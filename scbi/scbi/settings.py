@@ -25,7 +25,9 @@ SECRET_KEY = '*6eane9el--j4m74$!&0ql9w^wa&7hyeg4b^$7c=a^wv@49ap)'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    'Cambosbi-env.eba-mkftmsih.us-west-2.elasticbeanstalk.com'
+]
 
 
 # Application definition
