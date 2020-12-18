@@ -26,7 +26,7 @@ SECRET_KEY = '2fscwuwx((@*edd7t=&_je8oy=lo3g39s4162^!o0m5d(t6$92'
 DEBUG = True
 
 ALLOWED_HOSTS = [
-    'cambos.us-west-2.elasticbeanstalk.com',
+    'scbi.us-west-2.elasticbeanstalk.com',
     '127.0.0.1',
 ]
 
