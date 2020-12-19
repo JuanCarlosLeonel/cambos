@@ -1,0 +1,164 @@
+from django.db import models
+from core.models import Setor, Periodo
+from django_currentuser.db.models import CurrentUserField
+import datetime
+
+class Desempenho(models.Model):
+    UN_CHOICES = (
+            ('kg', 'kg'),
+            ('m', 'm'),             
+        )
+    setor                   = models.ForeignKey(Setor, on_delete=models.CASCADE)
+    periodo                 = models.ForeignKey(Periodo, on_delete=models.CASCADE)
+    unidade                 = models.CharField(blank=True, max_length=20, choices=UN_CHOICES)
+    capacidade_total        = models.IntegerField(blank=True, verbose_name='Capacidade Total')
+    dias_trabalhados        = models.FloatField(blank=True, verbose_name='Dias Trabalhados')
+    total_planejado         = models.IntegerField(blank=True, verbose_name='Total Planejado')
+    headcount               = models.FloatField(blank=True, verbose_name='nº Colaboradores')
+    expedidores             = models.FloatField(blank=True, verbose_name='nº Expedidores')
+    revisores               = models.FloatField(blank=True, verbose_name='nº Revisores')
+    setup                   = models.TimeField(blank=True)
+    carga_descarga          = models.TimeField(blank=True)
+    manutencao_corretiva    = models.TimeField(blank=True)
+    manutencao_preventiva   = models.TimeField(blank=True)
+    total_alvejado          = models.FloatField(blank=True, verbose_name='Total Alvejado')
+    total_chamuscado        = models.FloatField(blank=True, verbose_name='Total Chamuscado')
+    total_expedido          = models.FloatField(blank=True, verbose_name='Total Expedido')
+    total_tingido           = models.FloatField(blank=True, verbose_name='Total Expedido')
+    created_by              = CurrentUserField()
+    data_criacao            = models.DateField(verbose_name="Data", default=datetime.date.today)
+
+    def __str__(self):
+        return f'{self.setor}'
+    
+    class Meta:
+        verbose_name_plural = "Desempenho"
+
+
+class Material(models.Model):
+    TIPO_CHOICES = (
+            ('Insumo', 'Insumo'),
+            ('Material', 'Material'),                         
+        )
+    
+    ORIGEM_CHOICES = (
+            ('Compra', 'Compra'),
+            ('Fiação', 'Fiação'),             
+            ('Entrelaçadeira', 'Entrelaçadeira'),             
+            ('Tingimento', 'Tingimento'),             
+        )
+    cod          = models.IntegerField(null=True, blank=True)
+    nome         = models.CharField(max_length=110)
+    origem       = models.CharField(max_length=20, choices=ORIGEM_CHOICES)
+    tipo         = models.CharField(max_length=20, choices=TIPO_CHOICES)
+    created_by   = CurrentUserField()
+    data_criacao = models.DateField(verbose_name="Data", default=datetime.date.today)
+
+    def __str__(self):
+        return f'{self.nome}'
+    
+    class Meta:
+        verbose_name_plural = "Materiais"
+
+
+class Composicao(models.Model):
+    produto      = models.ForeignKey(Material, on_delete=models.CASCADE, related_name="produto")
+    material     = models.ForeignKey(Material, on_delete=models.CASCADE, related_name="material")
+    composicao   = models.FloatField()
+    created_by   = CurrentUserField()
+    data_criacao = models.DateField(verbose_name="Data", default=datetime.date.today)
+
+    def __str__(self):
+        return f'{self.produto}'
+    
+    class Meta:
+        verbose_name_plural = "Composição"
+
+
+class ValorCompra(models.Model):
+    periodo      = models.ForeignKey(Periodo, on_delete=models.CASCADE)
+    material     = models.ForeignKey(Material, on_delete=models.CASCADE)
+    valor        = models.FloatField()
+    created_by   = CurrentUserField()
+    data_criacao = models.DateField(verbose_name="Data", default=datetime.date.today)
+
+    def __str__(self):
+        return f'{self.material} / {self.periodo}'
+    
+    class Meta:
+        verbose_name_plural = "Valor de Compra"
+
+
+class Consumo(models.Model):
+    periodo      = models.ForeignKey(Periodo, on_delete=models.CASCADE)
+    material     = models.ForeignKey(Material, on_delete=models.CASCADE)
+    setor        = models.ForeignKey(Setor, on_delete=models.CASCADE)
+    created_by   = CurrentUserField()
+    data_criacao = models.DateField(verbose_name="Data", default=datetime.date.today)
+
+    def __str__(self):
+        return f'{self.material} / {self.periodo}'
+    
+    class Meta:
+        verbose_name_plural = "Consumo"
+
+
+class Perda(models.Model):
+    UN_CHOICES = (
+        ('kg', 'kg'),
+        ('m', 'm'),             
+    )
+    periodo         = models.ForeignKey(Periodo, on_delete=models.CASCADE)    
+    setor           = models.ForeignKey(Setor, on_delete=models.CASCADE)
+    unidade         = models.CharField(blank=True, max_length=20, choices=UN_CHOICES)
+    abertura_cardas = models.FloatField(blank=True)
+    conicaleira     = models.FloatField(blank=True)
+    encolhimento    = models.FloatField(blank=True)
+    estopa          = models.FloatField(blank=True)
+    retalho         = models.FloatField(blank=True)
+    retrabalho      = models.FloatField(blank=True)
+    varredura       = models.FloatField(blank=True)
+    created_by      = CurrentUserField()
+    data_criacao    = models.DateField(verbose_name="Data", default=datetime.date.today)
+
+    def __str__(self):
+        return f'{self.setor} / {self.periodo}'
+    
+
+class Custo(models.Model):
+     
+    periodo               = models.ForeignKey(Periodo, on_delete=models.CASCADE)    
+    setor                 = models.ForeignKey(Setor, on_delete=models.CASCADE)    
+    energia               = models.FloatField(blank=True)
+    laboratorio           = models.FloatField(blank=True)
+    manutencao            = models.FloatField(blank=True)
+    mao_de_obra           = models.FloatField(blank=True)
+    material_uso_continuo = models.FloatField(blank=True)
+    vapor                 = models.FloatField(blank=True)
+    agua                  = models.FloatField(blank=True)
+    created_by            = CurrentUserField()
+    data_criacao          = models.DateField(verbose_name="Data", default=datetime.date.today)
+
+    def __str__(self):
+        return f'{self.setor} / {self.periodo}'
+
+
+class Producao(models.Model):
+    UN_CHOICES = (
+        ('kg', 'kg'),
+        ('m', 'm'),             
+    )
+
+    periodo      = models.ForeignKey(Periodo, on_delete=models.CASCADE)    
+    setor        = models.ForeignKey(Setor, on_delete=models.CASCADE)    
+    unidade      = models.CharField(blank=True, max_length=20, choices=UN_CHOICES)
+    material     = models.ForeignKey(Material, on_delete=models.CASCADE)    
+    quantidade   = models.FloatField()
+    created_by   = CurrentUserField()
+    data_criacao = models.DateField(verbose_name="Data", default=datetime.date.today)
+    
+    def __str__(self):
+        return f'{self.material}'
+
+    class Meta:
+        verbose_name_plural = "Produção"
