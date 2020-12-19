@@ -61,7 +61,7 @@ ROOT_URLCONF = 'cambos.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [os.path.join(BASE_DIR, 'templates/')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -143,3 +143,14 @@ USE_TZ = True
 
 STATIC_ROOT = os.path.join(BASE_DIR, "..", "www", "static")
 STATIC_URL = '/static/'
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, "static"),
+]
+
+
+LOGIN_URL = 'login'
+LOGIN_REDIRECT_URL = 'core_index'
+LOGOUT_REDIRECT_URL = 'login'
+
+DECIMAL_SEPARATOR = ','
+USE_THOUSAND_SEPARATOR = True
