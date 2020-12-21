@@ -6,6 +6,7 @@ from django.contrib.auth.models import AbstractUser
 
 class Periodo(models.Model):
     periodo = models.DateField(verbose_name='Período')
+    nome    = models.CharField(max_length=18, default="-")
 
     def __str__(self):
         return f'{self.periodo}'

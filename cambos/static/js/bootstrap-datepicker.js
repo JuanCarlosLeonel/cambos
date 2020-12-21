@@ -1389,23 +1389,23 @@
 	};
 
 	var defaults = $.fn.datepicker.defaults = {
-		autoclose: false,
+		autoclose: true,
 		beforeShowDay: $.noop,
 		calendarWeeks: false,
 		clearBtn: false,
 		daysOfWeekDisabled: [],
 		endDate: Infinity,
 		forceParse: true,
-		format: 'mm/dd/yyyy',
+		format: 'MM/yyyy',
 		keyboardNavigation: true,
-		language: 'en',
-		minViewMode: 0,
+		language: 'br',
+		minViewMode: "months",
 		multidate: false,
 		multidateSeparator: ',',
 		orientation: "auto",
 		rtl: false,
-		startDate: -Infinity,
-		startView: 0,
+		startDate: "Agosto/2020",
+		startView: "months",
 		todayBtn: false,
 		todayHighlight: false,
 		weekStart: 0
@@ -1425,6 +1425,15 @@
 			monthsShort: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
 			today: "Today",
 			clear: "Clear"
+		},
+		br: {
+			days: ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"],
+			daysShort: ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
+			daysMin: ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"],
+			months: ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'],
+			monthsShort: ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'],
+			today: "Hoje",
+			clear: "Limpar"
 		}
 	};
 

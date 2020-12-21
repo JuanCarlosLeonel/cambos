@@ -810,8 +810,12 @@ a.label:hover, a.label:focus {
 
 .sidebar ul.nav ul.children li a {
   height: 40px;
-  background: #f1f4f7;
+  background: #ffffff;
   color: #444444; }
+
+.sidebar ul.nav ul.children li.divider {
+  border-bottom: 1px solid rgba(0, 0, 0, 0.226);
+  margin: 0px 0; }
 
 .sidebar ul.nav li.current a {
   background-color: #30a5ff;
