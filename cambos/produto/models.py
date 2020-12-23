@@ -17,13 +17,14 @@ class Desempenho(models.Model):
     headcount               = models.FloatField(blank=True, verbose_name='nº Colaboradores')
     expedidores             = models.FloatField(blank=True, verbose_name='nº Expedidores')
     revisores               = models.FloatField(blank=True, verbose_name='nº Revisores')
-    setup                   = models.TimeField(blank=True)
-    carga_descarga          = models.TimeField(blank=True)
-    manutencao_corretiva    = models.TimeField(blank=True)
-    manutencao_preventiva   = models.TimeField(blank=True)
+    setup                   = models.FloatField(blank=True, null=True)
+    carga_descarga          = models.FloatField(blank=True, null=True)
+    manutencao_corretiva    = models.FloatField(blank=True, null=True)
+    manutencao_preventiva   = models.FloatField(blank=True, null=True)
     total_alvejado          = models.FloatField(blank=True, verbose_name='Total Alvejado')
     total_chamuscado        = models.FloatField(blank=True, verbose_name='Total Chamuscado')
     total_expedido          = models.FloatField(blank=True, verbose_name='Total Expedido')
+    total_recebido           = models.FloatField(blank=True, null=True, verbose_name='Total Recebido')
     total_tingido           = models.FloatField(blank=True, verbose_name='Total Expedido')
     created_by              = CurrentUserField()
     data_criacao            = models.DateField(verbose_name="Data", default=datetime.date.today)
@@ -36,16 +37,25 @@ class Desempenho(models.Model):
 
 
 class Material(models.Model):
+    UN_CHOICES = (
+        ('kg', 'kg'),
+        ('m', 'm'),             
+    )
+
     TIPO_CHOICES = (
             ('Insumo', 'Insumo'),
             ('Material', 'Material'),                         
+            ('Refugo', 'Refugo'),                         
         )
     
     ORIGEM_CHOICES = (
             ('Compra', 'Compra'),
             ('Fiação', 'Fiação'),             
             ('Entrelaçadeira', 'Entrelaçadeira'),             
-            ('Tingimento', 'Tingimento'),             
+            ('Tingimento', 'Tingimento'),
+            ('Tecelagem', 'Tecelagem'),
+            ('Urdideira', 'Urdideira'),             
+            ('Perda', 'Perda'),             
         )
     cod          = models.IntegerField(null=True, blank=True)
     nome         = models.CharField(max_length=110)
@@ -53,6 +63,7 @@ class Material(models.Model):
     tipo         = models.CharField(max_length=20, choices=TIPO_CHOICES)
     created_by   = CurrentUserField()
     data_criacao = models.DateField(verbose_name="Data", default=datetime.date.today)
+    unidade      = models.CharField(blank=True, max_length=20, choices=UN_CHOICES)
 
     def __str__(self):
         return f'{self.nome}'
@@ -93,6 +104,7 @@ class Consumo(models.Model):
     periodo      = models.ForeignKey(Periodo, on_delete=models.CASCADE)
     material     = models.ForeignKey(Material, on_delete=models.CASCADE)
     setor        = models.ForeignKey(Setor, on_delete=models.CASCADE)
+    quantidade   = models.FloatField( default=0)
     created_by   = CurrentUserField()
     data_criacao = models.DateField(verbose_name="Data", default=datetime.date.today)
 
@@ -104,22 +116,13 @@ class Consumo(models.Model):
 
 
 class Perda(models.Model):
-    UN_CHOICES = (
-        ('kg', 'kg'),
-        ('m', 'm'),             
-    )
-    periodo         = models.ForeignKey(Periodo, on_delete=models.CASCADE)    
-    setor           = models.ForeignKey(Setor, on_delete=models.CASCADE)
-    unidade         = models.CharField(blank=True, max_length=20, choices=UN_CHOICES)
-    abertura_cardas = models.FloatField(blank=True)
-    conicaleira     = models.FloatField(blank=True)
-    encolhimento    = models.FloatField(blank=True)
-    estopa          = models.FloatField(blank=True)
-    retalho         = models.FloatField(blank=True)
-    retrabalho      = models.FloatField(blank=True)
-    varredura       = models.FloatField(blank=True)
-    created_by      = CurrentUserField()
-    data_criacao    = models.DateField(verbose_name="Data", default=datetime.date.today)
+    
+    periodo      = models.ForeignKey(Periodo, on_delete=models.CASCADE)    
+    setor        = models.ForeignKey(Setor, on_delete=models.CASCADE)    
+    material     = models.ForeignKey(Material, on_delete=models.CASCADE, default=1)
+    quantidade   = models.FloatField( default=0)
+    created_by   = CurrentUserField()
+    data_criacao = models.DateField(verbose_name="Data", default=datetime.date.today)
 
     def __str__(self):
         return f'{self.setor} / {self.periodo}'
@@ -144,14 +147,9 @@ class Custo(models.Model):
 
 
 class Producao(models.Model):
-    UN_CHOICES = (
-        ('kg', 'kg'),
-        ('m', 'm'),             
-    )
-
+    
     periodo      = models.ForeignKey(Periodo, on_delete=models.CASCADE)    
     setor        = models.ForeignKey(Setor, on_delete=models.CASCADE)    
-    unidade      = models.CharField(blank=True, max_length=20, choices=UN_CHOICES)
     material     = models.ForeignKey(Material, on_delete=models.CASCADE)    
     quantidade   = models.FloatField()
     created_by   = CurrentUserField()

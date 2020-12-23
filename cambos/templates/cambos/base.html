@@ -99,10 +99,10 @@
 				<em class="fa fa-navicon">&nbsp;</em> Divisão Têxtil <span data-toggle="collapse" href="#sub-item-1" class="icon pull-right"><em class="fa fa-minus"></em></span>
 				</a>
 				<ul class="children collapse in" id="sub-item-1">
-					<li><a id="setorTextil" class="" href="{% url 'core_index' %}"><em class="fa fa-bar-chart">&nbsp;</em> Consolidado </a></li>
+					<li><a id="setorTextil" class="" href="{% url 'core_index' %}?periodo={{ request.GET.periodo }}"><em class="fa fa-bar-chart">&nbsp;</em> Consolidado </a></li>
 					{% for item in setores %}
 						{% if item.divisao == "Têxtil" %}
-							<li ><a id="setor{{item.id}}"href="{% url 'core_textilp' item.id %}"><em class="fa fa-pie-chart">&nbsp;</em> {{item.nome}}</a></li>
+							<li ><a id="setor{{item.id}}"href="{% url 'core_textilp' item.id %}?periodo={{ request.GET.periodo }}"><em class="fa fa-pie-chart">&nbsp;</em> {{item.nome}}</a></li>
 						{% endif%}
 					{% endfor %}					
 					<li class="divider"></li>

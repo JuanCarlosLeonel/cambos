@@ -10,5 +10,5 @@ urlpatterns = [
     path('accounts/', include('django.contrib.auth.urls')),
     #index       
     path('', Index.as_view(), name='core_index'),
-    path('textilp/<str:pk>/', Index.as_view(), name='core_textilp'),
+    path('textilp/<str:pk>/', TextilP.as_view(), name='core_textilp'),
 ]
