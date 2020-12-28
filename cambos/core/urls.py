@@ -3,12 +3,12 @@ from django.conf.urls import include, url
 from . import views
 from core.views import(
     Index,
-    TextilP
+    ProducaoList
 )
 
 urlpatterns = [
     path('accounts/', include('django.contrib.auth.urls')),
     #index       
     path('', Index.as_view(), name='core_index'),
-    path('textilp/<str:pk>/', TextilP.as_view(), name='core_textilp'),
+    path('producao_list',  ProducaoList.as_view(), name='producao_list'),
 ]
