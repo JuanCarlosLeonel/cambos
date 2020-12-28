@@ -1,14 +1,27 @@
 from django.shortcuts import render
 from django.views.generic.base import TemplateView
 from django.views.generic.list import ListView
+from django.views.generic.edit import UpdateView, CreateView, DeleteView
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
-from core.models import Setor, Periodo
+from core.models import Setor, Periodo, User
 from produto.models import Producao, Desempenho, Custo, Perda, Material, Consumo, ValorCompra
+from core.form import UserCreationForm
 from django.db.models import Sum
 import json
 from django.core import serializers
 from django.http import JsonResponse
+from django.urls import reverse_lazy
+
+
+class UserCreate(CreateView):     
+    model = User
+    form_class = UserCreationForm
+    
+    def get_success_url(self):
+        return reverse_lazy('core_index')
+
+
 def get_periodo(self):
     try:
         periodo = Periodo.objects.get(nome = self.request.GET.get('periodo', None))
