@@ -8,9 +8,9 @@
 	<link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet">
 	<link href="{% static 'css/font-awesome.min.css' %}" rel="stylesheet">
 	<link href="{% static 'css/datepicker3.css' %}" rel="stylesheet">
-	
-	<link href="{% static 'css/bootstrap-table.css' %}" rel="stylesheet">
 	<link href="{% static 'css/styles.css' %}" rel="stylesheet">
+	<link href="{% static 'css/bootstrap-table.css' %}" rel="stylesheet">
+	
 	<!--Custom Font-->
 	<link href="https://fonts.googleapis.com/css?family=Montserrat:300,300i,400,400i,500,500i,600,600i,700,700i" rel="stylesheet">
 	{% block css %}{% endblock css %}
@@ -90,21 +90,21 @@
 		<form id="periodoForm" method="get">
 			<input type="hidden" value="{{request.GET.setor}}"class="" id="setor" name="setor">
 			<div class="input-group date form-group" data-provide="datepicker">				
-				<input readonly="readonly" type="text" value="{{ request.GET.periodo }}" class="form-control" id="periodo" name="periodo" required onchange="submete()">
+				<input type="text" value="{{ request.GET.periodo }}" class="form-control" id="periodo" name="periodo" required onchange="submete()">
 				<div class="input-group-addon btn-primary">
 					<span class="fa fa-calendar"></span>
 				</div>
 			</div>			                    
 		</form>		
-		<ul class="nav menu ">						
+		<ul class="nav menu">						
 			<li class="parent"><a data-toggle="collapse" href="#sub-item-1">
 				<em class="fa fa-navicon">&nbsp;</em> Divisão Têxtil <span data-toggle="collapse" href="#sub-item-1" class="icon pull-right"><em class="fa fa-minus"></em></span>
 				</a>
 				<ul class="children collapse in" id="sub-item-1">
-					<li class="enabled"><a id="setor" href="?setor=&periodo={{ request.GET.periodo }}"><em class="fa fa-bar-chart">&nbsp;</em> Consolidado </a></li>
+					<li><a id="setor" class="" href="?setor=&periodo={{ request.GET.periodo }}"><em class="fa fa-bar-chart">&nbsp;</em> Consolidado </a></li>
 					{% for item in setores %}
 						{% if item.divisao == "Têxtil" %}
-							<li class="enabled"><a id="setor{{item.id}}"href="?setor={{item.id}}&periodo={{ request.GET.periodo }}"><em class="fa fa-pie-chart">&nbsp;</em> {{item.nome}}</a></li>
+							<li ><a id="setor{{item.id}}"href="?setor={{item.id}}&periodo={{ request.GET.periodo }}"><em class="fa fa-pie-chart">&nbsp;</em> {{item.nome}}</a></li>
 						{% endif%}
 					{% endfor %}					
 					<li class="divider"></li>

@@ -1035,3 +1035,14 @@ p.back-link {
   margin-bottom: 20px;
   font-size: 12px;
   text-transform: uppercase; }
+
+li.disabled > a {
+  color: rgb(238, 228, 228)!important;
+}
+li.disabled > a:hover,
+li.disabled > a:focus {
+  color: #777!important;
+  text-decoration: none!important;
+  cursor: not-allowed!important;
+  background-color: transparent!important;
+}

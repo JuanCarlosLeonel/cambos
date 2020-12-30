@@ -172,24 +172,37 @@ class ProducaoList(ListView):
             Sum('quantidade'))['quantidade__sum']
         if setor.id < 5:
             unidades = 'Quilos'
-            unidade = 'Quilo'
+            unidade = 'kg'
         else:
             unidades = 'Metros'
-            unidade = 'Metro'
-        lista = []
-        contagem = 1
-        for item in producao:            
-            percentual = (item.quantidade / total)*100
+            unidade = 'm'
+        lista = []  
+        historico = Producao.objects.filter(
+            setor = setor.id            
+        ).order_by('material').distinct('material')
+        for material in historico:
+            material_nome = material.material.nome
+            quantidade = 0
+            percentual = 0    
+            id_producao = ''
+            id_material = material.material.id
+            for item in producao.distinct('material'):
+                if item.material.id == material.material.id:
+                    quantidade = item.quantidade
+                    percentual = (item.quantidade / total)*100
+                    id_producao = item.id                    
             lista.append({                
-                'material': item.material.nome,
-                'quantidade': int(item.quantidade),
-                '%': f'{percentual:.2f} %'
+                'material': material_nome,
+                'quantidade': quantidade,
+                'percentual': percentual,
+                'id': id_producao,                
+                'id_material': id_material                
                 })
-        
-        context['producaojs'] = lista
+        context['historico'] = historico
+        context['producaojs'] = sorted(lista, key=lambda x: x['quantidade'], reverse=True)
         context['unidade'] = unidade
         context['unidades'] = unidades
-        context['producao'] = producao
+        context['producao'] = total
         context['periodo'] = periodo.nome
         context['setor'] = setor
         return context
