@@ -26,7 +26,7 @@
 			<div class="panel-heading"> <strong class="">Produção</strong></div>
 			<div class="panel-body">
 				<div id="toolbar">
-					<a href="{% url 'producao_create' %}" class="btn btn-success">
+					<a href="{% url 'producao_create' %}?setor={{ request.GET.setor }}&periodo={{ request.GET.periodo }}" class="btn btn-success">
 					  <i class="fa fa-plus"></i> Novo
 					</a>
 				  </div>

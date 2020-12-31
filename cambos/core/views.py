@@ -177,27 +177,34 @@ class ProducaoList(ListView):
             unidades = 'Metros'
             unidade = 'm'
         lista = []  
-        historico = Producao.objects.filter(
-            setor = setor.id            
-        ).order_by('material').distinct('material')
+        if setor.id < 5:
+            origem = setor.nome
+        else:
+            origem = "Tecelagem"
+        historico = Material.objects.filter(
+            origem = origem            
+        ).order_by('nome')
         for material in historico:
-            material_nome = material.material.nome
+            material_nome = material.nome
             quantidade = 0
             percentual = 0    
             id_producao = ''
-            id_material = material.material.id
+            id_material = material.id
             for item in producao.distinct('material'):
-                if item.material.id == material.material.id:
+                if item.material.id == material.id:
                     quantidade = item.quantidade
                     percentual = (item.quantidade / total)*100
-                    id_producao = item.id                    
-            lista.append({                
-                'material': material_nome,
-                'quantidade': quantidade,
-                'percentual': percentual,
-                'id': id_producao,                
-                'id_material': id_material                
-                })
+                    id_producao = item.id
+            if material.inativo and quantidade == 0:
+                pass
+            else:                    
+                lista.append({                
+                    'material': material_nome,
+                    'quantidade': quantidade,
+                    'percentual': percentual,
+                    'id': id_producao,                
+                    'id_material': id_material                
+                    })
         context['historico'] = historico
         context['producaojs'] = sorted(lista, key=lambda x: x['quantidade'], reverse=True)
         context['unidade'] = unidade

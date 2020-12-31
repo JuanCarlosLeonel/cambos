@@ -10,6 +10,7 @@ from core.models import (
     Periodo,
 )
 from .form import (
+    MaterialProducaoForm,
     ProducaoModalForm,
     ProducaoForm,
 )
@@ -133,3 +134,38 @@ class ProducaoDelete(DeleteView):
         periodo = get_periodo(self)
         setor = get_setor(self)   
         return '/core/producao_list' + f'?setor={setor.id}&periodo={periodo.nome}'
+
+
+
+class MaterialProducaoCreate(CreateView):
+    model = Material
+    form_class = MaterialProducaoForm
+
+    def get_success_url(self, **kwargs):
+        periodo = get_periodo(self)
+        setor = get_setor(self)   
+        pk = self.object.pk
+        return f'/produto/producao_modal_create/{pk}' + f'?setor={setor.id}&periodo={periodo.nome}'
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)                
+        periodo = get_periodo(self)
+        setor = get_setor(self)                
+        context['tipo'] = "Material"
+        context['periodo'] = periodo.nome
+        context['setor'] = setor
+        return context
+        
+    def get_initial(self, *args, **kwargs):        
+        initial = super(MaterialProducaoCreate, self).get_initial(**kwargs)              
+        setor = get_setor(self)        
+        if setor.id < 5:
+            origem = setor.nome
+            unidade = 'kg'
+        else:
+            origem = "Tecelagem"
+            unidade = "m"
+        initial['unidade'] = unidade
+        initial['tipo'] = 'Material'
+        initial['origem'] = origem        
+        return initial

@@ -64,6 +64,7 @@ class Material(models.Model):
     created_by   = CurrentUserField()
     data_criacao = models.DateField(verbose_name="Data", default=datetime.date.today)
     unidade      = models.CharField(blank=True, max_length=20, choices=UN_CHOICES)
+    inativo      = models.BooleanField(default=False)
 
     def __str__(self):
         return f'{self.nome}'

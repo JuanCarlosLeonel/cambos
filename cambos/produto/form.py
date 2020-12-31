@@ -1,5 +1,5 @@
 from django import forms
-from .models import Producao
+from .models import Producao, Material
 from django_select2.forms import Select2Widget
 
 
@@ -51,3 +51,22 @@ class ProducaoForm(forms.ModelForm):
         ).exclude(
             id__in = produzidos
         )
+
+class MaterialProducaoForm(forms.ModelForm):
+    class Meta:
+        model = Material
+        fields = (
+            'cod',
+            'nome',
+            'origem',
+            'tipo',
+            'unidade',            
+        )
+        widgets = {                         
+            'cod': forms.NumberInput(attrs={'class':'form-control'}),
+            'nome': forms.TextInput(attrs={'class':'form-control'}),
+            'origem': forms.HiddenInput(),
+            'tipo': forms.HiddenInput(),
+            'unidade': forms.HiddenInput(),            
+        }
+         

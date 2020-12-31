@@ -6,9 +6,11 @@ from produto.views import(
     ProducaoCreate,
     ProducaoModalUpdate,
     ProducaoDelete,
+    MaterialProducaoCreate,
 )
 
 urlpatterns = [
+    path('material_producao_create', MaterialProducaoCreate.as_view(), name = 'material_producao_create'),
     path('producao_modal_create/<str:pk>/', ProducaoModalCreate.as_view(), name = 'producao_modal_create'),
     path('producao_create/', ProducaoCreate.as_view(), name = 'producao_create'),
     path('producao_modal_update/<str:pk>/', ProducaoModalUpdate.as_view(), name = 'producao_modal_update'),
