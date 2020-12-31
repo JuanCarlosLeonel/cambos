@@ -205,11 +205,60 @@ class ProducaoList(ListView):
                     'id': id_producao,                
                     'id_material': id_material                
                     })
+                        
         context['historico'] = historico
         context['producaojs'] = sorted(lista, key=lambda x: x['quantidade'], reverse=True)
         context['unidade'] = unidade
         context['unidades'] = unidades
         context['producao'] = total
+        context['periodo'] = periodo.nome
+        context['setor'] = setor
+        return context
+
+    
+@method_decorator(login_required, name='dispatch')
+class DesempenhoList(ListView):
+    model= Desempenho
+    template_name = 'core/desempenho_list.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)        
+        periodo = get_periodo(self)
+        setor = get_setor(self)        
+        lista = []
+        opcoes= [
+            'capacidade_total',
+            'dias_trabalhados',
+            'total_planejado',
+            'headcount',
+            'expedidores',
+            'revisores',
+            'setup',
+            'carga_descarga',
+            'manutencao_corretiva',
+            'manutencao_preventiva',
+            'total_alvejado',
+            'total_chamuscado',
+            'total_expedido',
+            'total_recebido',
+            'total_tingido',
+        ]
+    
+        if setor.id < 5:            
+            unidade_prod = 'kg'
+        else:            
+            unidade_prod = 'm'
+       
+        desempenho = Desempenho.objects.get(
+            periodo = periodo.id,
+            setor = setor.id
+        )
+        for opcao in opcoes:
+            lista.append({'item':opcao, 'valor':getattr(desempenho, opcao), 'un':'seila'})
+       
+                
+                
+        context['data'] = lista
         context['periodo'] = periodo.nome
         context['setor'] = setor
         return context

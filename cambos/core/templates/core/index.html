@@ -31,14 +31,16 @@
 						</div>
 					</div>
 				</a>
-				<div class="col-xs-6 col-md-2 col-lg-2 no-padding">
-					<div class="panel panel-blue panel-widget border-right">
-						<div class="row no-padding"><span class="color-teal"> Desempenho</span>
-							<div class="large">{{eficiencia | floatformat:0}}%</div>
-							<div class="text-muted">Eficiência</div>
+				<a href="{% url 'desempenho_list' %}?setor={{ request.GET.setor }}&periodo={{ periodo }}">
+					<div class="col-xs-6 col-md-2 col-lg-2 no-padding">
+						<div class="panel panel-blue panel-widget border-right">
+							<div class="row no-padding"><span class="color-teal"> Desempenho</span>
+								<div class="large">{{eficiencia | floatformat:0}}%</div>
+								<div class="text-muted">Eficiência</div>
+							</div>
 						</div>
 					</div>
-				</div>
+				</a>
 				<div class="col-xs-6 col-md-2 col-lg-2 no-padding">
 					<div class="panel panel-orange panel-widget border-right">
 						<div class="row no-padding"><span class="color-orange"> Matéria Prima</span>

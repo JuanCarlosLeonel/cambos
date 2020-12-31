@@ -4,7 +4,8 @@ from . import views
 from core.views import(
     Index,
     ProducaoList,
-    UserCreate
+    DesempenhoList,
+    UserCreate,
 )
 
 urlpatterns = [
@@ -12,5 +13,6 @@ urlpatterns = [
     #index       
     path('', Index.as_view(), name='core_index'),
     path('producao_list',  ProducaoList.as_view(), name='producao_list'),
+    path('desempenho_list',  DesempenhoList.as_view(), name='desempenho_list'),
     path('user_create/', UserCreate.as_view(), name = 'user_create_cbv'),
 ]

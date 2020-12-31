@@ -25,7 +25,7 @@ class Desempenho(models.Model):
     total_chamuscado        = models.FloatField(blank=True, verbose_name='Total Chamuscado')
     total_expedido          = models.FloatField(blank=True, verbose_name='Total Expedido')
     total_recebido           = models.FloatField(blank=True, null=True, verbose_name='Total Recebido')
-    total_tingido           = models.FloatField(blank=True, verbose_name='Total Expedido')
+    total_tingido           = models.FloatField(blank=True, verbose_name='Total Tingido')
     created_by              = CurrentUserField()
     data_criacao            = models.DateField(verbose_name="Data", default=datetime.date.today)
 
