@@ -11,6 +11,7 @@ from core.models import (
 )
 from .form import (
     ProducaoModalForm,
+    ProducaoForm,
 )
 
 def get_periodo(self):
@@ -55,6 +56,43 @@ class ProducaoModalCreate(CreateView):
         initial['setor'] = setor
         initial['periodo'] = periodo
         initial['material'] = material
+        return initial
+
+
+class ProducaoCreate(CreateView):
+    model = Producao
+    form_class = ProducaoForm
+
+    def get_success_url(self):
+        periodo = get_periodo(self)
+        setor = get_setor(self)   
+        return '/core/producao_list' + f'?setor={setor.id}&periodo={periodo.nome}'
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)                
+        periodo = get_periodo(self)
+        setor = get_setor(self)                
+        context['periodo'] = periodo.nome
+        context['setor'] = setor
+        return context
+    
+    def get_form_kwargs(self):
+        periodo = get_periodo(self)
+        setor = get_setor(self)
+        kwargs = super().get_form_kwargs()
+        produzidos = Producao.objects.filter(
+            periodo = periodo.id,
+            setor = setor.id
+        ).values('material__id')
+        kwargs['produzidos'] = produzidos
+        return kwargs
+    
+    def get_initial(self, *args, **kwargs):
+        initial = super(ProducaoCreate, self).get_initial(**kwargs)
+        periodo = get_periodo(self)        
+        setor = get_setor(self)        
+        initial['setor'] = setor
+        initial['periodo'] = periodo        
         return initial
 
 

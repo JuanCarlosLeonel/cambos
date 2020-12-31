@@ -1,6 +1,8 @@
 {% extends "cambos/base.html" %}
 
-{% block css %}{% endblock css %}
+{% block css %}
+
+{% endblock css %}
 
 {% block navigation %}
     <div class="row">
@@ -24,9 +26,9 @@
 			<div class="panel-heading"> <strong class="">Produção</strong></div>
 			<div class="panel-body">
 				<div id="toolbar">
-					<button id="new" class="btn btn-success">
+					<a href="{% url 'producao_create' %}" class="btn btn-success">
 					  <i class="fa fa-plus"></i> Novo
-					</button>
+					</a>
 				  </div>
 				<table id="table"				
 				 data-toolbar="#toolbar"
@@ -54,7 +56,7 @@
 										<a href="{% url 'producao_modal_update' data.id %}?setor={{ setor.id }}&periodo={{ periodo }}"
 										 class='fa fa-pencil-square-o'></a>										 
 									{% else %}
-										<a href="{% url 'producao_modal_create' data.id_material %}?setor={{ setor.id }} & periodo={{ periodo }}"
+										<a href="{% url 'producao_modal_create' data.id_material %}?setor={{ setor.id }}&periodo={{ periodo }}"
 										 class='text-success fa fa-pencil-square-o'></a>
 									{% endif %}
 								</td>

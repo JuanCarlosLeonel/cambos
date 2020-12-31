@@ -1,6 +1,8 @@
 {% extends "cambos/base.html" %}
 
-{% block css %}{% endblock css %}
+{% block css %}
+{{ form.media.css }}
+{% endblock css %}
 
 {% block navigation %}
     <div class="row">
@@ -28,8 +30,9 @@
                 <h3 class="modal-title">Produção</h3>
               </div>
               <div class="modal-body">
-
+                {%if item %}
                <h4> <strong>Material:</strong> {{item}}</h4>
+               {% endif %}
                     {% csrf_token %}
                     {{ form.non_field_errors }}
                     <div class="form-group">
@@ -60,6 +63,7 @@
 </div><!-- /.modal-dialog -->
 {% endblock content %}
 {% block script %}
+ {{ form.media.js }}
 	<script>
         let option = document.getElementById('setor{{setor.id}}');        
         option.setAttribute('class', 'active');					           
