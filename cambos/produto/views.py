@@ -192,8 +192,11 @@ class DesempenhoCreate(CreateView):
     def get_initial(self, *args, **kwargs):                
         initial = super(DesempenhoCreate, self).get_initial(**kwargs)   
         setor = get_setor(self)   
+        periodo = get_periodo(self)
         desempenho = Desempenho.objects.filter(setor = setor.id)                   
         ultimo_desempenho = desempenho.latest('periodo')
+        initial['setor'] = setor.id
+        initial['periodo'] = periodo.id                
         initial['capacidade_total'] = ultimo_desempenho.capacidade_total        
         initial['total_planejado'] = ultimo_desempenho.total_planejado        
         initial['headcount'] = ultimo_desempenho.headcount        
