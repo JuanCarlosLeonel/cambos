@@ -109,22 +109,23 @@ class Index(TemplateView):
             unidades = 'Metros'
             unidade = 'Metro'
         
-        total_planejado = Desempenho.objects.get(
-            setor = setor.id,
-            periodo = periodo.id
-        ).total_planejado
+        try:
+            total_planejado = Desempenho.objects.get(
+                setor = setor.id,
+                periodo = periodo.id
+            ).total_planejado
+        except:
+            total_planejado = 0
 
         try:
             eficiencia = (producao / total_planejado) * 100
         except:
             eficiencia = 0
-
-        custo = custo_setor(setor.id, periodo.id)[1]
         try:
+            custo = custo_setor(setor.id, periodo.id)[1]                
             custo_un = custo / producao
         except:
             custo_un = 0
-
         perda = perda_setor(setor.id, periodo.id).aggregate(
             Sum('quantidade'))['quantidade__sum']        
         try:
@@ -225,39 +226,77 @@ class DesempenhoList(ListView):
         context = super().get_context_data(**kwargs)        
         periodo = get_periodo(self)
         setor = get_setor(self)        
-        lista = []
-        opcoes= [
-            'capacidade_total',
-            'dias_trabalhados',
-            'total_planejado',
-            'headcount',
-            'expedidores',
-            'revisores',
-            'setup',
-            'carga_descarga',
-            'manutencao_corretiva',
-            'manutencao_preventiva',
-            'total_alvejado',
-            'total_chamuscado',
-            'total_expedido',
-            'total_recebido',
-            'total_tingido',
-        ]
-    
         if setor.id < 5:            
-            unidade_prod = 'kg'
+            unidade_prod = 'kilos'
         else:            
-            unidade_prod = 'm'
-       
-        desempenho = Desempenho.objects.get(
-            periodo = periodo.id,
-            setor = setor.id
-        )
+            unidade_prod = 'metros'
+        lista = []
+        opcoes= (
+            {'item':'capacidade_total',
+            'nome':'Capacidade Total',
+            'un': unidade_prod},
+            {'item':'dias_trabalhados',
+            'nome':'Dias Trabalhados',
+            'un': 'dias'},
+            {'item':'headcount',
+            'nome':'Colaboradores',
+            'un': 'Pessoas'},
+            {'item':'expedidores',
+            'nome':'Expedidores',
+            'un': 'Pessoas'},
+            {'item':'revisores',
+            'nome':'Revisores',
+            'un': 'Pessoas'},
+            {'item':'setup',
+            'nome':'Setup',
+            'un': 'horas'},
+            {'item':'carga_descarga',
+            'nome':'Carga e descarga',
+            'un': 'horas'},
+            {'item':'manutencao_corretiva',
+            'nome':'Manutenção Corretiva',
+            'un': 'horas'},
+            {'item':'manutencao_preventiva',
+            'nome':'Manutenção Preventiva',
+            'un': 'horas'},
+            {'item':'total_alvejado',
+            'nome':'Total Alvejado',
+            'un': unidade_prod},
+            {'item':'total_chamuscado',
+            'nome':'Total Chamuscado',
+            'un': unidade_prod},            
+            {'item':'total_expedido',
+            'nome':'Total Expedido',
+            'un': unidade_prod},
+            {'item':'total_recebido',
+            'nome':'Total Recebido',
+            'un': unidade_prod},
+            {'item':'total_tingido',
+            'nome':'Total Tingido',
+            'un': unidade_prod},
+        )        
+        try:                   
+            desempenho = Desempenho.objects.get(
+                periodo = periodo.id,
+                setor = setor.id
+            )        
+            lancado = desempenho.pk
+        except:
+            desempenho = ''
+            lancado = False
         for opcao in opcoes:
-            lista.append({'item':opcao, 'valor':getattr(desempenho, opcao), 'un':'seila'})
-       
-                
-                
+            item = opcao['nome']
+            if desempenho:
+                valor = getattr(desempenho, opcao['item'])
+            else:
+                valor = 0
+            if valor is None:
+                valor = 0
+            else:
+                valor = int(valor)
+            un = opcao['un']
+            lista.append({'item':item, 'valor':valor, 'un':un})                               
+        context['lancado'] = lancado
         context['data'] = lista
         context['periodo'] = periodo.nome
         context['setor'] = setor

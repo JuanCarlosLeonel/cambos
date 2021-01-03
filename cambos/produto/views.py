@@ -4,6 +4,7 @@ from django.urls import reverse_lazy
 from .models import (
     Producao,
     Material,
+    Desempenho,
 )
 from core.models import (
     Setor,
@@ -13,6 +14,7 @@ from .form import (
     MaterialProducaoForm,
     ProducaoModalForm,
     ProducaoForm,
+    DesempenhoForm
 )
 
 def get_periodo(self):
@@ -136,7 +138,6 @@ class ProducaoDelete(DeleteView):
         return '/core/producao_list' + f'?setor={setor.id}&periodo={periodo.nome}'
 
 
-
 class MaterialProducaoCreate(CreateView):
     model = Material
     form_class = MaterialProducaoForm
@@ -169,3 +170,50 @@ class MaterialProducaoCreate(CreateView):
         initial['tipo'] = 'Material'
         initial['origem'] = origem        
         return initial
+
+
+class DesempenhoCreate(CreateView):
+    model = Desempenho
+    form_class = DesempenhoForm
+
+    def get_success_url(self, **kwargs):
+        periodo = get_periodo(self)
+        setor = get_setor(self)   
+        return '/core/desempenho_list' + f'?setor={setor.id}&periodo={periodo.nome}'
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)                
+        periodo = get_periodo(self)
+        setor = get_setor(self)                        
+        context['periodo'] = periodo.nome
+        context['setor'] = setor
+        return context
+        
+    def get_initial(self, *args, **kwargs):                
+        initial = super(DesempenhoCreate, self).get_initial(**kwargs)   
+        setor = get_setor(self)   
+        desempenho = Desempenho.objects.filter(setor = setor.id)                   
+        ultimo_desempenho = desempenho.latest('periodo')
+        initial['capacidade_total'] = ultimo_desempenho.capacidade_total        
+        initial['total_planejado'] = ultimo_desempenho.total_planejado        
+        initial['headcount'] = ultimo_desempenho.headcount        
+        return initial
+
+
+class DesempenhoUpdate(UpdateView):
+    model = Desempenho
+    form_class = DesempenhoForm
+    
+    def get_success_url(self):
+        periodo = get_periodo(self)
+        setor = get_setor(self)   
+        return '/core/desempenho_list' + f'?setor={setor.id}&periodo={periodo.nome}'
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)        
+        periodo = get_periodo(self)
+        setor = get_setor(self)        
+        
+        context['periodo'] = periodo.nome
+        context['setor'] = setor
+        return context

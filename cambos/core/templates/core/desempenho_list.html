@@ -26,19 +26,25 @@
 			<div class="panel-heading"> <strong class="">Desempenho</strong></div>
 			<div class="panel-body">
 				<div id="toolbar">
-					<a href="{% url 'producao_create' %}?setor={{ request.GET.setor }}&periodo={{ request.GET.periodo }}" class="btn btn-success">
-					  <i class="fa fa-plus"></i> Novo
+					{% if lancado %}
+					<a href="{% url 'desempenho_update' lancado %}?setor={{ request.GET.setor }}&periodo={{ request.GET.periodo }}" class="btn btn-primary">
+					  <i class="fa fa-pencil"></i> Editar
 					</a>
+					{% else %}
+					<a href="{% url 'desempenho_create' %}?setor={{ request.GET.setor }}&periodo={{ request.GET.periodo }}" class="btn btn-danger">
+						<i class="fa fa-plus"></i> Lançar!
+					  </a>
+					{% endif%}
 				  </div>
 				<table id="table"				
 				 data-toolbar="#toolbar"
 				 data-toggle="table"
 				 data-show-refresh="false"
 				 data-show-toggle="true"
-				 data-show-columns="true"
+				 data-show-columns="false"
 				 data-search="true"
 				 data-select-item-name="toolbar"
-				 data-pagination="true"				 
+				 data-pagination="false"				 
 				 data-sort-order="desc">
 					<thead>
 						<tr>							
@@ -60,6 +66,7 @@
 				</table>
 			</div>
 		</div>
+		
 	</div>	
 {%endblock content%}
 
