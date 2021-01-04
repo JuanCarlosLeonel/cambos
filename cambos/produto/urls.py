@@ -21,6 +21,9 @@ from produto.views import(
     InsumoCreate,
     InsumoDelete,
     MaterialInsumoCreate,
+    PerdaModalCreate,
+    PerdaModalUpdate,
+    PerdaDelete
 )
 
 urlpatterns = [
@@ -50,5 +53,8 @@ urlpatterns = [
 
     path('custo_create/', CustoCreate.as_view(), name = 'custo_create'),
     path('custo_update/<str:pk>/', CustoUpdate.as_view(), name = 'custo_update'),
-    
+
+    path('perda_modal_create/<str:pk>/', PerdaModalCreate.as_view(), name = 'perda_modal_create'),
+    path('perda_modal_update/<str:pk>/', PerdaModalUpdate.as_view(), name = 'perda_modal_update'),
+    path('perda_delete/<int:pk>/', PerdaDelete.as_view(), name='perda_delete_cbv'),
 ]

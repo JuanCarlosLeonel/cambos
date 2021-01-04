@@ -1,5 +1,5 @@
 from django import forms
-from .models import Producao, Material, Desempenho, Consumo, Custo
+from .models import Producao, Material, Desempenho, Consumo, Custo, Perda
 from django_select2.forms import Select2Widget
 
 
@@ -97,6 +97,7 @@ class CustoForm(forms.ModelForm):
             'vapor':forms.NumberInput(attrs={'class':'form-control'}),            
             'agua':forms.NumberInput(attrs={'class':'form-control'}),                        
         }
+
 
 class DesempenhoForm(forms.ModelForm):
     class Meta:
@@ -209,3 +210,21 @@ class MaterialConsumoForm(forms.ModelForm):
             'tipo': forms.HiddenInput(),
             'unidade': forms.Select(attrs={'class':'form-control'}),
         }
+
+
+class PerdaModalForm(forms.ModelForm):
+    class Meta:
+        model = Perda
+        fields = (
+            'periodo',
+            'setor',
+            'material',
+            'quantidade'
+        )
+
+        widgets = {                         
+            'periodo': forms.HiddenInput(),
+            'setor': forms.HiddenInput(),
+            'material': forms.HiddenInput(),
+            'quantidade': forms.NumberInput(attrs={'class':'form-control', 'autofocus': 'autofocus'}),
+        } 

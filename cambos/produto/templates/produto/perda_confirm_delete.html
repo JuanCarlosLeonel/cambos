@@ -1,0 +1,50 @@
+{% extends "cambos/base.html" %}
+
+{% block css %}{% endblock css %}
+
+{% block navigation %}
+    <div class="row">
+        <ol class="breadcrumb">
+            <li><a href="{% url 'core_index' %}?setor={{ request.GET.setor }} & periodo={{ request.GET.periodo }}">
+                <em class="fa fa-home"></em>
+            </a></li>
+            <li class="active"><a href="{% url 'producao_list' %}?setor={{ request.GET.setor }} & periodo={{ request.GET.periodo }}">Perda</a></li>
+        </ol>
+    </div><!--/.row-->
+    <div class="row">
+        <div class="col-lg-12">
+            <h1 class="page-header">{{setor.nome}}<span class="text-muted small"> - {{periodo}}</span></h1></h1>
+        </div>
+    </div><!--/.row-->
+{% endblock navigation %}
+
+{% block content %}		
+
+<div class="modal-dialog modal-lg">
+    <div class="modal-content">
+        <form method="post" autocomplete="off">
+              <div class="modal-header">
+                <a href="javascript:void(0)" onClick="history.go(-1); return false;" type="button" class="close" aria-hidden="true">×</a>
+                <h3 class="modal-title">Perdas</h3>
+              </div>
+              <div class="modal-body">
+
+               <h4> <strong>Material:</strong> {{item}}</h4>
+               <h4> <strong>Quantidade:</strong> {{object.quantidade}}</h4>
+               <h5>Confirmação de Exclusão</h5>
+                <p>Você quer mesmo deletar o registro do período?</p>        
+               
+              </div>
+              <div class="modal-footer">
+                <form method="post" onsubmit="ShowLoading()">
+                    {% csrf_token %}
+                <a href="javascript:void(0)" onClick="history.go(-1); return false;" type="button" class="btn btn-primary">Voltar</a>
+                <input type="submit" class="btn btn-danger" value="Deletar"  />
+                
+            </form>
+              </div>
+        </form>
+       
+    </div><!-- /.modal-content -->
+</div><!-- /.modal-dialog -->
+{% endblock content %}

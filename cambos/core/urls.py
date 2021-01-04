@@ -8,7 +8,8 @@ from core.views import(
     UserCreate,
     ConsumoMaterialList,
     ConsumoInsumoList,
-    CustoList
+    CustoList,
+    PerdaList
 )
 
 urlpatterns = [
@@ -21,4 +22,5 @@ urlpatterns = [
     path('consumo_insumo_list',  ConsumoInsumoList.as_view(), name='consumo_insumo_list'),
     path('desempenho_list',  DesempenhoList.as_view(), name='desempenho_list'),
     path('custo_list',  CustoList.as_view(), name='custo_list'),    
+    path('perda_list',  PerdaList.as_view(), name='perda_list'),    
 ]

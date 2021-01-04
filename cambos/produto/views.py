@@ -6,7 +6,8 @@ from .models import (
     Material,
     Desempenho,
     Consumo,
-    Custo
+    Custo,
+    Perda
 )
 from core.models import (
     Setor,
@@ -20,7 +21,8 @@ from .form import (
     ConsumoForm,
     ConsumoModalForm,
     MaterialConsumoForm,
-    CustoForm
+    CustoForm,
+    PerdaModalForm
 )
 
 def get_periodo(self):
@@ -554,3 +556,74 @@ class MaterialInsumoCreate(CreateView):
         initial['tipo'] = 'Insumo'           
         initial['origem'] = 'Compra'           
         return initial
+
+
+class PerdaModalCreate(CreateView):
+    model = Perda
+    form_class = PerdaModalForm
+
+    def get_success_url(self):
+        periodo = get_periodo(self)
+        setor = get_setor(self)   
+        return '/core/perda_list' + f'?setor={setor.id}&periodo={periodo.nome}'
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)        
+        material = Material.objects.get(id = self.kwargs['pk'])
+        periodo = get_periodo(self)
+        setor = get_setor(self)        
+        context['item'] = material.nome
+        context['tipo'] = material.tipo
+        context['periodo'] = periodo.nome
+        context['setor'] = setor
+        return context
+    
+    def get_initial(self, *args, **kwargs):
+        initial = super(PerdaModalCreate, self).get_initial(**kwargs)
+        periodo = get_periodo(self)
+        material = Material.objects.get(id = self.kwargs['pk'])
+        setor = get_setor(self)        
+        initial['setor'] = setor
+        initial['periodo'] = periodo
+        initial['material'] = material
+        return initial
+
+
+class PerdaModalUpdate(UpdateView):
+    model = Perda
+    form_class = PerdaModalForm
+    
+    def get_success_url(self):
+        periodo = get_periodo(self)
+        setor = get_setor(self)   
+        return '/core/perda_list' + f'?setor={setor.id}&periodo={periodo.nome}'
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)        
+        periodo = get_periodo(self)
+        setor = get_setor(self)        
+        item = self.object.material
+        context['item'] = item.nome
+        context['tipo'] = item.tipo
+        context['periodo'] = periodo.nome
+        context['setor'] = setor
+        return context
+
+
+class PerdaDelete(DeleteView):
+    model = Perda
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)        
+        periodo = get_periodo(self)
+        setor = get_setor(self)        
+        item = self.object.material.nome
+        context['item'] = item
+        context['periodo'] = periodo.nome
+        context['setor'] = setor
+        return context   
+
+    def get_success_url(self):
+        periodo = get_periodo(self)
+        setor = get_setor(self)   
+        return '/core/perda_list' + f'?setor={setor.id}&periodo={periodo.nome}'

@@ -281,6 +281,59 @@ class ProducaoList(ListView):
 
 
 @method_decorator(login_required, name='dispatch')
+class PerdaList(ListView):
+    model= Perda
+    template_name = 'core/perda_list.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)        
+        periodo = get_periodo(self)
+        setor = get_setor(self)        
+        perda = perda_setor(setor.id, periodo.id)
+        total = perda.aggregate(
+            Sum('quantidade'))['quantidade__sum']
+        if setor.id < 5:
+            unidades = 'Quilos'
+            unidade = 'kg'
+        else:
+            unidades = 'Metros'
+            unidade = 'm'
+        lista = []          
+        historico = Perda.objects.filter(
+            setor = setor.id,            
+        ).distinct('material')
+        for material in historico:
+            material_nome = material.material.nome
+            quantidade = 0
+            percentual = 0    
+            id_perda = ''
+            id_material = material.material.id
+            for item in perda.distinct('material'):
+                if item.material.id == material.material.id:
+                    quantidade = item.quantidade
+                    percentual = (item.quantidade / total)*100
+                    id_perda = item.id
+            if material.material.inativo and quantidade == 0:
+                pass
+            else:                    
+                lista.append({                
+                    'material': material_nome,
+                    'quantidade': quantidade,
+                    'percentual': percentual,
+                    'id': id_perda,                
+                    'id_material': id_material                
+                    })                                
+        context['producaojs'] = sorted(lista, key=lambda x: x['quantidade'], reverse=True)
+        context['unidade'] = unidade
+        context['unidades'] = unidades
+        context['producao'] = total
+        context['periodo'] = periodo.nome
+        context['setor'] = setor
+        return context
+
+
+
+@method_decorator(login_required, name='dispatch')
 class ConsumoMaterialList(ListView):
     model= Consumo
     template_name = 'core/consumo_material_list.html'
