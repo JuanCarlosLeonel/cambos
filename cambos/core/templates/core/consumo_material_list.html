@@ -23,7 +23,7 @@
 {% block content %}		
 	<div class="col-12">
 		<div class="panel panel-default">
-			<div class="panel-heading"> <strong class="">Consumo de Insumos</strong></div>
+			<div class="panel-heading"> <strong class="">Consumo de Material</strong></div>
 			<div class="panel-body">
 				<div id="toolbar">
 					<a href="{% url 'producao_create' %}?setor={{ request.GET.setor }}&periodo={{ request.GET.periodo }}" class="btn btn-success">
@@ -44,9 +44,12 @@
 						<tr>
 							<th data-field="acao" class='text-center'></th>							
 							<th data-field="material"  data-sortable="false" class='text-center'>Material</th>
+							<th data-field="origem" data-sortable="false" class='text-center'>origem</th>
 							<th data-field="quantidade" data-sortable="false" class='text-center'>Quant</th>
 							<th data-field="preco" data-sortable="false" class='text-center'>Preço</th>
-							<th data-field="%" data-sortable="false" class='text-center'>%</th>
+							<th data-field="valor" data-sortable="false" class='text-center'>Valor</th>
+							<th data-field="percentual" data-sortable="false" class='text-center'>%</th>
+							
 						</tr>
 					</thead>
 					<tbody>
@@ -62,9 +65,11 @@
 									{% endif %}
 								</td>
 								<td class='text-center' >{{data.material}}</td>
+								<td class='text-center'>{{data.origem}}</td>
 								<td class='text-center'>{{data.quantidade|floatformat:0}}</td>
 								<td class='text-center'>R$ {{data.preco|floatformat:2}}</td>
-								<td class='text-center'>{{data.percentual|floatformat:2}}%</td>
+								<td class='text-center'>R$ {{data.valor|floatformat:2}}</td>
+								<td class='text-center'>{{data.percentual|floatformat:2}}%</td>								
 							</tr>
 						{%endfor%}
 					</tbody>

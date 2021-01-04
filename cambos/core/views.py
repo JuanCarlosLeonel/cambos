@@ -44,21 +44,6 @@ def get_setor(self):
         setor = Setor.objects.get(id=7)
     return setor
 
-def preco_material(id_material, periodo):
-    preco = 0
-    material = Material.objects.get(
-        id = id_material
-    )    
-    try:                
-        if material.origem == "Compra":            
-            preco = ValorCompra.objects.get(
-                material = material,
-                periodo = periodo.id
-            ).valor
-    except:
-        preco = 0
-    return preco
-
 def producao_setor(id_setor, id_periodo):
     producao = Producao.objects.filter(
         setor = id_setor,
@@ -112,6 +97,24 @@ def compra_setor(id_setor, id_periodo):
 
     return lista, total_insumo, total_material
 
+def preco_material(id_material, periodo):
+    preco = 0
+    material = Material.objects.get(
+        id = id_material
+    )    
+    try:                
+        if material.origem == "Compra":            
+            preco = ValorCompra.objects.get(
+                material = material,
+                periodo = periodo.id
+            ).valor
+        else:
+            setor = Setor.objects.get(nome = material.origem)
+            custo = custo_setor(setor.id, periodo.id)
+            preco = setor
+    except:
+        preco = 0
+    return preco
 
 @method_decorator(login_required, name='dispatch')
 class Index(TemplateView):
@@ -251,16 +254,16 @@ class ConsumoMaterialList(ListView):
         setor = get_setor(self)        
         consumo = Consumo.objects.filter(
             setor = setor.id,
-            periodo = periodo.id
-        )
-        
-        lista = []  
-        
+            periodo = periodo.id,            
+        )        
+        lista = []          
         historico = Consumo.objects.filter(
-            setor = setor.id            
+            setor = setor.id,
+            material__tipo = "Material"            
         ).distinct('material')
         for item in historico:
             material_nome = item.material.nome
+            origem = item.material.origem
             quantidade = 0
             preco = preco_material(item.material.id, periodo)
             total = 0
@@ -277,16 +280,17 @@ class ConsumoMaterialList(ListView):
             else:                    
                 lista.append({                
                     'material': material_nome,
+                    'origem': origem,
                     'quantidade': quantidade,
                     'preco': preco,
                     'percentual': percentual,
+                    'valor': preco ,
                     'id': id_consumo,                
                     'id_material': id_material                
                     })
                         
         context['historico'] = historico
-        context['producaojs'] = sorted(lista, key=lambda x: x['quantidade'], reverse=True)
-        context['producao'] = total
+        context['producaojs'] = sorted(lista, key=lambda x: x['quantidade'], reverse=True)        
         context['periodo'] = periodo.nome
         context['setor'] = setor
         return context
