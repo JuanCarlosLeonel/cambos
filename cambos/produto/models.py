@@ -101,6 +101,7 @@ class ValorCompra(models.Model):
 
 
 class Consumo(models.Model):
+    
     periodo      = models.ForeignKey(Periodo, on_delete=models.CASCADE)
     material     = models.ForeignKey(Material, on_delete=models.CASCADE)
     setor        = models.ForeignKey(Setor, on_delete=models.CASCADE)

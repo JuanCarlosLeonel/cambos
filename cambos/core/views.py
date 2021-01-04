@@ -15,7 +15,7 @@ from produto.models import (
     ValorCompra
 )
 from core.form import UserCreationForm
-from django.db.models import Sum
+from django.db.models import Sum, Count
 import json
 from django.core import serializers
 from django.http import JsonResponse
@@ -59,10 +59,13 @@ def perda_setor(id_setor, id_periodo):
     return perda
 
 def custo_setor(id_setor, id_periodo):
-    custo = Custo.objects.get(
-        setor = id_setor,
-        periodo = id_periodo
-    )
+    try:
+        custo = Custo.objects.get(
+            setor = id_setor,
+            periodo = id_periodo
+        )
+    except:
+        custo = Custo.objects.filter(setor = id_setor).latest('periodo')
     custo_total = custo.energia + custo.laboratorio + custo.manutencao + custo.material_uso_continuo + custo.mao_de_obra + custo.vapor + custo.agua
     return custo, custo_total
 
@@ -101,13 +104,21 @@ def preco_material(id_material, periodo):
     preco = 0
     material = Material.objects.get(
         id = id_material
-    )    
-                    
-    if material.origem == "Compra":            
-        preco = ValorCompra.objects.get(
-            material = material,
-            periodo = periodo.id
-        ).valor
+    )                        
+    if material.origem == "Compra":
+        historico_compra = ValorCompra.objects.filter(material = material).aggregate(
+            Count('id'))['id__count']
+        if historico_compra == 0:
+            preco = 0
+        else:      
+            try:
+                preco = ValorCompra.objects.get(
+                    material = material,
+                    periodo = periodo.id
+                ).valor
+            except:
+                ultima_compra = ValorCompra.objects.filter(material = material).latest('periodo').valor
+                preco = ultima_compra
     else:
         setor = Setor.objects.get(nome = material.origem)
         consumo = Consumo.objects.filter(
@@ -117,20 +128,29 @@ def preco_material(id_material, periodo):
         )
         consumo_total = 0
         for produto in consumo:
-            try:
-                preco = ValorCompra.objects.get(
-                    material = produto.material,
-                    periodo = periodo.id
-                ).valor                
-            except:
+            historico_compra = ValorCompra.objects.filter(material = produto.material).aggregate(
+            Count('id'))['id__count']
+            if historico_compra == 0:
                 preco = 0
+            else:      
+                try:
+                    preco = ValorCompra.objects.get(
+                        material = produto.material,
+                        periodo = periodo.id
+                    ).valor
+                except:
+                    ultima_compra = ValorCompra.objects.filter(material = produto.material).latest('periodo').valor
+                    preco = ultima_compra            
             consumo_total += preco * produto.quantidade            
         producao = producao_setor(setor.id, periodo.id).aggregate(
             Sum('quantidade'))['quantidade__sum']        
         custo = custo_setor(setor.id, periodo.id)[1]
-        preco = (custo + consumo_total) / producao
-    
+        try:
+            preco = (custo + consumo_total) / producao
+        except:
+            preco = 0    
     return preco
+
 
 @method_decorator(login_required, name='dispatch')
 class Index(TemplateView):
@@ -413,3 +433,4 @@ class DesempenhoList(ListView):
         context['periodo'] = periodo.nome
         context['setor'] = setor
         return context
+        

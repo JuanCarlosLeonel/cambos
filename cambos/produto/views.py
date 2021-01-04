@@ -5,6 +5,7 @@ from .models import (
     Producao,
     Material,
     Desempenho,
+    Consumo
 )
 from core.models import (
     Setor,
@@ -14,7 +15,10 @@ from .form import (
     MaterialProducaoForm,
     ProducaoModalForm,
     ProducaoForm,
-    DesempenhoForm
+    DesempenhoForm,
+    ConsumoForm,
+    ConsumoModalForm,
+    MaterialConsumoForm
 )
 
 def get_periodo(self):
@@ -220,3 +224,135 @@ class DesempenhoUpdate(UpdateView):
         context['periodo'] = periodo.nome
         context['setor'] = setor
         return context
+
+
+class ConsumoModalCreate(CreateView):
+    model = Consumo
+    form_class = ConsumoModalForm
+
+    def get_success_url(self):
+        periodo = get_periodo(self)
+        setor = get_setor(self)   
+        return '/core/consumo_material_list' + f'?setor={setor.id}&periodo={periodo.nome}'
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)        
+        material = Material.objects.get(id = self.kwargs['pk'])
+        periodo = get_periodo(self)
+        setor = get_setor(self)        
+        context['item'] = material.nome
+        context['periodo'] = periodo.nome
+        context['setor'] = setor
+        return context
+    
+    def get_initial(self, *args, **kwargs):
+        initial = super(ConsumoModalCreate, self).get_initial(**kwargs)
+        periodo = get_periodo(self)
+        material = Material.objects.get(id = self.kwargs['pk'])
+        setor = get_setor(self)        
+        initial['setor'] = setor
+        initial['periodo'] = periodo
+        initial['material'] = material
+        return initial
+
+
+class ConsumoCreate(CreateView):
+    model = Consumo
+    form_class = ConsumoForm
+
+    def get_success_url(self):
+        periodo = get_periodo(self)
+        setor = get_setor(self)   
+        return '/core/consumo_material_list' + f'?setor={setor.id}&periodo={periodo.nome}'
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)                
+        periodo = get_periodo(self)
+        setor = get_setor(self)                
+        context['periodo'] = periodo.nome
+        context['setor'] = setor
+        return context
+    
+    def get_form_kwargs(self):
+        periodo = get_periodo(self)
+        setor = get_setor(self)
+        kwargs = super().get_form_kwargs()
+        consumidos = Consumo.objects.filter(
+            material__tipo = "Material",
+            periodo = periodo.id,
+            setor = setor.id
+        ).values('material__id')
+        kwargs['consumidos'] = consumidos
+        return kwargs
+    
+    def get_initial(self, *args, **kwargs):
+        initial = super(ConsumoCreate, self).get_initial(**kwargs)
+        periodo = get_periodo(self)        
+        setor = get_setor(self)        
+        initial['setor'] = setor
+        initial['periodo'] = periodo        
+        return initial
+
+
+class ConsumoModalUpdate(UpdateView):
+    model = Consumo
+    form_class = ConsumoModalForm
+    
+    def get_success_url(self):
+        periodo = get_periodo(self)
+        setor = get_setor(self)   
+        return '/core/consumo_material_list' + f'?setor={setor.id}&periodo={periodo.nome}'
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)        
+        periodo = get_periodo(self)
+        setor = get_setor(self)        
+        item = self.object.material.nome
+        context['item'] = item
+        context['periodo'] = periodo.nome
+        context['setor'] = setor
+        return context
+
+
+class ConsumoDelete(DeleteView):
+    model = Consumo
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)        
+        periodo = get_periodo(self)
+        setor = get_setor(self)        
+        item = self.object.material.nome
+        context['item'] = item
+        context['periodo'] = periodo.nome
+        context['setor'] = setor
+        return context   
+
+    def get_success_url(self):
+        periodo = get_periodo(self)
+        setor = get_setor(self)   
+        return '/core/consumo_material_list' + f'?setor={setor.id}&periodo={periodo.nome}'
+
+
+class MaterialConsumoCreate(CreateView):
+    model = Material
+    form_class = MaterialConsumoForm
+
+    def get_success_url(self, **kwargs):
+        periodo = get_periodo(self)
+        setor = get_setor(self)   
+        pk = self.object.pk
+        return f'/produto/consumo_modal_create/{pk}' + f'?setor={setor.id}&periodo={periodo.nome}'
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)                
+        periodo = get_periodo(self)
+        setor = get_setor(self)                
+        context['tipo'] = "Material"
+        context['periodo'] = periodo.nome
+        context['setor'] = setor
+        return context
+    
+    def get_initial(self, *args, **kwargs):        
+        initial = super(MaterialConsumoCreate, self).get_initial(**kwargs)                      
+        initial['tipo'] = 'Material'           
+        return initial

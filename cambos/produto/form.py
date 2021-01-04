@@ -1,5 +1,5 @@
 from django import forms
-from .models import Producao, Material, Desempenho
+from .models import Producao, Material, Desempenho, Consumo
 from django_select2.forms import Select2Widget
 
 
@@ -52,6 +52,7 @@ class ProducaoForm(forms.ModelForm):
             id__in = produzidos
         )
 
+
 class MaterialProducaoForm(forms.ModelForm):
     class Meta:
         model = Material
@@ -67,7 +68,7 @@ class MaterialProducaoForm(forms.ModelForm):
             'nome': forms.TextInput(attrs={'class':'form-control'}),
             'origem': forms.HiddenInput(),
             'tipo': forms.HiddenInput(),
-            'unidade': forms.HiddenInput(),            
+            'unidade': forms.Select(attrs={'class':'form-control'}),
         }
 
 
@@ -111,4 +112,73 @@ class DesempenhoForm(forms.ModelForm):
             'total_expedido':forms.NumberInput(attrs={'class':'form-control'}),
             'total_recebido':forms.NumberInput(attrs={'class':'form-control'}),
             'total_tingido':forms.NumberInput(attrs={'class':'form-control'}),
+        }
+
+
+class ConsumoModalForm(forms.ModelForm):
+    class Meta:
+        model = Consumo
+        fields = (
+            'periodo',
+            'setor',
+            'material',
+            'quantidade'
+        )
+
+        widgets = {                         
+            'periodo': forms.HiddenInput(),
+            'setor': forms.HiddenInput(),
+            'material': forms.HiddenInput(),
+            'quantidade': forms.NumberInput(attrs={'class':'form-control', 'autofocus': 'autofocus'}),
+        } 
+
+
+class ConsumoForm(forms.ModelForm):
+    class Meta:
+        model = Consumo
+        fields = (
+            'periodo',
+            'setor',
+            'material',
+            'quantidade'
+        )
+         
+        widgets = {                         
+            'periodo': forms.HiddenInput(),
+            'setor': forms.HiddenInput(),
+            'material': Select2Widget(                
+                attrs={'class':'form-control', 'autofocus': 'autofocus'},                
+            ),
+            'quantidade': forms.NumberInput(attrs={'class':'form-control'}),
+        }
+    
+    def __init__(self, *args, **kwargs):        
+        consumidos = kwargs.pop('consumidos', None)
+        super().__init__(*args, **kwargs)
+
+        self.fields['material'].queryset = self.fields['material'].queryset.filter(            
+            tipo="Material"            
+        ).order_by(
+            'nome'
+        ).exclude(
+            id__in = consumidos
+        )
+
+
+class MaterialConsumoForm(forms.ModelForm):
+    class Meta:
+        model = Material
+        fields = (
+            'cod',
+            'nome',
+            'origem',
+            'tipo',
+            'unidade',            
+        )
+        widgets = {                         
+            'cod': forms.NumberInput(attrs={'class':'form-control'}),
+            'nome': forms.TextInput(attrs={'class':'form-control'}),
+            'origem': forms.Select(attrs={'class':'form-control'}),
+            'tipo': forms.HiddenInput(),
+            'unidade': forms.Select(attrs={'class':'form-control'}),
         }

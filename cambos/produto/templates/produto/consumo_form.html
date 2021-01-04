@@ -10,7 +10,7 @@
             <li><a href="{% url 'core_index' %}?setor={{ request.GET.setor }} & periodo={{ request.GET.periodo }}">
                 <em class="fa fa-home"></em>
             </a></li>
-            <li class="active"><a href="{% url 'producao_list' %}?setor={{ request.GET.setor }} & periodo={{ request.GET.periodo }}">Produção</a></li>
+            <li class="active"><a href="{% url 'consumo_material_list' %}?setor={{ request.GET.setor }} & periodo={{ request.GET.periodo }}">Consumo</a></li>
         </ol>
     </div><!--/.row-->
     <div class="row">
@@ -27,7 +27,7 @@
         <form method="post" autocomplete="off">
               <div class="modal-header">
                 <a href="javascript:void(0)" onClick="history.go(-1); return false;" type="button" class="close" aria-hidden="true">×</a>
-                <h3 class="modal-title">Produção</h3>
+                <h3 class="modal-title">Consumo</h3>
               </div>
               <div class="modal-body">
                 {%if item %}
@@ -54,9 +54,9 @@
                 <a href="javascript:void(0)" onClick="history.go(-1); return false;" type="button" class="btn btn-primary">Retornar</a>
                 <input type="submit" class="btn btn-success" value="Salvar"  />
                 {% if object  %}
-                <a href="{% url 'producao_delete_cbv' object.pk %}?setor={{ setor.id }}&periodo={{ periodo }}" type="button" class="btn btn-danger">Deletar</a>
+                <a href="{% url 'consumo_delete_cbv' object.pk %}?setor={{ setor.id }}&periodo={{ periodo }}" type="button" class="btn btn-danger">Deletar</a>
                 {% else %}
-                <a href="{% url 'material_producao_create' %}?setor={{ setor.id }}&periodo={{ periodo }}" type="button" class="btn btn-info">Novo Material</a>
+                <a href="{% url 'material_consumo_create' %}?setor={{ setor.id }}&periodo={{ periodo }}" type="button" class="btn btn-info">Novo Material</a>
                 {% endif %}
               </div>
         </form>
