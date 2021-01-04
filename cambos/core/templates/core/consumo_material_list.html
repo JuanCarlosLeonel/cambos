@@ -1,0 +1,82 @@
+{% extends "cambos/base.html" %}
+
+{% block css %}
+
+{% endblock css %}
+
+{% block navigation %}
+    <div class="row">
+        <ol class="breadcrumb">
+            <li><a href="{% url 'core_index' %}?setor={{ request.GET.setor }} & periodo={{ request.GET.periodo }}">
+                <em class="fa fa-home"></em>
+            </a></li>
+            <li class="active">Insumos</li>
+        </ol>
+    </div><!--/.row-->
+    <div class="row">
+        <div class="col-lg-12">
+            <h1 class="page-header">{{setor.nome}}<span class="text-muted small"> - {{periodo}}</span></h1></h1>
+        </div>
+    </div><!--/.row-->
+{% endblock navigation %}
+
+{% block content %}		
+	<div class="col-12">
+		<div class="panel panel-default">
+			<div class="panel-heading"> <strong class="">Consumo de Insumos</strong></div>
+			<div class="panel-body">
+				<div id="toolbar">
+					<a href="{% url 'producao_create' %}?setor={{ request.GET.setor }}&periodo={{ request.GET.periodo }}" class="btn btn-success">
+					  <i class="fa fa-plus"></i> Novo
+					</a>
+				  </div>
+				<table id="table"				
+				 data-toolbar="#toolbar"
+				 data-toggle="table"
+				 data-show-refresh="false"
+				 data-show-toggle="true"
+				 data-show-columns="true"
+				 data-search="true"
+				 data-select-item-name="toolbar"
+				 data-pagination="true"				 
+				 data-sort-order="desc">
+					<thead>
+						<tr>
+							<th data-field="acao" class='text-center'></th>							
+							<th data-field="material"  data-sortable="false" class='text-center'>Material</th>
+							<th data-field="quantidade" data-sortable="false" class='text-center'>Quant</th>
+							<th data-field="preco" data-sortable="false" class='text-center'>Preço</th>
+							<th data-field="%" data-sortable="false" class='text-center'>%</th>
+						</tr>
+					</thead>
+					<tbody>
+						{% for data in producaojs %}						
+							<tr data-index="{{forloop.counter0}}" >
+								<td class='text-center'>
+									{% if data.id %}
+										<a href="{% url 'producao_modal_update' data.id %}?setor={{ setor.id }}&periodo={{ periodo }}"
+										 class='fa fa-pencil-square-o'></a>										 
+									{% else %}
+										<a href="{% url 'producao_modal_create' data.id_material %}?setor={{ setor.id }}&periodo={{ periodo }}"
+										 class='text-success fa fa-pencil-square-o'></a>
+									{% endif %}
+								</td>
+								<td class='text-center' >{{data.material}}</td>
+								<td class='text-center'>{{data.quantidade|floatformat:0}}</td>
+								<td class='text-center'>R$ {{data.preco|floatformat:2}}</td>
+								<td class='text-center'>{{data.percentual|floatformat:2}}%</td>
+							</tr>
+						{%endfor%}
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</div>	
+{%endblock content%}
+
+{% block script %}
+	<script>
+    	let option = document.getElementById('setor{{setor.id}}');
+		option.setAttribute('class', 'active');						
+	  </script>
+{% endblock script %}

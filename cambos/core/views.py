@@ -5,7 +5,15 @@ from django.views.generic.edit import UpdateView, CreateView, DeleteView
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
 from core.models import Setor, Periodo, User
-from produto.models import Producao, Desempenho, Custo, Perda, Material, Consumo, ValorCompra
+from produto.models import (
+    Producao,
+    Desempenho,
+    Custo,
+    Perda,
+    Material,
+    Consumo,
+    ValorCompra
+)
 from core.form import UserCreationForm
 from django.db.models import Sum
 import json
@@ -35,6 +43,21 @@ def get_setor(self):
     except:
         setor = Setor.objects.get(id=7)
     return setor
+
+def preco_material(id_material, periodo):
+    preco = 0
+    material = Material.objects.get(
+        id = id_material
+    )    
+    try:                
+        if material.origem == "Compra":            
+            preco = ValorCompra.objects.get(
+                material = material,
+                periodo = periodo.id
+            ).valor
+    except:
+        preco = 0
+    return preco
 
 def producao_setor(id_setor, id_periodo):
     producao = Producao.objects.filter(
@@ -211,6 +234,58 @@ class ProducaoList(ListView):
         context['producaojs'] = sorted(lista, key=lambda x: x['quantidade'], reverse=True)
         context['unidade'] = unidade
         context['unidades'] = unidades
+        context['producao'] = total
+        context['periodo'] = periodo.nome
+        context['setor'] = setor
+        return context
+
+
+@method_decorator(login_required, name='dispatch')
+class ConsumoMaterialList(ListView):
+    model= Consumo
+    template_name = 'core/consumo_material_list.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)        
+        periodo = get_periodo(self)
+        setor = get_setor(self)        
+        consumo = Consumo.objects.filter(
+            setor = setor.id,
+            periodo = periodo.id
+        )
+        
+        lista = []  
+        
+        historico = Consumo.objects.filter(
+            setor = setor.id            
+        ).distinct('material')
+        for item in historico:
+            material_nome = item.material.nome
+            quantidade = 0
+            preco = preco_material(item.material.id, periodo)
+            total = 0
+            percentual = 0    
+            id_consumo = ''
+            id_material = item.material.id
+            for consumido in consumo:
+                if consumido.material.id == item.material.id:
+                    quantidade = consumido.quantidade
+                    percentual = (consumido.quantidade)*100
+                    id_consumo = consumido.id
+            if item.material.inativo and quantidade == 0:
+                pass
+            else:                    
+                lista.append({                
+                    'material': material_nome,
+                    'quantidade': quantidade,
+                    'preco': preco,
+                    'percentual': percentual,
+                    'id': id_consumo,                
+                    'id_material': id_material                
+                    })
+                        
+        context['historico'] = historico
+        context['producaojs'] = sorted(lista, key=lambda x: x['quantidade'], reverse=True)
         context['producao'] = total
         context['periodo'] = periodo.nome
         context['setor'] = setor
