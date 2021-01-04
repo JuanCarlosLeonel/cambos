@@ -9,6 +9,8 @@ from produto.views import(
     ProducaoMaterialCreate,
     DesempenhoCreate,
     DesempenhoUpdate,
+    CustoCreate,
+    CustoUpdate,
     ConsumoModalCreate,
     ConsumoModalUpdate,
     ConsumoCreate,
@@ -45,5 +47,8 @@ urlpatterns = [
     
     path('desempenho_create/', DesempenhoCreate.as_view(), name = 'desempenho_create'),
     path('desempenho_update/<str:pk>/', DesempenhoUpdate.as_view(), name = 'desempenho_update'),
+
+    path('custo_create/', CustoCreate.as_view(), name = 'custo_create'),
+    path('custo_update/<str:pk>/', CustoUpdate.as_view(), name = 'custo_update'),
     
 ]

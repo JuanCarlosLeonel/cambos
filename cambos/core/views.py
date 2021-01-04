@@ -12,7 +12,8 @@ from produto.models import (
     Perda,
     Material,
     Consumo,
-    ValorCompra
+    ValorCompra,
+    Custo
 )
 from core.form import UserCreationForm
 from django.db.models import Sum, Count
@@ -502,3 +503,63 @@ class DesempenhoList(ListView):
         context['setor'] = setor
         return context
         
+
+@method_decorator(login_required, name='dispatch')
+class CustoList(ListView):
+    model= Custo
+    template_name = 'core/custo_list.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)        
+        periodo = get_periodo(self)
+        setor = get_setor(self)        
+        
+        lista = []
+        opcoes= (                
+            {'item':'energia',
+            'nome':'Energia',
+            },
+            {'item':'laboratorio',
+            'nome':'Laboratório',
+            },
+            {'item':'manutencao',
+            'nome':'Manutenção',
+            },
+            {'item':'mao_de_obra',
+            'nome':'Mão de Obra',
+            },
+            {'item':'material_uso_continuo',
+            'nome':'Material de Uso Contínuo',
+            },
+            {'item':'vapor',
+            'nome':'Vapor',
+            },
+            {'item':'agua',
+            'nome':'Água',
+            },            
+        )        
+        try:                   
+            custo = Custo.objects.get(
+                periodo = periodo.id,
+                setor = setor.id
+            )        
+            lancado = custo.pk
+        except:
+            custo = ''
+            lancado = False
+        for opcao in opcoes:
+            item = opcao['nome']
+            if custo:
+                valor = getattr(custo, opcao['item'])
+            else:
+                valor = 0
+            if valor is None:
+                valor = 0
+            else:
+                valor = int(valor)            
+            lista.append({'item':item, 'valor':valor})  
+        context['lancado'] = lancado
+        context['data'] = lista
+        context['periodo'] = periodo.nome
+        context['setor'] = setor
+        return context

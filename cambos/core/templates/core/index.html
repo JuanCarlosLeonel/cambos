@@ -61,6 +61,7 @@
 					</div>
 				</div>
 				</a>
+				<a href="{% url 'custo_list' %}?setor={{ request.GET.setor }}&periodo={{ periodo }}">
 				<div class="col-xs-6 col-md-2 col-lg-2 no-padding">
 					<div class="panel panel-red panel-widget border-right">
 						<div class="row no-padding"><span class="color-red"> Custos</span>
@@ -69,6 +70,7 @@
 						</div>
 					</div>
 				</div>
+				</a>
 				<div class="col-xs-6 col-md-2 col-lg-2 no-padding">
 					<div class="panel panel-red panel-widget">
 						<div class="row no-padding"><span class="color-red"> Perdas</span>

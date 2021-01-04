@@ -1,0 +1,76 @@
+{% extends "cambos/base.html" %}
+
+{% block css %}
+
+{% endblock css %}
+
+{% block navigation %}
+    <div class="row">
+        <ol class="breadcrumb">
+            <li><a href="{% url 'core_index' %}?setor={{ request.GET.setor }} & periodo={{ request.GET.periodo }}">
+                <em class="fa fa-home"></em>
+            </a></li>
+            <li class="active">Custo</li>
+        </ol>
+    </div><!--/.row-->
+    <div class="row">
+        <div class="col-lg-12">
+            <h1 class="page-header">{{setor.nome}}<span class="text-muted small"> - {{periodo}}</span></h1></h1>
+        </div>
+    </div><!--/.row-->
+{% endblock navigation %}
+
+{% block content %}		
+	<div class="col-12">
+		<div class="panel panel-default">
+			<div class="panel-heading"> <strong class="">Custos</strong></div>
+			<div class="panel-body">
+				<div id="toolbar">
+					{% if lancado %}
+					<a href="{% url 'custo_update' lancado %}?setor={{ request.GET.setor }}&periodo={{ request.GET.periodo }}" class="btn btn-primary">
+					  <i class="fa fa-pencil"></i> Editar
+					</a>
+					{% else %}
+					<a href="{% url 'custo_create' %}?setor={{ request.GET.setor }}&periodo={{ request.GET.periodo }}" class="btn btn-danger">
+						<i class="fa fa-plus"></i> Lançar!
+					  </a>
+					{% endif%}
+				  </div>
+				<table id="table"				
+				 data-toolbar="#toolbar"
+				 data-toggle="table"
+				 data-show-refresh="false"
+				 data-show-toggle="true"
+				 data-show-columns="false"
+				 data-search="true"
+				 data-select-item-name="toolbar"
+				 data-pagination="false"				 
+				 data-sort-order="desc">
+					<thead>
+						<tr>							
+							<th data-field="item"  data-sortable="false" class='text-center'>custo</th>
+							<th data-field="valor" data-sortable="false" class='text-center'>valor</th>							
+						</tr>
+					</thead>
+					<tbody>
+						{% for item in data %}
+						<tr data-index="" >								
+							<td class='text-center' >{{item.item}}</td>
+							<td class='text-center'>R$ {{item.valor|floatformat:2}}</td>							
+						</tr>
+						{%endfor%}	
+												
+					</tbody>
+				</table>
+			</div>
+		</div>
+		
+	</div>	
+{%endblock content%}
+
+{% block script %}
+	<script>
+    	let option = document.getElementById('setor{{setor.id}}');
+		option.setAttribute('class', 'active');						
+	  </script>
+{% endblock script %}

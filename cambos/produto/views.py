@@ -5,7 +5,8 @@ from .models import (
     Producao,
     Material,
     Desempenho,
-    Consumo
+    Consumo,
+    Custo
 )
 from core.models import (
     Setor,
@@ -18,7 +19,8 @@ from .form import (
     DesempenhoForm,
     ConsumoForm,
     ConsumoModalForm,
-    MaterialConsumoForm
+    MaterialConsumoForm,
+    CustoForm
 )
 
 def get_periodo(self):
@@ -222,6 +224,58 @@ class DesempenhoUpdate(UpdateView):
         periodo = get_periodo(self)
         setor = get_setor(self)        
         
+        context['periodo'] = periodo.nome
+        context['setor'] = setor
+        return context
+
+
+class CustoCreate(CreateView):
+    model = Custo
+    form_class = CustoForm
+
+    def get_success_url(self, **kwargs):
+        periodo = get_periodo(self)
+        setor = get_setor(self)   
+        return '/core/custo_list' + f'?setor={setor.id}&periodo={periodo.nome}'
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)                
+        periodo = get_periodo(self)
+        setor = get_setor(self)                        
+        context['periodo'] = periodo.nome
+        context['setor'] = setor
+        return context
+        
+    def get_initial(self, *args, **kwargs):                
+        initial = super(CustoCreate, self).get_initial(**kwargs)   
+        setor = get_setor(self)   
+        periodo = get_periodo(self)
+        custo = Custo.objects.filter(setor = setor.id)                   
+        ultimo_desempenho = custo.latest('periodo')
+        initial['setor'] = setor.id
+        initial['periodo'] = periodo.id                
+        initial['energia'] = ultimo_desempenho.energia        
+        initial['laboratorio'] = ultimo_desempenho.laboratorio        
+        initial['manutencao'] = ultimo_desempenho.manutencao
+        initial['material_uso_continuo'] = ultimo_desempenho.material_uso_continuo        
+        initial['vapor'] = ultimo_desempenho.vapor
+        initial['agua'] = ultimo_desempenho.agua
+        return initial
+
+
+class CustoUpdate(UpdateView):
+    model = Custo
+    form_class = CustoForm
+    
+    def get_success_url(self):
+        periodo = get_periodo(self)
+        setor = get_setor(self)   
+        return '/core/custo_list' + f'?setor={setor.id}&periodo={periodo.nome}'
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)        
+        periodo = get_periodo(self)
+        setor = get_setor(self)                
         context['periodo'] = periodo.nome
         context['setor'] = setor
         return context
