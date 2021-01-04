@@ -10,12 +10,13 @@
             <li><a href="{% url 'core_index' %}?setor={{ request.GET.setor }} & periodo={{ request.GET.periodo }}">
                 <em class="fa fa-home"></em>
             </a></li>
-            <li class="active"><a href="{% url 'consumo_material_list' %}?setor={{ request.GET.setor }} & periodo={{ request.GET.periodo }}">Consumo</a></li>
+            <li class=""><a href="{% url 'consumo_insumo_list' %}?setor={{ request.GET.setor }} & periodo={{ request.GET.periodo }}">Insumo</a></li>
+            <li class="active">Cadastro de Insumo</li>
         </ol>
     </div><!--/.row-->
     <div class="row">
         <div class="col-lg-12">
-            <h1 class="page-header">{{setor.nome}}<span class="text-muted small"> - {{periodo}}</span></h1></h1>
+            <h1 class="page-header">{{setor.nome}}</h1></h1>
         </div>
     </div><!--/.row-->
 {% endblock navigation %}
@@ -27,7 +28,7 @@
         <form method="post" autocomplete="off">
               <div class="modal-header">
                 <a href="javascript:void(0)" onClick="history.go(-1); return false;" type="button" class="close" aria-hidden="true">×</a>
-                <h3 class="modal-title">Consumo de {{tipo}}</h3>
+                <h3 class="modal-title">Cadastro de Insumo</h3>
               </div>
               <div class="modal-body">
                 {%if item %}
@@ -35,7 +36,7 @@
                {% endif %}
                     {% csrf_token %}
                     {{ form.non_field_errors }}
-                    <div class="form-group ">
+                    <div class="form-group">
                     {% for field in form %}
                         <div class="form-group">
                             {% if field.errors %}
@@ -54,17 +55,7 @@
                 <a href="javascript:void(0)" onClick="history.go(-1); return false;" type="button" class="btn btn-primary">Retornar</a>
                 <input type="submit" class="btn btn-success" value="Salvar"  />
                 {% if object  %}
-                    {% if tipo == "Material" %}
-                        <a href="{% url 'consumo_delete_cbv' object.pk %}?setor={{ setor.id }}&periodo={{ periodo }}" type="button" class="btn btn-danger">Deletar</a>
-                    {% elif tipo == "Insumo" %}
-                        <a href="{% url 'insumo_delete_cbv' object.pk %}?setor={{ setor.id }}&periodo={{ periodo }}" type="button" class="btn btn-danger">Deletar</a>
-                    {%endif%}
-                {% else %}
-                    {% if tipo == "Material" %}
-                        <a href="{% url 'material_consumo_create' %}?setor={{ setor.id }}&periodo={{ periodo }}" type="button" class="btn btn-info">Novo Material</a>
-                    {% elif tipo == "Insumo" %}
-                        <a href="{% url 'insumo_consumo_create' %}?setor={{ setor.id }}&periodo={{ periodo }}" type="button" class="btn btn-info">Novo Insumo</a>
-                    {%endif%}
+                <a href="{% url 'producao_delete_cbv' object.pk %}?setor={{ setor.id }}&periodo={{ periodo }}" type="button" class="btn btn-danger">Deletar</a>                
                 {% endif %}
               </div>
         </form>

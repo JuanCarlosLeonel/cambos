@@ -13,7 +13,12 @@ from produto.views import(
     ConsumoModalUpdate,
     ConsumoCreate,
     ConsumoDelete,
-    MaterialConsumoCreate    
+    MaterialConsumoCreate,
+    InsumoModalCreate,
+    InsumoModalUpdate,
+    InsumoCreate,
+    InsumoDelete,
+    MaterialInsumoCreate,
 )
 
 urlpatterns = [
@@ -32,6 +37,12 @@ urlpatterns = [
     path('consumo_modal_update/<str:pk>/', ConsumoModalUpdate.as_view(), name = 'consumo_modal_update'),
     path('consumo_delete/<int:pk>/',ConsumoDelete.as_view(), name='consumo_delete_cbv'),
    
+    path('insumo_consumo_create', MaterialInsumoCreate.as_view(), name = 'insumo_consumo_create'),
+    path('insumo_modal_create/<str:pk>/', InsumoModalCreate.as_view(), name = 'insumo_modal_create'),
+    path('insumo_material_create/', InsumoCreate.as_view(), name = 'insumo_material_create'),    
+    path('insumo_modal_update/<str:pk>/', InsumoModalUpdate.as_view(), name = 'insumo_modal_update'),
+    path('insumo_delete/<int:pk>/', InsumoDelete.as_view(), name='insumo_delete_cbv'),
+    
     path('desempenho_create/', DesempenhoCreate.as_view(), name = 'desempenho_create'),
     path('desempenho_update/<str:pk>/', DesempenhoUpdate.as_view(), name = 'desempenho_update'),
     

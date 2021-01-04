@@ -56,10 +56,10 @@
 							<tr data-index="{{forloop.counter0}}" >
 								<td class='text-center'>
 									{% if data.id %}
-										<a href="{% url 'consumo_modal_update' data.id %}?setor={{ setor.id }}&periodo={{ periodo }}"
+										<a href="{% url 'insumo_modal_update' data.id %}?setor={{ setor.id }}&periodo={{ periodo }}"
 										 class='fa fa-pencil-square-o'></a>										 
 									{% else %}
-										<a href="{% url 'consumo_modal_create' data.id_material %}?setor={{ setor.id }}&periodo={{ periodo }}"
+										<a href="{% url 'insumo_modal_create' data.id_material %}?setor={{ setor.id }}&periodo={{ periodo }}"
 										 class='text-success fa fa-pencil-square-o'></a>
 									{% endif %}
 								</td>

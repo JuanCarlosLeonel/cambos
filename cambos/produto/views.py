@@ -242,6 +242,7 @@ class ConsumoModalCreate(CreateView):
         periodo = get_periodo(self)
         setor = get_setor(self)        
         context['item'] = material.nome
+        context['tipo'] = material.tipo
         context['periodo'] = periodo.nome
         context['setor'] = setor
         return context
@@ -272,6 +273,7 @@ class ConsumoCreate(CreateView):
         setor = get_setor(self)                
         context['periodo'] = periodo.nome
         context['setor'] = setor
+        context['tipo'] = "Material"
         return context
     
     def get_form_kwargs(self):
@@ -309,8 +311,9 @@ class ConsumoModalUpdate(UpdateView):
         context = super().get_context_data(**kwargs)        
         periodo = get_periodo(self)
         setor = get_setor(self)        
-        item = self.object.material.nome
-        context['item'] = item
+        item = self.object.material
+        context['item'] = item.nome
+        context['tipo'] = item.tipo
         context['periodo'] = periodo.nome
         context['setor'] = setor
         return context
@@ -358,4 +361,142 @@ class MaterialConsumoCreate(CreateView):
     def get_initial(self, *args, **kwargs):        
         initial = super(MaterialConsumoCreate, self).get_initial(**kwargs)                      
         initial['tipo'] = 'Material'           
+        return initial
+
+
+class InsumoModalCreate(CreateView):
+    model = Consumo
+    form_class = ConsumoModalForm
+
+    def get_success_url(self):
+        periodo = get_periodo(self)
+        setor = get_setor(self)   
+        return '/core/consumo_insumo_list' + f'?setor={setor.id}&periodo={periodo.nome}'
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)        
+        material = Material.objects.get(id = self.kwargs['pk'])
+        periodo = get_periodo(self)
+        setor = get_setor(self)        
+        context['tipo'] = material.tipo
+        context['item'] = material.nome
+        context['periodo'] = periodo.nome
+        context['setor'] = setor
+        return context
+    
+    def get_initial(self, *args, **kwargs):
+        initial = super(InsumoModalCreate, self).get_initial(**kwargs)
+        periodo = get_periodo(self)
+        material = Material.objects.get(id = self.kwargs['pk'])
+        setor = get_setor(self)        
+        initial['setor'] = setor
+        initial['periodo'] = periodo
+        initial['material'] = material
+        return initial
+
+
+class InsumoCreate(CreateView):
+    model = Consumo
+    form_class = ConsumoForm
+
+    def get_success_url(self):
+        periodo = get_periodo(self)
+        setor = get_setor(self)   
+        return '/core/consumo_insumo_list' + f'?setor={setor.id}&periodo={periodo.nome}'
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)                
+        periodo = get_periodo(self)
+        setor = get_setor(self)                
+        context['periodo'] = periodo.nome
+        context['setor'] = setor
+        context['tipo'] = "Insumo"
+        return context
+    
+    def get_form_kwargs(self):
+        periodo = get_periodo(self)
+        setor = get_setor(self)
+        kwargs = super().get_form_kwargs()
+        consumidos = Consumo.objects.filter(
+            material__tipo = "Insumo",
+            periodo = periodo.id,
+            setor = setor.id
+        ).values('material__id')
+        kwargs['material_tipo'] = "Insumo"
+        kwargs['consumidos'] = consumidos
+        return kwargs
+    
+    def get_initial(self, *args, **kwargs):
+        initial = super(InsumoCreate, self).get_initial(**kwargs)
+        periodo = get_periodo(self)        
+        setor = get_setor(self)        
+        initial['setor'] = setor
+        initial['periodo'] = periodo        
+        return initial
+
+
+class InsumoModalUpdate(UpdateView):
+    model = Consumo
+    form_class = ConsumoModalForm
+    
+    def get_success_url(self):
+        periodo = get_periodo(self)
+        setor = get_setor(self)   
+        return '/core/consumo_insumo_list' + f'?setor={setor.id}&periodo={periodo.nome}'
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)        
+        periodo = get_periodo(self)
+        setor = get_setor(self)        
+        item = self.object.material
+        context['item'] = item.nome
+        context['tipo'] = item.tipo
+        context['periodo'] = periodo.nome
+        context['setor'] = setor
+        return context
+
+
+class InsumoDelete(DeleteView):
+    model = Consumo
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)        
+        periodo = get_periodo(self)
+        setor = get_setor(self)        
+        item = self.object.material.nome
+        context['item'] = item
+        context['periodo'] = periodo.nome
+        context['setor'] = setor
+        return context   
+
+    def get_success_url(self):
+        periodo = get_periodo(self)
+        setor = get_setor(self)   
+        return '/core/consumo_insumo_list' + f'?setor={setor.id}&periodo={periodo.nome}'
+
+
+class MaterialInsumoCreate(CreateView):
+    model = Material
+    form_class = MaterialConsumoForm
+    template_name = "produto/insumo_consumo_create.html"
+
+    def get_success_url(self, **kwargs):
+        periodo = get_periodo(self)
+        setor = get_setor(self)   
+        pk = self.object.pk
+        return f'/produto/insumo_modal_create/{pk}' + f'?setor={setor.id}&periodo={periodo.nome}'
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)                
+        periodo = get_periodo(self)
+        setor = get_setor(self)                
+        context['tipo'] = "Insumo"
+        context['periodo'] = periodo.nome
+        context['setor'] = setor
+        return context
+    
+    def get_initial(self, *args, **kwargs):        
+        initial = super(MaterialInsumoCreate, self).get_initial(**kwargs)                      
+        initial['tipo'] = 'Insumo'           
+        initial['origem'] = 'Compra'           
         return initial
