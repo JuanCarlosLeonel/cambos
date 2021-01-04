@@ -7,6 +7,7 @@ from core.views import(
     DesempenhoList,
     UserCreate,
     ConsumoMaterialList,
+    ConsumoInsumoList
 )
 
 urlpatterns = [
@@ -15,6 +16,7 @@ urlpatterns = [
     path('', Index.as_view(), name='core_index'),
     path('producao_list',  ProducaoList.as_view(), name='producao_list'),
     path('consumo_material_list',  ConsumoMaterialList.as_view(), name='consumo_material_list'),
+    path('consumo_insumo_list',  ConsumoInsumoList.as_view(), name='consumo_insumo_list'),
     path('desempenho_list',  DesempenhoList.as_view(), name='desempenho_list'),
     path('user_create/', UserCreate.as_view(), name = 'user_create_cbv'),
 ]

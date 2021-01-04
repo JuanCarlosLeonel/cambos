@@ -153,11 +153,12 @@ class ConsumoForm(forms.ModelForm):
         }
     
     def __init__(self, *args, **kwargs):        
+        material_tipo = kwargs.pop('material_tipo', None)
         consumidos = kwargs.pop('consumidos', None)
         super().__init__(*args, **kwargs)
 
         self.fields['material'].queryset = self.fields['material'].queryset.filter(            
-            tipo="Material"            
+            tipo=material_tipo            
         ).order_by(
             'nome'
         ).exclude(

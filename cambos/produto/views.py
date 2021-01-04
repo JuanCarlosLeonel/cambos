@@ -142,9 +142,10 @@ class ProducaoDelete(DeleteView):
         return '/core/producao_list' + f'?setor={setor.id}&periodo={periodo.nome}'
 
 
-class MaterialProducaoCreate(CreateView):
+class ProducaoMaterialCreate(CreateView):
     model = Material
     form_class = MaterialProducaoForm
+    template_name = "produto/producao_material_create.html"
 
     def get_success_url(self, **kwargs):
         periodo = get_periodo(self)
@@ -162,7 +163,7 @@ class MaterialProducaoCreate(CreateView):
         return context
         
     def get_initial(self, *args, **kwargs):        
-        initial = super(MaterialProducaoCreate, self).get_initial(**kwargs)              
+        initial = super(ProducaoMaterialCreate, self).get_initial(**kwargs)              
         setor = get_setor(self)        
         if setor.id < 5:
             origem = setor.nome
@@ -282,6 +283,7 @@ class ConsumoCreate(CreateView):
             periodo = periodo.id,
             setor = setor.id
         ).values('material__id')
+        kwargs['material_tipo'] = "Material"
         kwargs['consumidos'] = consumidos
         return kwargs
     
@@ -336,6 +338,7 @@ class ConsumoDelete(DeleteView):
 class MaterialConsumoCreate(CreateView):
     model = Material
     form_class = MaterialConsumoForm
+    template_name = "produto/material_consumo_create.html"
 
     def get_success_url(self, **kwargs):
         periodo = get_periodo(self)

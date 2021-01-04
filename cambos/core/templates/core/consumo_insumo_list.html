@@ -10,7 +10,7 @@
             <li><a href="{% url 'core_index' %}?setor={{ request.GET.setor }} & periodo={{ request.GET.periodo }}">
                 <em class="fa fa-home"></em>
             </a></li>
-            <li class="active">Produção</li>
+            <li class="active">Insumos</li>
         </ol>
     </div><!--/.row-->
     <div class="row">
@@ -23,10 +23,10 @@
 {% block content %}		
 	<div class="col-12">
 		<div class="panel panel-default">
-			<div class="panel-heading"> <strong class="">Produção</strong></div>
+			<div class="panel-heading"> <strong class="">Consumo de Insumo</strong></div>
 			<div class="panel-body">
 				<div id="toolbar">
-					<a href="{% url 'producao_material_create' %}?setor={{ request.GET.setor }}&periodo={{ request.GET.periodo }}" class="btn btn-success">
+					<a href="{% url 'consumo_material_create' %}?setor={{ request.GET.setor }}&periodo={{ request.GET.periodo }}" class="btn btn-success">
 					  <i class="fa fa-plus"></i> Novo
 					</a>
 				  </div>
@@ -43,9 +43,12 @@
 					<thead>
 						<tr>
 							<th data-field="acao" class='text-center'></th>							
-							<th data-field="material"  data-sortable="false" class='text-center'>Material</th>
-							<th data-field="quantidade" data-sortable="false" class='text-center'>Quant ({{unidade}})</th>
-							<th data-field="%" data-sortable="false" class='text-center'>%</th>
+							<th data-field="material"  data-sortable="false" class='text-center'>Material</th>							
+							<th data-field="quantidade" data-sortable="false" class='text-center'>Quant</th>
+							<th data-field="preco" data-sortable="false" class='text-center'>Preço</th>
+							<th data-field="valor" data-sortable="false" class='text-center'>Valor</th>
+							<th data-field="percentual" data-sortable="false" class='text-center'>%</th>
+							
 						</tr>
 					</thead>
 					<tbody>
@@ -53,16 +56,18 @@
 							<tr data-index="{{forloop.counter0}}" >
 								<td class='text-center'>
 									{% if data.id %}
-										<a href="{% url 'producao_modal_update' data.id %}?setor={{ setor.id }}&periodo={{ periodo }}"
+										<a href="{% url 'consumo_modal_update' data.id %}?setor={{ setor.id }}&periodo={{ periodo }}"
 										 class='fa fa-pencil-square-o'></a>										 
 									{% else %}
-										<a href="{% url 'producao_modal_create' data.id_material %}?setor={{ setor.id }}&periodo={{ periodo }}"
+										<a href="{% url 'consumo_modal_create' data.id_material %}?setor={{ setor.id }}&periodo={{ periodo }}"
 										 class='text-success fa fa-pencil-square-o'></a>
 									{% endif %}
 								</td>
-								<td class='text-center' >{{data.material}}</td>
+								<td class='text-center' >{{data.material}}</td>								
 								<td class='text-center'>{{data.quantidade|floatformat:0}}</td>
-								<td class='text-center'>{{data.percentual|floatformat:2}}%</td>
+								<td class='text-center'>R$ {{data.preco|floatformat:2}}</td>
+								<td class='text-center'>R$ {{data.valor|floatformat:2}}</td>
+								<td class='text-center'>{{data.percentual|floatformat:2}}%</td>								
 							</tr>
 						{%endfor%}
 					</tbody>

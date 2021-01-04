@@ -291,6 +291,7 @@ class ConsumoMaterialList(ListView):
         consumo = Consumo.objects.filter(
             setor = setor.id,
             periodo = periodo.id,            
+            material__tipo = "Material"            
         )        
         lista = []          
         historico = Consumo.objects.filter(
@@ -348,7 +349,74 @@ class ConsumoMaterialList(ListView):
         context['setor'] = setor
         return context
 
-    
+
+@method_decorator(login_required, name='dispatch')
+class ConsumoInsumoList(ListView):
+    model= Consumo
+    template_name = 'core/consumo_insumo_list.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)        
+        periodo = get_periodo(self)
+        setor = get_setor(self)        
+        consumo = Consumo.objects.filter(
+            setor = setor.id,
+            periodo = periodo.id,            
+            material__tipo = "Insumo",            
+        )        
+        lista = []          
+        historico = Consumo.objects.filter(
+            setor = setor.id,
+            material__tipo = "Insumo",            
+        ).distinct('material')        
+        quantidade = 0
+        preco = 0
+        total = 0  
+        valor = 0                               
+        for consumido in consumo:
+            quantidade = consumido.quantidade           
+            preco = preco_material(consumido.material.id, periodo)                
+            valor = quantidade * preco                    
+            total += valor                   
+            
+        for item in historico:
+            material_nome = item.material.nome            
+            quantidade = 0            
+            preco = preco_material(item.material.id, periodo)            
+            percentual = 0    
+            id_consumo = ''
+            id_material = item.material.id
+            valor = 0
+            
+            for consumido in consumo:
+                if consumido.material.id == item.material.id:
+                    quantidade = consumido.quantidade                    
+                    valor = quantidade * preco
+                    try:                        
+                        percentual = (valor / total) * 100                        
+                    except:
+                        percentual = 0                        
+                    id_consumo = consumido.id
+            if item.material.inativo and quantidade == 0:
+                pass
+            else:                    
+                lista.append({                
+                    'material': material_nome,                    
+                    'quantidade': quantidade,
+                    'preco': preco,
+                    'percentual': percentual,
+                    'valor': valor,
+                    'id': id_consumo,                
+                    'id_material': id_material                
+                    })
+                        
+        context['historico'] = historico
+        context['producaojs'] = sorted(lista, key=lambda x: x['valor'], reverse=True)        
+        context['periodo'] = periodo.nome
+        context['setor'] = setor
+        return context
+
+
 @method_decorator(login_required, name='dispatch')
 class DesempenhoList(ListView):
     model= Desempenho
