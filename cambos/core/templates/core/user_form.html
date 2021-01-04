@@ -1,20 +1,60 @@
 {% extends "cambos/base.html" %}
 
-{% block css %}{% endblock css %}
+{% block css %}
+{{ form.media.css }}
+{% endblock css %}
 
 {% block navigation %}
-    
+    <div class="row">
+        <ol class="breadcrumb">
+            <li><a href="{% url 'core_index' %}?setor={{ request.GET.setor }} & periodo={{ request.GET.periodo }}">
+                <em class="fa fa-home"></em>
+            </a></li>            
+        </ol>
+    </div><!--/.row-->
+    <div class="row">
+        <div class="col-lg-12">
+            <h1 class="page-header">Criação de usuário<span class="text-muted small"> - {{periodo}}</span></h1></h1>
+        </div>
+    </div><!--/.row-->
 {% endblock navigation %}
 
-{% block content %}
-<form method="post" novalidate>
-    {% csrf_token %}
-    {{ form }}
-    <button type="submit" class="btn btn-success btn-effect">Salvar</button>
-    
-  </form>
-{%endblock content%}
+{% block content %}		
 
+<div class="modal-dialog modal-lg">
+    <div class="modal-content">
+        <form method="post" autocomplete="off">
+              <div class="modal-header">
+                <a href="javascript:void(0)" onClick="history.go(-1); return false;" type="button" class="close" aria-hidden="true">×</a>
+                <h3 class="modal-title">Produção</h3>
+              </div>
+              <div class="modal-body">               
+                    {% csrf_token %}
+                    
+                    <div class="form-group ">                    
+                    {{form}}
+              </div>
+              <div class="modal-footer">
+                <a href="javascript:void(0)" onClick="history.go(-1); return false;" type="button" class="btn btn-primary">Retornar</a>
+                <input type="submit" class="btn btn-success" value="Salvar"  />                                                                             
+              </div>
+        </form>
+       
+    </div><!-- /.modal-content -->
+</div><!-- /.modal-dialog -->
+{% endblock content %}
 {% block script %}
-	
+ {{ form.media.js }}
+	<script>
+        let option = document.getElementById('setor{{setor.id}}');        
+        option.setAttribute('class', 'active');					           
+      </script>
+      <script>
+        $(document).ready(function(){            
+            $(".enabled").attr("class", "disabled");
+            $(".disabled a").removeAttr("href");    
+            $(".date").css('pointer-events', 'none');       
+        });
+      </script>
+
 {% endblock script %}

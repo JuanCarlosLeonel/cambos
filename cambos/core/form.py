@@ -4,24 +4,26 @@ from django.utils.translation import ugettext, ugettext_lazy as _
 from django.contrib.auth.models import Permission
 
 class UserCreationForm(forms.ModelForm):
-    """
-    A form that creates a user, with no privileges, from the given username and
-    password.
-    """
+    
     error_messages = {
         'password_mismatch': _("The two password fields didn't match."),
     }
     password1 = forms.CharField(label=_("Password"),
-        widget=forms.PasswordInput)
+        widget=forms.PasswordInput(attrs={'class':'form-control'}))
     password2 = forms.CharField(label=_("Password confirmation"),
-        widget=forms.PasswordInput,
-        help_text=("Repita a senha."))
+        widget=forms.PasswordInput(attrs={'class':'form-control'}))        
 
     class Meta:
         model = User
         fields = (
-            "username",           
+            "username",
+            'setor'           
         )
+    
+        widgets = {                         
+            'username': forms.TextInput(attrs={'class':'form-control'}),
+            'setor': forms.Select(attrs={'class':'form-control'}),
+        } 
         
     def clean_password2(self):
         password1 = self.cleaned_data.get("password1")

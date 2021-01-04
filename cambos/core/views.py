@@ -111,7 +111,7 @@ def preco_material(id_material, periodo):
         else:
             setor = Setor.objects.get(nome = material.origem)
             custo = custo_setor(setor.id, periodo.id)
-            preco = setor
+            preco = 0
     except:
         preco = 0
     return preco
@@ -261,19 +261,36 @@ class ConsumoMaterialList(ListView):
             setor = setor.id,
             material__tipo = "Material"            
         ).distinct('material')
+        
+
+        quantidade = 0
+        preco = 0
+        total = 0  
+        valor = 0                               
+        for consumido in consumo:
+            quantidade = consumido.quantidade           
+            preco = preco_material(consumido.material.id, periodo)                
+            valor = quantidade * preco                    
+            total += valor                   
+            
         for item in historico:
             material_nome = item.material.nome
             origem = item.material.origem
-            quantidade = 0
-            preco = preco_material(item.material.id, periodo)
-            total = 0
+            quantidade = 0            
+            preco = preco_material(item.material.id, periodo)            
             percentual = 0    
             id_consumo = ''
             id_material = item.material.id
+            valor = 0
+            
             for consumido in consumo:
                 if consumido.material.id == item.material.id:
-                    quantidade = consumido.quantidade
-                    percentual = (consumido.quantidade)*100
+                    quantidade = consumido.quantidade                    
+                    valor = quantidade * preco
+                    try:                        
+                        percentual = (valor / total) * 100                        
+                    except:
+                        percentual = 0                        
                     id_consumo = consumido.id
             if item.material.inativo and quantidade == 0:
                 pass
@@ -284,13 +301,13 @@ class ConsumoMaterialList(ListView):
                     'quantidade': quantidade,
                     'preco': preco,
                     'percentual': percentual,
-                    'valor': preco ,
+                    'valor': valor,
                     'id': id_consumo,                
                     'id_material': id_material                
                     })
                         
         context['historico'] = historico
-        context['producaojs'] = sorted(lista, key=lambda x: x['quantidade'], reverse=True)        
+        context['producaojs'] = sorted(lista, key=lambda x: x['valor'], reverse=True)        
         context['periodo'] = periodo.nome
         context['setor'] = setor
         return context

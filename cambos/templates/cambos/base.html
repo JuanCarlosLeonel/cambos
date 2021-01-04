@@ -27,9 +27,10 @@
 					<span class="icon-bar"></span></button>
 				<a class="navbar-brand" href="#"><span>Souza</span>Cambos</a>
 				<ul class="nav navbar-top-links navbar-right">
+					<!--
 					<li class="dropdown"><a class="dropdown-toggle count-info" data-toggle="dropdown" href="#">
 						<em class="fa fa-envelope"></em><span class="label label-danger">!</span>
-					</a>
+					</a>						
 						<ul class="dropdown-menu dropdown-messages">
 							<li>
 								<div class="dropdown-messages-box"><a href="profile.html" class="pull-left">
@@ -45,10 +46,10 @@
 								<div class="all-button"><a href="#">
 									<em class="fa fa-list"></em> <strong>Preencher agora</strong>
 								</a></div>
-							</li>
-							
+							</li>							
 						</ul>
 					</li>
+					-->
 					<li class="dropdown">
 						<a class="dropdown-toggle count-info text-center" data-toggle="dropdown" href="#">
 							<strong>{{user.first_name|make_list|first}}</strong>
@@ -63,6 +64,22 @@
 								</a>
 							</li>
 							<li class="divider"></li>
+							{%if user.is_superuser %}
+							<li>
+								<a href="{% url 'user_create_cbv' %}">
+									<div>
+										<em class="fa fa-plus"></em> Novo Usuário									
+									</div>
+								</a>
+							</li>
+							<li>
+								<a href="{% url 'admin:index' %}">
+									<div>
+										<em class="fa fa-list"></em> Gerenciador									
+									</div>
+								</a>
+							</li>
+							{%endif%}
 							<li>
 								<a href="{% url 'logout' %}">
 									<div>
