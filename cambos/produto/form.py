@@ -16,7 +16,9 @@ class ProducaoModalForm(forms.ModelForm):
         widgets = {                         
             'periodo': forms.HiddenInput(),
             'setor': forms.HiddenInput(),
-            'material': forms.HiddenInput(),
+            'material': Select2Widget(                
+                attrs={'class':'form-control', 'autofocus': 'autofocus'},                
+            ),
             'quantidade': forms.NumberInput(attrs={'class':'form-control', 'autofocus': 'autofocus'}),
         } 
 
