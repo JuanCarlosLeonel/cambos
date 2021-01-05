@@ -16,9 +16,7 @@ class ProducaoModalForm(forms.ModelForm):
         widgets = {                         
             'periodo': forms.HiddenInput(),
             'setor': forms.HiddenInput(),
-            'material': Select2Widget(                
-                attrs={'class':'form-control', 'autofocus': 'autofocus'},                
-            ),
+            'material': forms.HiddenInput(),
             'quantidade': forms.NumberInput(attrs={'class':'form-control', 'autofocus': 'autofocus'}),
         } 
 
@@ -157,7 +155,9 @@ class ConsumoModalForm(forms.ModelForm):
         widgets = {                         
             'periodo': forms.HiddenInput(),
             'setor': forms.HiddenInput(),
-            'material': forms.HiddenInput(),
+            'material': Select2Widget(                
+                attrs={'class':'form-control', 'autofocus': 'autofocus'},                
+            ),
             'quantidade': forms.NumberInput(attrs={'class':'form-control', 'autofocus': 'autofocus'}),
         } 
 
