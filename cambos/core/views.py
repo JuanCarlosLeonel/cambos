@@ -152,6 +152,37 @@ def preco_material(id_material, periodo):
             preco = 0    
     return preco
 
+def label(nome_periodo, id_periodo, id_setor):
+    ano = int(nome_periodo[len(nome_periodo)-4:])
+    meses = ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"]
+    meses_abr = ["Jan", "fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dez"]
+    periodo_ind = meses_abr.index(nome_periodo[0:3])
+    if periodo_ind == 11:
+        p_inicio = 0
+    else:
+        p_inicio = periodo_ind + 1
+    p_fim = 0
+    id_periodo -= 11
+    label_periodo = []
+    data = []
+    while (p_fim < 12):
+        p_fim += 1
+        label_periodo.append(meses_abr[p_inicio])
+        try:
+            producao = producao_setor(id_setor, id_periodo).aggregate(
+                Sum('quantidade'))['quantidade__sum']
+            if not producao:
+                producao = 0
+        except:
+            producao = 0
+        data.append(int(producao))
+        id_periodo += 1
+        if p_inicio == 11:
+            p_inicio = 0
+        else:
+            p_inicio += 1
+    else:
+        return label_periodo, data
 
 @method_decorator(login_required, name='dispatch')
 class Index(TemplateView):
@@ -208,7 +239,9 @@ class Index(TemplateView):
         except:
             materia_prim_un = 0
         materia_prima = materia_prim_un
-
+                
+        context['data'] = label(periodo.nome, periodo.id, setor.id)[1]    
+        context['labels'] = label(periodo.nome, periodo.id, setor.id)[0]    
         context['materia_prima'] = materia_prima
         context['insumo'] = insumo_un
         context['perda'] = perda_un
