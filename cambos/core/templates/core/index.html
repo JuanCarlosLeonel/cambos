@@ -119,10 +119,26 @@
 						<span class="pull-right clickable panel-toggle panel-button-tab-left"><em class="fa fa-toggle-up"></em></span></div>
 					<div class="panel-body">
 						<div class="canvas-wrapper">
-							<canvas class="chart" id="barChart" height="186" width="558" style="width: 558px; height: 186px;"></canvas>
+							<canvas class="chart" id="chartProducao" height="186" width="558" style="width: 558px; height: 186px;"></canvas>
 							<script>
-								var myLabels = {{labels|safe}}
-								var myData = {{data|safe}}
+								var labels1 = {{labels|safe}}
+								var data1 = {{data|safe}}								
+							</script>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="col-lg-6">
+				<div class="panel panel-default">
+					<div class="panel-heading">
+						Custo Unitário de Produção						
+						<span class="pull-right clickable panel-toggle panel-button-tab-left"><em class="fa fa-toggle-up"></em></span></div>
+					<div class="panel-body">
+						<div class="canvas-wrapper">
+							<canvas class="chart" id="chartComposicao" height="186" width="558" style="width: 558px; height: 186px;"></canvas>
+							<script>
+								var labels1 = {{labels|safe}}
+								var data1 = {{data|safe}}								
 							</script>
 						</div>
 					</div>
@@ -424,15 +440,7 @@
 		
 	<script>
     	let option = document.getElementById('setor{{ request.GET.setor }}');
-    	option.setAttribute('class', 'active');
-	</script>
-	<script>
+		option.setAttribute('class', 'active');
 		
-		
-		var chart2 = document.getElementById("barChart").getContext("2d");
-		var barChart = new Chart(chart2).Bar(barChartData, {
-		responsive: true,		
-		});
-				
 	</script>
 {% endblock script %}
