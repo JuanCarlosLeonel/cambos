@@ -46,63 +46,62 @@ var randomScalingFactor = function(){ return Math.round(Math.random()*1000)};
 			}
 		]
 
-	}
+	} 
 
 	var pieData = [
 			{
 				value: 300,
-				color:"#30a5ff",
-				highlight: "#62b9fb",
-				label: "Blue"
+				color: "#30a5ff",
+				highlight: "#7376df",
+				label: "Value 1"
 			},
 			{
 				value: 50,
-				color: "#ffb53e",
-				highlight: "#fac878",
-				label: "Orange"
+				color: "#a0a0a0",
+				highlight: "#999999",
+				label: "Value 2"
 			},
 			{
 				value: 100,
-				color: "#1ebfae",
-				highlight: "#3cdfce",
-				label: "Teal"
+				color:"#dfdfdf",
+				highlight: "#cccccc",
+				label: "Value 3"
 			},
 			{
 				value: 120,
-				color: "#f9243f",
-				highlight: "#f6495f",
-				label: "Red"
+				color: "#f7f7f7",
+				highlight: "#eeeeee",
+				label: "Value 4"
 			}
 
 		];
 			
 	var doughnutData = [
-				{
-					value: 300,
-					color:"#30a5ff",
-					highlight: "#62b9fb",
-					label: "Blue"
-				},
-				{
-					value: 50,
-					color: "#ffb53e",
-					highlight: "#fac878",
-					label: "Orange"
-				},
-				{
-					value: 100,
-					color: "#1ebfae",
-					highlight: "#3cdfce",
-					label: "Teal"
-				},
-				{
-					value: 120,
-					color: "#f9243f",
-					highlight: "#f6495f",
-					label: "Red"
-				}
-
-			];
+			{
+				value: 300,
+				color: "#30a5ff",
+				highlight: "#7376df",
+				label: "Value 1"
+			},
+			{
+				value: 50,
+				color: "#a0a0a0",
+				highlight: "#999999",
+				label: "Value 2"
+			},
+			{
+				value: 100,
+				color:"#dfdfdf",
+				highlight: "#cccccc",
+				label: "Value 3"
+			},
+			{
+				value: 120,
+				color: "#f7f7f7",
+				highlight: "#eeeeee",
+				label: "Value 4"
+			}
+		];
 			
 	var radarData = {
 	    labels: ["Eating", "Drinking", "Sleeping", "Designing", "Coding", "Cycling", "Running"],
@@ -131,30 +130,29 @@ var randomScalingFactor = function(){ return Math.round(Math.random()*1000)};
 	};
 	
 	var polarData = [
-		    {
-		    	value: 300,
-		    	color: "#1ebfae",
-		    	highlight: "#38cabe",
-		    	label: "Teal"
-		    },
-		    {
-		    	value: 140,
-		    	color: "#ffb53e",
-		    	highlight: "#fac878",
-		    	label: "Orange"
-		    },
-		    {
-		    	value: 220,
-		    	color:"#30a5ff",
-		    	highlight: "#62b9fb",
-		    	label: "Blue"
-		    },
-		    {
-		    	value: 250,
-		    	color: "#f9243f",
-		    	highlight: "#f6495f",
-		    	label: "Red"
-		    }
+	    {
+	    	value: 300,
+	    	color: "#30a5ff",
+	    	highlight: "#7376df",
+	    	label: "Value 1"
+	    },
+	    {
+	    	value: 140,
+	    	color: "#a0a0a0",
+	    	highlight: "#999999",
+	    	label: "Value 2"
+	    },
+	    {
+	    	value: 220,
+	    	color:"#dfdfdf",
+	    	highlight: "#cccccc",
+	    	label: "Value 3"
+	    },
+	    {
+	    	value: 250,
+	    	color: "#f7f7f7",
+	    	highlight: "#eeeeee",
+	    	label: "Value 4"
+	    }
 		
 	];
-
