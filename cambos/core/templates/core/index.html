@@ -85,7 +85,7 @@
 		</div>
 		
 		<div class="row">
-			<div class="col-lg-6">
+			<div class="col-lg-12">
 				<div class="panel panel-default">
 					<div class="panel-heading">
 						Produção 
@@ -121,14 +121,14 @@
 						<div class="canvas-wrapper">
 							<canvas class="chart" id="chartProducao" height="186" width="558" style="width: 558px; height: 186px;"></canvas>
 							<script>
-								var labels1 = {{labels|safe}}
-								var data1 = {{data|safe}}								
+								var labels1 = {{labels1|safe}}
+								var data1 = {{data1|safe}}								
 							</script>
 						</div>
 					</div>
 				</div>
 			</div>
-			<div class="col-lg-6">
+			<div class="col-lg-12">
 				<div class="panel panel-default">
 					<div class="panel-heading">
 						Custo Unitário de Produção						
@@ -137,8 +137,10 @@
 						<div class="canvas-wrapper">
 							<canvas class="chart" id="chartComposicao" height="186" width="558" style="width: 558px; height: 186px;"></canvas>
 							<script>
-								var labels1 = {{labels|safe}}
-								var data1 = {{data|safe}}								
+								var labels2 = {{labels2|safe}}
+								var data2 = {{data2|safe}}								
+								var data3 = {{data3|safe}}								
+								var data4 = {{data4|safe}}								
 							</script>
 						</div>
 					</div>

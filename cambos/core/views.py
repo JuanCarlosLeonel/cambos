@@ -68,7 +68,7 @@ def custo_setor(id_setor, id_periodo):
     except:
         custo = Custo.objects.filter(setor = id_setor).latest('periodo')
     custo_total = custo.energia + custo.laboratorio + custo.manutencao + custo.material_uso_continuo + custo.mao_de_obra + custo.vapor + custo.agua
-    return custo, custo_total
+    return {'custo':custo, 'custo_total':custo_total}
 
 def compra_setor(id_setor, id_periodo):
     lista = []
@@ -99,7 +99,7 @@ def compra_setor(id_setor, id_periodo):
         elif item.material.tipo == "Material":
             total_material += preco * item.quantidade
 
-    return lista, total_insumo, total_material
+    return {'lista':lista, 'total_insumo':total_insumo, 'total_material':total_material}
 
 def preco_material(id_material, periodo):
     preco = 0
@@ -145,16 +145,31 @@ def preco_material(id_material, periodo):
             consumo_total += preco * produto.quantidade            
         producao = producao_setor(setor.id, periodo.id).aggregate(
             Sum('quantidade'))['quantidade__sum']        
-        custo = custo_setor(setor.id, periodo.id)[1]
+        custo = custo_setor(setor.id, periodo.id)['custo_total']
         try:
             preco = (custo + consumo_total) / producao
         except:
             preco = 0    
     return preco
 
-def label(nome_periodo, id_periodo, id_setor):
-    ano = int(nome_periodo[len(nome_periodo)-4:])
-    meses = ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"]
+def preco_material_periodo(id_setor, id_periodo):    
+    total = 0
+    lista_consumo = Consumo.objects.filter(
+        setor = id_setor,
+        periodo = id_periodo,
+        material__tipo = "Material"
+    )
+    for item in lista_consumo:
+        try:
+            preco = preco_material(item.material.id, id_periodo)
+            quantidade = item.quantidade
+            valor = preco * quantidade
+        except:
+            valor = 0
+        total += valor   
+    return total
+
+def label(nome_periodo, id_periodo, id_setor):    
     meses_abr = ["Jan", "fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dez"]
     periodo_ind = meses_abr.index(nome_periodo[0:3])
     if periodo_ind == 11:
@@ -164,25 +179,52 @@ def label(nome_periodo, id_periodo, id_setor):
     p_fim = 0
     id_periodo -= 11
     label_periodo = []
-    data = []
+    prod_periodo = []
+    insumo_periodo = []
+    material_periodo = []
+    custo_periodo = []
+    label_total = []
+    total_gastos = 0
     while (p_fim < 12):
         p_fim += 1
         label_periodo.append(meses_abr[p_inicio])
-        try:
-            producao = producao_setor(id_setor, id_periodo).aggregate(
-                Sum('quantidade'))['quantidade__sum']
-            if not producao:
-                producao = 0
-        except:
+        
+        producao = producao_setor(id_setor, id_periodo).aggregate(
+            Sum('quantidade'))['quantidade__sum']
+        if not producao:
             producao = 0
-        data.append(int(producao))
+        try:    
+            insumo = compra_setor(id_setor, id_periodo)['total_insumo'] / producao
+        except:
+            insumo = 0
+        try:
+            custo = custo_setor(id_setor, id_periodo)['custo_total'] / producao
+        except:
+            custo = 0
+        try:
+            material = preco_material_periodo(id_setor, id_periodo) / producao
+        except:
+            material = 0
+        prod_periodo.append(int(producao))
+        insumo_periodo.append(round(insumo,2))
+        material_periodo.append(round(material,2))
+        custo_periodo.append(round(custo,2))
+        total_gastos = insumo + material + custo
+        label_total.append(f'{meses_abr[p_inicio]} - R$ {round(total_gastos,2)}')
         id_periodo += 1
         if p_inicio == 11:
             p_inicio = 0
         else:
             p_inicio += 1
-    else:
-        return label_periodo, data
+        
+    return {
+        'label':label_periodo,
+        'label_total':label_total,
+        'producao':prod_periodo,
+        'insumo': insumo_periodo,
+        'material': material_periodo,
+        'custo': custo_periodo
+    }
 
 @method_decorator(login_required, name='dispatch')
 class Index(TemplateView):
@@ -216,7 +258,7 @@ class Index(TemplateView):
         except:
             eficiencia = 0
         try:
-            custo = custo_setor(setor.id, periodo.id)[1]                
+            custo = custo_setor(setor.id, periodo.id)['custo_total']                
             custo_un = custo / producao
         except:
             custo_un = 0
@@ -227,21 +269,26 @@ class Index(TemplateView):
         except:
             perda_un = 0
 
-        insumo = compra_setor(setor.id, periodo.id)[1]
+        insumo = compra_setor(setor.id, periodo.id)['total_insumo']
         try:
             insumo_un = insumo / producao
         except:
             insumo_un = 0
         
-        valor_consumo_material = compra_setor(setor.id, periodo.id)[2]        
+        valor_consumo_material = compra_setor(setor.id, periodo.id)['total_material']        
         try:
             materia_prim_un = valor_consumo_material / producao
         except:
             materia_prim_un = 0
         materia_prima = materia_prim_un
-                
-        context['data'] = label(periodo.nome, periodo.id, setor.id)[1]    
-        context['labels'] = label(periodo.nome, periodo.id, setor.id)[0]    
+        dashboard = label(periodo.nome, periodo.id, setor.id)
+        
+        context['data1'] =  dashboard['producao'] 
+        context['data2'] =  dashboard['custo'] 
+        context['data3'] =  dashboard['insumo']         
+        context['data4'] =  dashboard['material'] 
+        context['labels1'] = dashboard['label']  
+        context['labels2'] = dashboard['label_total']  
         context['materia_prima'] = materia_prima
         context['insumo'] = insumo_un
         context['perda'] = perda_un
