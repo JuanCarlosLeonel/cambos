@@ -37,10 +37,17 @@ var composicao = new Chart(chart2, {
 	data: {
 		labels: labels2,
 		datasets : [{	
+			label: 'Material',
+			data: data4,
+			backgroundColor:'rgba(255, 99, 132, 0.2)',              
+			borderColor:'rgba(255, 99, 132, 1)',               
+			borderWidth: 1
+		},
+		{	
 			label: 'Custo',
 			data: data2,
-			backgroundColor: 'rgba(255, 206, 86, 0.2)',            
-            borderColor: 'rgba(255, 206, 86, 1)',
+			backgroundColor: 'rgba(80, 180, 86, 0.2)',            
+            borderColor: 'rgba(80, 180, 86, 1)',
             borderWidth: 1
 		},
 		{	
@@ -49,24 +56,14 @@ var composicao = new Chart(chart2, {
 			backgroundColor:'rgba(255, 159, 64, 0.2)',        
             borderColor:'rgba(255, 159, 64, 1)',            
             borderWidth: 1
-		},
-		{	
-			label: 'Material',
-			data: data4,
-			backgroundColor:'rgba(255, 99, 132, 0.2)',              
-            borderColor:'rgba(255, 99, 132, 1)',               
-            borderWidth: 1
-		}
+		},		
 	]
     },
 	options: {
         scales: {
-            yAxes: [{
-                ticks: {
-                    beginAtZero: true
-                }
-            }]
-		},
+			xAxes: [{ stacked: true }],
+			yAxes: [{ stacked: true }]
+		  }	
     }
 });
 	
