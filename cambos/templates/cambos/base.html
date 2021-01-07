@@ -109,7 +109,7 @@
 		<form id="periodoForm" method="get">
 			<input type="hidden" value="{{request.GET.setor}}"class="" id="setor" name="setor">
 			<div class="input-group date form-group" data-provide="datepicker">				
-				<input readonly="readonly" type="text" value="{{ request.GET.periodo }}" class="form-control" id="periodo" name="periodo" required onchange="submete()">
+				<input readonly="readonly" type="text" value="{{ get_periodo.nome }}" class="form-control" id="periodo" name="periodo" required onchange="submete()">
 				<div class="input-group-addon btn-primary">
 					<span class="fa fa-calendar"></span>
 				</div>
@@ -120,7 +120,7 @@
 				<em class="fa fa-navicon">&nbsp;</em> Divisão Têxtil <span data-toggle="collapse" href="#sub-item-1" class="icon pull-right"><em class="fa fa-minus"></em></span>
 				</a>
 				<ul class="children collapse in" id="sub-item-1">
-					<li class="enabled"><a id="setor" href="?setor=&periodo={{ request.GET.periodo }}"><em class="fa fa-bar-chart">&nbsp;</em> Consolidado </a></li>
+					<li class="enabled"><a id="setor0" href="?setor=0&periodo={{ request.GET.periodo }}"><em class="fa fa-bar-chart">&nbsp;</em> Consolidado </a></li>
 					{% for item in setores %}
 						{% if item.divisao == "Têxtil" %}
 							<li class="enabled"><a id="setor{{item.id}}"href="?setor={{item.id}}&periodo={{ request.GET.periodo }}"><em class="fa fa-pie-chart">&nbsp;</em> {{item.nome}}</a></li>
