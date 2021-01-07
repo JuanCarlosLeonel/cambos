@@ -161,7 +161,7 @@
 						<div class="canvas-wrapper">
 							<canvas class="chart" id="chartComposicao" height="150" width="558" style="width: 558px; height: 150px;"></canvas>
 							<script>
-								var labels2 = {{labels2|safe}}
+								var labels2 = {{labels1|safe}}
 								var data2 = {{data2|safe}}								
 								var data3 = {{data3|safe}}								
 								var data4 = {{data4|safe}}								
@@ -463,6 +463,7 @@
 {%endblock content%}
 
 {% block script %}
+
 		
 	<script>
     	let option = document.getElementById('setor{{ request.GET.setor }}');

@@ -18,6 +18,10 @@ var producao = new Chart(chart1, {
         }]
     },
 	options: {
+		tooltips: {
+			mode: 'index',
+			intersect: false
+		},
         scales: {
             yAxes: [{
                 ticks: {
@@ -30,6 +34,26 @@ var producao = new Chart(chart1, {
 });
 
 // Composição do custo
+const totalizer = {
+    id: 'totalizer',
+    beforeUpdate: chart => {
+        let totals = {}
+        let utmost = 0
+
+            chart.data.datasets.forEach((dataset, datasetIndex) => {
+                if (chart.isDatasetVisible(datasetIndex)) {
+                    utmost = datasetIndex
+                        dataset.data.forEach((value, index) => {
+                            totals[index] = (totals[index] || 0) + value
+                        })
+                }
+            })
+            chart.$totalizer = {
+            totals: totals,
+            utmost: utmost
+        }
+    }
+}
 
 var chart2 = document.getElementById("chartComposicao").getContext("2d");
 var composicao = new Chart(chart2, {
@@ -55,19 +79,94 @@ var composicao = new Chart(chart2, {
 			data: data3,
 			backgroundColor:'rgba(255, 159, 64, 0.2)',        
             borderColor:'rgba(255, 159, 64, 1)',            
-            borderWidth: 1
-		},		
+			borderWidth: 1
+			
+		},	
+		{
+			label: 'Total',
+			data: [0, 0, 0,0,0,0,0,0,0,0,0,0],
+			backgroundColor: 'rgba(24,91,62,0)',
+			datalabels: {
+				font: {
+                    size: '14'
+                },
+				
+				formatter: (value, ctx) => {
+					const total = ctx.chart.$totalizer.totals[ctx.dataIndex];
+					if (total > 0) {
+						return "R$ "+ total.toFixed(2).toLocaleString('pt-BR', {})
+					}else {
+						return ""
+					}
+				},
+				align: 'end',
+				anchor: 'end',
+				display: function (ctx) {
+					return ctx.datasetIndex === ctx.chart.$totalizer.utmost
+				}
+			}
+
+		}
 	]
     },
-	options: {
+	options: {		
+		tooltips: {
+			mode: 'label',
+			intersect: false,
+			filter: function (tooltipItem) {
+				return tooltipItem.datasetIndex in [0,1,2];
+			},
+			callbacks: {
+				afterTitle: function() {
+					window.total = 0;
+				},
+				label: function(tooltipItem, data) {
+					var corporation = data.datasets[tooltipItem.datasetIndex].label;
+					var valor = data.datasets[tooltipItem.datasetIndex].data[tooltipItem.index];
+					window.total += valor;
+					return corporation + ": R$ " + valor.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ");             
+				},
+				footer: function() {
+					return "TOTAL: R$ " + window.total.toFixed(2).toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ");
+				},				
+			},
+		},
+		legend: {
+			labels: {
+				filter: function(legendItem, chartData) {
+				 if (legendItem.datasetIndex === 3) {
+				   return false;
+				 }
+				return true;
+				}
+			 }
+		 },
         scales: {
-			xAxes: [{ stacked: true }],
+			xAxes: [{ stacked: true, }],
 			yAxes: [{ stacked: true }]
-		  }	
-    }
+		},
+		plugins: {
+            datalabels: {                
+                display: function (context) {
+                    return context.chart.isDatasetVisible(context.datasetIndex);
+                },                
+                font: {
+                    weight: 'bold'
+				},
+				formatter: (value, ctx) => {
+					if(value >0 ){					
+						return "R$ "+ value.toLocaleString('pt-BR', {})
+					}else{
+						return ""
+					}
+				},
+            }
+        }
+    },
+    plugins: [totalizer]
+		
 });
-	
-	
+
 	var pieData = [
 			{
 				value: 300,
