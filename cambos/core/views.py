@@ -368,6 +368,7 @@ class ProducaoList(ListView):
         ).order_by('nome')
         for material in historico:
             material_nome = material.nome
+            material_unidade = material.unidade
             quantidade = 0
             percentual = 0    
             id_producao = ''
@@ -382,6 +383,7 @@ class ProducaoList(ListView):
             else:                    
                 lista.append({                
                     'material': material_nome,
+                    'material_unidade': material_unidade,
                     'quantidade': quantidade,
                     'percentual': percentual,
                     'id': id_producao,                
@@ -484,6 +486,7 @@ class ConsumoMaterialList(ListView):
             
         for item in historico:
             material_nome = item.material.nome
+            material_unidade = item.material.unidade
             origem = item.material.origem
             quantidade = 0            
             preco = preco_material(item.material.id, periodo)            
@@ -506,6 +509,7 @@ class ConsumoMaterialList(ListView):
             else:                    
                 lista.append({                
                     'material': material_nome,
+                    'material_unidade': material_unidade,
                     'origem': origem,
                     'quantidade': quantidade,
                     'preco': preco,
