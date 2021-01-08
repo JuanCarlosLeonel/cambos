@@ -150,9 +150,13 @@ def preco_material(id_material, periodo):
     else:
         setor_origem = Setor.objects.get(nome = material.origem)
         custo_setor_origem = custo_setor(setor_origem, periodo)['custo_total']
-        compra_setor_origem = compra_setor(setor_origem, periodo)                
+        compra_setor_origem = compra_setor(setor_origem, periodo)
+                      
         producao = producao_setor(setor_origem, periodo).aggregate(
             Sum('quantidade'))['quantidade__sum'] 
+        if producao is None:
+            producao = Producao.objects.filter(setor = setor_origem, periodo = (periodo.id-1)).aggregate(
+                Sum('quantidade'))['quantidade__sum'] 
         produto_interno = Consumo.objects.filter(
             periodo = periodo,
             setor = setor_origem,            
@@ -167,8 +171,10 @@ def preco_material(id_material, periodo):
             preco2 = (custo_setor_origem2 + compra_setor_origem2['total_insumo'] + compra_setor_origem2['total_material']) / producao2
 
         
-        
-        preco = ((custo_setor_origem + compra_setor_origem['total_insumo'] + compra_setor_origem['total_material']) / producao) + preco2
+        try:
+            preco = ((custo_setor_origem + compra_setor_origem['total_insumo'] + compra_setor_origem['total_material']) / producao) + preco2
+        except:
+            preco = 0
         
     return preco
 
