@@ -88,9 +88,10 @@ var composicao = new Chart(chart2, {
 			backgroundColor: 'rgba(24,91,62,0)',
 			datalabels: {
 				font: {
-                    size: '14'
-                },
-				
+					size: '14',
+					
+				},
+				color: 'rgba(10, 10, 50, 1)',
 				formatter: (value, ctx) => {
 					const total = ctx.chart.$totalizer.totals[ctx.dataIndex];
 					if (total > 0) {
@@ -142,8 +143,12 @@ var composicao = new Chart(chart2, {
 			 }
 		 },
         scales: {
-			xAxes: [{ stacked: true, }],
-			yAxes: [{ stacked: true }]
+			xAxes: [{ stacked: true,
+				gridLines: false }],
+			yAxes: [{
+				stacked: true,
+				display: false,				
+			 }]
 		},
 		plugins: {
             datalabels: {                

@@ -281,7 +281,7 @@ class Index(TemplateView):
                 ).total_planejado
             else:
                 total_planejado = Desempenho.objects.get(
-                    setor = setor.id,
+                    setor = setor,
                     periodo = periodo.id
                 ).total_planejado
         except:
@@ -463,13 +463,13 @@ class ConsumoMaterialList(ListView):
         periodo = get_periodo(self)
         setor = get_setor(self)        
         consumo = Consumo.objects.filter(
-            setor = setor.id,
+            setor = setor,
             periodo = periodo.id,            
             material__tipo = "Material"            
         )        
         lista = []          
         historico = Consumo.objects.filter(
-            setor = setor.id,
+            setor = setor,
             material__tipo = "Material"            
         ).distinct('material')
         
@@ -536,13 +536,13 @@ class ConsumoInsumoList(ListView):
         periodo = get_periodo(self)
         setor = get_setor(self)        
         consumo = Consumo.objects.filter(
-            setor = setor.id,
+            setor = setor,
             periodo = periodo.id,            
             material__tipo = "Insumo",            
         )        
         lista = []          
         historico = Consumo.objects.filter(
-            setor = setor.id,
+            setor = setor,
             material__tipo = "Insumo",            
         ).distinct('material')        
         quantidade = 0
@@ -654,7 +654,7 @@ class DesempenhoList(ListView):
         try:                   
             desempenho = Desempenho.objects.get(
                 periodo = periodo.id,
-                setor = setor.id
+                setor = setor
             )        
             lancado = desempenho.pk
         except:
@@ -716,7 +716,7 @@ class CustoList(ListView):
         try:                   
             custo = Custo.objects.get(
                 periodo = periodo.id,
-                setor = setor.id
+                setor = setor
             )        
             lancado = custo.pk
         except:

@@ -73,4 +73,10 @@
     	let option = document.getElementById('setor{{setor.id}}');
 		option.setAttribute('class', 'active');						
 	  </script>
+	  <script>
+		$(document).ready(function(){            
+		  $(".consolidado").attr("class", "disabled");
+		  $(".disabled a").removeAttr("href");    		
+		  });
+	  </script>
 {% endblock script %}
