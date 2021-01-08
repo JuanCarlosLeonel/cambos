@@ -148,35 +148,28 @@ def preco_material(id_material, periodo):
                 ultima_compra = ValorCompra.objects.filter(material = material).latest('periodo').valor
                 preco = ultima_compra
     else:
-        setor = Setor.objects.get(nome = material.origem)
-        consumo = Consumo.objects.filter(
-            material__origem = "Compra",
-            periodo = periodo.id,
-            setor = setor.id
-        )
-        consumo_total = 0
-        for produto in consumo:
-            historico_compra = ValorCompra.objects.filter(material = produto.material).aggregate(
-            Count('id'))['id__count']
-            if historico_compra == 0:
-                preco = 0
-            else:      
-                try:
-                    preco = ValorCompra.objects.get(
-                        material = produto.material,
-                        periodo = periodo.id
-                    ).valor
-                except:
-                    ultima_compra = ValorCompra.objects.filter(material = produto.material).latest('periodo').valor
-                    preco = ultima_compra            
-            consumo_total += preco * produto.quantidade            
-        producao = producao_setor(setor, periodo.id).aggregate(
-            Sum('quantidade'))['quantidade__sum']        
-        custo = custo_setor(setor.id, periodo.id)['custo_total']
-        try:
-            preco = (custo + consumo_total) / producao
-        except:
-            preco = 0    
+        setor_origem = Setor.objects.get(nome = material.origem)
+        custo_setor_origem = custo_setor(setor_origem, periodo)['custo_total']
+        compra_setor_origem = compra_setor(setor_origem, periodo)                
+        producao = producao_setor(setor_origem, periodo).aggregate(
+            Sum('quantidade'))['quantidade__sum'] 
+        produto_interno = Consumo.objects.filter(
+            periodo = periodo,
+            setor = setor_origem,            
+        ).exclude(material__origem = "Compra")        
+        preco2 = 0
+        for item in produto_interno:
+            setor_origem2 = Setor.objects.get(nome = item.material.origem)
+            custo_setor_origem2 = custo_setor(setor_origem2, periodo)['custo_total']
+            compra_setor_origem2 = compra_setor(setor_origem2, periodo)                
+            producao2 = producao_setor(setor_origem, periodo).aggregate(
+            Sum('quantidade'))['quantidade__sum'] 
+            preco2 = (custo_setor_origem2 + compra_setor_origem2['total_insumo'] + compra_setor_origem2['total_material']) / producao2
+
+        
+        
+        preco = ((custo_setor_origem + compra_setor_origem['total_insumo'] + compra_setor_origem['total_material']) / producao) + preco2
+        
     return preco
 
 def preco_material_periodo(setor, id_periodo):    
@@ -193,12 +186,11 @@ def preco_material_periodo(setor, id_periodo):
             material__tipo = "Material"
         )
     for item in lista_consumo:
-        try:
-            preco = preco_material(item.material.id, id_periodo)
-            quantidade = item.quantidade
-            valor = preco * quantidade
-        except:
-            valor = 0
+        
+        preco = preco_material(item.material.id, id_periodo)
+        quantidade = item.quantidade
+        valor = preco * quantidade
+        
         total += valor   
     return total
 
