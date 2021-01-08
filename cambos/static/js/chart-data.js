@@ -8,28 +8,55 @@ var producao = new Chart(chart1, {
 		datasets : [{	
 			label: 'Producao',
 			data: data1,
-			backgroundColor: [
-                'rgba(48, 164, 255, 0.2)',                
-            ],
-            borderColor: [
-                'rgba(48, 164, 255, 1)',                
-            ],
-            borderWidth: 1
+			backgroundColor : "rgba(48, 164, 255, 0.2)",
+			borderColor : "rgba(48, 164, 255, 1)",
+			pointColor : "rgba(48, 164, 255, 1)",	
+			borderWidth: 1					
         }]
     },
 	options: {
 		tooltips: {
 			mode: 'index',
-			intersect: false
+			intersect: false,
+			callbacks: {			
+				label: function(tooltipItem, data) {	
+					var label = data.datasets[tooltipItem.datasetIndex].data[tooltipItem.index];			
+					return label.toLocaleString('pt-BR', {})
+				},
+			}
+		},
+		legend: {
+			position: 'top',
+			labels: {
+				fontSize: 16,				
+			 }
 		},
         scales: {
-            yAxes: [{
-                ticks: {
-                    beginAtZero: true
-                }
-            }]
-		},
-		legend: false
+			xAxes: [{ 
+				gridLines: false }],
+			yAxes: [{				
+				display: false,				
+			 }]
+		},		
+		plugins: {
+            datalabels: { 
+				align: 'top',               
+                display: function (context) {
+                    return context.chart.isDatasetVisible(context.datasetIndex);
+                },                 
+                font: {
+					weight: 'bold',
+					size: 14
+				},				
+				formatter: (value, ctx) => {
+					if(value >0 ){					
+						return value.toLocaleString('pt-BR', {})
+					}else{
+						return ""
+					}
+				},
+            }
+        }
     }
 });
 
@@ -90,12 +117,11 @@ var composicao = new Chart(chart2, {
 				font: {
 					size: '14',
 					
-				},
-				color: 'rgba(10, 10, 50, 1)',
+				},				
 				formatter: (value, ctx) => {
 					const total = ctx.chart.$totalizer.totals[ctx.dataIndex];
 					if (total > 0) {
-						return "R$ "+ total.toFixed(2).toLocaleString('pt-BR', {})
+						return "R$ "+ total.toLocaleString('pt-BR', {})
 					}else {
 						return ""
 					}
@@ -125,15 +151,17 @@ var composicao = new Chart(chart2, {
 					var corporation = data.datasets[tooltipItem.datasetIndex].label;
 					var valor = data.datasets[tooltipItem.datasetIndex].data[tooltipItem.index];
 					window.total += valor;
-					return corporation + ": R$ " + valor.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ");             
+					return corporation + ": R$ " + valor.toLocaleString('pt-BR', {});            
 				},
 				footer: function() {
-					return "TOTAL: R$ " + window.total.toFixed(2).toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ");
+					return "TOTAL: R$ " + window.total.toLocaleString('pt-BR', {});            
 				},				
 			},
 		},
 		legend: {
+			position: 'top',
 			labels: {
+				fontSize: 16,
 				filter: function(legendItem, chartData) {
 				 if (legendItem.datasetIndex === 3) {
 				   return false;
@@ -141,7 +169,8 @@ var composicao = new Chart(chart2, {
 				return true;
 				}
 			 }
-		 },
+		},
+		
         scales: {
 			xAxes: [{ stacked: true,
 				gridLines: false }],
