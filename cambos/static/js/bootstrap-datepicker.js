@@ -1404,7 +1404,7 @@
 		multidateSeparator: ',',
 		orientation: "auto",
 		rtl: false,
-		startDate: "Agosto/2020",
+		startDate: "Agosto/2020",				
 		startView: "months",
 		todayBtn: false,
 		todayHighlight: false,

@@ -26,9 +26,11 @@
 			<div class="panel-heading"> <strong class="">Produção</strong></div>
 			<div class="panel-body">
 				<div id="toolbar">
-					<a href="{% url 'producao_material_create' %}?setor={{ request.GET.setor }}&periodo={{ request.GET.periodo }}" class="btn btn-success">
-					  <i class="fa fa-plus"></i> Novo
-					</a>
+					{%if setor.id%}
+						<a href="{% url 'producao_create' %}?setor={{ request.GET.setor }}&periodo={{ request.GET.periodo }}" class="btn btn-success">
+						<i class="fa fa-plus"></i> Novo
+						</a>
+					{%endif%}
 				  </div>
 				<table id="table"				
 				 data-toolbar="#toolbar"
@@ -42,7 +44,7 @@
 				 data-sort-order="desc">
 					<thead>
 						<tr>
-							<th data-field="acao" class='text-center'></th>							
+							{%if setor.id %}<th data-field="acao" class='text-center'></th>{% endif%}
 							<th data-field="material"  data-sortable="false" class='text-center'>Material</th>							
 							<th data-field="quantidade" data-sortable="false" class='text-center'>Quant</th>
 							<th data-field="material_unidade"  data-sortable="false" class='text-center'>Un</th>
@@ -52,6 +54,7 @@
 					<tbody>
 						{% for data in producaojs %}						
 							<tr data-index="{{forloop.counter0}}" >
+								{%if setor.id%}
 								<td class='text-center'>
 									{% if data.id %}
 										<a href="{% url 'producao_modal_update' data.id %}?setor={{ setor.id }}&periodo={{ periodo }}"
@@ -61,6 +64,7 @@
 										 class='text-success fa fa-pencil-square-o'></a>
 									{% endif %}
 								</td>
+								{%endif%}
 								<td class='text-center' >{{data.material}}</td>								
 								<td class='text-center'>{{data.quantidade|floatformat:0}}</td>
 								<td class='text-center' >{{data.material_unidade}}</td>
@@ -79,10 +83,5 @@
     	let option = document.getElementById('setor{{setor.id}}');
 		option.setAttribute('class', 'active');						
 	  </script>
-	  <script>
-		$(document).ready(function(){            
-		  $(".consolidado").attr("class", "disabled");
-		  $(".disabled a").removeAttr("href");    		
-		  });
-	  </script>
+	  
 {% endblock script %}

@@ -106,13 +106,14 @@
 			<div class="clear"></div>
 		</div>
 		
-		<form id="periodoForm" method="get">
+		<form id="periodoForm" method="get">			
 			<input type="hidden" value="{{request.GET.setor}}"class="" id="setor" name="setor">
-			<div class="input-group date form-group" data-provide="datepicker">				
+			<div class="input-group date form-group" data-provide="datepicker" data-date-end-date={{ultimo_periodo}}>				
+				
 				<input readonly="readonly" type="text" value="{{ get_periodo.nome }}" class="form-control" id="periodo" name="periodo" required onchange="submete()">
 				<div class="input-group-addon btn-primary">
 					<span class="fa fa-calendar"></span>
-				</div>
+				</div>				
 			</div>			                    
 		</form>		
 		<ul class="nav menu ">						
@@ -151,13 +152,15 @@
 	<script src="{% static 'js/custom.js' %}"></script>
 	<script src="{% static 'js/bootstrap-table.js' %}"></script>
 	
-	{% block script %}{% endblock script %}
+	{% block script %}
+	
+	{% endblock script %}
 	<script>
 	function submete(){
 		var form = document.getElementById("periodoForm")
 		form.submit()
 	}
-	</script>
+	</script>	
 		
 </body>
 </html>

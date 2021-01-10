@@ -200,7 +200,7 @@ def preco_material_periodo(setor, id_periodo):
         total += valor   
     return total
 
-def label(nome_periodo, id_periodo, setor):    
+def dash(nome_periodo, id_periodo, setor):    
     meses_abr = ["Jan", "fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dez"]
     periodo_ind = meses_abr.index(nome_periodo[0:3])
     if periodo_ind == 11:
@@ -323,7 +323,7 @@ class Index(TemplateView):
         except:
             materia_prim_un = 0
         
-        dashboard = label(periodo.nome, periodo.id, setor)
+        dashboard = dash(periodo.nome, periodo.id, setor)
         if setor == 0:
             setor = {'nome':'Consolidado'}        
         
@@ -358,14 +358,11 @@ class ProducaoList(ListView):
         producao = producao_setor(setor, periodo.id)
         total = producao.aggregate(
             Sum('quantidade'))['quantidade__sum']
-        if setor.id < 5:
-            unidades = 'Quilos'
-            unidade = 'kg'
-        else:
-            unidades = 'Metros'
-            unidade = 'm'
-        lista = []  
-        if setor.id < 5:
+        
+        lista = []   
+        if setor == 0:
+            origem = "Tecelagem"     
+        elif setor.id < 5:
             origem = setor.nome
         else:
             origem = "Tecelagem"
@@ -395,11 +392,12 @@ class ProducaoList(ListView):
                     'id': id_producao,                
                     'id_material': id_material                
                     })
-                        
+        if setor == 0:
+            setor = {
+                'nome':'Consolidado',
+            }                
         context['historico'] = historico
-        context['producaojs'] = sorted(lista, key=lambda x: x['quantidade'], reverse=True)
-        context['unidade'] = unidade
-        context['unidades'] = unidades
+        context['producaojs'] = sorted(lista, key=lambda x: x['quantidade'], reverse=True)        
         context['producao'] = total
         context['periodo'] = periodo.nome
         context['setor'] = setor
