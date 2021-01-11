@@ -338,7 +338,8 @@ class ConsumoCreate(CreateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)                
         periodo = get_periodo(self)
-        setor = get_setor(self)                
+        setor = get_setor(self) 
+        context['novo_registro'] = True               
         context['periodo'] = periodo.nome
         context['setor'] = setor
         context['tipo'] = "Material"

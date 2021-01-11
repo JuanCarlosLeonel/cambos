@@ -513,7 +513,7 @@ class ConsumoMaterialList(ListView):
             if item.material.inativo and quantidade == 0:
                 pass
             else:                    
-                lista.append({                
+                lista.append({                                    
                     'material': material_nome,
                     'material_unidade': material_unidade,
                     'origem': origem,
@@ -524,7 +524,7 @@ class ConsumoMaterialList(ListView):
                     'id': id_consumo,                
                     'id_material': id_material                
                     })
-                        
+        context['total'] = total                
         context['historico'] = historico
         context['producaojs'] = sorted(lista, key=lambda x: x['valor'], reverse=True)        
         context['periodo'] = periodo.nome

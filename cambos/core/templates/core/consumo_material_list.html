@@ -23,7 +23,7 @@
 {% block content %}		
 	<div class="col-12">
 		<div class="panel panel-default">
-			<div class="panel-heading"> <strong class="">Consumo de Material</strong></div>
+			<div class="panel-heading"> <strong class="">Consumo de Material: <strong class="text-danger">R$ {{total}}</strong></strong></div>
 			<div class="panel-body">
 				<div id="toolbar">
 					<a href="{% url 'consumo_material_create' %}?setor={{ request.GET.setor }}&periodo={{ request.GET.periodo }}" class="btn btn-success">
