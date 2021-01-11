@@ -668,6 +668,11 @@ class DesempenhoList(ListView):
                 {'item':'total_tingido',
                 'nome':'Total Tingido',
                 'un': unidade_prod})
+        if setor.nome == "Tecelagem":
+            opcoes.append(
+                {'item':'tempo_total_atendimento',
+                'nome':'Total Total de Atendimento',
+                'un': "horas"})
         try:                   
             desempenho = Desempenho.objects.get(
                 periodo = periodo.id,

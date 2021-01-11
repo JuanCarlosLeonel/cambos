@@ -122,6 +122,7 @@ class DesempenhoForm(forms.ModelForm):
             'total_expedido',
             'total_recebido',
             'total_tingido',            
+            'tempo_total_atendimento',            
         )
         widgets = {                         
             'periodo': forms.HiddenInput(),
@@ -141,6 +142,7 @@ class DesempenhoForm(forms.ModelForm):
             'total_expedido':forms.NumberInput(attrs={'class':'form-control'}),
             'total_recebido':forms.NumberInput(attrs={'class':'form-control'}),
             'total_tingido':forms.NumberInput(attrs={'class':'form-control'}),
+            'tempo_total_atendimento':forms.NumberInput(attrs={'class':'form-control'}),
         }
 
 
