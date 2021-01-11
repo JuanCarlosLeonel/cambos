@@ -142,7 +142,7 @@ def preco_material(id_material, periodo):
             try:
                 preco = ValorCompra.objects.get(
                     material = material,
-                    periodo = periodo.id
+                    periodo = periodo
                 ).valor
             except:
                 ultima_compra = ValorCompra.objects.filter(material = material).latest('periodo').valor
@@ -476,7 +476,7 @@ class ConsumoMaterialList(ListView):
         else:
             consumo = Consumo.objects.filter(
                 setor = setor,
-                           
+                periodo = periodo.id,           
                 material__tipo = "Material"            
             )       
         lista = [] 
