@@ -216,6 +216,12 @@ class DesempenhoCreate(CreateView):
         initial['total_planejado'] = ultimo_desempenho.total_planejado        
         initial['headcount'] = ultimo_desempenho.headcount        
         return initial
+    
+    def get_form_kwargs(self):        
+        setor = get_setor(self)
+        kwargs = super().get_form_kwargs()                
+        kwargs['setor'] = setor.nome
+        return kwargs
 
 
 class DesempenhoUpdate(UpdateView):

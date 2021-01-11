@@ -131,21 +131,37 @@ class DesempenhoForm(forms.ModelForm):
             'dias_trabalhados':forms.NumberInput(attrs={'class':'form-control'}),
             'total_planejado':forms.NumberInput(attrs={'class':'form-control'}),
             'headcount':forms.NumberInput(attrs={'class':'form-control'}),
-            'expedidores':forms.NumberInput(attrs={'class':'form-control'}),
-            'revisores':forms.NumberInput(attrs={'class':'form-control'}),
+            'expedidores':forms.HiddenInput(),
+            'revisores':forms.HiddenInput(),
             'setup':forms.NumberInput(attrs={'class':'form-control'}),
-            'carga_descarga':forms.NumberInput(attrs={'class':'form-control'}),
+            'carga_descarga':forms.HiddenInput(),
             'manutencao_corretiva':forms.NumberInput(attrs={'class':'form-control'}),
             'manutencao_preventiva':forms.NumberInput(attrs={'class':'form-control'}),
-            'total_alvejado':forms.NumberInput(attrs={'class':'form-control'}),
-            'total_chamuscado':forms.NumberInput(attrs={'class':'form-control'}),
-            'total_expedido':forms.NumberInput(attrs={'class':'form-control'}),
-            'total_recebido':forms.NumberInput(attrs={'class':'form-control'}),
-            'total_tingido':forms.NumberInput(attrs={'class':'form-control'}),
-            'tempo_total_atendimento':forms.NumberInput(attrs={'class':'form-control'}),
+            'total_alvejado':forms.HiddenInput(),
+            'total_chamuscado':forms.HiddenInput(),
+            'total_expedido':forms.HiddenInput(),
+            'total_recebido':forms.HiddenInput(),
+            'total_tingido':forms.HiddenInput(),
+            'tempo_total_atendimento':forms.HiddenInput(),
         }
 
-
+    def __init__(self, *args, **kwargs):
+        setor = kwargs.pop('setor', None)                
+        super().__init__(*args, **kwargs)
+        if setor == "Expedição":
+            self.fields['expedidores'].widget = forms.NumberInput(attrs={'class':'form-control'})
+            self.fields['total_recebido'].widget = forms.NumberInput(attrs={'class':'form-control'})
+            self.fields['total_expedido'].widget = forms.NumberInput(attrs={'class':'form-control'})
+            self.fields['carga_descarga'].widget = forms.NumberInput(attrs={'class':'form-control'})                  
+        if setor == "Revisão":
+            self.fields['revisores'].widget = forms.NumberInput(attrs={'class':'form-control'})                               
+        if setor == "Acabamento":
+            self.fields['total_chamuscado'].widget = forms.NumberInput(attrs={'class':'form-control'})                               
+            self.fields['total_alvejado'].widget = forms.NumberInput(attrs={'class':'form-control'})                              
+            self.fields['total_tingido'].widget = forms.NumberInput(attrs={'class':'form-control'})                                         
+        if setor == "Tecelagem":
+            self.fields['tempo_total_atendimento'].widget = forms.NumberInput(attrs={'class':'form-control'})
+            
 class ConsumoModalForm(forms.ModelForm):
     class Meta:
         model = Consumo
