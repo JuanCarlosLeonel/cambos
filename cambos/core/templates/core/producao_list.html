@@ -80,8 +80,8 @@
 
 {% block script %}
 	<script>
-    	let option = document.getElementById('setor{{setor.id}}');
-		option.setAttribute('class', 'active');						
-	  </script>
-	  
+    	let option = document.getElementById('setor{{ request.GET.setor }}');
+		option.setAttribute('class', 'active');
+		
+	</script>
 {% endblock script %}

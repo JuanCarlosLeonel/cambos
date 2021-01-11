@@ -22,8 +22,7 @@
 		<div class="panel panel-container">
 			<div class="row">
 				
-				<a href="{% url 'producao_list' %}?setor={{ setor.pk }}&periodo={{ periodo }}">
-												
+				<a href="{% url 'producao_list' %}?setor={{ setor.pk }}&periodo={{ periodo }}">												
 					<div class="col-xs-6 col-md-2 col-lg-2 no-padding">					
 						<div class="panel panel-teal panel-widget border-right">
 							<div class="row no-padding"><span class="color-blue"> Produção</span>
@@ -46,20 +45,16 @@
 							</div>
 						</div>
 					</div>
-				</a>
-				{% if setor.pk %}
-				<a href="{% url 'consumo_material_list' %}?setor={{ setor.pk }}&periodo={{ periodo }}">
-				{%else%}
-				<a href=""></a>
-				{%endif%}
-				<div class="col-xs-6 col-md-2 col-lg-2 no-padding">
-					<div class="panel panel-orange panel-widget border-right">
-						<div class="row no-padding"><span class="color-orange"> Matéria Prima</span>
-							<div class="large">{{materia_prima | floatformat:2}}</div>
-							<div class="text-muted">R$ / {{unidade}}</div>							
+				</a>			
+				<a href="{% url 'consumo_material_list' %}?setor={{ setor.pk }}&periodo={{ periodo }}">				
+					<div class="col-xs-6 col-md-2 col-lg-2 no-padding">
+						<div class="panel panel-orange panel-widget border-right">
+							<div class="row no-padding"><span class="color-orange"> Matéria Prima</span>
+								<div class="large">{{materia_prima | floatformat:2}}</div>
+								<div class="text-muted">R$ / {{unidade}}</div>							
+							</div>
 						</div>
 					</div>
-				</div>
 				</a>
 				{% if setor.pk %}
 				<a href="{% url 'consumo_insumo_list' %}?setor={{ setor.pk }}&periodo={{ periodo }}">

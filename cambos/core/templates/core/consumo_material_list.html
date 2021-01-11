@@ -23,12 +23,14 @@
 {% block content %}		
 	<div class="col-12">
 		<div class="panel panel-default">
-			<div class="panel-heading"> <strong class="">Consumo de Material: <strong class="text-danger">R$ {{total}}</strong></strong></div>
+			<div class="panel-heading"> <strong class="">Consumo de Material: <strong class="text-danger">R$ {{total|floatformat:2}}</strong></strong></div>
 			<div class="panel-body">
 				<div id="toolbar">
+					{%if setor.id%}
 					<a href="{% url 'consumo_material_create' %}?setor={{ request.GET.setor }}&periodo={{ request.GET.periodo }}" class="btn btn-success">
 					  <i class="fa fa-plus"></i> Novo
 					</a>
+					{%endif%}
 				  </div>
 				<table id="table"				
 				 data-toolbar="#toolbar"
@@ -42,7 +44,11 @@
 				 data-sort-order="desc">
 					<thead>
 						<tr>
-							<th data-field="acao" class='text-center'></th>							
+							{%if setor.id%}
+							<th data-field="acao" class='text-center'></th>
+							{%else%}
+							<th data-field="setor" class='text-center'  data-sortable="true">Setor</th>
+							{%endif%}
 							<th data-field="material"  data-sortable="false" class='text-center'>Material</th>
 							<th data-field="origem" data-sortable="false" class='text-center'>origem</th>
 							<th data-field="quantidade" data-sortable="false" class='text-center'>Quant</th>
@@ -56,6 +62,7 @@
 					<tbody>
 						{% for data in producaojs %}						
 							<tr data-index="{{forloop.counter0}}" >
+								{%if setor.id%}
 								<td class='text-center'>
 									{% if data.id %}
 										<a href="{% url 'consumo_modal_update' data.id %}?setor={{ setor.id }}&periodo={{ periodo }}"
@@ -65,6 +72,9 @@
 										 class='text-success fa fa-pencil-square-o'></a>
 									{% endif %}
 								</td>
+								{%else%}
+								<td class='text-center' >{{data.setor}}</td>
+								{%endif%}
 								<td class='text-center' >{{data.material}}</td>
 								<td class='text-center'>{{data.origem}}</td>
 								<td class='text-center'>{{data.quantidade|floatformat:0}}</td>
@@ -83,15 +93,10 @@
 
 {% block script %}
 	<script>
-    	let option = document.getElementById('setor{{setor.id}}');
-		option.setAttribute('class', 'active');						
-	  </script>
-	<script>
-		$(document).ready(function(){            
-		  $(".consolidado").attr("class", "disabled");
-		  $(".disabled a").removeAttr("href");    		
-		  });
-	  </script>
+    	let option = document.getElementById('setor{{ request.GET.setor }}');
+		option.setAttribute('class', 'active');
+		
+	</script>
 
 	  
 {% endblock script %}
