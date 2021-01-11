@@ -42,14 +42,16 @@ class ProducaoForm(forms.ModelForm):
     
     def __init__(self, *args, **kwargs):        
         produzidos = kwargs.pop('produzidos', None)
+        origem = kwargs.pop('origem', None)
         super().__init__(*args, **kwargs)
 
         self.fields['material'].queryset = self.fields['material'].queryset.filter(            
-            tipo="Material"            
+            tipo="Material",
+            origem = origem
         ).order_by(
             'nome'
         ).exclude(
-            id__in = produzidos
+            id__in = produzidos            
         )
 
 

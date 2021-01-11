@@ -358,6 +358,8 @@ class ProducaoList(ListView):
         producao = producao_setor(setor, periodo.id)
         total = producao.aggregate(
             Sum('quantidade'))['quantidade__sum']
+        if not total:
+            total = 0
         
         lista = []   
         if setor == 0:
@@ -611,7 +613,7 @@ class DesempenhoList(ListView):
         else:            
             unidade_prod = 'metros'
         lista = []
-        opcoes= (
+        opcoes= [
             {'item':'capacidade_total',
             'nome':'Capacidade Total',
             'un': unidade_prod},
@@ -620,41 +622,52 @@ class DesempenhoList(ListView):
             'un': 'dias'},
             {'item':'headcount',
             'nome':'Colaboradores',
-            'un': 'Pessoas'},
-            {'item':'expedidores',
-            'nome':'Expedidores',
-            'un': 'Pessoas'},
-            {'item':'revisores',
-            'nome':'Revisores',
-            'un': 'Pessoas'},
+            'un': 'Pessoas'},                        
             {'item':'setup',
             'nome':'Setup',
-            'un': 'horas'},
-            {'item':'carga_descarga',
-            'nome':'Carga e descarga',
-            'un': 'horas'},
+            'un': 'horas'},            
             {'item':'manutencao_corretiva',
             'nome':'Manutenção Corretiva',
             'un': 'horas'},
             {'item':'manutencao_preventiva',
             'nome':'Manutenção Preventiva',
-            'un': 'horas'},
-            {'item':'total_alvejado',
-            'nome':'Total Alvejado',
-            'un': unidade_prod},
-            {'item':'total_chamuscado',
-            'nome':'Total Chamuscado',
-            'un': unidade_prod},            
-            {'item':'total_expedido',
-            'nome':'Total Expedido',
-            'un': unidade_prod},
-            {'item':'total_recebido',
-            'nome':'Total Recebido',
-            'un': unidade_prod},
-            {'item':'total_tingido',
-            'nome':'Total Tingido',
-            'un': unidade_prod},
-        )        
+            'un': 'horas'},            
+        ]        
+        if setor.nome == "Expedição":
+            opcoes.append(
+                {'item':'expedidores',
+                'nome':'Expedidores',
+                'un': 'Pessoas'})
+            opcoes.append(
+                {'item':'total_recebido',
+                'nome':'Total Recebido',
+                'un': unidade_prod})
+            opcoes.append(
+                {'item':'total_expedido',
+                'nome':'Total Expedido',
+                'un': unidade_prod})
+            opcoes.append(
+                {'item':'carga_descarga',
+                'nome':'Carga e descarga',
+                'un': 'horas'})
+
+        if setor.nome == "Revisão":
+            opcoes.append({'item':'revisores',
+            'nome':'Revisores',
+            'un': 'Pessoas'}),
+        if setor.nome == "Acabamento":
+            opcoes.append(
+                {'item':'total_chamuscado',
+                'nome':'Total Chamuscado',
+                'un': unidade_prod})
+            opcoes.append(
+                {'item':'total_alvejado',
+                'nome':'Total Alvejado',
+                'un': unidade_prod})
+            opcoes.append(
+                {'item':'total_tingido',
+                'nome':'Total Tingido',
+                'un': unidade_prod})
         try:                   
             desempenho = Desempenho.objects.get(
                 periodo = periodo.id,

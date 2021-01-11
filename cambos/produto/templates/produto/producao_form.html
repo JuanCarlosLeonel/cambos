@@ -56,7 +56,7 @@
                 <input type="submit" class="btn btn-success" value="Salvar"  />
                 {% if object  %}
                 <a href="{% url 'producao_delete_cbv' object.pk %}?setor={{ setor.id }}&periodo={{ periodo }}" type="button" class="btn btn-danger">Deletar</a>                
-                {% else %}
+                {% elif novo_registro %}
                 <a href="{% url 'producao_material_create' %}?setor={{ setor.id }}&periodo={{ periodo }}" type="button" class="btn btn-info">Novo Material</a>                
                 {% endif %}
               </div>

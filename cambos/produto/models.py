@@ -66,7 +66,7 @@ class Material(models.Model):
     inativo      = models.BooleanField(default=False)
 
     def __str__(self):
-        return f'{self.nome}'
+        return f'{self.nome} - ({self.origem})'
     
     class Meta:
         verbose_name_plural = "Materiais"

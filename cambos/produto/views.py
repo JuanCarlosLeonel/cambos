@@ -83,6 +83,7 @@ class ProducaoCreate(CreateView):
         context = super().get_context_data(**kwargs)                
         periodo = get_periodo(self)
         setor = get_setor(self)                
+        context['novo_registro'] = True
         context['periodo'] = periodo.nome
         context['setor'] = setor
         return context
@@ -94,8 +95,13 @@ class ProducaoCreate(CreateView):
         produzidos = Producao.objects.filter(
             periodo = periodo.id,
             setor = setor.id
-        ).values('material__id')
+        ).values('material__id')        
+        if setor.id < 5:
+            origem = setor.nome            
+        else:
+            origem = "Tecelagem"
         kwargs['produzidos'] = produzidos
+        kwargs['origem'] = origem
         return kwargs
     
     def get_initial(self, *args, **kwargs):

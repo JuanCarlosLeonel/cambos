@@ -46,7 +46,58 @@
                             {% if field.help_text %}<div class="form-helptext">{{ field.help_text }}</div>{% endif %}                    
                         </div>
                     {% endfor %}
-                    {{form}}
+                    {{ form.capacidade_total.label_tag }}
+                    {{form.capacidade_total}}
+                    <br>
+                    {{form.dias_trabalhados.label_tag }}
+                    {{form.dias_trabalhados}}
+                    <br>
+                    {{form.total_planejado.label_tag }}
+                    {{form.total_planejado}}
+                    <br>
+                    {{form.headcount.label_tag }}
+                    {{form.headcount}}
+                    <br>
+                                        
+                    {{form.setup.label_tag }}
+                    {{form.setup}}
+                    <br>                    
+                    {{form.manutencao_corretiva.label_tag }}
+                    {{form.manutencao_corretiva}}
+                    <br>
+                    {{form.manutencao_preventiva.label_tag }}
+                    {{form.manutencao_preventiva}}
+                    <br>                    
+                    {% if setor.nome == "Expedição" %}
+                        {{form.expedidores.label_tag }}
+                        {{form.expedidores}}
+                        <br>
+                        {{form.total_expedido.label_tag }}
+                        {{form.total_expedido}}
+                        <br>
+                        {{form.total_recebido.label_tag }}
+                        {{form.total_recebido}}
+                        <br>
+                        {{form.carga_descarga.label_tag }}
+                        {{form.carga_descarga}}
+                        <br>
+
+                    {% elif setor.nome == "Revisão" %}
+                        {{form.revisores.label_tag }}
+                        {{form.revisores}}
+                        <br>
+                    {% elif setor.nome == "Acabamento" %}
+                        {{form.total_alvejado.label_tag }}
+                        {{form.total_alvejado}}
+                        <br>
+                        {{form.total_chamuscado.label_tag }}
+                        {{form.total_chamuscado}}
+                        <br>                    
+                        {{form.total_tingido.label_tag }}
+                        {{form.total_tingido}}
+                        <br>
+                    {% endif%}
+
               </div>
               <div class="modal-footer">
                 <a href="javascript:void(0)" onClick="history.go(-1); return false;" type="button" class="btn btn-primary">Retornar</a>
