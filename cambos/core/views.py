@@ -384,7 +384,7 @@ class ProducaoList(ListView):
             percentual = 0
             id_producao = ''
             id_material = material.id
-            for item in producao:
+            for item in producao.distinct('material'):
                 if item.material.id == material.id:
                     quantidade = item.quantidade
                     percentual = (item.quantidade / total) * 100
@@ -478,11 +478,7 @@ class ConsumoMaterialList(ListView):
                 material__tipo="Material",
                 material__origem="Compra"
             )
-            historico = Consumo.objects.filter(
-                periodo=periodo.id,
-                material__tipo="Material",
-                material__origem="Compra"
-            )
+            historico = consumo
         else:
             consumo = Consumo.objects.filter(
                 setor=setor,
@@ -565,22 +561,20 @@ class ConsumoInsumoList(ListView):
                 periodo=periodo.id,
                 material__tipo="Insumo",
             )
+            historico = consumo
         else:
             consumo = Consumo.objects.filter(
                 setor=setor,
                 periodo=periodo.id,
                 material__tipo="Insumo",
             )
-        lista = []
-        if setor == 0:
-            historico = Consumo.objects.filter(            
-            material__tipo="Insumo",
-        )
-        else:
+
             historico = Consumo.objects.filter(
             setor=setor,
             material__tipo="Insumo",
-        ).distinct('material')        
+        ).distinct('material') 
+
+        lista = []            
         quantidade = 0
         preco = 0
         total = 0
