@@ -187,7 +187,8 @@ def preco_material_periodo(setor, id_periodo):
     if setor == 0:
         lista_consumo = Consumo.objects.filter(
             periodo=id_periodo,
-            material__tipo="Material"
+            material__tipo="Material",
+            material__origem="Compra"
         )
     else:
         lista_consumo = Consumo.objects.filter(
@@ -303,26 +304,26 @@ class Index(TemplateView):
         except:
             eficiencia = 0
 
-        custo = custo_setor(setor, periodo.id)['custo_total']
+        custo = custo_setor(setor, periodo)['custo_total']
         try:
             custo_un = custo / producao
         except:
             custo_un = 0
 
-        perda = perda_setor(setor, periodo.id).aggregate(
+        perda = perda_setor(setor, periodo).aggregate(
             Sum('quantidade'))['quantidade__sum']
         try:
             perda_un = (perda / producao) * 100
         except:
             perda_un = 0
 
-        insumo = compra_setor(setor, periodo.id)['total_insumo']
+        insumo = compra_setor(setor, periodo)['total_insumo']
         try:
             insumo_un = insumo / producao
         except:
             insumo_un = 0
 
-        valor_consumo_material = preco_material_periodo(setor, periodo.id)
+        valor_consumo_material = preco_material_periodo(setor, periodo)
         try:
             materia_prim_un = valor_consumo_material / producao
         except:
@@ -383,7 +384,7 @@ class ProducaoList(ListView):
             percentual = 0
             id_producao = ''
             id_material = material.id
-            for item in producao.distinct('material'):
+            for item in producao:
                 if item.material.id == material.id:
                     quantidade = item.quantidade
                     percentual = (item.quantidade / total) * 100
@@ -474,7 +475,13 @@ class ConsumoMaterialList(ListView):
         if setor == 0:
             consumo = Consumo.objects.filter(
                 periodo=periodo.id,
-                material__tipo="Material"
+                material__tipo="Material",
+                material__origem="Compra"
+            )
+            historico = Consumo.objects.filter(
+                periodo=periodo.id,
+                material__tipo="Material",
+                material__origem="Compra"
             )
         else:
             consumo = Consumo.objects.filter(
@@ -482,17 +489,11 @@ class ConsumoMaterialList(ListView):
                 periodo=periodo.id,
                 material__tipo="Material"
             )
-        lista = []
-        if setor == 0:
-            historico = Consumo.objects.filter(
-                periodo=periodo.id,
-                material__tipo="Material"
-            ).distinct('material')
-        else:
             historico = Consumo.objects.filter(
                 setor=setor,
                 material__tipo="Material"
             ).distinct('material')
+        lista = []            
 
         quantidade = 0
         preco = 0
@@ -574,7 +575,7 @@ class ConsumoInsumoList(ListView):
         if setor == 0:
             historico = Consumo.objects.filter(            
             material__tipo="Insumo",
-        ).distinct('material')
+        )
         else:
             historico = Consumo.objects.filter(
             setor=setor,
