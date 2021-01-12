@@ -1,6 +1,8 @@
 from django.shortcuts import render
 from django.views.generic.edit import UpdateView, CreateView, DeleteView
 from django.urls import reverse_lazy
+from django.utils.decorators import method_decorator
+from django.contrib.auth.decorators import login_required
 from .models import (
     Producao,
     Material,
@@ -25,12 +27,14 @@ from .form import (
     PerdaModalForm
 )
 
+
 def get_periodo(self):
     try:
         periodo = Periodo.objects.get(nome = self.request.GET.get('periodo', None))
     except:
         periodo = Periodo.objects.latest('periodo')
     return periodo
+
 
 def get_setor(self):
     try:
@@ -40,6 +44,7 @@ def get_setor(self):
     return setor
 
 
+@method_decorator(login_required, name='dispatch')
 class ProducaoModalCreate(CreateView):
     model = Producao
     form_class = ProducaoModalForm
@@ -70,6 +75,7 @@ class ProducaoModalCreate(CreateView):
         return initial
 
 
+@method_decorator(login_required, name='dispatch')
 class ProducaoCreate(CreateView):
     model = Producao
     form_class = ProducaoForm
@@ -113,6 +119,7 @@ class ProducaoCreate(CreateView):
         return initial
 
 
+@method_decorator(login_required, name='dispatch')
 class ProducaoModalUpdate(UpdateView):
     model = Producao
     form_class = ProducaoModalForm
@@ -133,6 +140,7 @@ class ProducaoModalUpdate(UpdateView):
         return context
 
 
+@method_decorator(login_required, name='dispatch')
 class ProducaoDelete(DeleteView):
     model = Producao 
 
@@ -152,6 +160,7 @@ class ProducaoDelete(DeleteView):
         return '/core/producao_list' + f'?setor={setor.id}&periodo={periodo.nome}'
 
 
+@method_decorator(login_required, name='dispatch')
 class ProducaoMaterialCreate(CreateView):
     model = Material
     form_class = MaterialProducaoForm
@@ -187,6 +196,7 @@ class ProducaoMaterialCreate(CreateView):
         return initial
 
 
+@method_decorator(login_required, name='dispatch')
 class DesempenhoCreate(CreateView):
     model = Desempenho
     form_class = DesempenhoForm
@@ -224,6 +234,7 @@ class DesempenhoCreate(CreateView):
         return kwargs
 
 
+@method_decorator(login_required, name='dispatch')
 class DesempenhoUpdate(UpdateView):
     model = Desempenho
     form_class = DesempenhoForm
@@ -243,6 +254,7 @@ class DesempenhoUpdate(UpdateView):
         return context
 
 
+@method_decorator(login_required, name='dispatch')
 class CustoCreate(CreateView):
     model = Custo
     form_class = CustoForm
@@ -277,6 +289,7 @@ class CustoCreate(CreateView):
         return initial
 
 
+@method_decorator(login_required, name='dispatch')
 class CustoUpdate(UpdateView):
     model = Custo
     form_class = CustoForm
@@ -295,6 +308,7 @@ class CustoUpdate(UpdateView):
         return context
 
 
+@method_decorator(login_required, name='dispatch')
 class ConsumoModalCreate(CreateView):
     model = Consumo
     form_class = ConsumoModalForm
@@ -326,6 +340,7 @@ class ConsumoModalCreate(CreateView):
         return initial
 
 
+@method_decorator(login_required, name='dispatch')
 class ConsumoCreate(CreateView):
     model = Consumo
     form_class = ConsumoForm
@@ -367,6 +382,7 @@ class ConsumoCreate(CreateView):
         return initial
 
 
+@method_decorator(login_required, name='dispatch')
 class ConsumoModalUpdate(UpdateView):
     model = Consumo
     form_class = ConsumoModalForm
@@ -388,6 +404,7 @@ class ConsumoModalUpdate(UpdateView):
         return context
 
 
+@method_decorator(login_required, name='dispatch')
 class ConsumoDelete(DeleteView):
     model = Consumo
 
@@ -407,6 +424,7 @@ class ConsumoDelete(DeleteView):
         return '/core/consumo_material_list' + f'?setor={setor.id}&periodo={periodo.nome}'
 
 
+@method_decorator(login_required, name='dispatch')
 class MaterialConsumoCreate(CreateView):
     model = Material
     form_class = MaterialConsumoForm
@@ -433,6 +451,7 @@ class MaterialConsumoCreate(CreateView):
         return initial
 
 
+@method_decorator(login_required, name='dispatch')
 class InsumoModalCreate(CreateView):
     model = Consumo
     form_class = ConsumoModalForm
@@ -464,6 +483,7 @@ class InsumoModalCreate(CreateView):
         return initial
 
 
+@method_decorator(login_required, name='dispatch')
 class InsumoCreate(CreateView):
     model = Consumo
     form_class = ConsumoForm
@@ -504,6 +524,7 @@ class InsumoCreate(CreateView):
         return initial
 
 
+@method_decorator(login_required, name='dispatch')
 class InsumoModalUpdate(UpdateView):
     model = Consumo
     form_class = ConsumoModalForm
@@ -525,6 +546,7 @@ class InsumoModalUpdate(UpdateView):
         return context
 
 
+@method_decorator(login_required, name='dispatch')
 class InsumoDelete(DeleteView):
     model = Consumo
 
@@ -544,6 +566,7 @@ class InsumoDelete(DeleteView):
         return '/core/consumo_insumo_list' + f'?setor={setor.id}&periodo={periodo.nome}'
 
 
+@method_decorator(login_required, name='dispatch')
 class MaterialInsumoCreate(CreateView):
     model = Material
     form_class = MaterialConsumoForm
@@ -571,6 +594,7 @@ class MaterialInsumoCreate(CreateView):
         return initial
 
 
+@method_decorator(login_required, name='dispatch')
 class PerdaModalCreate(CreateView):
     model = Perda
     form_class = PerdaModalForm
@@ -602,6 +626,7 @@ class PerdaModalCreate(CreateView):
         return initial
 
 
+@method_decorator(login_required, name='dispatch')
 class PerdaModalUpdate(UpdateView):
     model = Perda
     form_class = PerdaModalForm
@@ -623,6 +648,7 @@ class PerdaModalUpdate(UpdateView):
         return context
 
 
+@method_decorator(login_required, name='dispatch')
 class PerdaDelete(DeleteView):
     model = Perda
 
