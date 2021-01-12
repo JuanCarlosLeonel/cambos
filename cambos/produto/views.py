@@ -450,6 +450,11 @@ class MaterialConsumoCreate(CreateView):
         initial['tipo'] = 'Material'           
         return initial
 
+    def get_form_kwargs(self):        
+        kwargs = super().get_form_kwargs()        
+        kwargs['material_tipo'] = "Material"        
+        return kwargs
+    
 
 @method_decorator(login_required, name='dispatch')
 class InsumoModalCreate(CreateView):
@@ -500,6 +505,7 @@ class InsumoCreate(CreateView):
         context['periodo'] = periodo.nome
         context['setor'] = setor
         context['tipo'] = "Insumo"
+        context['novo_registro'] = True  
         return context
     
     def get_form_kwargs(self):
@@ -592,7 +598,12 @@ class MaterialInsumoCreate(CreateView):
         initial['tipo'] = 'Insumo'           
         initial['origem'] = 'Compra'           
         return initial
-
+    
+    def get_form_kwargs(self):        
+        kwargs = super().get_form_kwargs()        
+        kwargs['material_tipo'] = "Insumo"        
+        return kwargs
+        
 
 @method_decorator(login_required, name='dispatch')
 class PerdaModalCreate(CreateView):

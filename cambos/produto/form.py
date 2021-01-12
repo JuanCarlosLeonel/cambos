@@ -156,7 +156,7 @@ class DesempenhoForm(forms.ModelForm):
         if setor == "Revisão":
             self.fields['revisores'].widget = forms.NumberInput(attrs={'class':'form-control'})                               
         if setor == "Acabamento":
-            self.fields['total_chamuscado'].widget = forms.NumberInput(attrs={'class':'form-control'})                               
+            forms.Select(attrs={'class':'form-control'}),                             
             self.fields['total_alvejado'].widget = forms.NumberInput(attrs={'class':'form-control'})                              
             self.fields['total_tingido'].widget = forms.NumberInput(attrs={'class':'form-control'})                                         
         if setor == "Tecelagem":
@@ -226,10 +226,17 @@ class MaterialConsumoForm(forms.ModelForm):
         widgets = {                         
             'cod': forms.NumberInput(attrs={'class':'form-control'}),
             'nome': forms.TextInput(attrs={'class':'form-control'}),
-            'origem': forms.Select(attrs={'class':'form-control'}),
+            'origem': forms.Select(attrs={'class':'form-control'}), 
             'tipo': forms.HiddenInput(),
             'unidade': forms.Select(attrs={'class':'form-control'}),
         }
+
+    def __init__(self, *args, **kwargs):
+        material_tipo = kwargs.pop('material_tipo', None)                
+        super().__init__(*args, **kwargs)
+        if material_tipo == "Insumo":
+            self.fields['origem'].widget = forms.HiddenInput()            
+            
 
 
 class PerdaModalForm(forms.ModelForm):

@@ -402,8 +402,7 @@ class ProducaoList(ListView):
         if setor == 0:
             setor = {
                 'nome': 'Consolidado',
-            }
-        context['historico'] = historico
+            }        
         context['producaojs'] = sorted(lista, key=lambda x: x['quantidade'], reverse=True)
         context['producao'] = total
         context['periodo'] = periodo.nome
@@ -544,8 +543,7 @@ class ConsumoMaterialList(ListView):
             setor = {
                 'nome': 'Consolidado',
             }
-        context['total'] = total
-        context['historico'] = historico
+        context['total'] = total        
         context['producaojs'] = sorted(lista, key=lambda x: x['valor'], reverse=True)
         context['periodo'] = periodo.nome
         context['setor'] = setor
@@ -561,16 +559,27 @@ class ConsumoInsumoList(ListView):
         context = super().get_context_data(**kwargs)
         periodo = get_periodo(self)
         setor = get_setor(self)
-        consumo = Consumo.objects.filter(
-            setor=setor,
-            periodo=periodo.id,
-            material__tipo="Insumo",
-        )
+        if setor == 0:
+            consumo = Consumo.objects.filter(                
+                periodo=periodo.id,
+                material__tipo="Insumo",
+            )
+        else:
+            consumo = Consumo.objects.filter(
+                setor=setor,
+                periodo=periodo.id,
+                material__tipo="Insumo",
+            )
         lista = []
-        historico = Consumo.objects.filter(
-            setor=setor,
+        if setor == 0:
+            historico = Consumo.objects.filter(            
             material__tipo="Insumo",
         ).distinct('material')
+        else:
+            historico = Consumo.objects.filter(
+            setor=setor,
+            material__tipo="Insumo",
+        ).distinct('material')        
         quantidade = 0
         preco = 0
         total = 0
@@ -609,10 +618,14 @@ class ConsumoInsumoList(ListView):
                     'percentual': percentual,
                     'valor': valor,
                     'id': id_consumo,
-                    'id_material': id_material
+                    'id_material': id_material,
+                    'setor': item.setor.nome
                 })
-
-        context['historico'] = historico
+        if setor == 0:
+            setor = {
+                'nome': 'Consolidado',
+            } 
+        context['total'] = total        
         context['producaojs'] = sorted(lista, key=lambda x: x['valor'], reverse=True)
         context['periodo'] = periodo.nome
         context['setor'] = setor

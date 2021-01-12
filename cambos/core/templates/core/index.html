@@ -55,20 +55,16 @@
 							</div>
 						</div>
 					</div>
-				</a>
-				{% if setor.pk %}
-				<a href="{% url 'consumo_insumo_list' %}?setor={{ setor.pk }}&periodo={{ periodo }}">
-				{%else%}
-				<a href=""></a>
-				{%endif%}
-				<div class="col-xs-6 col-md-2 col-lg-2 no-padding">
-					<div class="panel panel-orange panel-widget border-right">
-						<div class="row no-padding"><span class="color-orange"> Insumos</span>
-							<div class="large">{{insumo | floatformat:2}}</div>
-							<div class="text-muted"> R$ / {{unidade}} </div>							
+				</a>				
+				<a href="{% url 'consumo_insumo_list' %}?setor={{ setor.pk }}&periodo={{ periodo }}">				
+					<div class="col-xs-6 col-md-2 col-lg-2 no-padding">
+						<div class="panel panel-orange panel-widget border-right">
+							<div class="row no-padding"><span class="color-orange"> Insumos</span>
+								<div class="large">{{insumo | floatformat:2}}</div>
+								<div class="text-muted"> R$ / {{unidade}} </div>							
+							</div>
 						</div>
 					</div>
-				</div>
 				</a>
 				{% if setor.pk %}
 				<a href="{% url 'custo_list' %}?setor={{ setor.pk }}&periodo={{ periodo }}">
