@@ -23,18 +23,20 @@
 {% block content %}		
 	<div class="col-12">
 		<div class="panel panel-default">
-			<div class="panel-heading"> <strong class="">Custos</strong></div>
+			<div class="panel-heading"> <strong class="">Custos: <strong class="text-danger">R$ {{total|floatformat:2}}</strong></strong></div>
 			<div class="panel-body">
 				<div id="toolbar">
-					{% if lancado %}
-					<a href="{% url 'custo_update' lancado %}?setor={{ request.GET.setor }}&periodo={{ request.GET.periodo }}" class="btn btn-primary">
-					  <i class="fa fa-pencil"></i> Editar
-					</a>
-					{% else %}
-					<a href="{% url 'custo_create' %}?setor={{ request.GET.setor }}&periodo={{ request.GET.periodo }}" class="btn btn-danger">
-						<i class="fa fa-plus"></i> Lançar!
-					  </a>
-					{% endif%}
+					{%if setor.pk %}
+						{% if lancado %}
+						<a href="{% url 'custo_update' lancado %}?setor={{ request.GET.setor }}&periodo={{ request.GET.periodo }}" class="btn btn-primary">
+						<i class="fa fa-pencil"></i> Editar
+						</a>
+						{% else %}
+						<a href="{% url 'custo_create' %}?setor={{ request.GET.setor }}&periodo={{ request.GET.periodo }}" class="btn btn-danger">
+							<i class="fa fa-plus"></i> Lançar!
+						</a>
+						{% endif%}
+					{%endif%}
 				  </div>
 				<table id="table"				
 				 data-toolbar="#toolbar"
@@ -47,9 +49,13 @@
 				 data-pagination="false"				 
 				 data-sort-order="desc">
 					<thead>
-						<tr>							
-							<th data-field="item"  data-sortable="false" class='text-center'>custo</th>
-							<th data-field="valor" data-sortable="false" class='text-center'>valor</th>							
+						<tr>
+							{%if setor.pk %}							
+								<th data-field="item"  data-sortable="false" class='text-center'>Custo</th>
+							{%else%}
+								<th data-field="item"  data-sortable="false" class='text-center'>Setor</th>
+							{%endif%}
+							<th data-field="valor" data-sortable="false" class='text-center'>Valor</th>							
 						</tr>
 					</thead>
 					<tbody>
@@ -70,13 +76,7 @@
 
 {% block script %}
 	<script>
-    	let option = document.getElementById('setor{{setor.id}}');
+    	let option = document.getElementById('setor{{ request.GET.setor }}');
 		option.setAttribute('class', 'active');						
-	  </script>
-	  <script>
-		$(document).ready(function(){            
-		  $(".consolidado").attr("class", "disabled");
-		  $(".disabled a").removeAttr("href");    		
-		  });
-	  </script>
+	  </script>	  
 {% endblock script %}

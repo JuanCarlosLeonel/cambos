@@ -73,13 +73,9 @@ def perda_setor(setor, id_periodo):
 def custo_setor(setor, id_periodo):
     if setor == 0:
         custo_total = 0
-        try:
-            custo_lista = Custo.objects.filter(periodo=periodo)
-        except:
-            custo_lista = Custo.objects.filter()
+        custo_lista = Custo.objects.filter(periodo=id_periodo)
         for custo in custo_lista:
             custo_total += custo.energia + custo.laboratorio + custo.manutencao + custo.material_uso_continuo + custo.mao_de_obra + custo.vapor + custo.agua
-
     else:
         try:
             custo = Custo.objects.get(
@@ -792,52 +788,64 @@ class CustoList(ListView):
         context = super().get_context_data(**kwargs)
         periodo = get_periodo(self)
         setor = get_setor(self)
-
         lista = []
-        opcoes = (
-            {'item': 'energia',
-             'nome': 'Energia',
-             },
-            {'item': 'laboratorio',
-             'nome': 'Laboratório',
-             },
-            {'item': 'manutencao',
-             'nome': 'Manutenção',
-             },
-            {'item': 'mao_de_obra',
-             'nome': 'Mão de Obra',
-             },
-            {'item': 'material_uso_continuo',
-             'nome': 'Material de Uso Contínuo',
-             },
-            {'item': 'vapor',
-             'nome': 'Vapor',
-             },
-            {'item': 'agua',
-             'nome': 'Água',
-             },
-        )
-        try:
-            custo = Custo.objects.get(
-                periodo=periodo.id,
-                setor=setor
+        if setor == 0:            
+            setores = Setor.objects.filter(divisao= "Têxtil")
+            total = custo_setor(setor, periodo)['custo_total']
+            for setor in setores:
+                item = setor.nome
+                valor = custo_setor(setor, periodo)['custo_total']                
+                lista.append({'item': item, 'valor': valor})
+            lista = sorted(lista, key=lambda x: x['valor'], reverse=True)
+            setor = {
+                'nome': 'Consolidado',
+            }
+        else:
+            opcoes = (
+                {'item': 'energia',
+                'nome': 'Energia',
+                },
+                {'item': 'laboratorio',
+                'nome': 'Laboratório',
+                },
+                {'item': 'manutencao',
+                'nome': 'Manutenção',
+                },
+                {'item': 'mao_de_obra',
+                'nome': 'Mão de Obra',
+                },
+                {'item': 'material_uso_continuo',
+                'nome': 'Material de Uso Contínuo',
+                },
+                {'item': 'vapor',
+                'nome': 'Vapor',
+                },
+                {'item': 'agua',
+                'nome': 'Água',
+                },
             )
-            lancado = custo.pk
-        except:
-            custo = ''
-            lancado = False
-        for opcao in opcoes:
-            item = opcao['nome']
-            if custo:
-                valor = getattr(custo, opcao['item'])
-            else:
-                valor = 0
-            if valor is None:
-                valor = 0
-            else:
-                valor = int(valor)
-            lista.append({'item': item, 'valor': valor})
-        context['lancado'] = lancado
+            try:
+                custo = Custo.objects.get(
+                    periodo=periodo.id,
+                    setor=setor
+                )
+                lancado = custo.pk
+            except:
+                custo = ''
+                lancado = False
+            total = 0
+            for opcao in opcoes:
+                item = opcao['nome']
+                if custo:
+                    valor = getattr(custo, opcao['item'])
+                    total += valor
+                else:
+                    valor = 0
+                if valor is None:
+                    valor = 0                
+                lista.append({'item': item, 'valor': valor})
+            context['lancado'] = lancado
+        context['total'] = total
         context['data'] = lista
         context['periodo'] = periodo.nome
         context['setor'] = setor
