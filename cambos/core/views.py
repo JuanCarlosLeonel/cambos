@@ -15,7 +15,7 @@ from produto.models import (
     Custo
 )
 from .form import UserCreationForm
-from django.db.models import Sum, Count
+from django.db.models import Sum, Count, Q
 from django.urls import reverse_lazy
 
 
@@ -355,8 +355,9 @@ class ProducaoList(TemplateView):
             origem = "Tecelagem"
 
         historico = Producao.objects.filter(
-            material__origem=origem,
-            periodo__id= periodo.id - 1
+            Q(material__origem=origem,),                
+            Q(periodo__id= periodo.id - 1) |
+            Q(periodo__id= periodo.id)                        
         ).distinct('material')
 
         for material in historico:
@@ -510,9 +511,11 @@ class ConsumoMaterialList(ListView):
                 material__tipo="Material"
             )
             historico = Consumo.objects.filter(
-                setor=setor,
-                material__tipo="Material",
-                periodo__id= periodo.id - 1
+                Q(setor=setor),
+                Q(material__tipo="Material"),
+                Q(periodo__id= periodo.id - 1)|
+                Q(periodo__id= periodo.id)
+                
             ).distinct('material')        
         
             for consumido in consumo:
@@ -619,9 +622,11 @@ class ConsumoInsumoList(ListView):
             )
 
             historico = Consumo.objects.filter(
-                setor=setor,
-                material__tipo="Insumo",
-                periodo__id= periodo.id - 1
+                Q(setor=setor),
+                Q(material__tipo="Insumo"),
+                Q(periodo__id= periodo.id - 1)|
+                Q(periodo__id= periodo.id)
+                
             ).distinct('material') 
         
             for consumido in consumo:
