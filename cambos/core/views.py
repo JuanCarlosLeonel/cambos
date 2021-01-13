@@ -88,8 +88,7 @@ def custo_setor(setor, id_periodo):
     return {'custo_total': custo_total}
 
 
-def compra_setor(setor, id_periodo):
-    lista = []
+def compra_setor(setor, id_periodo):    
     if setor == 0:
         consumo = Consumo.objects.filter(
             periodo=id_periodo,
@@ -110,21 +109,41 @@ def compra_setor(setor, id_periodo):
             try:
                 preco = ValorCompra.objects.filter(material__id=item.material.id).latest('periodo').valor
             except:
-                preco = 0
-        lista.append({
-            'tipo': item.material.tipo,
-            'material': item.material,
-            'quantidade': item.quantidade,
-            'valor': preco,
-            'total': preco * item.quantidade
-        })
+                preco = 0        
         if item.material.tipo == "Insumo":
             total_insumo += preco * item.quantidade
         elif item.material.tipo == "Material":
             total_material += preco * item.quantidade
 
-    return {'lista': lista, 'total_insumo': total_insumo, 'total_material': total_material}
+    return {'total_insumo': total_insumo, 'total_material': total_material}
 
+def compra_insumo_setor(setor, id_periodo):    
+    if setor == 0:
+        consumo = Consumo.objects.filter(
+            periodo=id_periodo,
+            material__origem="Compra",
+            material__tipo="Insumo",
+        )
+    else:
+        consumo = Consumo.objects.filter(
+            setor=setor,
+            periodo=id_periodo,
+            material__origem="Compra",
+            material__tipo="Insumo",
+        )
+    total_insumo = 0    
+    for item in consumo:
+        try:
+            preco = ValorCompra.objects.get(material__id=item.material.id, periodo=id_periodo).valor
+        except:
+            try:
+                preco = ValorCompra.objects.filter(material__id=item.material.id).latest('periodo').valor
+            except:
+                preco = 0        
+        
+        total_insumo += preco * item.quantidade        
+
+    return total_insumo
 
 def preco_material(id_material, periodo):
     preco = 0
@@ -153,7 +172,7 @@ def preco_material(id_material, periodo):
         producao = producao_setor(setor_origem, periodo).aggregate(
             Sum('quantidade'))['quantidade__sum']
         if producao is None:
-            producao = producao_setor(setor_origem, periodo -1).aggregate(
+            producao = producao_setor(setor_origem, periodo.id -1).aggregate(
             Sum('quantidade'))['quantidade__sum']
         produto_interno = Consumo.objects.filter(
             periodo=periodo,
@@ -166,11 +185,11 @@ def preco_material(id_material, periodo):
             compra_setor_origem2 = compra_setor(setor_origem2, periodo)
             producao2 = producao_setor(setor_origem, periodo).aggregate(
                 Sum('quantidade'))['quantidade__sum']
-            preco2 = (custo_setor_origem2 + compra_setor_origem2['total_insumo'] + compra_setor_origem2[
-                'total_material']) / producao2
+            preco2 = (custo_setor_origem2 + compra_setor_origem2['total_insumo']
+             + compra_setor_origem2['total_material']) / producao2
         try:
-            preco = ((custo_setor_origem + compra_setor_origem['total_insumo'] + compra_setor_origem[
-                'total_material']) / producao) + preco2
+            preco = ((custo_setor_origem + compra_setor_origem['total_insumo']
+             + compra_setor_origem['total_material']) / producao) + preco2
         except:
             preco = 0
     return preco
@@ -224,7 +243,7 @@ def dash(nome_periodo, id_periodo, setor):
         if not producao:
             producao = 0
         try:
-            insumo = compra_setor(setor, id_periodo)['total_insumo'] / producao
+            insumo = compra_insumo_setor(setor, id_periodo) / producao
         except:
             insumo = 0
         try:
