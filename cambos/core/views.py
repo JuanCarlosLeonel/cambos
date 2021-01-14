@@ -17,6 +17,7 @@ from produto.models import (
 from .form import UserCreationForm
 from django.db.models import Sum, Count, Q
 from django.urls import reverse_lazy
+from django.db import connection
 
 
 class UserCreate(CreateView):
@@ -85,29 +86,30 @@ def custo_setor(setor, id_periodo):
         except:
             custo = Custo.objects.filter(setor=setor).latest('periodo')
         custo_total = custo.energia + custo.laboratorio + custo.manutencao + custo.material_uso_continuo + custo.mao_de_obra + custo.vapor + custo.agua
-    return {'custo_total': custo_total}
+    return custo_total
 
 
 def compra_setor(setor, id_periodo):    
     if setor == 0:
-        consumo = Consumo.objects.filter(
+        consumo = Consumo.objects.select_related('material').filter(
             periodo=id_periodo,
             material__origem="Compra",
         )
     else:
-        consumo = Consumo.objects.filter(
+        consumo = Consumo.objects.select_related('material').filter(
             setor=setor,
             periodo=id_periodo,
             material__origem="Compra",
         )
     total_insumo = 0
     total_material = 0
+    valor_compra = ValorCompra.objects.select_related('material').filter(material__id__in = consumo.values('material__id'))
     for item in consumo:
         try:
-            preco = ValorCompra.objects.get(material__id=item.material.id, periodo=id_periodo).valor
+            preco = valor_compra.get(material__id=item.material.id, periodo=id_periodo).valor
         except:
             try:
-                preco = ValorCompra.objects.filter(material__id=item.material.id).latest('periodo').valor
+                preco = valor_compra.filter(material__id=item.material.id).latest('periodo').valor
             except:
                 preco = 0        
         if item.material.tipo == "Insumo":
@@ -117,33 +119,33 @@ def compra_setor(setor, id_periodo):
 
     return {'total_insumo': total_insumo, 'total_material': total_material}
 
+
 def compra_insumo_setor(setor, id_periodo):    
     if setor == 0:
-        consumo = Consumo.objects.filter(
+        consumo = Consumo.objects.select_related('material').filter(
             periodo=id_periodo,
             material__origem="Compra",
             material__tipo="Insumo",
         )
     else:
-        consumo = Consumo.objects.filter(
+        consumo = Consumo.objects.select_related('material').filter(
             setor=setor,
             periodo=id_periodo,
             material__origem="Compra",
             material__tipo="Insumo",
         )
-    total_insumo = 0    
-    for item in consumo:
-        try:
-            preco = ValorCompra.objects.get(material__id=item.material.id, periodo=id_periodo).valor
-        except:
-            try:
-                preco = ValorCompra.objects.filter(material__id=item.material.id).latest('periodo').valor
-            except:
-                preco = 0        
-        
+    total_insumo = 0
+    valor_compra = ValorCompra.objects.select_related(
+        'material').filter(
+            material__id__in = consumo.values('material__id')).order_by(
+                'material', '-periodo').distinct(
+                    'material').annotate()
+    for item in valor_compra:
+        preco = item.valor
         total_insumo += preco * item.quantidade        
 
     return total_insumo
+
 
 def preco_material(id_material, periodo):
     preco = 0
@@ -151,7 +153,7 @@ def preco_material(id_material, periodo):
         id=id_material
     )
     if material.origem == "Compra":
-        valor_compra = ValorCompra.objects.filter(material=material)
+        valor_compra = ValorCompra.objects.select_related('material').filter(material=material)
         historico_compra = valor_compra.aggregate(
             Count('id'))['id__count']
         if historico_compra == 0:
@@ -166,7 +168,7 @@ def preco_material(id_material, periodo):
                 preco = ultima_compra
     else:
         setor_origem = Setor.objects.get(nome=material.origem)
-        custo_setor_origem = custo_setor(setor_origem, periodo)['custo_total']
+        custo_setor_origem = custo_setor(setor_origem, periodo)
         compra_setor_origem = compra_setor(setor_origem, periodo)
 
         producao = producao_setor(setor_origem, periodo).aggregate(
@@ -181,7 +183,7 @@ def preco_material(id_material, periodo):
         preco2 = 0
         for item in produto_interno:
             setor_origem2 = Setor.objects.get(nome=item.material.origem)
-            custo_setor_origem2 = custo_setor(setor_origem2, periodo)['custo_total']
+            custo_setor_origem2 = custo_setor(setor_origem2, periodo)
             compra_setor_origem2 = compra_setor(setor_origem2, periodo)
             producao2 = producao_setor(setor_origem, periodo).aggregate(
                 Sum('quantidade'))['quantidade__sum']
@@ -198,13 +200,13 @@ def preco_material(id_material, periodo):
 def preco_material_periodo(setor, id_periodo):
     total = 0
     if setor == 0:
-        lista_consumo = Consumo.objects.filter(
+        lista_consumo = Consumo.objects.select_related('material').filter(
             periodo=id_periodo,
             material__tipo="Material",
             material__origem="Compra"
         )
     else:
-        lista_consumo = Consumo.objects.filter(
+        lista_consumo = Consumo.objects.select_related('material').filter(
             setor=setor,
             periodo=id_periodo,
             material__tipo="Material"
@@ -247,7 +249,7 @@ def dash(nome_periodo, id_periodo, setor):
         except:
             insumo = 0
         try:
-            custo = custo_setor(setor, id_periodo)['custo_total'] / producao
+            custo = custo_setor(setor, id_periodo) / producao
         except:
             custo = 0
         try:
@@ -317,7 +319,7 @@ class Index(TemplateView):
         except:
             eficiencia = 0
 
-        custo = custo_setor(setor, periodo)['custo_total']
+        custo = custo_setor(setor, periodo)
         try:
             custo_un = custo / producao
         except:
@@ -345,7 +347,7 @@ class Index(TemplateView):
         dashboard = dash(periodo.nome, periodo.id, setor)
         if setor == 0:
             setor = {'nome': 'Consolidado'}
-
+        context['contagem'] = len(connection.queries)
         context['data1'] = dashboard['producao']
         context['data2'] = dashboard['custo']
         context['data3'] = dashboard['insumo']
@@ -821,7 +823,7 @@ class CustoList(ListView):
             total = custo_setor(setor, periodo)['custo_total']
             for setor in setores:
                 item = setor.nome
-                valor = custo_setor(setor, periodo)['custo_total']                
+                valor = custo_setor(setor, periodo)             
                 lista.append({'item': item, 'valor': valor})
             lista = sorted(lista, key=lambda x: x['valor'], reverse=True)
             setor = {
