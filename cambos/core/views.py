@@ -17,6 +17,7 @@ from produto.models import (
 from .form import UserCreationForm
 from django.db.models import Sum, Count, Q
 from django.urls import reverse_lazy
+from django.db import connection
 
 
 class UserCreate(CreateView):
@@ -45,12 +46,12 @@ def get_setor(self):
 
 def producao_setor(setor, id_periodo):
     if setor == 0:
-        producao = Producao.objects.filter(
+        producao = Producao.objects.select_related('material').filter(
             setor__nome="Revisão",
             periodo=id_periodo
         )
     else:
-        producao = Producao.objects.filter(
+        producao = Producao.objects.select_related('material').filter(
             setor=setor,
             periodo=id_periodo
         )
@@ -100,8 +101,7 @@ def compra_setor(setor, id_periodo):
             periodo=id_periodo,
             material__origem="Compra",
         )
-    total_insumo = 0
-    total_material = 0
+    total = 0
     for item in consumo:
         try:
             preco = ValorCompra.objects.get(material__id=item.material.id, periodo=id_periodo).valor
@@ -110,22 +110,20 @@ def compra_setor(setor, id_periodo):
                 preco = ValorCompra.objects.filter(material__id=item.material.id).latest('periodo').valor
             except:
                 preco = 0        
-        if item.material.tipo == "Insumo":
-            total_insumo += preco * item.quantidade
-        elif item.material.tipo == "Material":
-            total_material += preco * item.quantidade
+        
+        total += preco * item.quantidade
 
-    return {'total_insumo': total_insumo, 'total_material': total_material}
+    return total
 
 def compra_insumo_setor(setor, id_periodo):    
     if setor == 0:
-        consumo = Consumo.objects.filter(
+        consumo = Consumo.objects.select_related('material').filter(
             periodo=id_periodo,
             material__origem="Compra",
             material__tipo="Insumo",
         )
     else:
-        consumo = Consumo.objects.filter(
+        consumo = Consumo.objects.select_related('material').filter(
             setor=setor,
             periodo=id_periodo,
             material__origem="Compra",
@@ -185,11 +183,9 @@ def preco_material(id_material, periodo):
             compra_setor_origem2 = compra_setor(setor_origem2, periodo)
             producao2 = producao_setor(setor_origem, periodo).aggregate(
                 Sum('quantidade'))['quantidade__sum']
-            preco2 = (custo_setor_origem2 + compra_setor_origem2['total_insumo']
-             + compra_setor_origem2['total_material']) / producao2
+            preco2 = (custo_setor_origem2 + compra_setor_origem2) / producao2
         try:
-            preco = ((custo_setor_origem + compra_setor_origem['total_insumo']
-             + compra_setor_origem['total_material']) / producao) + preco2
+            preco = ((custo_setor_origem + compra_setor_origem) / producao) + preco2
         except:
             preco = 0
     return preco
@@ -275,6 +271,98 @@ def dash(nome_periodo, id_periodo, setor):
         'custo': custo_periodo
     }
 
+@method_decorator(login_required, name='dispatch')
+class Home(TemplateView):
+    template_name = 'core/index.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        periodo = get_periodo(self)
+        setor = get_setor(self)
+            
+        if not setor or setor == 0:
+            unidades = 'Metros'
+            unidade = 'Metro'
+
+        elif setor.id < 5:
+            unidades = 'Quilos'
+            unidade = 'Quilo'
+        else:
+            unidades = 'Metros'
+            unidade = 'Metro'
+
+        producao = producao_setor(setor, periodo.id)
+        producao_total = producao.aggregate(
+                Sum('quantidade')
+            )['quantidade__sum']
+    
+        try:
+            if setor == 0:
+                total_planejado = Desempenho.objects.get(
+                    setor__nome="Revisão",
+                    periodo=periodo.id
+                ).total_planejado
+            else:
+                total_planejado = Desempenho.objects.get(
+                    setor=setor,
+                    periodo=periodo.id
+                ).total_planejado
+        except:
+            total_planejado = 0
+
+        try:
+            eficiencia = (producao_total/ total_planejado) * 100
+        except:
+            eficiencia = 0
+
+        custo = custo_setor(setor, periodo)['custo_total']
+        try:
+            custo_un = custo / producao_total
+        except:
+            custo_un = 0
+
+        perda = perda_setor(setor, periodo).aggregate(
+            Sum('quantidade'))['quantidade__sum']
+        try:
+            perda_un = (perda / producao_total) * 100
+        except:
+            perda_un = 0
+
+        insumo = compra_insumo_setor(setor, periodo)
+        try:
+            insumo_un = insumo / producao_total
+        except:
+            insumo_un = 0
+
+        valor_consumo_material = preco_material_periodo(setor, periodo)
+        try:
+            materia_prim_un = valor_consumo_material / producao_total
+        except:
+            materia_prim_un = 0
+
+        dashboard = dash(periodo.nome, periodo.id, setor)
+        if setor == 0:
+            setor = {'nome': 'Consolidado'}
+
+        context['contagem'] = len(connection.queries)
+        context['materia_prima'] = materia_prim_un
+        context['insumo'] = insumo_un
+        context['perda'] = perda_un
+        context['custo'] = custo_un
+        context['eficiencia'] = eficiencia
+        context['unidade'] = unidade
+        context['unidades'] = unidades
+        context['producao'] = producao_total
+        context['periodo'] = periodo.nome
+        context['setor'] = setor
+        #dash
+        context['data1'] = dashboard['producao']
+        context['data2'] = dashboard['custo']
+        context['data3'] = dashboard['insumo']
+        context['data4'] = dashboard['material']
+        context['labels1'] = dashboard['label']
+        return context
+
 
 @method_decorator(login_required, name='dispatch')
 class Index(TemplateView):
@@ -330,7 +418,7 @@ class Index(TemplateView):
         except:
             perda_un = 0
 
-        insumo = compra_setor(setor, periodo)['total_insumo']
+        insumo = compra_insumo_setor(setor, periodo)['total_insumo']
         try:
             insumo_un = insumo / producao
         except:
@@ -345,7 +433,7 @@ class Index(TemplateView):
         dashboard = dash(periodo.nome, periodo.id, setor)
         if setor == 0:
             setor = {'nome': 'Consolidado'}
-
+        context['contagem'] = len(connection.queries)
         context['data1'] = dashboard['producao']
         context['data2'] = dashboard['custo']
         context['data3'] = dashboard['insumo']
