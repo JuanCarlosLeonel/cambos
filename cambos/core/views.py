@@ -395,18 +395,18 @@ class ProducaoList(ListView):
         ).distinct('material')
 
         for material in historico:
-            material_nome = material.nome
-            material_unidade = material.unidade
+            material_nome = material.material.nome
+            material_unidade = material.material.unidade
             quantidade = 0
             percentual = 0
             id_producao = ''
-            id_material = material.id
+            id_material = material.material.id
             for item in producao.distinct('material'):
-                if item.material.id == material.id:
+                if item.material.id == material.material.id:
                     quantidade = item.quantidade
                     percentual = (item.quantidade / total) * 100
                     id_producao = item.id
-            if material.inativo and quantidade == 0:
+            if material.material.inativo and quantidade == 0:
                 pass
             else:
                 lista.append({
