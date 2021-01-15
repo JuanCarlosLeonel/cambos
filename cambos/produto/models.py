@@ -116,6 +116,14 @@ class Consumo(models.Model):
     class Meta:
         verbose_name_plural = "Consumo"
 
+    @property
+    def valor(self):
+        if self.material.origem == "Compra":
+            preco = 0
+        else:
+            preco = 10
+        return preco
+
 
 class Perda(models.Model):
     

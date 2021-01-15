@@ -290,27 +290,41 @@ def dash2(nome_periodo, id_periodo, setor):
     label_total = []
     total_gastos = 0
     if setor == 0:
-        producao_ano = Producao.objects.select_related('material', 'setor', 'periodo').filter(        
+        producao_ano = Producao.objects.filter(        
             Q(setor__nome = "Revisão"),
+            Q(periodo__id__gt = id_periodo) |
+            Q(periodo__id__lt = id_periodo + 11)    
+        ).values('periodo').order_by('periodo').annotate(total=Sum('quantidade'))
+
+        consumo_ano = Consumo.objects.select_related('material', 'periodo').filter(            
             Q(periodo__id__gt = id_periodo) |
             Q(periodo__id__lt = id_periodo + 11)    
         )
     else:
-        producao_ano = Producao.objects.select_related('material', 'setor', 'periodo').filter(        
+        producao_ano = Producao.objects.filter(        
             Q(setor = setor),
             Q(periodo__id__gt = id_periodo) |
             Q(periodo__id__lt = id_periodo + 11)    
+        ).values('periodo').order_by('periodo').annotate(total=Sum('quantidade'))
+
+        consumo_ano = Consumo.objects.select_related('material', 'periodo').filter(
+            Q(setor = setor),            
+            Q(periodo__id__gt = id_periodo) |
+            Q(periodo__id__lt = id_periodo + 11)    
         )
+        insumo_ano = consumo_ano.filter(
+            material__tipo = "Insumo"
+        )
+
     while (p_fim < 12):
         p_fim += 1
         label_periodo.append(meses_abr[p_inicio])
-        
-        producao = producao_ano.filter(periodo = id_periodo).aggregate(
-            Sum('quantidade'))['quantidade__sum']
-        if not producao:
+        try:
+            producao = producao_ano.get(periodo = id_periodo)['total']
+        except:
             producao = 0
         try:
-            insumo = compra_insumo_setor(setor, id_periodo) / producao
+            insumo = compra_insumo_setor(setor, id_periodo)
         except:
             insumo = 0
         try:
@@ -339,7 +353,8 @@ def dash2(nome_periodo, id_periodo, setor):
         'producao': prod_periodo,
         'insumo': insumo_periodo,
         'material': material_periodo,
-        'custo': custo_periodo
+        'custo': custo_periodo,
+        'teste':consumo_ano
     }
 
 @method_decorator(login_required, name='dispatch')
@@ -412,6 +427,8 @@ class Home(TemplateView):
         if setor == 0:
             setor = {'nome': 'Consolidado'}
         
+        teste = dashboard['teste']
+
         context['contagem'] = len(connection.queries)
         context['materia_prima'] = materia_prim_un
         context['insumo'] = insumo_un
@@ -429,6 +446,7 @@ class Home(TemplateView):
         context['data3'] = dashboard['insumo']
         context['data4'] = dashboard['material']
         context['labels1'] = dashboard['label']
+        context['teste'] = teste
         return context
 
 
