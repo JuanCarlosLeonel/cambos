@@ -20,6 +20,7 @@ from django.urls import reverse_lazy
 from django.db import connection
 
 
+
 class UserCreate(CreateView):
     model = User
     form_class = UserCreationForm
@@ -272,6 +273,75 @@ def dash(nome_periodo, id_periodo, setor):
         'custo': custo_periodo
     }
 
+def dash2(nome_periodo, id_periodo, setor):
+    meses_abr = ["Jan", "fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dez"]
+    periodo_ind = meses_abr.index(nome_periodo[0:3])
+    if periodo_ind == 11:
+        p_inicio = 0
+    else:
+        p_inicio = periodo_ind + 1
+    p_fim = 0    
+    id_periodo -= 11
+    label_periodo = []
+    prod_periodo = []
+    insumo_periodo = []
+    material_periodo = []
+    custo_periodo = []
+    label_total = []
+    total_gastos = 0
+    if setor == 0:
+        producao_ano = Producao.objects.select_related('material', 'setor', 'periodo').filter(        
+            Q(setor__nome = "Revisão"),
+            Q(periodo__id__gt = id_periodo) |
+            Q(periodo__id__lt = id_periodo + 11)    
+        )
+    else:
+        producao_ano = Producao.objects.select_related('material', 'setor', 'periodo').filter(        
+            Q(setor = setor),
+            Q(periodo__id__gt = id_periodo) |
+            Q(periodo__id__lt = id_periodo + 11)    
+        )
+    while (p_fim < 12):
+        p_fim += 1
+        label_periodo.append(meses_abr[p_inicio])
+        
+        producao = producao_ano.filter(periodo = id_periodo).aggregate(
+            Sum('quantidade'))['quantidade__sum']
+        if not producao:
+            producao = 0
+        try:
+            insumo = compra_insumo_setor(setor, id_periodo) / producao
+        except:
+            insumo = 0
+        try:
+            custo = custo_setor(setor, id_periodo) / producao
+        except:
+            custo = 0
+        try:
+            material = preco_material_periodo(setor, id_periodo) / producao
+        except:
+            material = 0
+        prod_periodo.append(int(producao))
+        insumo_periodo.append(round(insumo, 2))
+        material_periodo.append(round(material, 2))
+        custo_periodo.append(round(custo, 2))
+        total_gastos = insumo + material + custo
+        label_total.append(f'{meses_abr[p_inicio]} - R$ {round(total_gastos, 2)}')
+        id_periodo += 1
+        if p_inicio == 11:
+            p_inicio = 0
+        else:
+            p_inicio += 1
+
+    return {
+        'label': label_periodo,
+        'label_total': label_total,
+        'producao': prod_periodo,
+        'insumo': insumo_periodo,
+        'material': material_periodo,
+        'custo': custo_periodo
+    }
+
 @method_decorator(login_required, name='dispatch')
 class Home(TemplateView):
     template_name = 'core/index.html'
@@ -338,7 +408,7 @@ class Home(TemplateView):
         except:
             materia_prim_un = 0
 
-        dashboard = dash(periodo.nome, periodo.id, setor)
+        dashboard = dash2(periodo.nome, periodo.id, setor)
         if setor == 0:
             setor = {'nome': 'Consolidado'}
         
@@ -432,7 +502,7 @@ class Index(TemplateView):
         if setor == 0:
             setor = {'nome': 'Consolidado'}
 
-        #context['contagem'] = len(connection.queries)
+        context['contagem'] = len(connection.queries)
         context['materia_prima'] = materia_prim_un
         context['insumo'] = insumo_un
         context['perda'] = perda_un
