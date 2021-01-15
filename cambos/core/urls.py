@@ -3,6 +3,7 @@ from django.conf.urls import include, url
 from . import views
 from core.views import(
     Index,
+    Home,
     ProducaoList,
     DesempenhoList,
     UserCreate,
@@ -17,6 +18,7 @@ urlpatterns = [
     path('user_create/', UserCreate.as_view(), name = 'user_create_cbv'),
     #index       
     path('', Index.as_view(), name='core_index'),
+    path('home', Home.as_view(), name='home'),
     path('producao_list',  ProducaoList.as_view(), name='producao_list'),
     path('consumo_material_list',  ConsumoMaterialList.as_view(), name='consumo_material_list'),
     path('consumo_insumo_list',  ConsumoInsumoList.as_view(), name='consumo_insumo_list'),
