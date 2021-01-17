@@ -155,9 +155,11 @@ def compra_insumo_setor(setor, id_periodo):
     return total_insumo
 
 
-def preco_material(material, periodo):
+def preco_material(id_material, periodo):
     preco = 0
-    
+    material = Material.objects.get(
+        id=id_material
+    )
     if material.origem == "Compra":
         valor_compra = ValorCompra.objects.select_related('material').filter(material=material)
         historico_compra = valor_compra.aggregate(
