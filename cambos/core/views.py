@@ -218,7 +218,7 @@ def preco_material_periodo(setor, id_periodo):
             material__tipo="Material"
         )
     for item in lista_consumo:
-        preco = preco_material(item.material, id_periodo)
+        preco = preco_material(item.material.id, id_periodo)
         quantidade = item.quantidade
         valor = preco * quantidade
 
