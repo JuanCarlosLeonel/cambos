@@ -91,12 +91,12 @@ def custo_setor(setor, id_periodo):
 
 def compra_setor(setor, id_periodo):    
     if setor == 0:
-        consumo = Consumo.objects.select_related('material').filter(
+        consumo = Consumo.objects.filter(
             periodo=id_periodo,
             material__origem="Compra",
         )
     else:
-        consumo = Consumo.objects.select_related('material').filter(
+        consumo = Consumo.objects.filter(
             setor=setor,
             periodo=id_periodo,
             material__origem="Compra",
@@ -104,10 +104,10 @@ def compra_setor(setor, id_periodo):
     total = 0
     for item in consumo:
         try:
-            preco = valor_compra.get(material__id=item.material.id, periodo=id_periodo).valor
+            preco = ValorCompra.objects.get(material__id=item.material.id, periodo=id_periodo).valor
         except:
             try:
-                preco = valor_compra.filter(material__id=item.material.id).latest('periodo').valor
+                preco = ValorCompra.objects.filter(material__id=item.material.id).latest('periodo').valor
             except:
                 preco = 0        
         
