@@ -774,7 +774,7 @@ class ConsumoMaterialList(ListView):
 
             for consumido in consumo:
                 quantidade = consumido.quantidade
-                preco = preco_material(consumido.material, periodo)
+                preco = preco_material(consumido.material.id, periodo)
                 valor = quantidade * preco
                 total += valor
 
@@ -785,7 +785,7 @@ class ConsumoMaterialList(ListView):
                 material_nome = item.material.nome
                 material_unidade = item.material.unidade
                 origem = item.material.origem                
-                preco = preco_material(item.material, periodo)                                
+                preco = preco_material(item.material.id, periodo)                                
                 quantidade = item.quantidade
                 valor = quantidade * preco
                 try:
@@ -822,7 +822,7 @@ class ConsumoMaterialList(ListView):
         
             for consumido in consumo:
                 quantidade = consumido.quantidade
-                preco = preco_material(consumido.material, periodo)
+                preco = preco_material(consumido.material.id, periodo)
                 valor = quantidade * preco
                 total += valor
 
@@ -831,7 +831,7 @@ class ConsumoMaterialList(ListView):
                 material_unidade = item.material.unidade
                 origem = item.material.origem
                 quantidade = 0
-                preco = preco_material(item.material, periodo)
+                preco = preco_material(item.material.id, periodo)
                 percentual = 0
                 id_consumo = ''
                 id_material = item.material.id
