@@ -236,10 +236,10 @@ def consumo_material_setor(setor, periodo):
     
     valor_compra = ValorCompra.objects.select_related(
             'material'
-        ).filter(periodo__id__lt = periodo.id).order_by('material','-periodo').distinct('material')
+        ).filter(periodo__id__lte = periodo.id).order_by('material','-periodo').distinct('material')
 
     consumo_setor = lista_consumo.filter(setor = setor, material__tipo = "Material")
-    valor_compra_setor = valor_compra.filter(material__tipo = "Material")
+    valor_compra_setor = valor_compra.filter( material__tipo = "Material")
     custo_origem = {'Entrelaçadeira':0,'Fiação':0,'Tingimento':0,'Urdideira':0,'Tecelagem':0,}
     for consumo in consumo_setor:
         preco = 0
@@ -273,19 +273,48 @@ def consumo_material_setor(setor, periodo):
                     quantidade_externo = 0
                     if consumo_externo.material.origem == "Compra":
                         for valor_externo in valor_compra:
-                            preco_externo = valor_externo.valor
+                            if consumo_externo.material == valor_externo.material:
+                                preco_externo = valor_externo.valor
                         quantidade_externo = consumo_externo.quantidade   
                         valor_consumo_externo = preco_externo * quantidade_externo
                         consumo_setor_origem += valor_consumo_externo
-                    else:
-                        pass
+                    else:                        
+                        if consumo_externo.material.origem == "Entrelaçadeira":
+                            setor_origem2 = 1
+                        elif consumo_externo.material.origem == "Fiação":
+                            setor_origem2 = 2
+                        elif consumo_externo.material.origem == "Tingimento":
+                            setor_origem2 = 3
+                        elif consumo_externo.material.origem == "Urdideira":
+                            setor_origem2 = 4
+                        else:
+                            setor_origem2 = 5
+                        custo_setor_origem2 = custo_setor(setor_origem2, periodo) #Atençãp
+                        producao_setor_origem2 = Producao.objects.filter(setor = setor_origem2, periodo = periodo).aggregate(
+                        Sum('quantidade'))['quantidade__sum'] # Atenção
+                        lista_consumo_origem2 = lista_consumo.filter(setor = setor_origem2) # Atenção
+                        consumo_setor_origem2 = 0
+                        for consumo_externo2 in lista_consumo_origem2: 
+                            preco_externo2 = 0
+                            quantidade_externo2 = 0
+                            if consumo_externo2.material.origem == "Compra":
+                                for valor_externo2 in valor_compra:
+                                    if consumo_externo2.material == valor_externo2.material:
+                                        preco_externo2 = valor_externo2.valor
+                                quantidade_externo2 = consumo_externo2.quantidade   
+                                valor_consumo_externo2 = preco_externo2 * quantidade_externo2
+                                consumo_setor_origem2 += valor_consumo_externo2
+                        preco_unitario_setor2 = (consumo_setor_origem2 + custo_setor_origem2) / producao_setor_origem2
+                        quantidade_externo = consumo_externo.quantidade 
+                        valor2 = preco_unitario_setor2 * quantidade_externo                           
+                        consumo_setor_origem += valor2                               
                 preco_unitario_setor = (consumo_setor_origem + custo_setor_origem) / producao_setor_origem
                 quantidade = consumo.quantidade
-                valor = preco_unitario_setor * quantidade
-                custo_origem[consumo.material.origem] = valor
-                total += valor
+                valor3 = preco_unitario_setor * quantidade
+                custo_origem[consumo.material.origem] = preco_unitario_setor
+                total += valor3
             else:
-                total += custo_origem[consumo.material.origem]
+                total += custo_origem[consumo.material.origem] * consumo.quantidade
     return total
 
 
