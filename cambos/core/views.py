@@ -782,7 +782,10 @@ class PerdaList(ListView):
             for item in perda.distinct('material'):
                 if item.material.id == material.material.id:
                     quantidade = item.quantidade
-                    percentual = (item.quantidade / total) * 100
+                    try:
+                        percentual = (item.quantidade / total) * 100
+                    except:
+                        percentual = 0
                     id_perda = item.id
             if material.material.inativo and quantidade == 0:
                 pass
@@ -941,14 +944,14 @@ class ConsumoInsumoList(ListView):
             )            
             for item in consumo:
                 quantidade = item.quantidade
-                preco = preco_material(item.material, periodo)
+                preco = preco_material(item.material.id, periodo)
                 valor = quantidade * preco
                 total += valor
 
             for item in consumo:                
                 percentual = 0                
                 material_nome = item.material.nome                
-                preco = preco_material(item.material, periodo)                                
+                preco = preco_material(item.material.id, periodo)                                
                 valor = 0
                 quantidade = item.quantidade
                 valor = quantidade * preco
@@ -985,14 +988,14 @@ class ConsumoInsumoList(ListView):
         
             for consumido in consumo:
                 quantidade = consumido.quantidade
-                preco = preco_material(consumido.material, periodo)
+                preco = preco_material(consumido.material.id, periodo)
                 valor = quantidade * preco
                 total += valor
 
             for item in historico:
                 material_nome = item.material.nome
                 quantidade = 0
-                preco = preco_material(item.material, periodo)
+                preco = preco_material(item.material.id, periodo)
                 percentual = 0
                 id_consumo = ''
                 id_material = item.material.id
