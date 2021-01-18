@@ -228,7 +228,7 @@ def preco_material_periodo(setor, id_periodo):
 
 def consumo_material_setor(setor, periodo):
     total = 0
-          
+    
     lista_consumo = Consumo.objects.select_related('material', 'setor').filter(
         periodo= periodo,        
     )
@@ -238,7 +238,10 @@ def consumo_material_setor(setor, periodo):
             'material'
         ).filter(periodo__id__lte = periodo.id).order_by('material','-periodo').distinct('material')
 
-    consumo_setor = lista_consumo.filter(setor = setor, material__tipo = "Material")
+    if setor == 0:
+        consumo_setor = lista_consumo.filter(material__tipo = "Material", periodo = periodo, material__origem = "Compra")
+    else:
+        consumo_setor = lista_consumo.filter(setor = setor, material__tipo = "Material")
     valor_compra_setor = valor_compra.filter( material__tipo = "Material")
     custo_origem = {'Entrelaçadeira':0,'Fiação':0,'Tingimento':0,'Urdideira':0,'Tecelagem':0,}
     for consumo in consumo_setor:
@@ -399,7 +402,7 @@ def dash2(nome_periodo, id_periodo, setor):
             Q(periodo__id__lt = id_periodo + 11)    
         ).values('periodo').order_by('periodo').annotate(total=Sum('quantidade'))
 
-        consumo_ano = Consumo.objects.select_related('material', 'periodo').filter(            
+        insumo_consumido = Consumo.objects.select_related('material', 'periodo').filter(            
             Q(periodo__id__gt = id_periodo) |
             Q(periodo__id__lt = id_periodo + 11)    
         )
@@ -471,7 +474,7 @@ def dash2(nome_periodo, id_periodo, setor):
 
 
 @method_decorator(login_required, name='dispatch')
-class Home(TemplateView):
+class Index(TemplateView):
     template_name = 'core/index.html'
 
     def get_context_data(self, **kwargs):
@@ -552,21 +555,17 @@ class Home(TemplateView):
         except:
             materia_prim_un = 0
 
-        """dashboard = dash2(periodo.nome, periodo.id, setor)
+        dashboard = dash(periodo.nome, periodo.id, setor)
         if setor == 0:
             setor = {'nome': 'Consolidado'}
         
        
-        x = dashboard['teste']
-        teste= x
-    
         #dash
         context['data1'] = dashboard['producao']
         context['data2'] = dashboard['custo']
         context['data3'] = dashboard['insumo']
         context['data4'] = dashboard['material']
-        context['labels1'] = dashboard['label']
-        context['teste'] = len(teste)"""
+        context['labels1'] = dashboard['label']       
         context['contagem'] = len(connection.queries)
         context['setor'] = setor
         context['periodo'] = periodo.nome
@@ -583,7 +582,7 @@ class Home(TemplateView):
 
 
 @method_decorator(login_required, name='dispatch')
-class Index(TemplateView):
+class Home(TemplateView):
     template_name = 'core/index.html'
 
     def get_context_data(self, **kwargs):
