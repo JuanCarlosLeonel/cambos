@@ -320,7 +320,7 @@ def consumo_material_setor(setor, periodo):
                 total += custo_origem[consumo.material.origem] * consumo.quantidade
     return total
 
-
+#Arquivo
 def dash(nome_periodo, id_periodo, setor):
     meses_abr = ["Jan", "fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dez"]
     periodo_ind = meses_abr.index(nome_periodo[0:3])
@@ -379,7 +379,7 @@ def dash(nome_periodo, id_periodo, setor):
     }
 
 
-def dash2(nome_periodo, id_periodo, setor):
+def dash2(nome_periodo, periodo, setor):
     meses_abr = ["Jan", "fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dez"]
     periodo_ind = meses_abr.index(nome_periodo[0:3])
     if periodo_ind == 11:
@@ -387,6 +387,7 @@ def dash2(nome_periodo, id_periodo, setor):
     else:
         p_inicio = periodo_ind + 1
     p_fim = 0    
+    id_periodo = periodo.id
     id_periodo -= 11
     label_periodo = []
     prod_periodo = []
@@ -398,64 +399,83 @@ def dash2(nome_periodo, id_periodo, setor):
     if setor == 0:
         producao_ano = Producao.objects.filter(        
             Q(setor__nome = "Revisão"),
-            Q(periodo__id__gt = id_periodo) |
-            Q(periodo__id__lt = id_periodo + 11)    
+            Q(periodo__id__gte = id_periodo) ,
+            Q(periodo__id__lte = id_periodo + 11)    
         ).values('periodo').order_by('periodo').annotate(total=Sum('quantidade'))
 
-        insumo_consumido = Consumo.objects.select_related('material', 'periodo').filter(            
-            Q(periodo__id__gt = id_periodo) |
-            Q(periodo__id__lt = id_periodo + 11)    
+        insumo_consumido = Consumo.objects.select_related('material', 'periodo').filter( 
+            Q(material__tipo = "Insumo"),           
+            Q(periodo__id__gte = id_periodo) ,
+            Q(periodo__id__lte = id_periodo + 11)    
+        )
+
+        valor_compra_insumo = ValorCompra.objects.prefetch_related('material', 'periodo').filter(            
+            Q(material__tipo = "Insumo"),                       
+            Q(periodo__id__lte = id_periodo + 11),
         )
     else:
         producao_ano = Producao.objects.filter(        
             Q(setor = setor),
-            Q(periodo__id__gt = id_periodo) |
-            Q(periodo__id__lt = id_periodo + 11)    
+            Q(periodo__id__gte = id_periodo),
+            Q(periodo__id__lte = id_periodo + 11)    
         ).values('periodo').order_by('periodo').annotate(total=Sum('quantidade'))
 
-        material_consumido = Consumo.objects.prefetch_related('material').filter(
-            Q(material__origem = "Compra"),              
-        )
         
-        insumo_consumido = material_consumido.filter(
-            Q(material__tipo = "Insumo"),
-        )
+        insumo_consumido = Consumo.objects.prefetch_related('material', 'periodo').filter(
+            Q(setor = setor),
+            Q(material__tipo = "Insumo"),           
+            Q(periodo__id__gte = id_periodo) ,
+            Q(periodo__id__lte = id_periodo + 11),
+        ).values('material', 'periodo', 'quantidade')
+
+        valor_compra_insumo = ValorCompra.objects.prefetch_related('material', 'periodo').filter(            
+            Q(material__tipo = "Insumo"),                       
+            Q(periodo__id__lte = id_periodo + 11),
+        ).values('material', 'periodo', 'valor')
 
         
     while (p_fim < 12):
         p_fim += 1
         label_periodo.append(meses_abr[p_inicio])
-        try:
-            producao = producao_ano.get(periodo = id_periodo)['total']
-        except:
-            producao = 0                
+        producao = 0
+        insumo_total = 0
+        for mes in producao_ano:            
+            if mes['periodo'] == id_periodo:                
+                producao = mes['total']
+                for insumo in insumo_consumido:                    
+                    if insumo['periodo'] == mes['periodo']:
+                        for valor in valor_compra_insumo:                
+                            if valor["material"] == insumo['material'] and valor['periodo'] == insumo['periodo']:
+                                
+                                preco = float(valor['valor'])
+                                quantidade = insumo['quantidade']
+                                total = preco * quantidade
+                                insumo_total += total
+                try:
+                    insumo_total = insumo_total / producao                                                       
+                except:
+                    pass
+        insumo_periodo.append(round(insumo_total,2))
+        prod_periodo.append(int(producao))
         
-        insumo_total = 0            
-        for consumo in insumo_consumido.filter(periodo__id = id_periodo):
-            
-            quantidade = consumo.quantidade
-            
-            
-            insumo_total += quantidade
-        try:         
-            insumo = insumo_total / producao
-        except:
-            insumo = 0
         
+
+
         try:
             custo = custo_setor(setor, id_periodo) / producao
         except:
             custo = 0
+            
         try:
-            material = preco_material_periodo(setor, id_periodo) / producao
+            periodo2 = Periodo.objects.get(id = id_periodo)
+            material = consumo_material_setor(setor, periodo2) / producao
         except:
             material = 0
-        prod_periodo.append(int(producao))
-        insumo_periodo.append(round(insumo, 2))
+        
+        
         material_periodo.append(round(material, 2))
         custo_periodo.append(round(custo, 2))
-        total_gastos = insumo + material + custo
-        label_total.append(f'{meses_abr[p_inicio]} - R$ {round(total_gastos, 2)}')
+        
         id_periodo += 1
         if p_inicio == 11:
             p_inicio = 0
@@ -463,13 +483,12 @@ def dash2(nome_periodo, id_periodo, setor):
             p_inicio += 1
 
     return {
-        'label': label_periodo,
-        'label_total': label_total,
+        'label': label_periodo,        
         'producao': prod_periodo,
         'insumo': insumo_periodo,
         'material': material_periodo,
         'custo': custo_periodo,
-        'teste':insumo_consumido
+        'teste':insumo_periodo
     }
 
 
@@ -555,17 +574,18 @@ class Index(TemplateView):
         except:
             materia_prim_un = 0
 
-        dashboard = dash(periodo.nome, periodo.id, setor)
+        dashboard = dash2(periodo.nome, periodo, setor)
         if setor == 0:
             setor = {'nome': 'Consolidado'}
         
        
         #dash
+        context['teste'] = dashboard['teste']
         context['data1'] = dashboard['producao']
         context['data2'] = dashboard['custo']
         context['data3'] = dashboard['insumo']
         context['data4'] = dashboard['material']
-        context['labels1'] = dashboard['label']       
+        context['labels1'] = dashboard['label']
         context['contagem'] = len(connection.queries)
         context['setor'] = setor
         context['periodo'] = periodo.nome
@@ -580,7 +600,7 @@ class Index(TemplateView):
 
         return context
 
-
+##Arquivo
 @method_decorator(login_required, name='dispatch')
 class Home(TemplateView):
     template_name = 'core/index.html'
