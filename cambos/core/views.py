@@ -407,12 +407,12 @@ def dash2(nome_periodo, periodo, setor):
             Q(material__tipo = "Insumo"),           
             Q(periodo__id__gte = id_periodo) ,
             Q(periodo__id__lte = id_periodo + 11)    
-        )
+        ).values('material', 'periodo', 'quantidade')
 
         valor_compra_insumo = ValorCompra.objects.prefetch_related('material', 'periodo').filter(            
             Q(material__tipo = "Insumo"),                       
             Q(periodo__id__lte = id_periodo + 11),
-        )
+        ).values('material', 'periodo', 'valor')
     else:
         producao_ano = Producao.objects.filter(        
             Q(setor = setor),
@@ -457,9 +457,7 @@ def dash2(nome_periodo, periodo, setor):
                     pass
         insumo_periodo.append(round(insumo_total,2))
         prod_periodo.append(int(producao))
-        
-        
-
+                
 
         try:
             custo = custo_setor(setor, id_periodo) / producao
