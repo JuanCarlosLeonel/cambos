@@ -2,17 +2,31 @@
 
 var chart1 = document.getElementById("chartProducao").getContext("2d");
 var producao = new Chart(chart1, {
-	type: 'line',
+	type: 'bar',
 	data: {
 		labels: labels1,
 		datasets : [{	
 			label: 'Producao',
+			type: 'line',
 			data: data1,
 			backgroundColor : "rgba(48, 164, 255, 0.2)",
 			borderColor : "rgba(48, 164, 255, 1)",
 			pointColor : "rgba(48, 164, 255, 1)",	
-			borderWidth: 1					
-        }]
+			borderWidth: 1,
+			yAxisID: "A"					
+		},
+		{	
+			label: 'percapita',
+			type: 'bar',
+			data: data5,
+			backgroundColor : "rgba(120, 120, 120, 0.2)",
+			borderColor : "rgba(120, 120, 120, 1)",
+			pointColor : "rgba(120, 120, 120, 1)",	
+			borderWidth: 1,
+			yAxisID: "B"
+
+		}],
+		
     },
 	options: {
 		tooltips: {
@@ -20,8 +34,9 @@ var producao = new Chart(chart1, {
 			intersect: false,
 			callbacks: {			
 				label: function(tooltipItem, data) {	
-					var label = data.datasets[tooltipItem.datasetIndex].data[tooltipItem.index];			
-					return label.toLocaleString('pt-BR', {})
+					var corporation = data.datasets[tooltipItem.datasetIndex].label;
+					var valor = data.datasets[tooltipItem.datasetIndex].data[tooltipItem.index];
+					return corporation + ": " + valor.toLocaleString('pt-BR', {});            
 				},
 			}
 		},
@@ -34,9 +49,18 @@ var producao = new Chart(chart1, {
         scales: {
 			xAxes: [{ 
 				gridLines: false }],
-			yAxes: [{				
-				display: false,				
-			 }]
+				yAxes: [{
+					id: 'A',
+					position: 'left',
+					gridLines: false,
+					display: false,
+					
+				  }, {
+					id: 'B',
+					gridLines: false,
+					position: 'right',					
+					display: false,
+				  }]
 		},		
 		plugins: {
             datalabels: { 
@@ -44,9 +68,14 @@ var producao = new Chart(chart1, {
                 display: function (context) {
                     return context.chart.isDatasetVisible(context.datasetIndex);
                 },                 
-                font: {
-					weight: 'bold',
-					size: 14
+                font: function(context) {
+					var width = context.chart.width;
+					var size = Math.round(width / 132);
+	
+					return {
+						weight: 'bold',
+						size: size
+					};
 				},				
 				formatter: (value, ctx) => {
 					if(value >0 ){					
@@ -114,9 +143,14 @@ var composicao = new Chart(chart2, {
 			data: [0, 0, 0,0,0,0,0,0,0,0,0,0],
 			backgroundColor: 'rgba(24,91,62,0)',
 			datalabels: {
-				font: {
-					size: '14',
-					
+				font: function(context) {
+					var width = context.chart.width;
+					var size = Math.round(width / 100);
+	
+					return {
+						weight: 'bold',
+						size: size
+					};
 				},				
 				formatter: (value, ctx) => {
 					const total = ctx.chart.$totalizer.totals[ctx.dataIndex];
@@ -184,8 +218,14 @@ var composicao = new Chart(chart2, {
                 display: function (context) {
                     return context.chart.isDatasetVisible(context.datasetIndex);
                 },                
-                font: {
-                    weight: 'bold'
+                font: function(context) {
+					var width = context.chart.width;
+					var size = Math.round(width / 132);
+	
+					return {
+						weight: 'bold',
+						size: size
+					};
 				},
 				formatter: (value, ctx) => {
 					if(value >0 ){					

@@ -388,8 +388,14 @@ def dash2(nome_periodo, periodo, setor):
     insumo_periodo = []
     material_periodo = []
     custo_periodo = []
+    capita_periodo = []
     
     if setor == 0:
+        desempenho = Desempenho.objects.select_related('setor', 'periodo').filter(
+            Q(periodo__id__gte = id_periodo) ,
+            Q(periodo__id__lte = id_periodo + 11)    
+        )
+
         producao_ano = Producao.objects.filter(        
             Q(setor__nome = "Revisão"),
             Q(periodo__id__gte = id_periodo) ,
@@ -406,7 +412,13 @@ def dash2(nome_periodo, periodo, setor):
             Q(material__tipo = "Insumo"),                       
             Q(periodo__id__lte = id_periodo + 11),
         ).values('material', 'periodo', 'valor')
+        
     else:
+        
+        desempenho = Desempenho.objects.select_related('setor', 'periodo').filter(
+            Q(periodo__id__gte = id_periodo) ,
+            Q(periodo__id__lte = id_periodo + 11)    
+        )
         producao_ano = Producao.objects.filter(        
             Q(setor = setor),
             Q(periodo__id__gte = id_periodo),
@@ -426,12 +438,13 @@ def dash2(nome_periodo, periodo, setor):
             Q(periodo__id__lte = id_periodo + 11),
         ).values('material', 'periodo', 'valor')
 
-        
+    percapita_total = desempenho.values('periodo').order_by('periodo').annotate(total=Sum('headcount'))
     while (p_fim < 12):
         p_fim += 1
         label_periodo.append(meses_abr[p_inicio])
         producao = 0
         insumo_total = 0
+        percapita = 0
         for mes in producao_ano:            
             if mes['periodo'] == id_periodo:                
                 producao = mes['total']
@@ -444,10 +457,14 @@ def dash2(nome_periodo, periodo, setor):
                                 quantidade = insumo['quantidade']
                                 total = preco * quantidade
                                 insumo_total += total
+                for pessoa in percapita_total:
+                    if pessoa['periodo'] == mes['periodo']:
+                        percapita = producao / pessoa['total']
                 try:
                     insumo_total = insumo_total / producao                                                       
                 except:
                     pass
+        capita_periodo.append(int(percapita))
         insumo_periodo.append(round(insumo_total,2))
         prod_periodo.append(int(producao))
                 
@@ -479,6 +496,7 @@ def dash2(nome_periodo, periodo, setor):
         'insumo': insumo_periodo,
         'material': material_periodo,
         'custo': custo_periodo,        
+        'percapita': capita_periodo,        
     }
 
 
@@ -575,6 +593,7 @@ class Index(TemplateView):
         context['data2'] = dashboard['custo']
         context['data3'] = dashboard['insumo']
         context['data4'] = dashboard['material']
+        context['data5'] = dashboard['percapita']
         context['labels1'] = dashboard['label']
         #context['contagem'] = len(connection.queries)
         context['setor'] = setor
