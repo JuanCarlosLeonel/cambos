@@ -91,16 +91,18 @@ def custo_setor(setor, id_periodo):
 
 def compra_setor(setor, id_periodo):    
     if setor == 0:
-        consumo = Consumo.objects.filter(
+        consumo = Consumo.objects.select_related('setor', 'material', 'periodo').filter(
             periodo=id_periodo,
             material__origem="Compra",
         )
+
     else:
-        consumo = Consumo.objects.filter(
+        consumo = Consumo.objects.select_related('setor', 'material', 'periodo').filter(
             setor=setor,
             periodo=id_periodo,
             material__origem="Compra",
         )
+    
     total = 0
     for item in consumo:
         try:
@@ -155,25 +157,16 @@ def compra_insumo_setor(setor, id_periodo):
     return total_insumo
 
 
-def preco_material(id_material, periodo):
-    preco = 0
-    material = Material.objects.get(
-        id=id_material
-    )
+def preco_material(material, periodo):
+    preco = 0    
     if material.origem == "Compra":
-        valor_compra = ValorCompra.objects.select_related('material', 'periodo').filter(material=material)
-        historico_compra = valor_compra.aggregate(
-            Count('id'))['id__count']
-        if historico_compra == 0:
-            preco = 0
-        else:
-            try:
-                preco = valor_compra.get(                    
-                    periodo=periodo
-                ).valor
-            except:
-                ultima_compra = valor_compra.latest('periodo').valor
-                preco = ultima_compra
+        valor_compra = ValorCompra.objects.select_related('material', 'periodo').filter(
+            material=material,
+            periodo__lte=periodo).order_by('-periodo').distinct('periodo')
+        
+        for valor in valor_compra:
+            if valor.material == material:
+                preco = valor.valor    
     else:
         setor_origem = Setor.objects.get(nome=material.origem)
         custo_setor_origem = custo_setor(setor_origem, periodo)
@@ -218,7 +211,7 @@ def preco_material_periodo(setor, id_periodo):
             material__tipo="Material"
         )
     for item in lista_consumo:
-        preco = preco_material(item.material.id, id_periodo)
+        preco = preco_material(item.material, id_periodo)
         quantidade = item.quantidade
         valor = preco * quantidade
 
@@ -576,7 +569,7 @@ class Index(TemplateView):
         
        
         #dash
-        context['teste'] = dashboard['teste']
+        
         context['data1'] = dashboard['producao']
         context['data2'] = dashboard['custo']
         context['data3'] = dashboard['insumo']
@@ -832,7 +825,7 @@ class ConsumoMaterialList(ListView):
                 material_nome = item.material.nome
                 material_unidade = item.material.unidade
                 origem = item.material.origem                
-                preco = preco_material(item.material.id, periodo)                                
+                preco = preco_material(item.material, periodo)                                
                 quantidade = item.quantidade
                 valor = quantidade * preco
                 try:
@@ -871,7 +864,7 @@ class ConsumoMaterialList(ListView):
                 valor = 0
                 id_consumo = ''
 
-                preco = preco_material(item.material.id, periodo) 
+                preco = preco_material(item.material, periodo) 
                 if item.periodo == periodo:
                     quantidade = item.quantidade
                     id_consumo = item.id                
@@ -924,14 +917,14 @@ class ConsumoInsumoList(ListView):
             )            
             for item in consumo:
                 quantidade = item.quantidade
-                preco = preco_material(item.material.id, periodo)
+                preco = preco_material(item.material, periodo)
                 valor = quantidade * preco
                 total += valor
 
             for item in consumo:                
                 percentual = 0                
                 material_nome = item.material.nome                
-                preco = preco_material(item.material.id, periodo)                                
+                preco = preco_material(item.material, periodo)                                
                 valor = 0
                 quantidade = item.quantidade
                 valor = quantidade * preco
@@ -968,14 +961,14 @@ class ConsumoInsumoList(ListView):
         
             for consumido in consumo:
                 quantidade = consumido.quantidade
-                preco = preco_material(consumido.material.id, periodo)
+                preco = preco_material(consumido.material, periodo)
                 valor = quantidade * preco
                 total += valor
 
             for item in historico:
                 material_nome = item.material.nome
                 quantidade = 0
-                preco = preco_material(item.material.id, periodo)
+                preco = preco_material(item.material, periodo)
                 percentual = 0
                 id_consumo = ''
                 id_material = item.material.id
