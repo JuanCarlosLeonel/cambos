@@ -102,17 +102,18 @@ def compra_setor(setor, id_periodo):
             periodo=id_periodo,
             material__origem="Compra",
         )
-    
+    valor_compra = ValorCompra.objects.select_related('material', 'periodo').filter(            
+        material__consumo__id__in = consumo,
+        periodo__lte = id_periodo
+    ).order_by('material','-periodo').distinct('material')
+
     total = 0
+    
     for item in consumo:
-        try:
-            preco = ValorCompra.objects.get(material__id=item.material.id, periodo=id_periodo).valor
-        except:
-            try:
-                preco = ValorCompra.objects.filter(material__id=item.material.id).latest('periodo').valor
-            except:
-                preco = 0        
-        
+        preco = 0
+        for valor in valor_compra:
+            if item.material == valor.material:
+                preco = valor.valor
         total += preco * item.quantidade
 
     return total
@@ -888,7 +889,7 @@ class ConsumoMaterialList(ListView):
                         'id_material': id_material,
                         'setor': item.setor.nome
                     })
-        context['contagem'] = len(connection.queries)        
+        #context['contagem'] = len(connection.queries)        
         context['total'] = total        
         context['producaojs'] = sorted(lista, key=lambda x: x['valor'], reverse=True)
         context['periodo'] = periodo.nome
