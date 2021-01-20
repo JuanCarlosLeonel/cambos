@@ -458,15 +458,15 @@ def dash2(nome_periodo, periodo, setor):
                 for insumo in insumo_consumido:                    
                     if insumo['periodo'] == mes['periodo']:
                         for valor in valor_compra_insumo:                
-                            if valor["material"] == insumo['material'] and valor['periodo'] == insumo['periodo']:
-                                
+                            if valor["material"] == insumo['material'] and valor['periodo'] == insumo['periodo']:                                
                                 preco = float(valor['valor'])
                                 quantidade = insumo['quantidade']
                                 total = preco * quantidade
                                 insumo_total += total
-                
-                insumo_un = insumo_total / producao                                                       
-                
+                try:
+                    insumo_un = insumo_total / producao                                                       
+                except:
+                    insumo_un = 0
                 for pessoa in percapita_total:
                     if pessoa['periodo'] == mes['periodo']:
                         percapita = producao / pessoa['total']
