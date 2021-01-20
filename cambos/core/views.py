@@ -895,7 +895,10 @@ class ConsumoMaterialList(ListView):
                     quantidade = item.quantidade
                     id_consumo = item.id                
                     valor = quantidade * preco
-                    percentual = (valor / total)*100
+                    try:
+                        percentual = (valor / total)*100
+                    except:
+                        percentual = 0
                 
                 id_material = item.material.id
                                 
