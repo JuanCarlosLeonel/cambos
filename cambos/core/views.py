@@ -301,11 +301,17 @@ def consumo_material_setor(setor, periodo):
                                 quantidade_externo2 = consumo_externo2.quantidade   
                                 valor_consumo_externo2 = preco_externo2 * quantidade_externo2
                                 consumo_setor_origem2 += valor_consumo_externo2
-                        preco_unitario_setor2 = (consumo_setor_origem2 + custo_setor_origem2) / producao_setor_origem2
+                        try:
+                            preco_unitario_setor2 = (consumo_setor_origem2 + custo_setor_origem2) / producao_setor_origem2
+                        except:
+                            preco_unitario_setor2 = 0
                         quantidade_externo = consumo_externo.quantidade 
                         valor2 = preco_unitario_setor2 * quantidade_externo                           
-                        consumo_setor_origem += valor2                               
-                preco_unitario_setor = (consumo_setor_origem + custo_setor_origem) / producao_setor_origem
+                        consumo_setor_origem += valor2   
+                try:                          
+                    preco_unitario_setor = (consumo_setor_origem + custo_setor_origem) / producao_setor_origem
+                except:
+                    preco_unitario_setor = 0
                 quantidade = consumo.quantidade
                 valor3 = preco_unitario_setor * quantidade
                 custo_origem[consumo.material.origem] = preco_unitario_setor
