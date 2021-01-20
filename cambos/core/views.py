@@ -261,7 +261,11 @@ def consumo_material_setor(setor, periodo):
                 else:
                     setor_origem = 5
                 custo_setor_origem = custo_setor(setor_origem, periodo) #Atençãp
-                producao_setor_origem = Producao.objects.filter(setor = setor_origem, periodo = periodo).aggregate(
+                producao_setor_origem = Producao.objects.filter(
+                    Q(setor = setor_origem),
+                    Q(periodo = periodo)|
+                    Q(periodo__id = periodo.id -1)
+                    ).order_by('-periodo').distinct('periodo').aggregate(
                 Sum('quantidade'))['quantidade__sum'] # Atenção
                 lista_consumo_origem = lista_consumo.filter(setor = setor_origem) # Atenção
                 consumo_setor_origem = 0
@@ -287,7 +291,11 @@ def consumo_material_setor(setor, periodo):
                         else:
                             setor_origem2 = 5
                         custo_setor_origem2 = custo_setor(setor_origem2, periodo) #Atençãp
-                        producao_setor_origem2 = Producao.objects.filter(setor = setor_origem2, periodo = periodo).aggregate(
+                        producao_setor_origem2 = Producao.objects.filter(
+                            Q(setor = setor_origem2),
+                            Q(periodo = periodo)|
+                            Q(periodo__id = periodo.id -1 )
+                            ).order_by('-periodo').distinct('periodo').aggregate(
                         Sum('quantidade'))['quantidade__sum'] # Atenção
                         lista_consumo_origem2 = lista_consumo.filter(setor = setor_origem2) # Atenção
                         consumo_setor_origem2 = 0
