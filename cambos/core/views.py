@@ -449,6 +449,7 @@ def dash2(nome_periodo, periodo, setor):
         p_fim += 1
         label_periodo.append(meses_abr[p_inicio])
         producao = 0
+        insumo_un = 0
         insumo_total = 0
         percapita = 0
         for mes in producao_ano:            
@@ -463,15 +464,15 @@ def dash2(nome_periodo, periodo, setor):
                                 quantidade = insumo['quantidade']
                                 total = preco * quantidade
                                 insumo_total += total
+                
+                insumo_un = insumo_total / producao                                                       
+                
                 for pessoa in percapita_total:
                     if pessoa['periodo'] == mes['periodo']:
                         percapita = producao / pessoa['total']
-                try:
-                    insumo_total = insumo_total / producao                                                       
-                except:
-                    pass
+                
         capita_periodo.append(int(percapita))
-        insumo_periodo.append(round(insumo_total,2))
+        insumo_periodo.append(round(insumo_un,2))
         prod_periodo.append(int(producao))
                 
 
