@@ -11,17 +11,23 @@ var producao = new Chart(chart1, {
 			data: data1,
 			backgroundColor : "rgba(48, 164, 255, 0.2)",
 			borderColor : "rgba(48, 164, 255, 1)",
-			pointColor : "rgba(48, 164, 255, 1)",	
+			pointColor : "rgba(48, 164, 255, 1)",
+			pointStrokeColor : "#fff",
+			pointHighlightFill : "#fff",
+			pointHighlightStroke : "rgba(48, 164, 255, 1)",					
 			borderWidth: 1,
 			yAxisID: "A"					
 		},
 		{	
 			label: 'percapita',
-			type: 'bar',
-			data: data5,
-			backgroundColor : "rgba(120, 120, 120, 0.2)",
-			borderColor : "rgba(120, 120, 120, 1)",
-			pointColor : "rgba(120, 120, 120, 1)",	
+			type: 'line',
+			data: data5,			
+			backgroundColor : "rgba(80, 180, 86, 0.2)",
+			borderColor : "rgba(80, 180, 86, 1)",
+			pointColor : "rgba(80, 180, 86, 1)",
+			pointStrokeColor : "#fff",
+			pointHighlightFill : "#fff",
+			pointHighlightStroke : "rgba(80, 180, 86, 1)",		
 			borderWidth: 1,
 			yAxisID: "B"
 
@@ -30,7 +36,7 @@ var producao = new Chart(chart1, {
     },
 	options: {
 		tooltips: {
-			mode: 'index',
+			mode: 'label',
 			intersect: false,
 			callbacks: {			
 				label: function(tooltipItem, data) {	
@@ -53,13 +59,15 @@ var producao = new Chart(chart1, {
 					id: 'A',
 					position: 'left',
 					gridLines: false,
-					display: false,
-					
+					display: false,										
 				  }, {
 					id: 'B',
 					gridLines: false,
 					position: 'right',					
-					display: false,
+					display: false,						
+					afterDataLimits(scale) {
+						scale.max *= 2;						
+					  }				
 				  }]
 		},		
 		plugins: {
@@ -126,8 +134,8 @@ var composicao = new Chart(chart2, {
 		{	
 			label: 'Custo',
 			data: data2,
-			backgroundColor: 'rgba(80, 180, 86, 0.2)',            
-            borderColor: 'rgba(80, 180, 86, 1)',
+			backgroundColor: 'rgba(150, 150, 156, 0.2)',            
+            borderColor: 'rgba(150, 150, 156, 1)',
             borderWidth: 1
 		},
 		{	
