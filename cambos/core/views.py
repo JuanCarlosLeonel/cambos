@@ -410,13 +410,13 @@ def dash2(nome_periodo, periodo, setor):
 
         insumo_consumido = Consumo.objects.select_related('material', 'periodo').filter( 
             Q(material__tipo = "Insumo"),           
-            Q(periodo__id__gte = id_periodo) ,
-            Q(periodo__id__lte = id_periodo + 11)    
+            Q(periodo__id__gte = periodo.id - 11) ,
+            Q(periodo__id__lte = periodo.id)    
         ).values('material', 'periodo', 'quantidade')
 
         valor_compra_insumo = ValorCompra.objects.prefetch_related('material', 'periodo').filter(            
             Q(material__tipo = "Insumo"),                       
-            Q(periodo__id__lte = id_periodo + 11),
+            Q(periodo__id__lte = periodo.id),
         ).values('material', 'periodo', 'valor')
         
     else:
@@ -435,13 +435,13 @@ def dash2(nome_periodo, periodo, setor):
         insumo_consumido = Consumo.objects.prefetch_related('material', 'periodo').filter(
             Q(setor = setor),
             Q(material__tipo = "Insumo"),           
-            Q(periodo__id__gte = id_periodo) ,
-            Q(periodo__id__lte = id_periodo + 11),
+            Q(periodo__id__gte = periodo.id -11) ,
+            Q(periodo__id__lte = periodo.id),
         ).values('material', 'periodo', 'quantidade')
 
         valor_compra_insumo = ValorCompra.objects.prefetch_related('material', 'periodo').filter(            
             Q(material__tipo = "Insumo"),                       
-            Q(periodo__id__lte = id_periodo + 11),
+            Q(periodo__id__lte = periodo.id),
         ).values('material', 'periodo', 'valor')
 
     percapita_total = desempenho.values('periodo').order_by('periodo').annotate(total=Sum('headcount'))
@@ -1042,7 +1042,7 @@ class DesempenhoList(ListView):
         periodo = get_periodo(self)
         setor = get_setor(self)
         if setor.id < 5:
-            unidade_prod = 'kilos'
+            unidade_prod = 'quilos'
         else:
             unidade_prod = 'metros'
         lista = []
