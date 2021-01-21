@@ -423,7 +423,8 @@ def dash2(nome_periodo, periodo, setor):
         
         desempenho = Desempenho.objects.select_related('setor', 'periodo').filter(
             Q(periodo__id__gte = id_periodo) ,
-            Q(periodo__id__lte = id_periodo + 11)    
+            Q(periodo__id__lte = id_periodo + 11),
+            Q(setor = setor)   
         )
         producao_ano = Producao.objects.filter(        
             Q(setor = setor),
