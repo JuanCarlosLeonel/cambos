@@ -83,9 +83,9 @@ def custo_setor(setor, id_periodo):
                 periodo=id_periodo,
                 setor=setor
             )
+            custo_total = custo.energia + custo.laboratorio + custo.manutencao + custo.material_uso_continuo + custo.mao_de_obra + custo.vapor + custo.agua
         except:
-            custo = Custo.objects.filter(setor=setor).latest('periodo')
-        custo_total = custo.energia + custo.laboratorio + custo.manutencao + custo.material_uso_continuo + custo.mao_de_obra + custo.vapor + custo.agua
+            custo_total = 0        
     return custo_total
 
 
@@ -163,7 +163,7 @@ def preco_material(material, periodo):
     if material.origem == "Compra":
         valor_compra = ValorCompra.objects.select_related('material', 'periodo').filter(
             material=material,
-            periodo__lte=periodo).order_by('-periodo').distinct('periodo')
+            periodo__lte=periodo).order_by('periodo').distinct('periodo')
         
         for valor in valor_compra:
             if valor.material == material:
