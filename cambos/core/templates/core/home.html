@@ -1,0 +1,62 @@
+{% extends "cambos/base_clean.html" %}
+
+{% block css %}{% endblock css %}
+
+{% block navigation %}
+    <div class="row container">
+		
+        <ol class="breadcrumb ">
+            <li><a href="">
+                <em class="fa fa-home"></em>
+            </a></li>
+            <li class="active">Menu</li>
+        </ol>	
+    </div><!--/.row-->
+	
+    <div class="container">
+        <div class="col-lg-12">
+            <h1 class="page-header">Divisão<span class="text-muted small"> </span></h1></h1>
+        </div>
+    </div><!--/.row-->
+{% endblock navigation %}
+
+{% block content %}
+<div class="container mx-3">
+	<div class="row">			
+		<div class="col-6">
+			<div class="panel panel-default">
+				<div class="panel-body">				
+					<a href="">																		
+						<div class="panel panel-blue panel-widget">							
+							<div class="large"><em class="fa fa-barcode color-blue"></em></div>								
+							<h3 class=""> Comercial </h3>								
+						</div>							
+					</a>								
+				</div>
+			</div><!--/.row-->
+		</div>
+		<div class="col-6">
+			<div class="panel panel-default">
+				<div class="panel-body">				
+					<a href="{% url 'core_index' %}?setor={{ request.GET.setor }}&periodo={{ periodo }}">																		
+						<div class="panel panel-teal panel-widget">															
+							<div class="large"><em class="fa fa-shirtsinbulk color-teal"></em></div>								
+							<h3 class=""> Industrial </h3>																
+						</div>						
+					</a>								
+				</div>
+			</div>
+		</div>
+	</div>		
+</div>
+{%endblock content%}
+
+{% block script %}
+
+		
+	<script>
+    	let option = document.getElementById('setor{{ request.GET.setor }}');
+		option.setAttribute('class', 'active');
+		
+	</script>
+{% endblock script %}
