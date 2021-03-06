@@ -572,7 +572,7 @@ class Index(TemplateView):
         perda = perda_setor(setor, periodo).aggregate(
             Sum('quantidade'))['quantidade__sum']
         try:
-            perda_un = (perda / producao_total) * 100
+            perda_un = (perda / (producao_total + perda)) * 100
         except:
             perda_un = 0
 
