@@ -22,7 +22,8 @@
 
 {% block content %}
 <div class="container mx-3">
-	<div class="row">			
+	<div class="row">	
+		{% if user.comercial.all.count > 0  %}		
 		<div class="col-6">
 			<div class="panel panel-default">
 				<div class="panel-body">				
@@ -35,17 +36,20 @@
 				</div>
 			</div><!--/.row-->
 		</div>
+		{% endif %}
+		{% if user.industrial%}
 		<div class="col-6">
 			<div class="panel panel-default">
 				<div class="panel-body">				
 					<a href="{% url 'core_index' %}?setor={{ request.GET.setor }}&periodo={{ periodo }}">																		
 						<div class="panel panel-teal panel-widget">															
 							<div class="large"><em class="fa fa-shirtsinbulk color-teal"></em></div>								
-							<h3 class=""> Industrial </h3>																
+							<h3 class=""> Têxtil </h3>																
 						</div>						
 					</a>								
 				</div>
 			</div>
+		{% endif%}
 		</div>
 	</div>		
 </div>

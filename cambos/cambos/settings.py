@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'core',
     'produto',
+    'comercial',
     'django_select2',  
 ]
 

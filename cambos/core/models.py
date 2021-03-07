@@ -1,6 +1,7 @@
 from django.db import models
 from django_currentuser.db.models import CurrentUserField
 from django.contrib.auth.models import AbstractUser
+from comercial.models import Comercial
 
 ### Geral ###
 
@@ -31,7 +32,16 @@ class Setor(models.Model):
 
 
 class User(AbstractUser):
-    setor = models.ForeignKey(Setor, null=True, blank=True, on_delete=models.SET_NULL)
+    COM_CHOICES = (
+            ('Mendes Júnior', 'Mendes Júnior'),
+            ('Xavantes', 'Xavantes'),             
+            ('Cotton Move', 'Cotton Move'),             
+            ('Geral', 'Geral'),             
+        )
+    setor      = models.ForeignKey(Setor, null=True, blank=True, on_delete=models.SET_NULL)
+    industrial = models.BooleanField(default=False)
+    comercial  = models.ManyToManyField(Comercial, blank=True)
+    
 
     
 

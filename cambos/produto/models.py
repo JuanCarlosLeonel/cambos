@@ -4,10 +4,7 @@ from django_currentuser.db.models import CurrentUserField
 import datetime
 
 class Desempenho(models.Model):
-    UN_CHOICES = (
-            ('kg', 'kg'),
-            ('m', 'm'),             
-        )
+    
     setor                   = models.ForeignKey(Setor, on_delete=models.CASCADE)
     periodo                 = models.ForeignKey(Periodo, on_delete=models.CASCADE)    
     capacidade_total        = models.IntegerField(blank=True, null=True, verbose_name='Capacidade Total')
