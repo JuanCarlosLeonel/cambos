@@ -29,6 +29,9 @@ class CustoManipulacao(models.Model):
 
     def __str__(self):
         return f'{self.cliente} - {self.custo}'
+    
+    class Meta:
+        verbose_name_plural = "Custo Manipulações"
       
 
 class Cotacao(models.Model):
@@ -46,6 +49,9 @@ class Cotacao(models.Model):
 
     def __str__(self):
         return f'{self.cliente} ({self.descricao})'
+    
+    class Meta:
+        verbose_name_plural = "Cotações"
 
 
 class Tecido(models.Model):
@@ -66,6 +72,9 @@ class PrecoTecido(models.Model):
 
     def __str__(self):
         return f'{self.tecido} - {self.data}'
+    
+    class Meta:
+        verbose_name_plural = "Preço Tecidos"
 
 
 class PontuacaoProducao(models.Model):
@@ -75,6 +84,9 @@ class PontuacaoProducao(models.Model):
 
     def __str__(self):
         return f'{self.pontuacao}'
+    
+    class Meta:
+        verbose_name_plural = "Pontuação Produção"
 
 
 class Produto(models.Model):
@@ -103,6 +115,9 @@ class ItemCotacao(models.Model):
 
     def __str__(self):
         return f'{self.cod}'
+    
+    class Meta:
+        verbose_name_plural = "Itens Cotações"
 
 
 class Proposta(models.Model):
