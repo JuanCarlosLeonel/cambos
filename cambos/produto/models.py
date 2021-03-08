@@ -1,6 +1,7 @@
 from django.db import models
 from core.models import Setor, Periodo
 from django_currentuser.db.models import CurrentUserField
+
 import datetime
 
 class Desempenho(models.Model):

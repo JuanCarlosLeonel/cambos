@@ -57,6 +57,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'django_currentuser.middleware.ThreadLocalUserMiddleware',
 ]
 
 ROOT_URLCONF = 'cambos.urls'
@@ -154,7 +155,7 @@ STATICFILES_DIRS = [
 
 
 LOGIN_URL = 'login'
-LOGIN_REDIRECT_URL = 'core_home'
+LOGIN_REDIRECT_URL = 'core_index'
 LOGOUT_REDIRECT_URL = 'login'
 
 DECIMAL_SEPARATOR = ','
