@@ -322,7 +322,7 @@ def consumo_material_setor(setor, periodo):
 
 #Arquivo
 def dash(nome_periodo, id_periodo, setor):
-    meses_abr = ["Jan", "fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dez"]
+    meses_abr = ["Jan", "Fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dez"]
     periodo_ind = meses_abr.index(nome_periodo[0:3])
     if periodo_ind == 11:
         p_inicio = 0
@@ -380,7 +380,7 @@ def dash(nome_periodo, id_periodo, setor):
 
 
 def dash2(nome_periodo, periodo, setor):
-    meses_abr = ["Jan", "fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dez"]
+    meses_abr = ["Jan", "Fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dez"]
     periodo_ind = meses_abr.index(nome_periodo[0:3])
     if periodo_ind == 11:
         p_inicio = 0
