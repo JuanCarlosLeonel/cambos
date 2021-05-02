@@ -20,6 +20,7 @@ class Setor(models.Model):
     DIVISAO_CHOICES = (
             ('Têxtil', 'Têxtil'),
             ('Confecção', 'Confecção'),             
+            ('Geral', 'Geral'),             
         )
     nome    = models.CharField(max_length=20)
     divisao = models.CharField(max_length=20, choices=DIVISAO_CHOICES, verbose_name='Divisão')
@@ -38,9 +39,10 @@ class User(AbstractUser):
             ('Cotton Move', 'Cotton Move'),             
             ('Geral', 'Geral'),             
         )
-    setor      = models.ForeignKey(Setor, null=True, blank=True, on_delete=models.SET_NULL)
-    industrial = models.BooleanField(default=False)
-    comercial  = models.ManyToManyField(Comercial, blank=True)
+    setor     = models.ForeignKey(Setor, null=True, blank=True, on_delete=models.SET_NULL)
+    textil    = models.BooleanField(default=False)
+    confeccao = models.BooleanField(default=False)
+    comercial = models.ManyToManyField(Comercial, blank=True)
     
 
     

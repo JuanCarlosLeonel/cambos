@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     'core',
     'produto',
     'comercial',
+    'roupa',
     'django_select2',  
 ]
 

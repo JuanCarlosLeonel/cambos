@@ -595,8 +595,7 @@ class Index(TemplateView):
             setor = {'nome': 'Consolidado'}
         
        
-        #dash
-        
+        #dash        
         context['data1'] = dashboard['producao']
         context['data2'] = dashboard['custo']
         context['data3'] = dashboard['insumo']
