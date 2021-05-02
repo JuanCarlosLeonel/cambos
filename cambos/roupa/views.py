@@ -4,6 +4,8 @@ from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
 import requests
 from requests.auth import HTTPBasicAuth
+from datetime import datetime
+from dateutil import parser
 
 @method_decorator(login_required, name='dispatch')
 class Index(TemplateView):
@@ -12,9 +14,18 @@ class Index(TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         url = requests.get(
-            url='http://ec2-34-212-204-187.us-west-2.compute.amazonaws.com:8000/core/api/users/b9d36a5f-fe64-45fd-929c-280303bb966b/',
-            auth=HTTPBasicAuth('admin', 'admin')
+            url='https://json.extendsclass.com/bin/9b619402741b'
         )
-        dados = url.json()
-        context['dados'] = dados
+        dados = url.json()["ENTREGA"]
+        lista = []
+        for produto in dados:
+            decoder = parser.parse(produto['ENTREGA'])
+            semana = datetime.isocalendar(decoder)[1]
+            lista.append({
+                'FC': produto['FC'],
+                'ENTREGA':semana,
+                'QUANTIDADE': produto['QUANTIDADE']
+            })
+        
+        context['dados'] = lista
         return context

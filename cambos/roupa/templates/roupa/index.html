@@ -28,8 +28,10 @@
 				<div class="panel-body">				
 					<a href="{% url 'core_index' %}?setor={{ request.GET.setor }}&periodo={{ periodo }}">																		
 						<div class="panel panel-teal panel-widget">															
-							<div class="large"><em class="fa fa-scissors color-teal"></em></div>								
-							<h3 class=""> {{dados}} </h3>																
+							<div class="large"><em class="fa fa-scissors color-teal"></em></div>
+							{% for item in dados%}
+							<h3 class=""> semana {{item.ENTREGA}} -  Total {{item.QUANTIDADE}} </h3>																
+							{% endfor%}							
 						</div>						
 					</a>								
 				</div>
