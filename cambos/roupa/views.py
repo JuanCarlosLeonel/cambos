@@ -14,17 +14,17 @@ class Index(TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         url = requests.get(
-            url='https://json.extendsclass.com/bin/9b619402741b'
+            url='http://187.45.32.103:20080/spi/producaoservice/statusentrega'
         )
-        dados = url.json()["ENTREGA"]
+        dados = url.json()["value"]
         lista = []
         for produto in dados:
-            decoder = parser.parse(produto['ENTREGA'])
+            decoder = parser.parse(produto['DataEntrega'])
             semana = datetime.isocalendar(decoder)[1]
             lista.append({
-                'FC': produto['FC'],
+                'FC': produto['FichaCorte'],
                 'ENTREGA':semana,
-                'QUANTIDADE': produto['QUANTIDADE']
+                'QUANTIDADE': produto['QuantPecas']
             })
         
         context['dados'] = lista
