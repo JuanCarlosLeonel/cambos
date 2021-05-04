@@ -6,6 +6,9 @@ import requests
 from requests.auth import HTTPBasicAuth
 from datetime import datetime
 from dateutil import parser
+from collections import Counter
+import collections
+
 
 @method_decorator(login_required, name='dispatch')
 class Index(TemplateView):
@@ -14,18 +17,39 @@ class Index(TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         url = requests.get(
-            url='http://187.45.32.103:20080/spi/producaoservice/statusentrega'
+            'http://187.45.32.103:20080/spi/producaoservice/statusentrega'
         )
         dados = url.json()["value"]
         lista = []
+        total_pecas = 0
+        entrega_atraso = 0
+        produto_parado = 0
+        
         for produto in dados:
             decoder = parser.parse(produto['DataEntrega'])
             semana = datetime.isocalendar(decoder)[1]
             lista.append({
-                'FC': produto['FichaCorte'],
-                'ENTREGA':semana,
-                'QUANTIDADE': produto['QuantPecas']
+                
+                'entrega':semana,
+                'quantidade': produto['QuantPecas'],
+                
             })
+            total_pecas += produto['QuantPecas']
+            if produto['Atrasado'] == "Atrasado":
+                entrega_atraso += 1
+            if produto['Parado'] == "1":
+                produto_parado += 1
         
-        context['dados'] = lista
+        result = Counter()
+        
+        for i in lista:
+            result [i['entrega']] += i['quantidade']
+        result = collections.OrderedDict(sorted(result.items()))
+        context['teste'] = list(result.keys())
+        context['label'] = list(result.keys())
+        context['value'] = list(result.values())
+        context['total'] = total_pecas
+        context['atrasado'] = entrega_atraso
+        context['parado'] = produto_parado
+
         return context
