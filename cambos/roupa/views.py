@@ -23,33 +23,55 @@ class Index(TemplateView):
         lista = []
         total_pecas = 0
         entrega_atraso = 0
+        quantidade_atraso = 0
         produto_parado = 0
-        
+        hoje = datetime.today()
+        semana_atual = datetime.isocalendar(hoje)[1]+1
         for produto in dados:
             decoder = parser.parse(produto['DataEntrega'])
-            semana = datetime.isocalendar(decoder)[1]
-            lista.append({
-                
-                'entrega':semana,
-                'quantidade': produto['QuantPecas'],
-                
-            })
+            semana_entrega = datetime.isocalendar(decoder)[1]+1            
+            if semana_entrega < semana_atual:
+                lista.append({
+                    'em_dia': 0,
+                    'em_atraso': 0,             
+                    'entrega':semana_atual,                    
+                })
+            elif produto['Atrasado'] == "Em Atraso":
+                lista.append({
+                    'em_dia': 0,
+                    'em_atraso': produto['QuantPecas'],                              
+                    'entrega':semana_entrega,                    
+                })
+            else:
+                lista.append({
+                    'em_dia': produto['QuantPecas'],                
+                    'em_atraso': 0,               
+                    'entrega':semana_entrega,                    
+                })
             total_pecas += produto['QuantPecas']
             if produto['Atrasado'] == "Atrasado":
                 entrega_atraso += 1
+                quantidade_atraso += produto['QuantPecas']
             if produto['Parado'] == "1":
                 produto_parado += 1
         
-        result = Counter()
+        em_dia = Counter()
+        em_atraso = Counter()
+        atrasado = Counter()
         
         for i in lista:
-            result [i['entrega']] += i['quantidade']
-        result = collections.OrderedDict(sorted(result.items()))
-        context['teste'] = list(result.keys())
-        context['label'] = list(result.keys())
-        context['value'] = list(result.values())
+            em_dia [i['entrega']] += i['em_dia']
+            em_atraso [i['entrega']] += i['em_atraso']
+           
+        em_dia = collections.OrderedDict(sorted(em_dia.items()))
+        em_atraso = collections.OrderedDict(sorted(em_atraso.items()))        
+        context['semana_atual'] = semana_atual
+        context['label'] = list(em_dia.keys())
+        context['em_dia'] = list(em_dia.values())
+        context['em_atraso'] = list(em_atraso.values())
+        context['atrasado'] = quantidade_atraso
         context['total'] = total_pecas
-        context['atrasado'] = entrega_atraso
+        context['entrega_atraso'] = entrega_atraso
         context['parado'] = produto_parado
 
         return context

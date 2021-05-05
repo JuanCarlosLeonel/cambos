@@ -47,7 +47,7 @@
 			<div class="col-xs-6 col-md-2 col-lg-2 no-padding">
 				<div class="panel panel-orange panel-widget border-right">
 					<div class="row no-padding"><span class="color-orange"> Entregas em Atraso</span>
-						<div class="large">{{atrasado}}</div>
+						<div class="large">{{entrega_atraso}}</div>
 						<div class="text-muted">produtos </div>							
 					</div>
 				</div>
@@ -73,6 +73,16 @@
 			</div>
 		</div>
 		</a>
+		<a href="">				
+			<div class="col-xs-6 col-md-2 col-lg-2 no-padding">
+				<div class="panel panel-red panel-widget border-right">
+					<div class="row no-padding"><span class="color-red"> Semana Atual</span>
+						<div class="large">{{semana_atual}}</div>
+						<div class="text-muted"></div>
+					</div>
+				</div>
+			</div>
+			</a>
 		
 	</div><!--/.row-->
 </div>
@@ -112,34 +122,17 @@
 				<span class="pull-right clickable panel-toggle panel-button-tab-left"><em class="fa fa-toggle-up"></em></span></div>
 			<div class="panel-body">
 				<div class="canvas-wrapper">
-					<canvas class="chart" id="chartProducao" height="150" width="558" style="width: 558px; height: 150px;"></canvas>
+					<canvas class="chart" id="chartCarteira" height="150" width="558" style="width: 558px; height: 150px;"></canvas>
 					<script>
 						var labels1 = {{label|safe}}
-						var data1 = {{value|safe}}								
-						var data5 = {{value|safe}}								
+						var data1 = {{em_dia|safe}}								
+						var data2 = {{em_atraso|safe}}								
+						var data3 = {{atrasado|safe}}								
 					</script>
 				</div>
 			</div>
 		</div>
-	</div>
-	<div class="col-lg-12">
-		<div class="panel panel-default">
-			<div class="panel-heading">
-				Custo Unitário de Produção						
-				<span class="pull-right clickable panel-toggle panel-button-tab-left"><em class="fa fa-toggle-up"></em></span></div>
-			<div class="panel-body">
-				<div class="canvas-wrapper">
-					<canvas class="chart" id="chartComposicao" height="150" width="558" style="width: 558px; height: 150px;"></canvas>
-					<script>
-						var labels2 = {{labels1|safe}}
-						var data2 = {{data2|safe}}								
-						var data3 = {{data3|safe}}								
-						var data4 = {{data4|safe}}								
-					</script>
-				</div>
-			</div>
-		</div>
-	</div>
+	</div>	
 </div>
 {{teste}}
 
