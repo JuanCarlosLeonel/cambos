@@ -1,4 +1,5 @@
 from django.views.generic.base import TemplateView
+from django.views.generic.list import ListView
 from django.shortcuts import render
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
@@ -9,6 +10,12 @@ from dateutil import parser
 from collections import Counter
 import collections
 
+def get_url():
+    url = requests.get(
+            'http://187.45.32.103:20080/spi/producaoservice/statusentrega'
+        )
+    dados = url.json()["value"]
+    return dados
 
 @method_decorator(login_required, name='dispatch')
 class Index(TemplateView):
@@ -16,10 +23,7 @@ class Index(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        url = requests.get(
-            'http://187.45.32.103:20080/spi/producaoservice/statusentrega'
-        )
-        dados = url.json()["value"]
+        dados = get_url()
         lista = []
         total_pecas = 0
         entrega_atraso = 0
@@ -74,4 +78,15 @@ class Index(TemplateView):
         context['entrega_atraso'] = entrega_atraso
         context['parado'] = produto_parado
 
+        return context
+
+
+@method_decorator(login_required, name='dispatch')
+class ProducaoList(TemplateView):    
+    template_name = 'roupa/producao_list.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        dados = get_url()
+        context['producaojs'] = dados
         return context

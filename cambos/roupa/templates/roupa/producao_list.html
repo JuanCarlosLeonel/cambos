@@ -1,0 +1,87 @@
+{% extends "cambos/base_roupa.html" %}
+
+{% block css %}
+
+{% endblock css %}
+
+{% block navigation %}
+    <div class="row">
+        <ol class="breadcrumb">
+			<li><a href="{% url 'roupa_index' %}">
+                <em class="fa fa-home"></em>
+            </a></li>
+            <li class="active">Produção</li>
+        </ol>
+    </div><!--/.row-->
+    <div class="row">
+        <div class="col-lg-12">
+            <h1 class="page-header">PCP<span class="text-muted small"> Produção</span></h1></h1>
+        </div>
+    </div><!--/.row-->
+{% endblock navigation %}
+
+{% block content %}		
+	<div class="col-12">
+		
+		<div class="panel panel-default">
+			<div class="panel-heading"> <strong class="">Produtos <strong class="text-success"></strong></strong></div>
+			<div class="panel-body">
+				<div id="toolbar">
+					{%if setor.id%}
+						<a href="{% url 'producao_create' %}?setor={{ request.GET.setor }}&periodo={{ request.GET.periodo }}" class="btn btn-success">
+						<i class="fa fa-plus"></i> Novo
+						</a>
+					{%endif%}
+				  </div>
+				<table id="table"				
+				 data-toolbar="#toolbar"
+				 data-toggle="table"
+				 data-show-refresh="false"
+				 data-show-toggle="true"
+				 data-show-columns="true"
+				 data-search="true"
+				 data-select-item-name="toolbar"
+				 data-pagination="true"				 
+				 data-sort-order="desc">
+					<thead>
+						<tr>
+							<th data-field="acao" class='text-center'></th>
+							<th data-field="FichaCorte"  data-sortable="true" class='text-center'>FC</th>							
+							<th data-field="QuantPecas" data-sortable="false" class='text-center'>Quant</th>
+							<th data-field="Nome"  data-sortable="false" class='text-center'>Cliente</th>
+							<th data-field="Atrasado" data-sortable="false" class='text-center'>Situação</th>
+						</tr>
+					</thead>
+					<tbody>
+						{% for data in producaojs %}						
+							<tr data-index="{{forloop.counter0}}" >								
+								<td class='text-center'>
+									{% if data.id %}
+										<a href=""
+										 class='fa fa-pencil-square-o'></a>										 
+									{% else %}
+										<a href=""
+										 class='text-success fa fa-pencil-square-o'></a>
+									{% endif %}
+								</td>					
+								<td class='text-center' >{{data.FichaCorte}}</td>								
+								<td class='text-center'>{{data.QuantPecas}}</td>
+								<td class='text-center' >{{data.Nome}}</td>
+								<td class='text-center'>{{data.Atrasado}}</td>
+							</tr>
+						{%endfor%}
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</div>	
+	
+{%endblock content%}
+
+{% block script %}
+	<script>
+    	let option = document.getElementById('setor{{ request.GET.setor }}');
+		option.setAttribute('class', 'active');
+		
+	</script>
+{% endblock script %}
