@@ -11,11 +11,10 @@ from collections import Counter
 import collections
 
 def get_url():
-    url = requests.get(
-            'http://187.45.32.103:20080/spi/producaoservice/statusentrega'
-        )
-    dados = url.json()["value"]
-    return dados
+    url = 'http://187.45.32.103:20080/spi/producaoservice/statusentrega'
+    response = requests.get(url)
+    dados = response.json()
+    return dados['value']
 
 @method_decorator(login_required, name='dispatch')
 class Index(TemplateView):
@@ -82,8 +81,8 @@ class Index(TemplateView):
 
 
 @method_decorator(login_required, name='dispatch')
-class ProducaoList(TemplateView):    
-    template_name = 'roupa/producao_list.html'
+class ProducaoRoupaList(TemplateView):    
+    template_name = 'roupa/producao_roupa_list.html'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
