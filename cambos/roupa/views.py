@@ -9,12 +9,29 @@ from datetime import datetime
 from dateutil import parser
 from collections import Counter
 import collections
+import pandas as pd
 
 def get_url():
-    url = 'http://187.45.32.103:20080/spi/producaoservice/statusentrega'
-    response = requests.get(url)
-    dados = response.json()
+    url = 'http://187.45.32.103:20080/spi/producaoservice/statusentrega'    
+    dados = pd.read_json(url)
     return dados['value']
+
+def convert_setor(id):
+    lista = [
+        "1.Modelagem",
+        "2.Encaixe",
+        "3.Expedição Tecido",
+        "4.Corte",
+        "5.Costura",
+        "6.Finalização",
+        "7.Lavanderia",
+        "8.Qualidade",
+        "9.Acabamento",
+        "10.Expedição",
+        "11.Pronto",
+    ]
+    nome = lista[id-1]
+    return nome
 
 @method_decorator(login_required, name='dispatch')
 class Index(TemplateView):
@@ -75,7 +92,10 @@ class Index(TemplateView):
         context['atrasado'] = quantidade_atraso
         context['total'] = total_pecas
         context['entrega_atraso'] = entrega_atraso
-        context['parado'] = produto_parado
+        context['parado'] = produto_parado  
+        """d = dados.to_dict()    
+        df=pd.DataFrame.from_dict(d, orient='index')  
+        context['teste'] = df[df["Atrasado"]=="Em Dia"]"""
 
         return context
 
@@ -87,5 +107,9 @@ class ProducaoRoupaList(TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         dados = get_url()
+        for produto in dados:
+            produto["Status"] = convert_setor(produto["Status"])
+            produto["DataEntrega"] = parser.parse(produto['DataEntrega'])
         context['producaojs'] = dados
+        context['teste'] = convert_setor(1)
         return context
