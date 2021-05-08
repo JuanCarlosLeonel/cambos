@@ -9,11 +9,12 @@ from datetime import datetime
 from dateutil import parser
 from collections import Counter
 import collections
-import pandas as pd
+
 
 def get_url():
-    url = 'http://187.45.32.103:20080/spi/producaoservice/statusentrega'    
-    dados = pd.read_json(url)
+    url = 'http://187.45.32.103:20080/spi/producaoservice/statusentrega'
+    response = requests.get(url)
+    dados = response.json()
     return dados['value']
 
 def convert_setor(id):
@@ -109,7 +110,7 @@ class ProducaoRoupaList(TemplateView):
         dados = get_url()
         for produto in dados:
             produto["Status"] = convert_setor(produto["Status"])
-            produto["DataEntrega"] = parser.parse(produto['DataEntrega'])
+            
         context['producaojs'] = dados
         context['teste'] = convert_setor(1)
         return context
