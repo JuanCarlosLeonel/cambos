@@ -39,7 +39,7 @@ class Index(TemplateView):
     template_name = 'roupa/index.html'
 
     def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
+        context = super().get_context_data(**kwargs)        
         dados = get_url()
         lista = []
         total_pecas = 0
