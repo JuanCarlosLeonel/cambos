@@ -1,5 +1,6 @@
 from django.contrib import admin
 from django.urls import path, include
+from bot import telegrambot
 
 urlpatterns = [
     path('', include('core.urls')),
@@ -9,3 +10,5 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('django.contrib.auth.urls')),
 ]
+
+telegrambot.send_message()
