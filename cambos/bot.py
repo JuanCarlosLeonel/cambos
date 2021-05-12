@@ -12,7 +12,7 @@ class telegrambot():
         token = '1852462745:AAF02s1SOqvgZlfxlLX8iFb_uzhgrY5T8cM'
         n=0
         while n < 60:
-            send_text = f'https://api.telegram.org/bot{token}/sendMessage?chat_id=' + bot_chatID_tony + '&parse_mode=Markdown&text=' + "teste" + n
+            send_text = f'https://api.telegram.org/bot{token}/sendMessage?chat_id=' + bot_chatID_tony + '&parse_mode=Markdown&text=' + "testenovo"
             n += 1
             time.sleep(60)
             requests.get(send_text)
