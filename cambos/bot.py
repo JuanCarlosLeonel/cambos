@@ -11,10 +11,10 @@ class telegrambot():
         bot_chatID_tony = '1603244057'        
         token = '1852462745:AAF02s1SOqvgZlfxlLX8iFb_uzhgrY5T8cM'
         n=0
-        while n < 1:
-            send_text = f'https://api.telegram.org/bot{token}/sendMessage?chat_id=' + bot_chatID_tony + '&parse_mode=Markdown&text=' + "Tony4"
+        while n < 60:
+            send_text = f'https://api.telegram.org/bot{token}/sendMessage?chat_id=' + bot_chatID_tony + '&parse_mode=Markdown&text=' + "teste" + n
             n += 1
-            time.sleep(10)
+            time.sleep(60)
             requests.get(send_text)
 
 
