@@ -11,5 +11,5 @@ from bot import TelegramBot
 
 def start():
     scheduler = BackgroundScheduler()
-    scheduler.add_job(TelegramBot.send_message, 'interval', hours=4, name='messages')    
+    scheduler.add_job(TelegramBot.send_message, 'interval', hours=8, name='messages')    
     scheduler.start()    

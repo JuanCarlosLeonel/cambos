@@ -1,16 +1,37 @@
 import requests
 import time
 import json
+from roupa.views import get_url
+from dateutil import parser
+from datetime import datetime
 
 class TelegramBot():
     def __init__(self):
         token = '1852462745:AAF02s1SOqvgZlfxlLX8iFb_uzhgrY5T8cM'
         self.url_base = f'https://api.telegram.org/bot{token}/'
 
-    def send_message():        
+    def send_message():   
+        dados = get_url()
         bot_chatID_tony = '1603244057'        
         token = '1852462745:AAF02s1SOqvgZlfxlLX8iFb_uzhgrY5T8cM'
-        send_text = f'https://api.telegram.org/bot{token}/sendMessage?chat_id={bot_chatID_tony}&parse_mode=Markdown&text=testenovo'
+        total_pecas = 0
+        entrega_atraso = 0
+        quantidade_atraso = 0
+        produto_parado = 0
+        for produto in dados:
+            decoder = parser.parse(produto['DataEntrega'])
+            semana_entrega = datetime.isocalendar(decoder)[1]+1                        
+            total_pecas += produto['QuantPecas']
+            if produto['Atrasado'] == "Atrasado":
+                entrega_atraso += 1
+                quantidade_atraso += produto['QuantPecas']
+            if produto['Parado'] == "1":
+                produto_parado += 1        
+        send_text = f'https://api.telegram.org/bot{token}/sendMessage?chat_id={bot_chatID_tony}&parse_mode=Markdown&text=Olá, Tony!'
+        requests.get(send_text)
+        send_text = f'https://api.telegram.org/bot{token}/sendMessage?chat_id={bot_chatID_tony}&parse_mode=Markdown&text=temos {produto_parado} produtos parados'
+        requests.get(send_text)
+        send_text = f'https://api.telegram.org/bot{token}/sendMessage?chat_id={bot_chatID_tony}&parse_mode=Markdown&text=e {entrega_atraso} entregas atrasadas.'
         requests.get(send_text)
 
     def Iniciar(self):
