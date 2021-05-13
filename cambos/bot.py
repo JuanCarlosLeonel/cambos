@@ -2,7 +2,7 @@ import requests
 import time
 import json
 
-class telegrambot():
+class TelegramBot():
     def __init__(self):
         token = '1852462745:AAF02s1SOqvgZlfxlLX8iFb_uzhgrY5T8cM'
         self.url_base = f'https://api.telegram.org/bot{token}/'
@@ -10,13 +10,8 @@ class telegrambot():
     def send_message():        
         bot_chatID_tony = '1603244057'        
         token = '1852462745:AAF02s1SOqvgZlfxlLX8iFb_uzhgrY5T8cM'
-        n=0
-        while n < 60:
-            send_text = f'https://api.telegram.org/bot{token}/sendMessage?chat_id=' + bot_chatID_tony + '&parse_mode=Markdown&text=' + "testenovo"
-            n += 1
-            time.sleep(60)
-            requests.get(send_text)
-
+        send_text = f'https://api.telegram.org/bot{token}/sendMessage?chat_id={bot_chatID_tony}&parse_mode=Markdown&text=testenovo'
+        requests.get(send_text)
 
     def Iniciar(self):
         update_id = None

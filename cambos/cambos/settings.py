@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     'comercial',
     'roupa',
     'django_select2',  
+    'django_apscheduler',
 ]
 
 MIDDLEWARE = [
