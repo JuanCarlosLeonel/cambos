@@ -23,7 +23,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = '2fscwuwx((@*edd7t=&_je8oy=lo3g39s4162^!o0m5d(t6$92'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = [
     'scbi.us-west-2.elasticbeanstalk.com',
