@@ -7,9 +7,10 @@ from bot import TelegramBot
 
 # This is the function you want to schedule - add as many as you want and then register them in the start() function below
 
-
+bot2 = TelegramBot()
 
 def start():
     scheduler = BackgroundScheduler()
-    scheduler.add_job(TelegramBot.send_message, 'interval', hours=8, name='messages')    
+    scheduler.add_job(bot2.Iniciar)        
+    scheduler.add_job(TelegramBot.send_message, 'interval', hours=8, name='bot')        
     scheduler.start()    
