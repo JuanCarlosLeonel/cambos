@@ -5,16 +5,16 @@ import os
 from roupa.views import get_url
 from dateutil import parser
 from datetime import date, datetime, timedelta
-from core.models import Bot
+
 
 
 class TelegramBot():
     def __init__(self):
-        token = str(Bot.objects.latest('token').token)
+        token = "1852462745:AAF02s1SOqvgZlfxlLX8iFb_uzhgrY5T8cM"
         self.url_base = f'https://api.telegram.org/bot{token}/'
 
     def Iniciar(self):
-        update_id = int(Bot.objects.latest('token').last_update_id)        
+        update_id = 888170508        
         while True:            
             atualizacao = self.obter_mensagens(update_id)
             if atualizacao['result']:
@@ -60,7 +60,7 @@ class TelegramBot():
         dados = get_url()
         bot_chatID_tony = '1603244057'    
         bot_chatID_joao = '1110999676'    
-        token = str(Bot.objects.latest('token').token)
+        token = '1852462745:AAF02s1SOqvgZlfxlLX8iFb_uzhgrY5T8cM'
         total_pecas = 0
         entrega_atraso = 0
         quantidade_atraso = 0
