@@ -45,7 +45,7 @@ class User(AbstractUser):
     comercial = models.ManyToManyField(Comercial, blank=True)
     
 
+class Bot(models.Model):
+    last_update_id  = models.CharField(max_length=30)
+    token           = models.CharField(max_length=46)
     
-
-
-
