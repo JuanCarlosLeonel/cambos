@@ -11,6 +11,6 @@ bot2 = TelegramBot()
 
 def start():
     scheduler = BackgroundScheduler()
-    scheduler.add_job(bot2.Iniciar, 'interval', minutes=2, name='botIniciar')        
+    scheduler.add_job(bot2.Iniciar, 'interval', minutes=1, name='botIniciar')        
     #scheduler.add_job(TelegramBot.send_message, 'interval', seconds=10, name='botRotina')        
     scheduler.start()    
