@@ -5,31 +5,35 @@ import os
 from roupa.views import get_url
 from dateutil import parser
 from datetime import date, datetime, timedelta
-from core.models import Bot
+#from core.models import Bot
 
 
 class TelegramBot():
     def __init__(self):
-        token = str(Bot.objects.latest('token').token)
+        token = "str(Bot.objects.latest('token').token)"
         self.url_base = f'https://api.telegram.org/bot{token}/'
 
     def Iniciar(self):
-        update_id = int(Bot.objects.latest('token').last_update_id)        
+        pass
+        """update_id = int(Bot.objects.latest('token').last_update_id)        
         while True:            
-            atualizacao = self.obter_mensagens(update_id)
-            if atualizacao['result']:
-                dados = atualizacao['result']                
-                if dados:
-                    for dado in dados:
-                        update_id = dado['update_id']                    
-                        chat_id = dado["message"]["from"]["id"]    
-                        primeira_menssagem = dado['message']['message_id'] == 1
-                        resposta = self.criar_resposta(dado, primeira_menssagem)
-                        self.responder(resposta, chat_id)
-                time.sleep(20)
+            if Bot.objects.latest('token').ativo:
+                atualizacao = self.obter_mensagens(update_id)
+                if atualizacao['result']:
+                    dados = atualizacao['result']                
+                    if dados:
+                        for dado in dados:
+                            update_id = dado['update_id']                    
+                            chat_id = dado["message"]["from"]["id"]    
+                            primeira_menssagem = dado['message']['message_id'] == 1
+                            resposta = self.criar_resposta(dado, primeira_menssagem)
+                            self.responder(resposta, chat_id)
+                    time.sleep(20)
+                else:
+                    break
             else:
                 break
-            
+        """    
                 
     def obter_mensagens(self, update_id):
         link_requisicao = f'{self.url_base}getUpdates?timeout=100'
@@ -60,7 +64,7 @@ class TelegramBot():
         dados = get_url()
         bot_chatID_tony = '1603244057'    
         bot_chatID_joao = '1110999676'    
-        token = str(Bot.objects.latest('token').token)
+        token = "str(Bot.objects.latest('token').token)"
         total_pecas = 0
         entrega_atraso = 0
         quantidade_atraso = 0
