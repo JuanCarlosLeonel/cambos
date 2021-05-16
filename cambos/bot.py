@@ -60,7 +60,7 @@ class TelegramBot():
             return f'''olá, {user}!:{os.linesep}escolha uma opção:{os.linesep}{os.linesep} 1 -->  Relação de Entregas{os.linesep} 2 --> Agendamento de Entregas das oficinas (vem aí)'''
         if mensagem == '1':
             dados = get_url()
-            relacao = ''
+            relacao = f'Oficina Leila: {os.linesep}{os.linesep}'
             for item in dados:
                 if item['Status'] == 5:
                     if item['Celula'] == "Leila":
@@ -96,3 +96,6 @@ class TelegramBot():
         texto = f"olá Tony! {os.linesep}{os.linesep}temos {produto_parado} produtos parados {os.linesep}e {entrega_atraso} entregas atrasadas."
         send_text = f'{self.url_base}sendMessage?chat_id={bot_chatID_tony}&parse_mode=Markdown&text={texto}'                        
         requests.get(send_text)        
+        texto2 = f"olá João Vitor! {os.linesep}{os.linesep}temos {produto_parado} produtos parados {os.linesep}e {entrega_atraso} entregas atrasadas."
+        send_text2 = f'{self.url_base}sendMessage?chat_id={bot_chatID_joao}&parse_mode=Markdown&text={texto2}'                        
+        requests.get(send_text2)        
