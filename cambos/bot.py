@@ -7,6 +7,17 @@ from dateutil import parser
 from datetime import date, datetime, timedelta
 from core.models import Bot
 
+lista_users= [
+    {
+        'nome':'Tony',
+        'bot_id':'1603244057',
+        'admin':True
+    },{
+        'nome':'João Vitor',
+        'bot_id':'1110999676',
+        'admin':True
+    },
+]
 
 class TelegramBot():
     def __init__(self):
@@ -34,8 +45,7 @@ class TelegramBot():
                     break
             else:
                 break
-            
-                
+                    
     def obter_mensagens(self, update_id):
         link_requisicao = f'{self.url_base}getUpdates?timeout=100'
         if update_id:
@@ -49,19 +59,23 @@ class TelegramBot():
         if primeira_mensagem == True or mensagem.lower() == 'menu':
             return f'''olá, {user}!:{os.linesep}escolha uma opção:{os.linesep}{os.linesep} 1 -->  Relação de Entregas{os.linesep} 2 --> Agendamento de Entregas das oficinas (vem aí)'''
         if mensagem == '1':
-            return 'Oficina X:'
+            dados = get_url()
+            relacao = ''
+            for item in dados:
+                if item['Status'] == 5:
+                    if item['Celula'] == "Leila":
+                        relacao += f".{item['FichaCorte']} - {item['Modelo']} {os.linesep}"
+            return relacao
         if mensagem == '2':
             return 'Em breve'        
         else:
-            return f'''escolha uma opção, {user}:{os.linesep}{os.linesep} 1 -->  Relação de Entregas{os.linesep} 2 --> Agendamento de Entregas das oficinas (vem aí)'''
-        
+            return f'''escolha uma opção, {user}:{os.linesep}{os.linesep} 1 -->  Relação de Entregas{os.linesep} 2 --> Agendamento de Entregas das oficinas (vem aí)'''    
     
     def responder(self,resposta,chat_id):
         link_de_envio = f'{self.url_base}sendMessage?chat_id={chat_id}&text={resposta}'
         requests.get(link_de_envio)
     
-
-    def send_message():   
+    def send_message(self):   
         dados = get_url()
         bot_chatID_tony = '1603244057'    
         bot_chatID_joao = '1110999676'    
@@ -82,7 +96,7 @@ class TelegramBot():
         
         send_text = f'https://api.telegram.org/bot{token}/sendMessage?chat_id={bot_chatID_tony}&parse_mode=Markdown&text=Olá, Tony!'
         requests.get(send_text)
-        #send_text = f'https://api.telegram.org/bot{token}/sendMessage?chat_id={bot_chatID_tony}&parse_mode=Markdown&text=temos {produto_parado} produtos parados'
-        #requests.get(send_text)
-        #send_text = f'https://api.telegram.org/bot{token}/sendMessage?chat_id={bot_chatID_tony}&parse_mode=Markdown&text=e {entrega_atraso} entregas atrasadas.'        
-        #requests.get(send_text)        
+        send_text = f'https://api.telegram.org/bot{token}/sendMessage?chat_id={bot_chatID_tony}&parse_mode=Markdown&text=temos {produto_parado} produtos parados'
+        requests.get(send_text)
+        send_text = f'https://api.telegram.org/bot{token}/sendMessage?chat_id={bot_chatID_tony}&parse_mode=Markdown&text=e {entrega_atraso} entregas atrasadas.'        
+        requests.get(send_text)        
