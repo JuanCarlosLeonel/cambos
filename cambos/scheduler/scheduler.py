@@ -4,13 +4,13 @@ from django.utils import timezone
 from django_apscheduler.models import DjangoJobExecution
 import sys
 from bot import TelegramBot
+from pytz import utc
 
-# This is the function you want to schedule - add as many as you want and then register them in the start() function below
 
 bot2 = TelegramBot()
 
 def start():
     scheduler = BackgroundScheduler()
     scheduler.add_job(bot2.Iniciar, 'interval', minutes=1, name='botIniciar')        
-    scheduler.add_job(bot2.send_message, 'cron', day_of_week='sun', hour='17', minute='20', name='botRotina')        
+    scheduler.add_job(bot2.send_message, 'cron', day_of_week='sun', hour='20', minute='30', name='botRotina', start_date='2021-05-16')        
     scheduler.start()    

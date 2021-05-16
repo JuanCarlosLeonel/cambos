@@ -47,7 +47,7 @@ class TelegramBot():
                 break
                     
     def obter_mensagens(self, update_id):
-        link_requisicao = f'{self.url_base}getUpdates?timeout=100'
+        link_requisicao = f'{self.url_base}getUpdates?timeout=200'
         if update_id:
             link_requisicao = f'{link_requisicao}&offset={update_id + 1}'
         resultado = requests.get(link_requisicao)
@@ -93,10 +93,6 @@ class TelegramBot():
                 quantidade_atraso += produto['QuantPecas']
             if produto['Parado'] == "1":
                 produto_parado += 1 
-        
-        send_text = f'https://api.telegram.org/bot{token}/sendMessage?chat_id={bot_chatID_tony}&parse_mode=Markdown&text=Olá, Tony!'
-        requests.get(send_text)
-        send_text = f'https://api.telegram.org/bot{token}/sendMessage?chat_id={bot_chatID_tony}&parse_mode=Markdown&text=temos {produto_parado} produtos parados'
-        requests.get(send_text)
-        send_text = f'https://api.telegram.org/bot{token}/sendMessage?chat_id={bot_chatID_tony}&parse_mode=Markdown&text=e {entrega_atraso} entregas atrasadas.'        
+        texto = f"olá Tony! {os.linesep}{os.linesep}temos {produto_parado} produtos parados {os.linesep}e {entrega_atraso} entregas atrasadas."
+        send_text = f'{self.url_base}sendMessage?chat_id={bot_chatID_tony}&parse_mode=Markdown&text={texto}'                        
         requests.get(send_text)        
