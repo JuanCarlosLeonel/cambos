@@ -49,4 +49,31 @@ class Bot(models.Model):
     last_update_id  = models.CharField(max_length=30)
     token           = models.CharField(max_length=46)
     ativo           = models.BooleanField(default=False)
+
+class OFICINA(models.Model):
+    choice = models.CharField(max_length=154, unique=True)
+    
+    def __str__(self):
+        return f'{self.choice}'
+    
+
+class ACABAMENTO(models.Model):
+    choice = models.CharField(max_length=154, unique=True)
+    
+    def __str__(self):
+        return f'{self.choice}'
+    
+class UserBot(models.Model):
+    user_id    = models.IntegerField(unique=True)
+    user_nome  = models.CharField(max_length=30)
+    user_tel   = models.CharField(max_length=30, blank=True)
+    oficina    = models.ManyToManyField(OFICINA, blank=True)
+    lavanderia = models.BooleanField(default=False)
+    corte      = models.BooleanField(default=False)
+    expedicao  = models.BooleanField(default=False)
+    acabamento = models.ManyToManyField(ACABAMENTO, blank=True)
+    geral = models.BooleanField(default=False)
+
+    def __str__(self):
+        return f'{self.user_nome}'
     
