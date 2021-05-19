@@ -29,8 +29,7 @@ class TelegramBot():
                         try:
                             update_id = dado['update_id']                    
                             chat_id = dado["message"]["from"]["id"]    
-                            primeira_menssagem = dado['message']['message_id'] == 1
-                            resposta = self.criar_resposta(dado, primeira_menssagem)
+                            resposta = self.criar_resposta(dado)
                             self.responder(resposta, chat_id)
                         except:
                             pass
@@ -47,11 +46,11 @@ class TelegramBot():
         resultado = requests.get(link_requisicao)
         return json.loads(resultado.content)
         
-    def criar_resposta(self, mensagem, primeira_mensagem):
+    def criar_resposta(self, dado):
         from core.models import UserBot
-        user = mensagem["message"]["from"]["first_name"]
-        user_id = mensagem["message"]["from"]["id"]
-        mensagem = mensagem['message']['text']
+        user = dado["message"]["from"]["first_name"]
+        user_id = dado["message"]["from"]["id"]
+        mensagem = dado['message']['text']
         try:
             userbot = UserBot.objects.get(user_id = user_id)
         except:
@@ -60,31 +59,25 @@ class TelegramBot():
             p = UserBot(user_id = user_id, user_nome = user)
             p.save()        
             return f'Olá {user}!{os.linesep}Obrigado por acessar nosso sistema.{os.linesep}Já já seu acesso será liberado.'        
-        else:
-            if primeira_mensagem == True or mensagem.lower() == 'menu':
-                return f'''olá, {user}!:{os.linesep}escolha uma opção:{os.linesep}{os.linesep} 1 -->  Relação de Entregas{os.linesep} 2 --> Agendamento de Entregas das oficinas (vem aí)'''
-            if mensagem == '1':                
-                relacao = f'Lavanderia: {os.linesep}{os.linesep}'                
-                for item in self.dados:
-                    if item['Status'] == 7:
-                        if item['DiasLavanderia'] >= 5:
-                            relacao += f".{item['FichaCorte']} - {item['Modelo']} {os.linesep}"
-                return relacao
-            if mensagem == '2':
-                return 'Em breve'        
-            else:
-                return f'''escolha uma opção, {user}:{os.linesep}{os.linesep} 1 -->  Atraso Lavanderia{os.linesep} 2 --> Agendamento das oficinas (vem aí)'''    
+        else:            
+            return self.menu(user_id, user)            
+
             
-    
-    def send_message(self):           
-        bot_chatID_tony = '1603244057'    
-        bot_chatID_joao = '1110999676'    
+    def menu(self, user_id, user):
+        user_bot = UserBot.objects.get(user_id=user_id)
+        menu = f'olá, {user}!:{os.linesep}escolha uma opção:{os.linesep}{os.linesep}'
+        if user_bot.oficina.count() > 0:
+            menu += f' 1 --> Em breve{os.linesep}'
+        if user_bot.lavanderia:
+            menu += f' 2 --> Em breve{os.linesep}'        
+        return menu
+    def send_message(self):             
         total_pecas = 0
         entrega_atraso = 0
         quantidade_atraso = 0
         produto_parado = 0        
         for produto in self.dados:
-            semana = parser.parse(produto['DataEntrega'])            
+            data = parser.parse(produto['DataEntrega'])            
             total_pecas += produto['QuantPecas']
             if produto['Atrasado'] == "Atrasado":
                 entrega_atraso += 1
@@ -93,10 +86,27 @@ class TelegramBot():
                 produto_parado += 1  
                
         for user in UserBot.objects.all():
-            resposta = f'b=Bom dia, {user.user_nome}!'
+            resposta = f'Bom dia, {user.user_nome}!'
             self.responder(resposta, user.user_id)
+            if user.geral==True:
+                resposta = f"No Geral, temos {produto_parado} produtos parados {os.linesep}e {entrega_atraso} entregas atrasadas."
+                self.responder(resposta, user.user_id)
+            if user.oficina.count() > 0:                
+                for oficina in user.oficina.all():                
+                    count = 0
+                    soma = 0
+                    for produto in self.dados:
+                        if produto['Status'] == 5:
+                            if produto['Celula'] == oficina.choice:
+                                if produto['DiasCostura'] >= 15:
+                                    count += 1                    
+                                    soma += produto['QuantPecas']
+                    if count > 0:       
+                        resposta = f'Em Atraso - Oficinas:{os.linesep}{os.linesep} {oficina.choice}:{os.linesep}'                 
+                        resposta += f"{count} lotes / {soma} peças"
+                        self.responder(resposta, user.user_id)
             if user.lavanderia==True:
-                resposta += f'Em Atraso - Lavanderia: {os.linesep}{os.linesep}'
+                resposta = f'Em Atraso - Lavanderia: {os.linesep}{os.linesep}'
                 count = 0
                 soma = 0
                 for produto in self.dados:
@@ -109,10 +119,7 @@ class TelegramBot():
                 else:
                     resposta += f"{count} lotes / {soma} peças"
                 self.responder(resposta, user.user_id)
-            if user.geral==True:
-                resposta = f"No Geral, temos {produto_parado} produtos parados {os.linesep}e {entrega_atraso} entregas atrasadas."
-                self.responder(resposta, user.user_id)
-        
+            
 
     def responder(self,resposta,chat_id):
         link_de_envio = f'{self.url_base}sendMessage?chat_id={chat_id}&text={resposta}'
