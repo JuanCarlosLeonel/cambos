@@ -6,12 +6,15 @@ from roupa.views import get_url
 from dateutil import parser
 from datetime import date, datetime, timedelta
 from core.models import Bot, UserBot
+import telegram
+from telegram import InlineKeyboardButton, InlineKeyboardMarkup
 
 
 class TelegramBot():
     def __init__(self):
         self.bot = Bot.objects.latest('token')
         token = self.bot.token
+        self.bot = telegram.Bot(token=token)
         self.url_base = f'https://api.telegram.org/bot{token}/'
         self.dados = get_url()
 
@@ -66,11 +69,12 @@ class TelegramBot():
     def menu(self, user_id, user):
         user_bot = UserBot.objects.get(user_id=user_id)
         menu = f'olá, {user}!:{os.linesep}escolha uma opção:{os.linesep}{os.linesep}'
-        if user_bot.oficina.count() > 0:
+        """if user_bot.oficina.count() > 0:
             menu += f' 1 --> Em breve{os.linesep}'
         if user_bot.lavanderia:
-            menu += f' 2 --> Em breve{os.linesep}'        
+            menu += f' 2 --> Em breve{os.linesep}' """       
         return menu
+
     def send_message(self):             
         total_pecas = 0
         entrega_atraso = 0
@@ -122,5 +126,12 @@ class TelegramBot():
             
 
     def responder(self,resposta,chat_id):
-        link_de_envio = f'{self.url_base}sendMessage?chat_id={chat_id}&text={resposta}'
-        requests.get(link_de_envio)
+        dict = {"Agendamento": "1", "Ficha técnica": "2", "Fotos": "3"}
+        buttons = []
+
+        for key, value in dict.items():
+            buttons.append(
+            [InlineKeyboardButton(text = key, callback_data = value)]
+            )
+        keyboard = InlineKeyboardMarkup(buttons)
+        self.bot.sendMessage(chat_id,text = resposta, reply_markup = keyboard)
