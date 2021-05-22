@@ -54,26 +54,49 @@ class TelegramBot():
         user = dado["message"]["from"]["first_name"]
         user_id = dado["message"]["from"]["id"]
         mensagem = dado['message']['text']
+       
         try:
             userbot = UserBot.objects.get(user_id = user_id)
         except:
             userbot = False
+        try:
+            data = dado['message']['data']
+        except:
+            data = False
         if not userbot:
             p = UserBot(user_id = user_id, user_nome = user)
             p.save()        
             return f'Olá {user}!{os.linesep}Obrigado por acessar nosso sistema.{os.linesep}Já já seu acesso será liberado.'        
+        elif data:
+            if data == 'terceirizados':
+                return self.terceirizado(user_id, user)        
         else:            
-            return self.menu(user_id, user)            
+            return self.menu(user_id, user)        
+                
 
             
     def menu(self, user_id, user):
         user_bot = UserBot.objects.get(user_id=user_id)
         menu = f'olá, {user}!:{os.linesep}escolha uma opção:{os.linesep}{os.linesep}'
-        """if user_bot.oficina.count() > 0:
-            menu += f' 1 --> Em breve{os.linesep}'
+        dict = {}
+        
+        if user_bot.oficina.count() > 0:
+            dict['Terceirizados']='terceirizados'
         if user_bot.lavanderia:
-            menu += f' 2 --> Em breve{os.linesep}' """       
-        return menu
+            dict['Lavanderia']='lavanderia'
+        return {'text':menu, 'dict':dict}
+    
+
+    def terceirizado(self, user_id, user):
+        user_bot = UserBot.objects.get(user_id=user_id)
+        menu = f'olá, {user}!:{os.linesep}escolha uma opção:{os.linesep}{os.linesep}'
+        dict = {}
+        
+        if user_bot.oficina.count() > 0:
+            dict['oficina1']='terceirizados'
+        if user_bot.lavanderia:
+            dict['Oficina2']='lavanderia'
+        return {'text':menu, 'dict':dict}
 
     def send_message(self):             
         total_pecas = 0
@@ -126,12 +149,11 @@ class TelegramBot():
             
 
     def responder(self,resposta,chat_id):
-        dict = {"Agendamento": "1", "Ficha técnica": "2", "Fotos": "3"}
         buttons = []
-
-        for key, value in dict.items():
+        for key, value in resposta['dict'].items():
             buttons.append(
             [InlineKeyboardButton(text = key, callback_data = value)]
             )
         keyboard = InlineKeyboardMarkup(buttons)
-        self.bot.sendMessage(chat_id,text = resposta, reply_markup = keyboard)
+        
+        self.bot.sendMessage(chat_id,text = resposta['text'], reply_markup = keyboard)
