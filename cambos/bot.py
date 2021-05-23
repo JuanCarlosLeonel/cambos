@@ -60,24 +60,25 @@ class TelegramBot():
         except:
             userbot = False
         try:
-            data = dado['message']['data']
+            data = dado['data']
         except:
             data = False
         if not userbot:
             p = UserBot(user_id = user_id, user_nome = user)
-            p.save()        
-            return f'Olá {user}!{os.linesep}Obrigado por acessar nosso sistema.{os.linesep}Já já seu acesso será liberado.'        
+            p.save() 
+            text = f'Olá {user}!{os.linesep}Obrigado por acessar nosso sistema.{os.linesep}Já já seu acesso será liberado.'   
+            return {'text':text, 'dict':{}}
+        
         elif data:
             if data == 'terceirizados':
                 return self.terceirizado(user_id, user)        
         else:            
             return self.menu(user_id, user)        
                 
-
             
     def menu(self, user_id, user):
         user_bot = UserBot.objects.get(user_id=user_id)
-        menu = f'olá, {user}!:{os.linesep}escolha uma opção:{os.linesep}{os.linesep}'
+        menu = f'escolha uma opção:{os.linesep}{os.linesep}'
         dict = {}
         
         if user_bot.oficina.count() > 0:
