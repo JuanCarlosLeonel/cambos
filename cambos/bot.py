@@ -1,160 +1,118 @@
-import requests
-import time
-import json
+#!/usr/bin/env python
+# pylint: disable=C0116
+# This program is dedicated to the public domain under the CC0 license.
+
+"""
+Basic example for a bot that uses inline keyboards. For an in-depth explanation, check out
+ https://git.io/JOmFw.
+"""
+from core.models import Bot
 import os
-from roupa.views import get_url
-from dateutil import parser
-from datetime import date, datetime, timedelta
-from core.models import Bot, UserBot
-import telegram
-from telegram import InlineKeyboardButton, InlineKeyboardMarkup
+import logging
+
+from telegram import InlineKeyboardButton, InlineKeyboardMarkup, Update
+from telegram.ext import (
+    Updater,
+    CommandHandler,
+    CallbackQueryHandler,
+    CallbackContext,
+    MessageHandler,
+    Filters
+)
+
+logging.basicConfig(
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO
+)
+logger = logging.getLogger(__name__)
 
 
-class TelegramBot():
-    def __init__(self):
-        self.bot = Bot.objects.latest('token')
-        token = self.bot.token
-        self.bot = telegram.Bot(token=token)
-        self.url_base = f'https://api.telegram.org/bot{token}/'
-        self.dados = get_url()
+def start():
+    return menu()
 
+def menu(update, context):
+    from core.models import UserBot
 
-    def Iniciar(self):
-        update_id = None
-        while True:
-            ativo= Bot.objects.latest('token').ativo            
-            if ativo:
-                atualizacao = self.obter_mensagens(update_id)
-                if atualizacao['result']:
-                    dados = atualizacao['result']                
-                                         
-                    for dado in dados:
-                        try:
-                            update_id = dado['update_id']                    
-                            chat_id = dado["message"]["from"]["id"]    
-                            resposta = self.criar_resposta(dado)
-                            self.responder(resposta, chat_id)
-                        except:
-                            pass
-                    time.sleep(20)
-                else:
-                    break
-            else:
-                break
-                    
-    def obter_mensagens(self, update_id):
-        link_requisicao = f'{self.url_base}getUpdates?timeout=200'
-        if update_id:
-            link_requisicao = f'{link_requisicao}&offset={update_id + 1}'
-        resultado = requests.get(link_requisicao)
-        return json.loads(resultado.content)
-        
-    def criar_resposta(self, dado):
-        from core.models import UserBot
-        user = dado["message"]["from"]["first_name"]
-        user_id = dado["message"]["from"]["id"]
-        mensagem = dado['message']['text']
-       
-        try:
-            userbot = UserBot.objects.get(user_id = user_id)
-        except:
-            userbot = False
-        try:
-            data = dado['data']
-        except:
-            data = False
-        if not userbot:
-            p = UserBot(user_id = user_id, user_nome = user)
-            p.save() 
-            text = f'Olá {user}!{os.linesep}Obrigado por acessar nosso sistema.{os.linesep}Já já seu acesso será liberado.'   
-            return {'text':text, 'dict':{}}
-        
-        elif data:
-            if data == 'terceirizados':
-                return self.terceirizado(user_id, user)        
-        else:            
-            return self.menu(user_id, user)        
-                
-            
-    def menu(self, user_id, user):
-        user_bot = UserBot.objects.get(user_id=user_id)
-        menu = f'escolha uma opção:{os.linesep}{os.linesep}'
-        dict = {}
-        
-        if user_bot.oficina.count() > 0:
+    chat_id = update.message.chat_id
+    first_name = update.message.chat.first_name
+    mensagem = update.message.text
+    
+    try:
+        userbot = UserBot.objects.get(user_id = chat_id)
+        text = f'Escolha uma opção:'
+        dict = {}  
+        if userbot.oficina.count() > 0:
             dict['Terceirizados']='terceirizados'
-        if user_bot.lavanderia:
-            dict['Lavanderia']='lavanderia'
-        return {'text':menu, 'dict':dict}
+
+        if userbot.lavanderia:
+             dict['Lavanderia']='lavanderia'
+
+        keyboard = []
+        for key, value in dict.items():
+            keyboard.append(
+            [InlineKeyboardButton(key, callback_data = value)]
+            )        
+        keyboard.append([InlineKeyboardButton('Geral', callback_data = "geral")])  
+        reply_markup = InlineKeyboardMarkup(keyboard)
+
+        update.message.reply_text(text, reply_markup=reply_markup)
+
+    except:
+        p = UserBot(user_id = chat_id, user_nome = first_name)
+        p.save() 
+        text = f'Olá {first_name}!{os.linesep}Obrigado por acessar nosso sistema.{os.linesep}Já já seu acesso será liberado.'   
+        update.message.reply_text(text)    
+
+
+def button(update: Update, _: CallbackContext) -> None:
+    query = update.callback_query
+    
+    query.answer()
+    if query.data == 'lavanderia':
+        keyboard = [
+        [
+            InlineKeyboardButton("Opção 1", callback_data='1'),
+            InlineKeyboardButton("Opção 2", callback_data='2'),
+        ],
+        [InlineKeyboardButton("Opção 3", callback_data='3')],
+        ]
+
+        
+    if query.data == 'terceirizados':
+        keyboard = [
+        [
+            InlineKeyboardButton("Opção 4", callback_data='4'),
+            InlineKeyboardButton("Opção 5", callback_data='5'),
+        ],
+        [InlineKeyboardButton("Opção 6", callback_data='6')],
+        ]
+
+    reply_markup = InlineKeyboardMarkup(keyboard)
+
+    query.edit_message_text('opção', reply_markup=reply_markup)
+
+    
     
 
-    def terceirizado(self, user_id, user):
-        user_bot = UserBot.objects.get(user_id=user_id)
-        menu = f'olá, {user}!:{os.linesep}escolha uma opção:{os.linesep}{os.linesep}'
-        dict = {}
-        
-        if user_bot.oficina.count() > 0:
-            dict['oficina1']='terceirizados'
-        if user_bot.lavanderia:
-            dict['Oficina2']='lavanderia'
-        return {'text':menu, 'dict':dict}
 
-    def send_message(self):             
-        total_pecas = 0
-        entrega_atraso = 0
-        quantidade_atraso = 0
-        produto_parado = 0        
-        for produto in self.dados:
-            data = parser.parse(produto['DataEntrega'])            
-            total_pecas += produto['QuantPecas']
-            if produto['Atrasado'] == "Atrasado":
-                entrega_atraso += 1
-                quantidade_atraso += produto['QuantPecas']
-            if produto['Parado'] == "1":
-                produto_parado += 1  
-               
-        for user in UserBot.objects.all():
-            resposta = f'Bom dia, {user.user_nome}!'
-            self.responder(resposta, user.user_id)
-            if user.geral==True:
-                resposta = f"No Geral, temos {produto_parado} produtos parados {os.linesep}e {entrega_atraso} entregas atrasadas."
-                self.responder(resposta, user.user_id)
-            if user.oficina.count() > 0:                
-                for oficina in user.oficina.all():                
-                    count = 0
-                    soma = 0
-                    for produto in self.dados:
-                        if produto['Status'] == 5:
-                            if produto['Celula'] == oficina.choice:
-                                if produto['DiasCostura'] >= 15:
-                                    count += 1                    
-                                    soma += produto['QuantPecas']
-                    if count > 0:       
-                        resposta = f'Em Atraso - Oficinas:{os.linesep}{os.linesep} {oficina.choice}:{os.linesep}'                 
-                        resposta += f"{count} lotes / {soma} peças"
-                        self.responder(resposta, user.user_id)
-            if user.lavanderia==True:
-                resposta = f'Em Atraso - Lavanderia: {os.linesep}{os.linesep}'
-                count = 0
-                soma = 0
-                for produto in self.dados:
-                    if produto['Status'] == 7:
-                        if produto['DiasLavanderia'] >= 5:
-                            count += 1                    
-                            soma += produto['QuantPecas']
-                if count == 0:
-                    resposta += "Nenhum produto em atraso."
-                else:
-                    resposta += f"{count} lotes / {soma} peças"
-                self.responder(resposta, user.user_id)
-            
+def help_command(update: Update, _: CallbackContext) -> None:
+    update.message.reply_text("Use /start to test this bot.")
 
-    def responder(self,resposta,chat_id):
-        buttons = []
-        for key, value in resposta['dict'].items():
-            buttons.append(
-            [InlineKeyboardButton(text = key, callback_data = value)]
-            )
-        keyboard = InlineKeyboardMarkup(buttons)
-        
-        self.bot.sendMessage(chat_id,text = resposta['text'], reply_markup = keyboard)
+
+def main() -> None:
+    # Create the Updater and pass it your bot's token.
+    updater = Updater("1852462745:AAF02s1SOqvgZlfxlLX8iFb_uzhgrY5T8cM")
+    updater.dispatcher.add_handler(MessageHandler(Filters.text, menu))
+    updater.dispatcher.add_handler(CommandHandler('start', start))
+    updater.dispatcher.add_handler(CallbackQueryHandler(button))
+    updater.dispatcher.add_handler(CommandHandler('help', help_command))
+
+    # Start the Bot
+    updater.start_polling()
+
+    # Run the bot until the user presses Ctrl-C or the process receives SIGINT,
+    # SIGTERM or SIGABRT
+    updater.idle()
+
+
+if __name__ == '__main__':
+    main()
