@@ -158,4 +158,4 @@ class TelegramBot():
             
 
     def responder(self,resposta,chat_id):   
-        self.bot.sendMessage(chat_id,text = resposta['text'])
+        self.bot.sendMessage(chat_id,text = resposta)

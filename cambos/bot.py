@@ -101,10 +101,13 @@ def help_command(update: Update, _: CallbackContext) -> None:
 def main() -> None:
     # Create the Updater and pass it your bot's token.
     updater = Updater("1852462745:AAF02s1SOqvgZlfxlLX8iFb_uzhgrY5T8cM")
-    updater.dispatcher.add_handler(MessageHandler(Filters.text, menu))
-    updater.dispatcher.add_handler(CommandHandler('start', start))
-    updater.dispatcher.add_handler(CallbackQueryHandler(button))
-    updater.dispatcher.add_handler(CommandHandler('help', help_command))
+    ativo= Bot.objects.latest('token').ativo            
+    if ativo:
+    
+        updater.dispatcher.add_handler(MessageHandler(Filters.text, menu))
+        updater.dispatcher.add_handler(CommandHandler('start', start))
+        updater.dispatcher.add_handler(CallbackQueryHandler(button))
+        updater.dispatcher.add_handler(CommandHandler('help', help_command))
 
     # Start the Bot
     updater.start_polling()
