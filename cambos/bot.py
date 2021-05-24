@@ -6,7 +6,7 @@
 Basic example for a bot that uses inline keyboards. For an in-depth explanation, check out
  https://git.io/JOmFw.
 """
-from core.models import Bot
+
 import os
 import logging
 
@@ -101,6 +101,7 @@ def help_command(update: Update, _: CallbackContext) -> None:
 def main() -> None:
     # Create the Updater and pass it your bot's token.
     updater = Updater("1852462745:AAF02s1SOqvgZlfxlLX8iFb_uzhgrY5T8cM")
+    from core.models import Bot
     ativo= Bot.objects.latest('token').ativo            
     if ativo:
     
@@ -109,12 +110,10 @@ def main() -> None:
         updater.dispatcher.add_handler(CallbackQueryHandler(button))
         updater.dispatcher.add_handler(CommandHandler('help', help_command))
 
-    # Start the Bot
-    updater.start_polling()
+        updater.start_polling()
+        updater.idle()   
 
-    # Run the bot until the user presses Ctrl-C or the process receives SIGINT,
-    # SIGTERM or SIGABRT
-    updater.idle()
+
 
 
 if __name__ == '__main__':
