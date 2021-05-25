@@ -100,8 +100,10 @@ def shutdown():
     updater = Updater("1852462745:AAF02s1SOqvgZlfxlLX8iFb_uzhgrY5T8cM")
     updater.stop()
     updater.is_idle = False
-def stop(bot, update):
     return iniciar()
+
+def stop(bot, update):
+    threading.Thread(target=shutdown).start()
 
 
 def main() -> None:
