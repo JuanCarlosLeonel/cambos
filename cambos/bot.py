@@ -101,18 +101,22 @@ def help_command(update: Update, _: CallbackContext) -> None:
 def main() -> None:
     # Create the Updater and pass it your bot's token.
     updater = Updater("1852462745:AAF02s1SOqvgZlfxlLX8iFb_uzhgrY5T8cM")
+    
+    
+    updater.dispatcher.add_handler(MessageHandler(Filters.text, menu))
+    updater.dispatcher.add_handler(CommandHandler('start', start))
+    updater.dispatcher.add_handler(CallbackQueryHandler(button))
+    updater.dispatcher.add_handler(CommandHandler('help', help_command))
+
+    updater.start_polling()
+    updater.idle()
+   
+
+def iniciar():
     from core.models import Bot
     ativo= Bot.objects.latest('token').ativo            
     if ativo:
-    
-        updater.dispatcher.add_handler(MessageHandler(Filters.text, menu))
-        updater.dispatcher.add_handler(CommandHandler('start', start))
-        updater.dispatcher.add_handler(CallbackQueryHandler(button))
-        updater.dispatcher.add_handler(CommandHandler('help', help_command))
-
-        updater.start_polling()
-        updater.idle()   
-
+        return main()
 
 
 
