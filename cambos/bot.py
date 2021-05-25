@@ -9,7 +9,7 @@ Basic example for a bot that uses inline keyboards. For an in-depth explanation,
 
 import os
 import logging
-
+import threading
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup, Update
 from telegram.ext import (
     Updater,
@@ -94,20 +94,21 @@ def button(update: Update, _: CallbackContext) -> None:
     
 
 
-def help_command(update: Update, _: CallbackContext) -> None:
-    update.message.reply_text("Use /start to test this bot.")
-
-
+def shutdown():
+    updater = Updater("1852462745:AAF02s1SOqvgZlfxlLX8iFb_uzhgrY5T8cM")
+    updater.stop()
+    updater.is_idle = False
+def stop(bot, update):
+    threading.Thread(target=shutdown).start()
 def main() -> None:
     # Create the Updater and pass it your bot's token.
     updater = Updater("1852462745:AAF02s1SOqvgZlfxlLX8iFb_uzhgrY5T8cM")
     
-    
+    updater.dispatcher.add_handler(CommandHandler('stop', stop))
     updater.dispatcher.add_handler(MessageHandler(Filters.text, menu))
     updater.dispatcher.add_handler(CommandHandler('start', start))
     updater.dispatcher.add_handler(CallbackQueryHandler(button))
-    updater.dispatcher.add_handler(CommandHandler('help', help_command))
-
+    
     updater.start_polling()
     updater.idle()
    
