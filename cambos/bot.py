@@ -9,8 +9,8 @@ Basic example for a bot that uses inline keyboards. For an in-depth explanation,
 
 import os
 import logging
-from re import escape
 import threading
+from bot2 import TelegramBot
 
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup, Update
 from telegram.ext import (
@@ -31,6 +31,43 @@ logger = logging.getLogger(__name__)
 def start():
     return menu()
 
+
+def button(update: Update, _: CallbackContext) -> None:
+    query = update.callback_query
+    
+    query.answer()
+    if query.data == 'geral':
+        keyboard = [
+        [InlineKeyboardButton("Atraso na Entrega", callback_data='atraso_geral')],
+        [InlineKeyboardButton("Menu", callback_data='menu')],
+        ]
+    if query.data == 'lavanderia':
+        keyboard = [
+        [
+            InlineKeyboardButton("Atraso no Setor", callback_data='menu'),
+            InlineKeyboardButton("Atraso na Entrega", callback_data='menu'),
+        ],
+        [InlineKeyboardButton("Menu", callback_data='menu')],
+        ]
+        
+    if query.data == 'terceirizados':
+        keyboard = [
+        [
+            InlineKeyboardButton("Produtos por Oficina", callback_data='menu'),
+            InlineKeyboardButton("Entregas Atrasadas", callback_data='menu'),
+        ],
+        [InlineKeyboardButton("Menu", callback_data='menu')],
+        ]
+
+    if query.data == 'menu':
+        keyboard = menu(query, 'nav')
+
+    if query.data == 'atraso_geral':
+       return TelegramBot().send_message()
+
+    reply_markup = InlineKeyboardMarkup(keyboard)
+    query.edit_message_text('escolha uma opção:', reply_markup=reply_markup)
+
 def menu(update, context):
     from core.models import UserBot
 
@@ -42,6 +79,9 @@ def menu(update, context):
         userbot = UserBot.objects.get(user_id = chat_id)
         text = f'Escolha uma opção:'
         dict = {}  
+        if userbot.geral:
+             dict['Geral']='geral'
+
         if userbot.oficina.count() > 0:
             dict['Terceirizados']='terceirizados'
 
@@ -56,42 +96,16 @@ def menu(update, context):
         keyboard.append([InlineKeyboardButton('Geral', callback_data = "geral")])  
         reply_markup = InlineKeyboardMarkup(keyboard)
 
-        update.message.reply_text(text, reply_markup=reply_markup)
+        if context == 'nav':
+            return keyboard
+        else:
+            update.message.reply_text(text, reply_markup=reply_markup)
 
     except:
         p = UserBot(user_id = chat_id, user_nome = first_name)
         p.save() 
         text = f'Olá {first_name}!{os.linesep}Obrigado por acessar nosso sistema.{os.linesep}Já já seu acesso será liberado.'   
         update.message.reply_text(text)    
-
-
-def button(update: Update, _: CallbackContext) -> None:
-    query = update.callback_query
-    
-    query.answer()
-    if query.data == 'lavanderia':
-        keyboard = [
-        [
-            InlineKeyboardButton("Opção 1", callback_data='1'),
-            InlineKeyboardButton("Opção 2", callback_data='2'),
-        ],
-        [InlineKeyboardButton("Opção 3", callback_data='3')],
-        ]
-
-        
-    if query.data == 'terceirizados':
-        keyboard = [
-        [
-            InlineKeyboardButton("Opção 4", callback_data='4'),
-            InlineKeyboardButton("Opção 5", callback_data='5'),
-        ],
-        [InlineKeyboardButton("Opção 6", callback_data='6')],
-        ]
-
-    reply_markup = InlineKeyboardMarkup(keyboard)
-
-    query.edit_message_text('opção', reply_markup=reply_markup)
-
     
     
 
@@ -99,8 +113,7 @@ def button(update: Update, _: CallbackContext) -> None:
 def shutdown():
     updater = Updater("1852462745:AAF02s1SOqvgZlfxlLX8iFb_uzhgrY5T8cM")
     updater.stop()
-    updater.is_idle = False
-    return iniciar()
+    updater.is_idle = False    
 
 def stop(bot, update):
     threading.Thread(target=shutdown).start()

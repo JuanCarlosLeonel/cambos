@@ -83,8 +83,7 @@ class TelegramBot():
             text = f'{data},terc.'   
             return {'text':text, 'dict':{}}   
         else:            
-            return self.menu(userbot)        
-                
+            return self.menu(userbot)                    
             
     def menu(self, userbot):        
         menu = f'escolha uma opção:{os.linesep}{os.linesep}'
@@ -95,7 +94,6 @@ class TelegramBot():
             dict['Lavanderia']='lavanderia'
         return {'text':menu, 'dict':dict}
     
-
     def terceirizado(self, user_id, user):
         user_bot = UserBot.objects.get(user_id=user_id)
         menu = f'olá, {user}!:{os.linesep}escolha uma opção:{os.linesep}{os.linesep}'
@@ -122,12 +120,13 @@ class TelegramBot():
                 produto_parado += 1  
                
         for user in UserBot.objects.all():
-            resposta = f'Bom dia, {user.user_nome}!'
+            resposta = f'Oi {user.user_nome}!'
             self.responder(resposta, user.user_id)
             if user.geral==True:
                 resposta = f"No Geral, temos {produto_parado} produtos parados {os.linesep}e {entrega_atraso} entregas atrasadas."
                 self.responder(resposta, user.user_id)
             if user.oficina.count() > 0:                
+                resposta = f'Em Atraso - Oficinas:{os.linesep}{os.linesep}'                 
                 for oficina in user.oficina.all():                
                     count = 0
                     soma = 0
@@ -138,7 +137,7 @@ class TelegramBot():
                                     count += 1                    
                                     soma += produto['QuantPecas']
                     if count > 0:       
-                        resposta = f'Em Atraso - Oficinas:{os.linesep}{os.linesep} {oficina.choice}:{os.linesep}'                 
+                        resposta = f'{oficina.choice}:{os.linesep}'                 
                         resposta += f"{count} lotes / {soma} peças"
                         self.responder(resposta, user.user_id)
             if user.lavanderia==True:
