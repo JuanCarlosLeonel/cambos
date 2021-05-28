@@ -19,17 +19,18 @@ def get_url():
 
 def convert_setor(id):
     lista = [
-        "1.Modelagem",
-        "2.Encaixe",
-        "3.Expedição Tecido",
-        "4.Corte",
-        "5.Costura",
-        "6.Finalização",
-        "7.Lavanderia",
-        "8.Qualidade",
-        "9.Acabamento",
-        "10.Expedição",
-        "11.Pronto",
+        "Modelagem",
+        "Encaixe",
+        "Expedição Tecido",
+        "Corte",
+        "Costura",
+        "Finalização",
+        "Lavanderia",
+        "Qualidade",
+        "Acabamento",
+        "Expedição",
+        "Pronto",
+        "Geral",
     ]
     nome = lista[id-1]
     return nome

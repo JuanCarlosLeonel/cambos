@@ -9,25 +9,54 @@ from telegram.ext import (
     MessageHandler,
     Filters
 )
-from roupa.views import get_url
+from roupa.views import get_url, convert_setor
 from dateutil import parser
 
 
-dados = get_url()
-total_pecas = 0
-entrega_atraso = 0
-quantidade_atraso = 0
-produto_parado = 0  
-quantidade_parado = 0      
-for produto in dados:
-    data = parser.parse(produto['DataEntrega'])            
-    total_pecas += produto['QuantPecas']
-    if produto['Atrasado'] == "Atrasado":
-        entrega_atraso += 1
-        quantidade_atraso += produto['QuantPecas']
-    if produto['Parado'] == "1":
-        produto_parado += 1  
-        quantidade_parado += produto['QuantPecas']
+def get_data(setor, context):
+    dados = get_url()    
+    contador = 0
+    somador = 0    
+    for produto in dados:              
+        if setor == 12:
+            if context == 'atrasado':
+                if produto['Atrasado'] == "Atrasado":
+                    contador += 1
+                    somador += produto['QuantPecas']
+            elif context == 'parado':
+                if produto['Parado'] == "1":
+                    contador += 1
+                    somador += produto['QuantPecas']
+        else:
+            if produto['Status'] == setor:
+                if context == 'atrasado':                        
+                    if produto['Atrasado'] == "Atrasado":            
+                        contador += 1
+                        somador += produto['QuantPecas']    
+
+    return {'contador':contador,'somador':somador}
+
+def return_menu(update, text):
+    keyboard = [[InlineKeyboardButton("Menu", callback_data='menu')]]
+    reply_markup = InlineKeyboardMarkup(keyboard)    
+    update.message.reply_text('\U00002757', reply_markup=reply_markup)
+
+
+def producao_em_atraso(update, setor):        
+    dados = get_data(setor, context = 'atrasado') 
+    setor = convert_setor(setor)           
+    text=f"Produção <b>{setor}:</b> {os.linesep}\U00002757 {dados['contador']} entregas ATRASADAS: <b>{dados['somador']} peças.</b>"
+    update.edit_message_text(text, parse_mode=ParseMode.HTML)
+    return return_menu(update, text)
+    
+
+def producao_parada(update, setor):
+    dados = get_data(setor, context = 'parado')
+    setor = convert_setor(setor)
+    text=f"Produção <b>{setor}:</b> {os.linesep}\U00002757 {dados['contador']} produtos PARADOS: <b>{dados['somador']} peças.</b>"
+    update.edit_message_text(text, parse_mode=ParseMode.HTML)
+    return return_menu(update, text)
+
 
 
 logging.basicConfig(
@@ -126,7 +155,7 @@ def button(update: Update, _: CallbackContext) -> None:
         keyboard = menu(query, 'nav')
 
     if query.data == 'atraso_geral':        
-        return producao_em_atraso(query,'geral')
+        return producao_em_atraso(query,12)
     
     if query.data == 'atraso_geral_lavanderia':        
         return producao_em_atraso(query,7)
@@ -135,44 +164,19 @@ def button(update: Update, _: CallbackContext) -> None:
         return producao_em_atraso(query,10)
 
     if query.data == 'parado_geral':        
-            return producao_parada(query,'geral')
+        return producao_parada(query,12)
 
     reply_markup = InlineKeyboardMarkup(keyboard)
     query.edit_message_text('escolha uma opção:', reply_markup=reply_markup)
     
-def producao_em_atraso(update, setor):    
-    entrega_atraso = 0
-    quantidade_atraso = 0    
-    for produto in dados:
-        if setor == 'geral':                
-            if produto['Atrasado'] == "Atrasado":
-                entrega_atraso += 1
-                quantidade_atraso += produto['QuantPecas']
-        else:
-            if produto['Status'] == setor:
-                if produto['Atrasado'] == "Atrasado":
-                    entrega_atraso += 1
-                    quantidade_atraso += produto['QuantPecas']
-            
-    text=f"\U00002757 {entrega_atraso} entregas atrasadas: <b>{quantidade_atraso} peças.</b>"
-    update.edit_message_text(text, parse_mode=ParseMode.HTML)
-    
-
-def producao_parada(update, setor):
-    text=f"\U00002757 {produto_parado} produtos parados: <b>{quantidade_parado} peças.</b>"
-    update.edit_message_text(text, parse_mode=ParseMode.HTML)
-
-
 
 def main() -> None:
     # Create the Updater and pass it your bot's token.
     updater = Updater("1852462745:AAF02s1SOqvgZlfxlLX8iFb_uzhgrY5T8cM")
     
-    
     updater.dispatcher.add_handler(MessageHandler(Filters.text, menu))
     updater.dispatcher.add_handler(CommandHandler('start', start))
     updater.dispatcher.add_handler(CallbackQueryHandler(button))
-
 
     updater.start_polling()
     updater.idle()
