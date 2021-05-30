@@ -61,7 +61,7 @@ def get_data(setor, context, oficina=None):
 def return_menu(update, text):
     keyboard = [[InlineKeyboardButton("Menu", callback_data='menu')]]
     reply_markup = InlineKeyboardMarkup(keyboard)    
-    update.message.reply_text('\U00002714', reply_markup=reply_markup)
+    update.message.reply_text('\U00002705', reply_markup=reply_markup)
 
 
 def producao_em_atraso(update, setor):            
@@ -109,7 +109,9 @@ def start():
 
 
 def menu(update, context):
-        
+
+    from core.models import UserBot
+    chat_id = update.message.chat_id    
     first_name = update.message.chat.first_name
     mensagem = update.message.text
     
@@ -256,7 +258,7 @@ def resumo_diario(context: CallbackContext):
 
         keyboard = [[InlineKeyboardButton("Menu", callback_data='menu')]]
         reply_markup = InlineKeyboardMarkup(keyboard)
-        text= f"\U00002714 para mais informações:"    
+        text= f"\U0001F4AC para mais informações:"    
         context.bot.send_message(chat_id=chat_id, text=text, reply_markup=reply_markup)
 
 def main() -> None:
