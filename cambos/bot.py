@@ -59,9 +59,9 @@ def get_data(setor, context, oficina=None):
 
 
 def return_menu(update, text):
-    keyboard = [[InlineKeyboardButton("Menu", callback_data='menu')]]
+    keyboard = [[InlineKeyboardButton(f'\U000021A9 Menu', callback_data='menu')]]
     reply_markup = InlineKeyboardMarkup(keyboard)    
-    update.message.reply_text('\U00002705', reply_markup=reply_markup)
+    update.message.reply_text('\U0001F456', reply_markup=reply_markup)
 
 
 def producao_em_atraso(update, setor):            
@@ -271,7 +271,7 @@ def main() -> None:
 
     hora = datetime.time(11, 00, 00, 000000) # +3 horas
     up_job = updater.job_queue    
-    up_job.run_daily(resumo_diario, time=hora, days=(1, 2, 3, 4, 5))    
+    up_job.run_daily(resumo_diario, time=hora, days=(0, 1, 2, 3, 4))    
     #up_job.run_once(resumo_diario, 10)
     updater.start_polling()
     updater.idle()

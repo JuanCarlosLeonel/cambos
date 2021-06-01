@@ -152,6 +152,85 @@ var carteira = new Chart(chart1, {
 		
 });
 
+var chart2 = document.getElementById("chartEstoque").getContext("2d");
+var estoque = new Chart(chart2, {
+	type: 'bar',
+	data: {
+		labels: labels1,
+		datasets : [{	
+			label: 'Estocado',
+			data: data4,
+			backgroundColor:'rgba(48, 165, 255, 0.2)',              
+			borderColor:'rgba(48, 165, 255, 1)',               
+			borderWidth: 1
+		},		
+		
+		
+		
+	]
+    },
+	options: {		
+		tooltips: {
+			mode: 'label',
+			intersect: false,
+			filter: function (tooltipItem) {
+				return tooltipItem.datasetIndex in [0,1,2];
+			},
+			callbacks: {
+				title: function(tooltipItems, data) {
+					return 'Semana: ' + tooltipItems[0].xLabel ;
+				  },
+				afterTitle: function() {
+					window.total = 0;
+				},
+				label: function(tooltipItem, data) {
+					var corporation = data.datasets[tooltipItem.datasetIndex].label;
+					var valor = data.datasets[tooltipItem.datasetIndex].data[tooltipItem.index];
+					window.total += valor;
+					return corporation + ": " + valor.toLocaleString('pt-BR', {});            
+				},
+								
+			},
+		},
+		legend: {
+            display: false
+         },
+		
+        scales: {
+			xAxes: [{ stacked: true,
+				gridLines: false }],
+			yAxes: [{
+				stacked: true,
+				display: false,				
+			 }]
+		},
+		plugins: {
+            datalabels: {                
+                display: function (context) {
+                    return context.chart.isDatasetVisible(context.datasetIndex);
+                },                
+                font: function(context) {
+					var width = context.chart.width;
+					var size = Math.round(width / 132);
+	
+					return {
+						weight: 'bold',
+						size: size
+					};
+				},
+				formatter: (value, ctx) => {
+					if(value >0 ){					
+						return value.toLocaleString('pt-BR', {})
+					}else{
+						return ""
+					}
+				},
+            }
+        }
+    },
+    plugins: [totalizer]
+		
+});
 	var pieData = [
 			{
 				value: 300,
