@@ -4,11 +4,11 @@ from django.shortcuts import render
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
 import requests
-from requests.auth import HTTPBasicAuth
 from datetime import datetime
 from dateutil import parser
 from collections import Counter
 import collections
+from .models import (DiasCalendario)
 
 
 def get_url():
@@ -136,3 +136,8 @@ class ProducaoRoupaList(TemplateView):
         context['producaojs'] = dados
         context['teste'] = convert_setor(1)
         return context
+
+
+@method_decorator(login_required, name='dispatch')
+class Calendario(TemplateView):
+    template_name = 'roupa/calendario.html'

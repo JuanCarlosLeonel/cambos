@@ -1,0 +1,45 @@
+{% extends "cambos/base_roupa.html" %}
+{% load static %}
+{% block css %}
+
+{% endblock css %}
+
+{% block navigation %}
+    <div class="row">
+        <ol class="breadcrumb">
+			<li><a href="{% url 'roupa_index' %}">
+                <em class="fa fa-home"></em>
+            </a></li>
+            <li class="active">Calendario</li>
+        </ol>
+    </div><!--/.row-->
+    <div class="row">
+        <div class="col-lg-12">
+            <h1 class="page-header">PCP<span class="text-muted small"> Calendario</span></h1></h1>
+        </div>
+    </div><!--/.row-->
+{% endblock navigation %}
+
+{% block content %}		
+	<div class="col-12">
+		
+		<div class="panel panel-default">
+			<input type="number" class="form-control" id="txtnumber" onchange="calcular()" value="{{ano}}"                            
+			aria-label="Ano" aria-describedby="basic-addon1">   
+			<div class="panel-heading"> <strong class="">Nome <strong class="text-success">Setores</strong></strong></div>
+			<div class="panel-body">
+				<div id="calendario" class="row">                    
+				</div> 
+				<script>
+					
+				</script>
+			</div>
+		</div>
+	</div>	
+	
+{%endblock content%}
+
+{% block script %}
+	<script src="{% static 'js/calendario.js' %}"></script>
+	
+{% endblock script %}
