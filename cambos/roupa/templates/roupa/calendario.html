@@ -1,7 +1,7 @@
 {% extends "cambos/base_roupa.html" %}
 {% load static %}
 {% block css %}
-
+	<link rel="stylesheet" type="text/css" href="https://unpkg.com/js-year-calendar@latest/dist/js-year-calendar.min.css" />
 {% endblock css %}
 
 {% block navigation %}
@@ -23,12 +23,10 @@
 {% block content %}		
 	<div class="col-12">
 		
-		<div class="panel panel-default">
-			<input type="number" class="form-control" id="txtnumber" onchange="calcular()" value="{{ano}}"                            
-			aria-label="Ano" aria-describedby="basic-addon1">   
+		<div class="panel panel-default">			
 			<div class="panel-heading"> <strong class="">Nome <strong class="text-success">Setores</strong></strong></div>
 			<div class="panel-body">
-				<div id="calendario" class="row">                    
+				<div id="calendario"></div>                
 				</div> 
 				<script>
 					
@@ -40,6 +38,9 @@
 {%endblock content%}
 
 {% block script %}
+	
 	<script src="{% static 'js/calendario.js' %}"></script>
+	<script src="{% static 'js/custom_calendario.js' %}"></script>
+	
 	
 {% endblock script %}
