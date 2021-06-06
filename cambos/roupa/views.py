@@ -138,8 +138,7 @@ class ProducaoRoupaList(TemplateView):
         for produto in dados:
             produto["Status"] = convert_setor(produto["Status"])
             
-        context['producaojs'] = dados
-        context['teste'] = convert_setor(1)
+        context['producaojs'] = dados        
         return context
 
 
@@ -185,3 +184,18 @@ class CalendarioTemplate(TemplateView):
             return redirect(f'/roupa/calendario/{calendario.pk}')   
         else:
             return render(request, 'roupa/calendario.html', context)
+
+
+@method_decorator(login_required, name='dispatch')
+class OficinaList(TemplateView):    
+    template_name = 'roupa/oficina_list.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        dados = get_url()
+        for produto in dados:
+            produto["Status"] = convert_setor(produto["Status"])
+            
+        context['producaojs'] = dados
+        context['teste'] = convert_setor(1)
+        return context

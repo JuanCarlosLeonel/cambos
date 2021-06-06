@@ -20,8 +20,7 @@ class DiasCalendario(models.Model):
     
 
 class Processo(models.Model):
-    nome           = models.CharField(max_length=18)
-    interno        = models.BooleanField(default=True)
+    nome           = models.CharField(max_length=18)    
     ordem_esperada = models.IntegerField()
     recorrente     = models.BooleanField(default=False)
     status_spi     = models.IntegerField() 
@@ -34,6 +33,7 @@ class Etapa(models.Model):
     processo   = models.ForeignKey(Processo, on_delete=models.CASCADE)
     calendario = models.ForeignKey(Calendario, null=True, blank=True, on_delete=models.SET_NULL)
     nome       = models.CharField(max_length=18)
+    interno    = models.BooleanField(default=True)
     capacidade = models.IntegerField()
     nick_spi   = models.CharField(max_length=20, null=True, blank=True)
 
