@@ -1,14 +1,19 @@
 from django.views.generic.base import TemplateView
 from django.views.generic.list import ListView
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
+from django.utils.dateparse import parse_date
 import requests
 from datetime import datetime
 from dateutil import parser
 from collections import Counter
 import collections
-from .models import (DiasCalendario)
+from .models import (
+    Calendario,
+    DiasCalendario
+    )
+from django.http import JsonResponse
 
 
 def get_url():
@@ -139,5 +144,44 @@ class ProducaoRoupaList(TemplateView):
 
 
 @method_decorator(login_required, name='dispatch')
-class Calendario(TemplateView):
+class CalendarioTemplate(TemplateView):
     template_name = 'roupa/calendario.html'
+
+    def get(self, request, *args, **kwargs):     
+        context = super().get_context_data(**kwargs)
+        calendario = Calendario.objects.get(pk = self.kwargs['pk'])                           
+        calendarios = Calendario.objects.filter()                           
+        dados = DiasCalendario.objects.filter(calendario = self.kwargs['pk'])        
+        lista = []
+        for data in dados:            
+            lista.append(str(f'{data.data} 0:0:0'))        
+        context['calendarios'] = calendarios
+        context['calendario'] = calendario
+        context['dias'] = lista
+        add = self.request.GET.get('adicionar')                 
+        if not add is None:    
+            list_add = list(add.split(","))  
+            try:
+                for c in list_add:        
+                    date = c
+                    model = DiasCalendario(calendario = calendario, data = date)                        
+                    model.save()            
+            except:
+                pass
+        deletar = self.request.GET.get('deletar')
+        if not deletar is None:
+            list_del = list(deletar.split(",")) 
+            try:
+                for c in list_del:
+                    date = c
+                    model = DiasCalendario.objects.filter(
+                        calendario = calendario,
+                        data = date
+                    )
+                    model.delete()            
+            except:
+                pass
+        if not add is None or not deletar is None:  
+            return redirect(f'/roupa/calendario/{calendario.pk}')   
+        else:
+            return render(request, 'roupa/calendario.html', context)

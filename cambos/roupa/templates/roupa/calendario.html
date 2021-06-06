@@ -24,15 +24,38 @@
 	<div class="col-12">
 		
 		<div class="panel panel-default">			
-			<div class="panel-heading"> <strong class="">Nome <strong class="text-success">Setores</strong></strong></div>
+			<div class="panel-heading btn-margins"> <strong class="">Calendário: </strong>
+				<div class="btn-group ">
+					<button data-toggle="dropdown" class="btn btn-default btn-lg dropdown-toggle margin"><strong>{{calendario.nome}}</strong> <span class="caret"></span></button>
+					<ul class="dropdown-menu">						
+						{% for item in calendarios%}
+						<li><a href="{% url 'calendario' item.pk %}" class="font-bold">{{item.nome}}</a></li>
+						{%endfor%}
+						
+					</ul>
+				</div>
+				<div class="btn-group pull-right">
+					<form class="" id="" method="submit">
+						<button class="btn btn-success margin" type="submit" role="button">
+							salvar
+						</button>
+						<input type="hidden" class="form-control" id="adicionar" name="adicionar"
+								value="" placeholder="adição"
+								aria-label="Adição" aria-describedby="basic-addon1">
+						<input type="hidden" class="form-control" id="deletar" name="deletar"
+								value="" placeholder="apagar"
+								aria-label="Apagar" aria-describedby="basic-addon1">  
+					</form>
+				</div>
+				
+			</div>
 			<div class="panel-body">
 				<div id="calendario"></div>                
 				</div> 
-				<script>
-					
-				</script>
+				
 			</div>
 		</div>
+		
 	</div>	
 	
 {%endblock content%}
@@ -40,6 +63,9 @@
 {% block script %}
 	
 	<script src="{% static 'js/calendario.js' %}"></script>
+	<script>
+		var dias = {{dias|safe}}					
+	</script>
 	<script src="{% static 'js/custom_calendario.js' %}"></script>
 	
 	
