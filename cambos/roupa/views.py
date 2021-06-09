@@ -11,7 +11,8 @@ from collections import Counter
 import collections
 from .models import (
     Calendario,
-    DiasCalendario
+    DiasCalendario,
+    Etapa,     
     )
 from django.http import JsonResponse
 
@@ -187,15 +188,39 @@ class CalendarioTemplate(TemplateView):
 
 
 @method_decorator(login_required, name='dispatch')
-class OficinaList(TemplateView):    
-    template_name = 'roupa/oficina_list.html'
+class ConfeccaoList(TemplateView):    
+    template_name = 'roupa/confeccao_list.html'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        oficina_list = Etapa.objects.filter()        
         dados = get_url()
-        for produto in dados:
-            produto["Status"] = convert_setor(produto["Status"])
-            
-        context['producaojs'] = dados
+        em_producao = []
+        for oficina in oficina_list:                        
+            quant_un = 0
+            quant_pt = 0
+            contador = 0
+            soma_duracao = 0
+            for produto in dados:
+                if oficina.nick_spi == produto["Celula"]:
+                    dias = produto['DiasPedido'
+                    ] + produto['DiasExpTecido'
+                    ] + produto['DiasEncaixe'
+                    ] + produto['DiasProducao']
+                    
+                    if produto["Status"] == 5:
+                        contador += 1
+                        quant_un += produto["QuantPecas"]
+                        quant_pt += produto["ValorDentro"] * produto["QuantPecas"]
+                        soma_duracao += produto["DiasCostura"]
+            em_producao.append({
+                'oficina': oficina.nome,
+                'quant_un':quant_un,
+                'quant_pt':quant_pt,
+                'duracao': soma_duracao / contador,
+                'dias':dias
+            })
+                
+        context['lista'] = em_producao
         context['teste'] = convert_setor(1)
         return context
