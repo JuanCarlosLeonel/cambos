@@ -218,6 +218,7 @@ class ConfeccaoList(TemplateView):
                 'quant_un':quant_un,
                 'quant_pt':quant_pt,
                 'duracao': soma_duracao / contador,
+                'contador': contador,
                 'dias':dias
             })
                 

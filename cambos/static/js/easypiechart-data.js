@@ -20,7 +20,7 @@ $(function() {
 });
 
 $(function() {
-   $('#easypiechart-blue').easyPieChart({
+   $('.easypiechart-blue').easyPieChart({
        scaleColor: false,
        barColor: '#30a5ff'
    });
