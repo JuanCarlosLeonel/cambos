@@ -1,19 +1,19 @@
 $(function() {
-    $('#easypiechart-teal').easyPieChart({
+    $('.easypiechart-teal').easyPieChart({
         scaleColor: false,
         barColor: '#1ebfae'
     });
 });
 
 $(function() {
-    $('#easypiechart-orange').easyPieChart({
+    $('.easypiechart-orange').easyPieChart({
         scaleColor: false,
         barColor: '#ffb53e'
     });
 });
 
 $(function() {
-    $('#easypiechart-red').easyPieChart({
+    $('.easypiechart-red').easyPieChart({
         scaleColor: false,
         barColor: '#f9243f'
     });

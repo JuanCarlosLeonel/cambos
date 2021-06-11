@@ -25,7 +25,7 @@
 	<div class="col-lg-12">
 		<div class="panel panel-default">
 			<div class="panel-heading">	
-				Oficinas Internas		
+				<strong>Oficinas Internas</strong>
 				<ul class="pull-right panel-settings panel-button-tab-right">
 
 					<li class="dropdown"><a class="pull-right dropdown-toggle" data-toggle="dropdown" href="#">
@@ -52,40 +52,37 @@
 					
 				</ul>				
 				<span class="pull-right clickable panel-toggle panel-button-tab-left"><em class="fa fa-toggle-up"></em></span></div>
-			<div class="panel-body">
-				<div class="panel panel-container">
-					<div class="row">
-						{%for oficina in lista %}
-
-						<div class=" col-xs-6 col-md-3 col-lg-3 no-padding">
-							<div class="panel-widget">																	
-								<h2>									
-									<span class="color-blue">{{oficina.oficina}}</span>
-								</h2>									
-								<div class="easypiechart easypiechart-blue no-padding" data-percent="{{oficina.duracao}}" >
-									<span class="percent">
-										{{oficina.duracao|floatformat:2}}%
-									</span>
-								</div>								
-								<h2 class="">{{oficina.quant_pt|floatformat:0}} </h2>
-								<div class="text-muted">peças / pt</div>								
-								<h4>{{oficina.contador}} Cortes</h4>
-								
-							</div>							
-						</div>	
-						{%endfor%}								
-					</div>
+			<div class="panel-body bg-primary">
+				<div class="row">
+					{%for oficina in internas %}
+					<a class="col-xs-6 col-md-3">
+						<div class="panel panel-default">
+							<div class="panel-body easypiechart-panel">
+								<h2>{{oficina.oficina}}</h2>
+								<div class="easypiechart easypiechart-teal" data-percent="92" ><span class="percent">92%</span></div>
+								<h4>
+									{% if oficina.em_atraso == 0 %}
+										<strong class="color-teal">{{oficina.em_atraso}} </strong>atraso
+									{%elif oficina.em_atraso == 1%}
+										<strong class="color-red">{{oficina.em_atraso}} </strong>atraso
+									{%else%}
+										<strong class="color-red">{{oficina.em_atraso}} </strong>atrasos
+									{%endif%}
+								</h4>
+							</div>
+						</div>
+					</a>
+					{%endfor%}
 				</div>
 			</div>
-		</div>	
-	</div>
+		</div>
+	</div>	
 </div>
-
 <div class="row">
 	<div class="col-lg-12">
 		<div class="panel panel-default">
 			<div class="panel-heading">	
-				Oficinas Externas
+				<strong>Oficinas Externas</strong>
 				<ul class="pull-right panel-settings panel-button-tab-right">
 
 					<li class="dropdown"><a class="pull-right dropdown-toggle" data-toggle="dropdown" href="#">
@@ -112,10 +109,27 @@
 					
 				</ul>				
 				<span class="pull-right clickable panel-toggle panel-button-tab-left"><em class="fa fa-toggle-up"></em></span></div>
-			<div class="panel-body">
-				<div class="canvas-wrapper">
-					
-					
+			<div class="panel-body bg-primary">
+				<div class="row">
+					{%for oficina in externas %}
+					<a class="col-xs-6 col-md-3">
+						<div class="panel panel-default">
+							<div class="panel-body easypiechart-panel">
+								<h2>{{oficina.oficina}}</h2>
+								<div class="easypiechart easypiechart-teal" data-percent="92" ><span class="percent">92%</span></div>
+								<h4>
+									{% if oficina.em_atraso == 0 %}
+										<strong class="color-teal">{{oficina.em_atraso}} </strong>atraso
+									{%elif oficina.em_atraso == 1%}
+										<strong class="color-red">{{oficina.em_atraso}} </strong>atraso
+									{%else%}
+										<strong class="color-red">{{oficina.em_atraso}} </strong>atrasos
+									{%endif%}
+								</h4>
+							</div>
+						</div>
+					</a>
+					{%endfor%}
 				</div>
 			</div>
 		</div>

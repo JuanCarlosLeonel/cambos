@@ -195,11 +195,13 @@ class ConfeccaoList(TemplateView):
         context = super().get_context_data(**kwargs)
         oficina_list = Etapa.objects.filter()        
         dados = get_url()
-        em_producao = []
+        em_producao_int = []
+        em_producao_ext = []
         for oficina in oficina_list:                        
             quant_un = 0
             quant_pt = 0
             contador = 0
+            atraso = 0
             soma_duracao = 0
             for produto in dados:
                 if oficina.nick_spi == produto["Celula"]:
@@ -209,19 +211,34 @@ class ConfeccaoList(TemplateView):
                     ] + produto['DiasProducao']
                     
                     if produto["Status"] == 5:
+                        if produto['Atrasado'] == "Em Atraso":
+                            atraso +=1
                         contador += 1
                         quant_un += produto["QuantPecas"]
                         quant_pt += produto["ValorDentro"] * produto["QuantPecas"]
                         soma_duracao += produto["DiasCostura"]
-            em_producao.append({
-                'oficina': oficina.nome,
-                'quant_un':quant_un,
-                'quant_pt':quant_pt,
-                'duracao': soma_duracao / contador,
-                'contador': contador,
-                'dias':dias
-            })
+            if oficina.interno:
+                em_producao_int.append({
+                    'oficina': oficina.nome,
+                    'quant_un':quant_un,
+                    'quant_pt':quant_pt,
+                    'duracao': soma_duracao / contador,
+                    'contador': contador,
+                    'dias':dias,
+                    'em_atraso':atraso
+                })
+            else:
+                em_producao_ext.append({
+                    'oficina': oficina.nome,
+                    'quant_un':quant_un,
+                    'quant_pt':quant_pt,
+                    'duracao': soma_duracao / contador,
+                    'contador': contador,
+                    'dias':dias,
+                    'em_atraso':atraso
+                })
                 
-        context['lista'] = em_producao
+        context['internas'] = em_producao_int
+        context['externas'] = em_producao_ext
         context['teste'] = convert_setor(1)
         return context
