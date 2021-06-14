@@ -1,11 +1,13 @@
 from django.views.generic.base import TemplateView
 from django.views.generic.list import ListView
+from django.views.generic.detail import DetailView
 from django.shortcuts import render, redirect
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
 from django.utils.dateparse import parse_date
 import requests
-from datetime import datetime
+
+from datetime import (datetime, timedelta)
 from dateutil import parser
 from collections import Counter
 import collections
@@ -15,7 +17,7 @@ from .models import (
     Etapa,     
     )
 from django.http import JsonResponse
-
+from dateutil.parser import parse
 
 def get_url():
     url = 'http://187.45.32.103:20080/spi/producaoservice/statusentrega'
@@ -219,6 +221,7 @@ class ConfeccaoList(TemplateView):
                         soma_duracao += produto["DiasCostura"]
             if oficina.interno:
                 em_producao_int.append({
+                    'id': oficina.id,
                     'oficina': oficina.nome,
                     'quant_un':quant_un,
                     'quant_pt':quant_pt,
@@ -229,6 +232,7 @@ class ConfeccaoList(TemplateView):
                 })
             else:
                 em_producao_ext.append({
+                    'id': oficina.id,
                     'oficina': oficina.nome,
                     'quant_un':quant_un,
                     'quant_pt':quant_pt,
@@ -242,3 +246,49 @@ class ConfeccaoList(TemplateView):
         context['externas'] = em_producao_ext
         context['teste'] = convert_setor(1)
         return context
+
+
+@method_decorator(login_required, name='dispatch')
+class ConfeccaoDetail(DetailView):    
+    model = Etapa
+    template_name = 'roupa/confeccao_detail.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        oficina = Etapa.objects.get(id = self.kwargs['pk'])        
+        dados = get_url()
+        lista = []
+        
+                        
+        for produto in dados:
+            if oficina.nick_spi == produto["Celula"]:
+                if produto["Status"] == 5:
+                    dias = produto['DiasPedido'
+                    ] + produto['DiasExpTecido'
+                    ] + produto['DiasEncaixe'
+                    ] + produto['DiasProducao']                    
+                    
+                    pedido = parse(produto["DataPedido"])
+                    entrada = pedido.date() + timedelta(days=dias)
+                    entrega = parse(produto["DataEntrega"])
+                
+                    
+                    quant_un = produto["QuantPecas"]
+                    quant_pt = produto["ValorDentro"] * produto["QuantPecas"]
+                    soma_duracao = produto["DiasCostura"]
+
+                
+                    lista.append({                        
+                        'produto': produto["FichaCorte"],                    
+                        'quant_un':quant_un,
+                        'quant_pt':quant_pt,                
+                        'dias':dias,                    
+                        'pedido': pedido,                    
+                        'entrada': entrada,                    
+                        'entrega': entrega,                    
+                    })   
+
+        context['lista'] = lista
+        context['teste'] = convert_setor(1)
+        return context
+

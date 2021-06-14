@@ -5,7 +5,9 @@ from .views import(
     Index,
     CalendarioTemplate,
     ProducaoRoupaList,
-    ConfeccaoList
+    ConfeccaoList,
+    ConfeccaoDetail
+
 )
 
 urlpatterns = [
@@ -13,4 +15,5 @@ urlpatterns = [
     path('calendario/<int:pk>/', CalendarioTemplate.as_view(), name='calendario'),    
     path('producao_roupa_list',  ProducaoRoupaList.as_view(), name='producao_roupa_list'),
     path('confeccao_list',  ConfeccaoList.as_view(), name='confeccao_list'),
+    path('confeccao_detail/<int:pk>/',ConfeccaoDetail.as_view(), name='confeccao_detail_cbv'),
 ]
