@@ -1,3 +1,4 @@
+import json
 from django.views.generic.base import TemplateView
 from django.views.generic.list import ListView
 from django.views.generic.detail import DetailView
@@ -6,7 +7,7 @@ from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
 from django.utils.dateparse import parse_date
 import requests
-
+import json
 from datetime import (datetime, timedelta)
 from dateutil import parser
 from collections import Counter
@@ -276,19 +277,26 @@ class ConfeccaoDetail(DetailView):
                     quant_un = produto["QuantPecas"]
                     quant_pt = produto["ValorDentro"] * produto["QuantPecas"]
                     soma_duracao = produto["DiasCostura"]
-
+                    if produto['Parado'] == "1":
+                        situacao = "Parado"
+                    elif produto['Atrasado'] == "Em Atraso":
+                        situacao = "Em atraso"
+                    else:
+                        situacao = "Em dia"
                 
                     lista.append({                        
                         'produto': produto["FichaCorte"],                    
                         'quant_un':quant_un,
                         'quant_pt':quant_pt,                
                         'dias':dias,                    
-                        'pedido': pedido,                    
-                        'entrada': entrada,                    
-                        'entrega': entrega,                    
+                        'pedido': str(pedido),                    
+                        'entrada': str(entrada),                    
+                        'entrega': str(entrega),                    
+                        'situacao': situacao
                     })   
 
-        context['lista'] = lista
+        
+        context['lista'] = json.dumps(lista)
         context['teste'] = convert_setor(1)
         return context
 
