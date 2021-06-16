@@ -112,7 +112,7 @@
 			<div class="panel-body bg-primary">
 				<div class="row">
 					{%for oficina in externas %}
-					<a class="col-xs-6 col-md-3">
+					<a href="{% url 'confeccao_detail_cbv' oficina.id %}" class="col-xs-6 col-md-3">
 						<div class="panel panel-default">
 							<div class="panel-body easypiechart-panel">
 								<h2>{{oficina.oficina}}</h2>

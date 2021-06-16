@@ -257,9 +257,10 @@ class ConfeccaoDetail(DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         oficina = Etapa.objects.get(id = self.kwargs['pk'])        
-        dados = get_url()
-        lista = []
-        
+        dados = get_url()        
+        em_dia = []
+        atrasado = []        
+        parado =[]
                         
         for produto in dados:
             if oficina.nick_spi == produto["Celula"]:
@@ -272,29 +273,30 @@ class ConfeccaoDetail(DetailView):
                     pedido = parse(produto["DataPedido"])
                     entrada = pedido.date() + timedelta(days=dias)
                     entrega = parse(produto["DataEntrega"])
-                
-                    
+                                    
                     quant_un = produto["QuantPecas"]
                     quant_pt = produto["ValorDentro"] * produto["QuantPecas"]
                     soma_duracao = produto["DiasCostura"]
-                    if produto['Parado'] == "1":
-                        situacao = "Parado"
-                    elif produto['Atrasado'] == "Em Atraso":
-                        situacao = "Em atraso"
-                    else:
-                        situacao = "Em dia"
-                
-                    lista.append({                        
+
+                    linha = {                        
                         'produto': produto["FichaCorte"],                    
                         'quant_un':quant_un,
                         'quant_pt':quant_pt,                
                         'dias':dias,                    
                         'pedido': str(pedido),                    
                         'entrada': str(entrada),                    
-                        'entrega': str(entrega),                    
-                        'situacao': situacao
-                    })   
+                        'entrega': str(entrega),                                            
+                    }
 
+
+                    if produto['Parado'] == "1":
+                        parado.append(linha)
+                    elif produto['Atrasado'] == "Em Atraso":
+                        atrasado.append(linha)
+                    else:
+                        em_dia.append(linha)
+                
+        lista = {'parado':parado, 'atrasado':atrasado, 'em_dia':em_dia}
         
         context['lista'] = json.dumps(lista)
         context['teste'] = convert_setor(1)

@@ -1,32 +1,55 @@
 var produtos = JSON.parse(lista);
 
+function data(option){
+  let data = []
+  for (var i = 0; i < option.length; i++) {
+    data.push({
+      x: option[i].produto,
+      y: [
+        new Date(option[i].entrada).getTime(),
+        new Date(option[i].entrega).getTime(),
+      ],
+      z:{
+        name : option[i].produto,
+        desc : option[i].produto,
+        
+      },
+      
+    })
+  }
+  return data
+  
+}
+
 function series(){
   var produtosEmLinha = []
-  for (var i = 0; i < produtos.length; i++) {
+  let em_dia = produtos.em_dia
+  let atrasado = produtos.atrasado
+  let parado = produtos.parado
+  if (em_dia.length > 0){    
+      produtosEmLinha.push(
+        {
+          name:  "Em Dia",
+          data: data(em_dia)
+        }
+      )    
+  }
+  if (atrasado.length > 0){    
     produtosEmLinha.push(
       {
-        name:   produtos[i].situacao,
-        data: [
-          
-          {
-            x: produtos[i].produto,
-            y: [
-              new Date(produtos[i].entrada).getTime(),
-              new Date(produtos[i].entrega).getTime(),
-            ],
-            z:{
-              name : produtos[i].produto,
-              desc : produtos[i].produto,
-              
-            },
-            fillColor: '#008FFB'
-          },
-          
-          
-        ]
+        name:  "Atrasado",
+        data: data(atrasado)
       }
-    )
-    }
+    )    
+  }
+  if (parado.length > 0){    
+    produtosEmLinha.push(
+      {
+        name:  "Parado",
+        data: data(parado)
+      }
+    )    
+  }
   return produtosEmLinha
 }
 var options = {
@@ -68,7 +91,8 @@ var options = {
   plotOptions: {
     bar: {
       horizontal: true,
-      barHeight: '80%'
+      barHeight: '60%',
+      rangeBarGroupRows: true
     }
   }
   
@@ -82,19 +106,15 @@ var options = {
   xaxis: {
     type: 'datetime'
   },
-  fill: {
-    type: 'gradient',
-    gradient: {
-      shade: 'light',
-      type: 'vertical',
-      shadeIntensity: 0.25,
-      gradientToColors: undefined,
-      inverseColors: true,
-      opacityFrom: 1,
-      opacityTo: 1,
-      stops: [50, 0, 100, 100]
-    }
+  yaxis: {
+    show: false
   },
+  colors: [
+    "#008FFB", "#FEB019", "#d7263d", "#FF4560", "#775DD0",
+    "#3F51B5", "#546E7A", "#D4526E", "#8D5B4C", "#F86624",
+    "#D7263D", "#1B998B", "#F46036", "#E2C044"
+  ],
+  
   legend: {
     position: 'top',
     horizontalAlign: 'left'
