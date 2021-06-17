@@ -261,7 +261,12 @@ class ConfeccaoDetail(DetailView):
         em_dia = []
         atrasado = []        
         parado =[]
-                        
+        lista_intervalos = []
+        calendario = DiasCalendario.objects.filter(calendario = oficina.calendario)
+        data_inicial = str('06-20-21')
+        data_final = str('06-22-21')
+        
+        lista_intervalos.append({'start':data_inicial,'end':data_final})
         for produto in dados:
             if oficina.nick_spi == produto["Celula"]:
                 if produto["Status"] == 5:
@@ -287,8 +292,6 @@ class ConfeccaoDetail(DetailView):
                         'entrada': str(entrada),                    
                         'entrega': str(entrega),                                            
                     }
-
-
                     if produto['Parado'] == "1":
                         parado.append(linha)
                     elif produto['Atrasado'] == "Em Atraso":
@@ -299,6 +302,6 @@ class ConfeccaoDetail(DetailView):
         lista = {'parado':parado, 'atrasado':atrasado, 'em_dia':em_dia}
         
         context['lista'] = json.dumps(lista)
-        context['teste'] = convert_setor(1)
+        context['intervalos'] = json.dumps(lista_intervalos)
         return context
 

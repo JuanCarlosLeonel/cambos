@@ -129,13 +129,14 @@
 		</div>
 	</div>	
 </div>		
-
+{{intervalos}}
 {%endblock content%}
 
 {% block script %}
 <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
 <script>
-	var lista = '{{lista|safe}}'					
+	var lista = '{{lista|safe}}'	
+	var calendar = '{{intervalos|safe}}'					
 </script>
 <script src="{% static 'js/timeline.js' %}"></script>	
 

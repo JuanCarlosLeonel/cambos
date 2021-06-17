@@ -1,4 +1,5 @@
 var produtos = JSON.parse(lista);
+var intervalos = JSON.parse(calendar);
 
 function data(option){
   let data = []
@@ -80,7 +81,6 @@ var options = {
       }
 
     }
-
   },
   dataLabels: {
     enabled: true,
@@ -104,7 +104,7 @@ var options = {
   }*/,
   series: series(),
   xaxis: {
-    type: 'datetime'
+    type: 'datetime',
   },
   yaxis: {
     show: false
@@ -118,7 +118,44 @@ var options = {
   legend: {
     position: 'top',
     horizontalAlign: 'left'
+  },
+  grid: {
+    show: true,        
+    position: 'back',
+    xaxis: {
+        lines: {
+            show: true
+        },    
+    },   
+    yaxis: {
+        lines: {
+            show: false
+        }
+    },          
+  },
+  annotations: {
+    xaxis: [
+      {
+        x: new Date().getTime(),
+            strokeDashArray: 0,
+            borderColor: "#1B998B",
+            label: {
+              borderColor: '#1B998B',
+              style: {
+                color: '#fff',
+                background: '#1B998B',
+              },
+              text: 'hoje',
+        }
+      },{
+        x: new Date(intervalos[0].start).getTime(),
+        x2: new Date(intervalos[0].end).getTime(),
+        
+        opacity: 0.3,        
+      },
+    ]
   }
+
 }
 
 var chart = new ApexCharts(document.querySelector('#chart'), options);
