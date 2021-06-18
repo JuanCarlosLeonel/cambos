@@ -220,13 +220,17 @@ class ConfeccaoList(TemplateView):
                         quant_un += produto["QuantPecas"]
                         quant_pt += produto["ValorDentro"] * produto["QuantPecas"]
                         soma_duracao += produto["DiasCostura"]
+            try:
+                duracao = soma_duracao / contador
+            except:
+                duracao = 0
             if oficina.interno:
                 em_producao_int.append({
                     'id': oficina.id,
                     'oficina': oficina.nome,
                     'quant_un':quant_un,
                     'quant_pt':quant_pt,
-                    'duracao': soma_duracao / contador,
+                    'duracao': duracao,
                     'contador': contador,
                     'dias':dias,
                     'em_atraso':atraso
@@ -237,7 +241,7 @@ class ConfeccaoList(TemplateView):
                     'oficina': oficina.nome,
                     'quant_un':quant_un,
                     'quant_pt':quant_pt,
-                    'duracao': soma_duracao / contador,
+                    'duracao': duracao,
                     'contador': contador,
                     'dias':dias,
                     'em_atraso':atraso
