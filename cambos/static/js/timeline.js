@@ -1,6 +1,34 @@
 var produtos = JSON.parse(lista);
 var intervalos = JSON.parse(calendar);
 
+function get_intervals(){
+  let intervals = []
+  intervals.push(
+    {
+      x: new Date().getTime(),
+      strokeDashArray: 0,
+      borderColor: "#1B998B",
+      label: {
+        borderColor: '#1B998B',
+        style: {
+          color: '#fff',
+          background: '#1B998B',
+        },
+        text: 'hoje',
+      }
+    }
+  )
+  for (var i = 0; i < intervalos.length; i++) {
+    intervals.push({
+      x: new Date(intervalos[i].start).getTime(),
+      x2: new Date(intervalos[i].end).getTime(),      
+      borderColor: "#1B998B",
+      opacity: 0.2,       
+    })
+  }
+  return intervals
+}
+
 function data(option){
   let data = []
   for (var i = 0; i < option.length; i++) {
@@ -55,6 +83,62 @@ function series(){
 }
 var options = {
   chart: {
+    
+      "name": "pt-br",
+      "options": {
+        "months": [
+          "Janeiro",
+          "Fevereiro",
+          "Março",
+          "Abril",
+          "Maio",
+          "Junho",
+          "Julho",
+          "Agosto",
+          "Setembro",
+          "Outubro",
+          "Novembro",
+          "Dezembro"
+        ],
+        "shortMonths": [
+          "Jan",
+          "Fev",
+          "Mar",
+          "Abr",
+          "Mai",
+          "Jun",
+          "Jul",
+          "Ago",
+          "Set",
+          "Out",
+          "Nov",
+          "Dez"
+        ],
+        "days": [
+          "Domingo",
+          "Segunda",
+          "Terça",
+          "Quarta",
+          "Quinta",
+          "Sexta",
+          "Sábado"
+        ],
+        "shortDays": ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sab"],
+        "toolbar": {
+          "exportToSVG": "Baixar SVG",
+          "exportToPNG": "Baixar PNG",
+          "exportToCSV": "Baixar CSV",
+          "menu": "Menu",
+          "selection": "Selecionar",
+          "selectionZoom": "Selecionar Zoom",
+          "zoomIn": "Aumentar",
+          "zoomOut": "Diminuir",
+          "pan": "Navegação",
+          "reset": "Reiniciar Zoom"
+        }
+      },
+   
+    
     height: 450,
     type: 'rangeBar',
   events : {
@@ -134,28 +218,8 @@ var options = {
     },          
   },
   annotations: {
-    xaxis: [
-      {
-        x: new Date().getTime(),
-            strokeDashArray: 0,
-            borderColor: "#1B998B",
-            label: {
-              borderColor: '#1B998B',
-              style: {
-                color: '#fff',
-                background: '#1B998B',
-              },
-              text: 'hoje',
-        }
-      },{
-        x: new Date(intervalos[0].start).getTime(),
-        x2: new Date(intervalos[0].end).getTime(),
-        
-        opacity: 0.3,        
-      },
-    ]
+    xaxis: get_intervals()             
   }
-
 }
 
 var chart = new ApexCharts(document.querySelector('#chart'), options);

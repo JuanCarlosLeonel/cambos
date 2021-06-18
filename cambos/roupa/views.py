@@ -262,33 +262,48 @@ class ConfeccaoDetail(DetailView):
         atrasado = []        
         parado =[]
         lista_intervalos = []
-        calendario = DiasCalendario.objects.filter(calendario = oficina.calendario)
-        data_inicial = str('06-20-21')
-        data_final = str('06-22-21')
-        
-        lista_intervalos.append({'start':data_inicial,'end':data_final})
+        calendario = DiasCalendario.objects.filter(calendario = oficina.calendario).order_by('data')
+        data_inicial = ''        
+        for item in calendario:            
+            if data_inicial == "intervalo":
+                final_intervalo= str(item.data - timedelta(days=1))
+                lista_intervalos.append({'start':inicio_intervalo,'end':final_intervalo})
+                data_inicial = item.data
+            if data_inicial == '':
+                data_inicial = item.data
+            if item.data == data_inicial:
+                data_inicial = item.data + timedelta(days=1)
+            else:
+                inicio_intervalo = str(data_inicial)
+                data_inicial = "intervalo"
+                        
         for produto in dados:
             if oficina.nick_spi == produto["Celula"]:
                 if produto["Status"] == 5:
+                    capacidade =oficina.capacidade
                     dias = produto['DiasPedido'
                     ] + produto['DiasExpTecido'
                     ] + produto['DiasEncaixe'
                     ] + produto['DiasProducao']                    
-                    
+                    quant_un = produto["QuantPecas"]
+                    pont = produto["ValorDentro"]
+                    quant_pt = produto["ValorDentro"] * produto["QuantPecas"] 
                     pedido = parse(produto["DataPedido"])
                     entrada = pedido.date() + timedelta(days=dias)
-                    entrega = parse(produto["DataEntrega"])
+                    duracao_estimada = round(quant_pt / capacidade)
+                    data_entrega = calendario.filter(data__gte = entrada)
+                    entrega = data_entrega[1+ duracao_estimada].data
                                     
-                    quant_un = produto["QuantPecas"]
-                    quant_pt = produto["ValorDentro"] * produto["QuantPecas"]
-                    soma_duracao = produto["DiasCostura"]
+                   
+                    duracao_atual = produto["DiasCostura"]
+                    
 
                     linha = {                        
                         'produto': produto["FichaCorte"],                    
                         'quant_un':quant_un,
-                        'quant_pt':quant_pt,                
-                        'dias':dias,                    
-                        'pedido': str(pedido),                    
+                        'pont':pont,                
+                        'quant_pt':quant_pt,                        
+                        'dias':duracao_estimada,                                                   
                         'entrada': str(entrada),                    
                         'entrega': str(entrega),                                            
                     }
