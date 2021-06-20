@@ -8,7 +8,7 @@ from django.contrib.auth.decorators import login_required
 from django.utils.dateparse import parse_date
 import requests
 import json
-from datetime import (datetime, timedelta)
+from datetime import (datetime, timedelta, date)
 from dateutil import parser
 from collections import Counter
 import collections
@@ -297,10 +297,15 @@ class ConfeccaoDetail(DetailView):
                     duracao_estimada = round(quant_pt / capacidade)
                     data_entrega = calendario.filter(data__gte = entrada)
                     entrega = data_entrega[1+ duracao_estimada].data
-                                    
-                   
-                    duracao_atual = produto["DiasCostura"]
-                    
+                    if produto['Atrasado'] == "Em Atraso":
+                        situacao = "em_atraso"
+                    else:
+                        situacao = "em_dia"                        
+
+                    if entrega < date.today():
+                        dias_atraso = datetime.today()
+                    else:
+                        dias_atraso = ""
 
                     linha = {                        
                         'produto': produto["FichaCorte"],                    
@@ -310,15 +315,15 @@ class ConfeccaoDetail(DetailView):
                         'dias':duracao_estimada,                                                   
                         'entrada': str(entrada),                    
                         'entrega': str(entrega),                                            
+                        'atraso': str(dias_atraso),                                            
+                        'situacao': situacao,                                            
                     }
                     if produto['Parado'] == "1":
-                        parado.append(linha)
-                    elif produto['Atrasado'] == "Em Atraso":
-                        atrasado.append(linha)
+                        parado.append(linha)                    
                     else:
                         em_dia.append(linha)
-                
-        lista = {'parado':parado, 'atrasado':atrasado, 'em_dia':em_dia}
+        teste = sorted(em_dia, key=lambda x: x['entrada'], reverse=False)        
+        lista = {'parado':parado, 'atrasado':atrasado, 'em_dia':teste}
         
         context['lista'] = json.dumps(lista)
         context['intervalos'] = json.dumps(lista_intervalos)

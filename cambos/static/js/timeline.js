@@ -14,7 +14,7 @@ function get_intervals(){
           color: '#fff',
           background: '#1B998B',
         },
-        text: 'hoje',
+        text: 'agora',
       }
     }
   )
@@ -32,20 +32,38 @@ function get_intervals(){
 function data(option){
   let data = []
   for (var i = 0; i < option.length; i++) {
-    data.push({
-      x: option[i].produto,
-      y: [
-        new Date(option[i].entrada).getTime(),
-        new Date(option[i].entrega).getTime(),
-      ],
-      z:{
-        name : option[i].produto,
-        desc : option[i].produto,
+    
+      data.push({
+        x: option[i].produto,
+        y: [
+          new Date(option[i].entrada).getTime(),
+          new Date(option[i].entrega).getTime(),
+        ],
+        z:{
+          name : option[i].produto,
+          desc : option[i].produto,
+          
+        },        
         
-      },
-      
-    })
-  }
+      })
+      if (option[i].atraso != ''){
+        data.push({
+          x: option[i].produto,
+          y: [
+            new Date(option[i].entrega).getTime(),
+            new Date(option[i].atraso).getTime(),
+          ],
+          z:{
+            name : option[i].produto,
+            desc : option[i].produto,
+            
+          },
+          fillColor: '#ffcec9'
+          
+        })
+      }
+    }
+  
   return data
   
 }
@@ -58,7 +76,7 @@ function series(){
   if (em_dia.length > 0){    
       produtosEmLinha.push(
         {
-          name:  "Em Dia",
+          name:  "Em Produção",
           data: data(em_dia)
         }
       )    
@@ -83,60 +101,64 @@ function series(){
 }
 var options = {
   chart: {
-    
-      "name": "pt-br",
-      "options": {
-        "months": [
-          "Janeiro",
-          "Fevereiro",
-          "Março",
-          "Abril",
-          "Maio",
-          "Junho",
-          "Julho",
-          "Agosto",
-          "Setembro",
-          "Outubro",
-          "Novembro",
-          "Dezembro"
-        ],
-        "shortMonths": [
-          "Jan",
-          "Fev",
-          "Mar",
-          "Abr",
-          "Mai",
-          "Jun",
-          "Jul",
-          "Ago",
-          "Set",
-          "Out",
-          "Nov",
-          "Dez"
-        ],
-        "days": [
-          "Domingo",
-          "Segunda",
-          "Terça",
-          "Quarta",
-          "Quinta",
-          "Sexta",
-          "Sábado"
-        ],
-        "shortDays": ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sab"],
-        "toolbar": {
-          "exportToSVG": "Baixar SVG",
-          "exportToPNG": "Baixar PNG",
-          "exportToCSV": "Baixar CSV",
-          "menu": "Menu",
-          "selection": "Selecionar",
-          "selectionZoom": "Selecionar Zoom",
-          "zoomIn": "Aumentar",
-          "zoomOut": "Diminuir",
-          "pan": "Navegação",
-          "reset": "Reiniciar Zoom"
+    defaultLocale: 'en',
+    locales: [{    
+        "name": "en",
+        "options": {
+          "months": [
+            "Janeiro",
+            "Fevereiro",
+            "Março",
+            "Abril",
+            "Maio",
+            "Junho",
+            "Julho",
+            "Agosto",
+            "Setembro",
+            "Outubro",
+            "Novembro",
+            "Dezembro"
+          ],
+          "shortMonths": [
+            "Jan",
+            "Fev",
+            "Mar",
+            "Abr",
+            "Mai",
+            "Jun",
+            "Jul",
+            "Ago",
+            "Set",
+            "Out",
+            "Nov",
+            "Dez"
+          ],
+          "days": [
+            "Domingo",
+            "Segunda",
+            "Terça",
+            "Quarta",
+            "Quinta",
+            "Sexta",
+            "Sábado"
+          ],
+          "shortDays": ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sab"],
+          "toolbar": {
+            "exportToSVG": "Baixar SVG",
+            "exportToPNG": "Baixar PNG",
+            "exportToCSV": "Baixar CSV",
+            "menu": "Menu",
+            "selection": "Selecionar",
+            "selectionZoom": "Selecionar Zoom",
+            "zoomIn": "Aumentar",
+            "zoomOut": "Diminuir",
+            "pan": "Navegação",
+            "reset": "Reiniciar Zoom"
+          }
         }
-      },
+    }],
+        
+      
    
     
     height: 450,
@@ -179,7 +201,7 @@ var options = {
       rangeBarGroupRows: true
     }
   }
-  
+
   /*,
   tooltip: {
     custom: function({series, seriesIndex, dataPointIndex, w}) {
