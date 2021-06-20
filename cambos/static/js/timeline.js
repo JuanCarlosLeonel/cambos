@@ -58,7 +58,7 @@ function data(option){
             desc : option[i].produto,
             
           },
-          fillColor: '#ffcec9'
+          fillColor: '#ff6657'
           
         })
       }
@@ -216,7 +216,7 @@ var options = {
     show: false
   },
   colors: [
-    "#008FFB", "#FEB019", "#d7263d", "#FF4560", "#775DD0",
+    "#008FFB", "#d7263d", "#FEB019",  "#FF4560", "#775DD0",
     "#3F51B5", "#546E7A", "#D4526E", "#8D5B4C", "#F86624",
     "#D7263D", "#1B998B", "#F46036", "#E2C044"
   ],
