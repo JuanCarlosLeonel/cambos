@@ -55,10 +55,10 @@ class Index(TemplateView):
         total_pecas = 0
         entrega_atraso = 0
         quantidade_atraso = 0
-        produto_parado = 0
+        produto_parado = 0        
         hoje = datetime.today()
         semana_atual = datetime.isocalendar(hoje)[1]+1
-        for produto in dados:
+        for produto in dados:            
             decoder = parser.parse(produto['DataEntrega'])
             semana_entrega = datetime.isocalendar(decoder)[1]+1            
             if semana_entrega < semana_atual:
@@ -299,6 +299,8 @@ class ConfeccaoDetail(DetailView):
                     entrega = data_entrega[1+ duracao_estimada].data
                     if produto['Atrasado'] == "Em Atraso":
                         situacao = "em_atraso"
+                    elif produto['Parado'] == "1":
+                        situacao = "parado"
                     else:
                         situacao = "em_dia"                        
 

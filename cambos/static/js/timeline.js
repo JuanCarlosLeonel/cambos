@@ -32,7 +32,7 @@ function get_intervals(){
 function data(option){
   let data = []
   for (var i = 0; i < option.length; i++) {
-    
+    if (option[i].situacao == 'em_dia'){
       data.push({
         x: option[i].produto,
         y: [
@@ -44,8 +44,39 @@ function data(option){
           desc : option[i].produto,
           
         },        
-        
+        fillColor: "#008FFB" 
       })
+    }
+    if (option[i].situacao == 'em_atraso'){
+      data.push({
+        x: option[i].produto,
+        y: [
+          new Date(option[i].entrada).getTime(),
+          new Date(option[i].entrega).getTime(),
+        ],
+        z:{
+          name : option[i].produto,
+          desc : option[i].produto,
+          
+        },        
+        fillColor: "#FEB019"
+      })
+    }
+    if (option[i].situacao == 'parado'){
+      data.push({
+        x: option[i].produto,
+        y: [
+          new Date(option[i].entrada).getTime(),
+          new Date(option[i].entrega).getTime(),
+        ],
+        z:{
+          name : option[i].produto,
+          desc : option[i].produto,
+          
+        },        
+        fillColor: "#d7263d"
+      })
+    }
       if (option[i].atraso != ''){
         data.push({
           x: option[i].produto,
@@ -54,7 +85,7 @@ function data(option){
             new Date(option[i].atraso).getTime(),
           ],
           z:{
-            name : option[i].produto,
+            name : "teste",
             desc : option[i].produto,
             
           },
@@ -63,6 +94,7 @@ function data(option){
         })
       }
     }
+  
   
   return data
   
