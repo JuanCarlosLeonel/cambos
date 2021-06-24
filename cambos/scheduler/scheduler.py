@@ -5,10 +5,10 @@ from django_apscheduler.models import DjangoJobExecution
 from apscheduler.triggers.cron import CronTrigger
 import sys
 import bot
-from bot2 import TelegramBot
+#from bot2 import TelegramBot
 from pytz import utc
 
-bot3 = TelegramBot()
+#bot3 = TelegramBot()
 
 def start():
     scheduler = BackgroundScheduler()

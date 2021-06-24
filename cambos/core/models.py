@@ -43,8 +43,8 @@ class User(AbstractUser):
     textil    = models.BooleanField(default=False)
     confeccao = models.BooleanField(default=False)
     comercial = models.ManyToManyField(Comercial, blank=True)
-    
 
+    
 class Bot(models.Model):
     last_update_id  = models.CharField(max_length=30)
     token           = models.CharField(max_length=46)
