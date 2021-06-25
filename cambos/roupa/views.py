@@ -266,6 +266,7 @@ class ConfeccaoDetail(DetailView):
         atrasado = []        
         parado =[]
         lista_intervalos = []
+        produtos_em_linha = []
         calendario = DiasCalendario.objects.filter(calendario = oficina.calendario).order_by('data')
         data_inicial = ''        
         for item in calendario:            
@@ -284,49 +285,62 @@ class ConfeccaoDetail(DetailView):
         for produto in dados:
             if oficina.nick_spi == produto["Celula"]:
                 if produto["Status"] == 5:
-                    capacidade =oficina.capacidade
                     dias = produto['DiasPedido'
                     ] + produto['DiasExpTecido'
                     ] + produto['DiasEncaixe'
                     ] + produto['DiasProducao']                    
-                    quant_un = produto["QuantPecas"]
-                    pont = produto["ValorDentro"]
-                    quant_pt = produto["ValorDentro"] * produto["QuantPecas"] 
                     pedido = parse(produto["DataPedido"])
                     entrada = pedido.date() + timedelta(days=dias)
-                    duracao_estimada = round(quant_pt / capacidade)
-                    data_entrega = calendario.filter(data__gte = entrada)
-                    entrega = data_entrega[1+ duracao_estimada].data
-                    if produto['Atrasado'] == "Em Atraso":
-                        situacao = "em_atraso"
-                    elif produto['Parado'] == "1":
-                        situacao = "parado"
-                    else:
-                        situacao = "em_dia"                        
+                    produto['entrada'] = entrada
+                    produtos_em_linha.append(produto)
+        lista_ordenada = sorted(produtos_em_linha, key=lambda x: x['entrada'], reverse=False)
+        ordem = 1
+        soma_dias = 0
+        for produto in lista_ordenada:
+            capacidade = oficina.capacidade                         
+            quant_un = produto["QuantPecas"]
+            pont = produto["ValorDentro"]
+            quant_pt = produto["ValorDentro"] * produto["QuantPecas"] 
+            pedido = parse(produto["DataPedido"])
+            entrada = produto['entrada']
+            duracao_estimada = round(quant_pt / capacidade) 
+            entrada_calendario = calendario.filter(data__gte = entrada)
+            entrega = entrada_calendario[1+ duracao_estimada + soma_dias].data
+            if produto['Atrasado'] == "Em Atraso":
+                situacao = "em_atraso"
+            elif produto['Parado'] == "1":
+                situacao = "parado"
+            else:
+                situacao = "em_dia"                        
+            if entrega < date.today():
+                dias_atraso = datetime.today()
+            else:
+                dias_atraso = ""
 
-                    if entrega < date.today():
-                        dias_atraso = datetime.today()
-                    else:
-                        dias_atraso = ""
+            linha = {                        
+                'produto': produto["FichaCorte"],                    
+                'quant_un':quant_un,
+                'pont':pont,                
+                'quant_pt':quant_pt,                        
+                'dias':duracao_estimada,                                                   
+                'entrada': str(entrada),                    
+                'entrega': str(entrega),                                            
+                'atraso': str(dias_atraso),                                            
+                'situacao': situacao,                      
+                'ordem':ordem,
+                'soma_dias':soma_dias
 
-                    linha = {                        
-                        'produto': produto["FichaCorte"],                    
-                        'quant_un':quant_un,
-                        'pont':pont,                
-                        'quant_pt':quant_pt,                        
-                        'dias':duracao_estimada,                                                   
-                        'entrada': str(entrada),                    
-                        'entrega': str(entrega),                                            
-                        'atraso': str(dias_atraso),                                            
-                        'situacao': situacao,                                            
-                    }
-                    if produto['Parado'] == "1":
-                        parado.append(linha)                    
-                    else:
-                        em_dia.append(linha)
-        teste = sorted(em_dia, key=lambda x: x['entrada'], reverse=False)        
-        lista = {'parado':parado, 'atrasado':atrasado, 'em_dia':teste}
+            }
+            if produto['Parado'] == "1":
+                parado.append(linha)                    
+            else:
+                em_dia.append(linha)
+                soma_dias += duracao_estimada
+                ordem += 1
+            
         
+               
+        lista = {'parado':parado, 'atrasado':atrasado, 'em_dia':em_dia}        
         context['lista'] = json.dumps(lista)
         context['intervalos'] = json.dumps(lista_intervalos)
         return context
