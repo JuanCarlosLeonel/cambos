@@ -237,7 +237,14 @@ var options = {
   /*,
   tooltip: {
     custom: function({series, seriesIndex, dataPointIndex, w}) {
-      return '<div class="apexcharts-tooltip-rangebar">' + '<div> <span class="series-name" style="color: ' + color + '">' + (w.config.series[seriesIndex].name ? w.config.series[seriesIndex].name : '') + '</span></div>' + '<div> <span class="category">' + ylabel + ': </span> <span class="value start-value">' + startVal + '</span> <span class="separator">-</span> <span class="value end-value">' + endVal + '</span></div>' + '</div>'
+      return '<div class="apexcharts-tooltip-rangebar">' +
+       '<div> <span class="series-name" style="color: ' + '">' +
+        (w.config.series[seriesIndex].name ? w.config.series[seriesIndex].name : '') +
+         '</span></div>' +
+          '<div> <span class="category">' +
+            ': </span> <span class="value start-value">' +
+            w.config.series[seriesIndex].data[dataPointIndex].z.desc + '</span> <span class="separator">-</span> <span class="value end-value">' +
+             '</span></div>' + '</div>'
     }
   }*/,
   series: series(),

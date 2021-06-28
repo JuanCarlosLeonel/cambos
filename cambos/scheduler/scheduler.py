@@ -1,9 +1,4 @@
 from apscheduler.schedulers.background import BackgroundScheduler
-from django_apscheduler.jobstores import DjangoJobStore, register_events
-from django.utils import timezone
-from django_apscheduler.models import DjangoJobExecution
-from apscheduler.triggers.cron import CronTrigger
-import sys
 import bot
 #from bot2 import TelegramBot
 from pytz import utc
