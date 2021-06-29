@@ -196,7 +196,7 @@ class ConfeccaoList(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        oficina_list = Etapa.objects.filter()        
+        oficina_list = Etapa.objects.filter().order_by('nome')        
         dados = get_url()
         em_producao_int = []
         em_producao_ext = []
@@ -283,25 +283,27 @@ class ConfeccaoDetail(DetailView):
                 data_inicial = "intervalo"
                         
         for produto in dados:
-            if oficina.nick_spi == produto["Celula"]:
-                if produto["Status"] == 5:
-                    dias = produto['DiasPedido'
-                    ] + produto['DiasExpTecido'
-                    ] + produto['DiasEncaixe'
-                    ] + produto['DiasProducao']                    
-                    pedido = parse(produto["DataPedido"])
-                    entrada = pedido.date() + timedelta(days=dias)
+            if oficina.nick_spi == produto["Celula"]:                
+                if produto["Status"] == 5:                                  
+                    entrada = parse(produto["DataCostura"]).date()
+                    produto['entrada'] = entrada
+                    produtos_em_linha.append(produto)
+            if oficina.nick_spi == "finalizacao":                
+                if produto["Status"] == 6:                                  
+                    entrada = parse(produto["DataFinalizacao"]).date()
                     produto['entrada'] = entrada
                     produtos_em_linha.append(produto)
         lista_ordenada = sorted(produtos_em_linha, key=lambda x: x['entrada'], reverse=False)
         ordem = 1
         soma_dias = 0
-        for produto in lista_ordenada:
-            capacidade = oficina.capacidade                         
+        capacidade = oficina.capacidade                         
+        for produto in lista_ordenada:            
             quant_un = produto["QuantPecas"]
-            pont = produto["ValorDentro"]
-            quant_pt = produto["ValorDentro"] * produto["QuantPecas"] 
-            pedido = parse(produto["DataPedido"])
+            if oficina.nick_spi == "finalizacao":                
+                pont = produto["ValorReal"] - produto["ValorDentro"]
+            else:
+                pont = produto["ValorDentro"]
+            quant_pt = pont * produto["QuantPecas"]             
             entrada = produto['entrada']
             duracao_estimada = round(quant_pt / capacidade) 
             entrada_calendario = calendario.filter(data__gte = entrada)
@@ -343,5 +345,6 @@ class ConfeccaoDetail(DetailView):
         lista = {'parado':parado, 'atrasado':atrasado, 'em_dia':em_dia}        
         context['lista'] = json.dumps(lista)
         context['intervalos'] = json.dumps(lista_intervalos)
+        context['teste']= datetime.today()
         return context
 
