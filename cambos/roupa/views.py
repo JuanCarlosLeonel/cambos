@@ -1,3 +1,4 @@
+from .form import EtapaForm
 import json
 from django.views.generic.base import TemplateView
 from django.views.generic.list import ListView
@@ -206,6 +207,7 @@ class ConfeccaoList(TemplateView):
             contador = 0
             atraso = 0
             soma_duracao = 0
+            dias = 0
             for produto in dados:
                 if oficina.nick_spi == produto["Celula"]:
                     dias = produto['DiasPedido'
@@ -348,3 +350,23 @@ class ConfeccaoDetail(DetailView):
         context['teste']= datetime.today()
         return context
 
+
+
+#CREATE
+def nova_oficina(request):
+    data = {}
+    form =EtapaForm(request.POST or None)
+
+    if form.is_valid():
+        form.save()
+        return redirect('confeccao_list')
+
+    data['form'] = form
+    return render(request, 'roupa/oficina_etapa.html', data)
+
+
+#DELETE
+def delete(request, pk):
+    etapa = Etapa.objects.get(pk=pk)
+    etapa.delete()
+    return redirect('confeccao_list')
