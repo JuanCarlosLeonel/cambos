@@ -141,7 +141,7 @@ class ProducaoRoupaList(TemplateView):
         dados = get_url()
         for produto in dados:
             produto["Status"] = convert_setor(produto["Status"])
-            
+            produto["DataEntrega"] = parse(produto["DataEntrega"]).date()
         context['producaojs'] = dados        
         return context
 
@@ -338,13 +338,23 @@ class ConfeccaoDetail(DetailView):
             else:
                 em_dia.append(linha)
                 soma_dias += duracao_estimada
-                ordem += 1
-            
-        
-               
+                ordem += 1                    
         lista = {'parado':parado, 'atrasado':atrasado, 'em_dia':em_dia}        
         context['lista'] = json.dumps(lista)
         context['intervalos'] = json.dumps(lista_intervalos)
         context['teste']= datetime.today()
         return context
 
+
+@method_decorator(login_required, name='dispatch')
+class ProgramacaoList(TemplateView):    
+    template_name = 'roupa/programacao_list.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        dados = get_url()
+        for produto in dados:
+            produto["Status"] = convert_setor(produto["Status"])
+            produto["DataEntrega"] = parse(produto["DataEntrega"]).date()
+        context['producaojs'] = dados        
+        return context
