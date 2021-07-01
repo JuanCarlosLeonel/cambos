@@ -30,8 +30,15 @@ def update_api():
     model.api = dados
     model.save()
 
-def get_url():    
-    return  API.objects.get(id=1).api['value']
+def get_url():  
+    try:  
+        return  API.objects.get(id=1).api['value']
+    except:
+        url = 'http://187.45.32.103:20080/spi/intproducaoservice/statusentrega'
+        response = requests.get(url)
+        dados = response.json()
+        return dados['value']
+
 
 def convert_setor(id):
     lista = [
