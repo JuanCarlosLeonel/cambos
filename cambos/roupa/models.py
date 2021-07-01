@@ -1,5 +1,10 @@
 from django.db import models
 from django.db.models.deletion import CASCADE, PROTECT
+from jsonfield import JSONField
+
+
+class API(models.Model):
+    api = JSONField()
 
 
 class Calendario(models.Model):    
@@ -62,6 +67,7 @@ class Pedido(models.Model):
 
     def __str__(self):
         return f'{self.lacre}'
+
 
 class Programacao(models.Model):
     pedido  = models.ForeignKey(Pedido, on_delete=models.CASCADE)

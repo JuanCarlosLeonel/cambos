@@ -15,16 +15,23 @@ import collections
 from .models import (
     Calendario,
     DiasCalendario,
-    Etapa,     
+    Etapa,    
+    API 
     )
 from django.http import JsonResponse
 from dateutil.parser import parse
 
-def get_url():
+
+def update_api():
     url = 'http://187.45.32.103:20080/spi/intproducaoservice/statusentrega'
     response = requests.get(url)
     dados = response.json()
-    return dados['value']
+    model = API.objects.get(id=1)
+    model.api = dados
+    model.save()
+
+def get_url():    
+    return  API.objects.get(id=1).api['value']
 
 def convert_setor(id):
     lista = [
@@ -43,6 +50,7 @@ def convert_setor(id):
     ]
     nome = lista[id-1]
     return nome
+
 
 @method_decorator(login_required, name='dispatch')
 class Index(TemplateView):
@@ -183,9 +191,10 @@ class CalendarioTemplate(TemplateView):
                     )
                     model.delete()            
             except:
-                pass
+                pass        
         if not add is None or not deletar is None:  
             return redirect(f'/roupa/calendario/{calendario.pk}')   
+            
         else:
             return render(request, 'roupa/calendario.html', context)
 
