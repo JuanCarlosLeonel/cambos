@@ -1,4 +1,5 @@
 from django.db import models
+from django.db.models.deletion import CASCADE, PROTECT
 
 
 class Calendario(models.Model):    
@@ -44,7 +45,7 @@ class Etapa(models.Model):
         )
     processo   = models.ForeignKey(Processo, on_delete=models.CASCADE)
     calendario = models.ForeignKey(Calendario, null=True, blank=True, on_delete=models.SET_NULL)
-    nome       = models.CharField(max_length=18)
+    nome       = models.CharField(max_length=18,unique=True)
     interno    = models.BooleanField(default=True)
     capacidade = models.IntegerField()
     linha      = models.CharField(max_length=20, choices=LINHA_CHOICES, null=True, blank=True)
@@ -53,3 +54,22 @@ class Etapa(models.Model):
 
     def __str__(self):
         return f'{self.nome}'
+        
+
+class Pedido(models.Model):
+    lacre = models.IntegerField(unique=True)
+    tag   = models.ManyToManyField(TAG, blank=True)
+
+    def __str__(self):
+        return f'{self.lacre}'
+
+class Programacao(models.Model):
+    pedido  = models.ForeignKey(Pedido, on_delete=models.CASCADE)
+    etapa   = models.ForeignKey(Etapa, on_delete=models.PROTECT)
+    ordem   = models.IntegerField()
+    entrada = models.DateField()
+    saida   = models.DateField()
+
+    def __str__(self):
+        return f'{self.pedido} - {self.etapa}'
+    

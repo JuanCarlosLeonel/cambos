@@ -1046,3 +1046,7 @@ li.disabled > a:focus {
   cursor: not-allowed!important;
   background-color: transparent!important;
 }
+
+.negrito {
+  font-weight: bold;  
+}
