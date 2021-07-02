@@ -385,6 +385,16 @@ class ProgramacaoList(TemplateView):
 class PedidoDetail(TemplateView):    
     template_name = 'roupa/pedido_detail.html'
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        dados = get_url()
+        for produto in dados:
+            produto["Status"] = convert_setor(produto["Status"])
+            produto["DataEntrega"] = parse(produto["DataEntrega"]).date()
+        context['producaojs'] = dados        
+        return context
+
+        
 #CREATE
 @login_required
 def CreateOficina(request):
