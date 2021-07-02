@@ -1,3 +1,4 @@
+from .form import EtapaForm
 import json
 from django.views.generic.base import TemplateView
 from django.views.generic.list import ListView
@@ -225,6 +226,7 @@ class ConfeccaoList(TemplateView):
             contador = 0
             atraso = 0
             soma_duracao = 0
+            dias = 0
             for produto in dados:
                 if oficina.nick_spi == produto["Celula"]:
                     dias = produto['DiasPedido'
@@ -383,11 +385,41 @@ class ProgramacaoList(TemplateView):
 class PedidoDetail(TemplateView):    
     template_name = 'roupa/pedido_detail.html'
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        dados = get_url()
-        for produto in dados:
-            produto["Status"] = convert_setor(produto["Status"])
-            produto["DataEntrega"] = parse(produto["DataEntrega"]).date()
-        context['producaojs'] = dados        
-        return context
+#CREATE
+@login_required
+def CreateOficina(request):
+    data = {}
+    form = EtapaForm(request.POST or None)
+
+    if form.is_valid():
+        form.save()
+        return redirect('confeccao_list')
+
+    data['form'] = form
+    return render(request, 'roupa/oficina_etapa.html', data)
+
+
+#UPDATE
+@login_required
+def UpdateOficina(request,pk):
+    data = {}
+    etapa = Etapa.objects.get(pk=pk)
+    form = EtapaForm(request.POST or None, instance=etapa)
+
+    if form.is_valid():
+        form.save()
+        return redirect('confeccao_list')
+
+    data['form'] = form
+    return render(request, 'roupa/oficina_etapa.html',data)
+
+
+
+#DELETE
+@login_required
+def DeleteOficina(request, pk):
+    etapa = Etapa.objects.get(pk=pk)
+    etapa.delete()
+    return redirect('confeccao_list')
+    
+    

@@ -50,7 +50,7 @@ class Etapa(models.Model):
         )
     processo   = models.ForeignKey(Processo, on_delete=models.CASCADE)
     calendario = models.ForeignKey(Calendario, null=True, blank=True, on_delete=models.SET_NULL)
-    nome       = models.CharField(max_length=18)
+    nome       = models.CharField(max_length=18,unique=True)
     interno    = models.BooleanField(default=True)
     capacidade = models.IntegerField()
     linha      = models.CharField(max_length=20, choices=LINHA_CHOICES, null=True, blank=True)

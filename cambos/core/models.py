@@ -43,19 +43,25 @@ class User(AbstractUser):
     textil    = models.BooleanField(default=False)
     confeccao = models.BooleanField(default=False)
     comercial = models.ManyToManyField(Comercial, blank=True)
-    
 
+    
 class Bot(models.Model):
     last_update_id  = models.CharField(max_length=30)
     token           = models.CharField(max_length=46)
     ativo           = models.BooleanField(default=False)
 
+
 class OFICINA(models.Model):
-    choice = models.CharField(max_length=154, unique=True)
-    
+    DIVISAO_CHOICES = (
+        ('Oficinas Internas', 'Oficinas Internas'),
+        ('Oficinas Externas', 'Oficinas Externas'),    
+    )
+    choice = models.CharField(max_length=154, unique=True, verbose_name='Oficina')
+    divisao = models.CharField(max_length=20, choices=DIVISAO_CHOICES, verbose_name='Divisão')
+
     def __str__(self):
         return f'{self.choice}'
-    
+
 
 class ACABAMENTO(models.Model):
     choice = models.CharField(max_length=154, unique=True)
