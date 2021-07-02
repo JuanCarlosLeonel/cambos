@@ -23,12 +23,15 @@ from dateutil.parser import parse
 
 
 def update_api():
-    url = 'http://187.45.32.103:20080/spi/intproducaoservice/statusentrega'
-    response = requests.get(url)
-    dados = response.json()
-    model = API.objects.get(id=1)
-    model.api = dados
-    model.save()
+    try:
+        url = 'http://187.45.32.103:20080/spi/intproducaoservice/statusentrega'
+        response = requests.get(url)
+        dados = response.json()
+        model = API.objects.get(id=1)
+        model.api = dados
+        model.save()
+    except:
+        pass
 
 def get_url():  
     try:  
@@ -365,6 +368,20 @@ class ConfeccaoDetail(DetailView):
 @method_decorator(login_required, name='dispatch')
 class ProgramacaoList(TemplateView):    
     template_name = 'roupa/programacao_list.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        dados = get_url()
+        for produto in dados:
+            produto["Status"] = convert_setor(produto["Status"])
+            produto["DataEntrega"] = parse(produto["DataEntrega"]).date()
+        context['producaojs'] = dados        
+        return context
+
+
+@method_decorator(login_required, name='dispatch')
+class PedidoDetail(TemplateView):    
+    template_name = 'roupa/pedido_detail.html'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

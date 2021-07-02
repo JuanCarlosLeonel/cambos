@@ -1,0 +1,150 @@
+{% extends "cambos/base_roupa.html" %}
+{% load static %}
+{% block css %}
+
+{% endblock css %}
+
+{% block navigation %}
+    <div class="row">
+        <ol class="breadcrumb">
+			<li><a href="{% url 'roupa_index' %}">
+                <em class="fa fa-home"></em>
+            </a></li>
+            <li class="active"><a href="{% url 'confeccao_list' %}">
+                Confecções
+            </a></li>
+        </ol>
+    </div><!--/.row-->
+    <div class="row">
+        <div class="col-lg-12">
+            <h1 class="page-header">{{object}}<span class="text-muted small">  </span></h1></h1>
+        </div>
+    </div><!--/.row-->
+{% endblock navigation %}
+
+{% block content %}		
+<div class="row">
+	<div class="col-lg-12">
+		<div class="panel panel-default">
+			<div class="panel-heading">	
+				Dados
+				<ul class="pull-right panel-settings panel-button-tab-right">
+
+					<li class="dropdown"><a class="pull-right " href="#">
+						<em class="fa fa-pencil"></em>
+					</a>
+					</li>
+					
+				</ul>				
+				<span class="pull-right clickable panel-toggle panel-button-tab-left"><em class="fa fa-toggle-up"></em></span></div>
+			<div class="panel-body ">
+				<div class="row">
+					<div class="col-xs-6 col-md-2 col-lg-2 no-padding">
+						<div class="panel panel-orange panel-widget border-right">
+							<div class="row no-padding"><span class="color-orange"> Linha</span>
+								<div class="large">{{object.linha}}</div>
+								<div class="text-muted"> </div>							
+							</div>
+						</div>
+					</div>
+					
+					<div class="col-xs-6 col-md-2 col-lg-2 no-padding">
+						<div class="panel panel-blue panel-widget border-right">
+							<div class="row no-padding"><span class="color-teal"> Capacidade</span>
+								<div class="large">{{object.capacidade}}</div>
+								<div class="text-muted">peças pt / dia</div>
+							</div>
+						</div>
+					</div>
+					
+					<div class="col-xs-6 col-md-2 col-lg-2 no-padding">					
+						<div class="panel panel-teal panel-widget border-right">
+							<div class="row no-padding"><span class="color-blue"> Calendário</span>
+								<div class="large">{{object.calendario}}</div>
+								<div class="text-muted">  </div>							
+							</div>
+						</div>
+					</div>
+					
+					<div class="col-xs-6 col-md-2 col-lg-2 no-padding">
+						<div class="panel panel-orange panel-widget border-right">
+							<div class="row no-padding"><span class="color-orange"> Score</span>
+								<div class="large">A</div>
+								<div class="text-muted">  </div>							
+							</div>
+						</div>
+					</div>
+					<div class="col-xs-12 col-md-4 col-lg-4 no-padding">
+						<div class="panel panel-red panel-widget border-right">
+							<div class="row no-padding"><span class="color-red"> Tags</span>
+								<div class="">
+									{% for item in object.tag.all %}
+										{{item}},
+									{%endfor%}
+								</div>								
+							</div>
+						</div>
+					</div>
+											
+				</div>
+			</div>
+		</div>	
+	</div>
+</div>
+<div class="row">
+	<div class="col-lg-12">
+		<div class="panel panel-default">
+			<div class="panel-heading">
+				Programação
+				<!--
+				<ul class="pull-right panel-settings panel-button-tab-right">
+					
+					<li class="dropdown"><a class="pull-right dropdown-toggle" data-toggle="dropdown" href="#">
+						<em class="fa fa-cogs"></em>
+					</a>
+						<ul class="dropdown-menu dropdown-menu-right">
+							<li>
+								<ul class="dropdown-settings">
+									<li><a href="#">
+										<em class="fa fa-cog"></em> Settings 1
+									</a></li>
+									<li class="divider"></li>
+									<li><a href="#">
+										<em class="fa fa-cog"></em> Settings 2
+									</a></li>
+									<li class="divider"></li>
+									<li><a href="#">
+										<em class="fa fa-cog"></em> Settings 3
+									</a></li>
+								</ul>
+							</li>
+						</ul>
+					</li>
+					
+				</ul>
+				-->
+				<span class="pull-right clickable panel-toggle panel-button-tab-left"><em class="fa fa-toggle-up"></em></span></div>
+			<div class="panel-body">
+				<div id="chart">
+					
+			</div>
+		</div>
+	</div>	
+</div>
+	
+	{{lista}}
+
+{%endblock content%}
+
+{% block script %}
+<script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+<script>
+	var lista = '{{lista|safe}}'	
+	var calendar = '{{intervalos|safe}}'					
+</script>
+<script src="{% static 'js/timeline.js' %}"></script>	
+
+
+  
+  
+{% endblock script %}

@@ -7,7 +7,8 @@ from .views import(
     ProducaoRoupaList,
     ConfeccaoList,
     ConfeccaoDetail,
-    ProgramacaoList
+    ProgramacaoList,
+    PedidoDetail
 
 )
 
@@ -18,4 +19,5 @@ urlpatterns = [
     path('programacao_list',  ProgramacaoList.as_view(), name='programacao_list'),
     path('confeccao_list',  ConfeccaoList.as_view(), name='confeccao_list'),
     path('confeccao_detail/<int:pk>/',ConfeccaoDetail.as_view(), name='confeccao_detail_cbv'),
+    path('pedido_detail/<int:pk>/',PedidoDetail.as_view(), name='pedido_detail'),
 ]
