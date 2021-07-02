@@ -394,8 +394,7 @@ class PedidoDetail(TemplateView):
         context['producaojs'] = dados        
         return context
 
-        
-#CREATE
+
 @login_required
 def CreateOficina(request):
     data = {}
@@ -409,7 +408,6 @@ def CreateOficina(request):
     return render(request, 'roupa/oficina_etapa.html', data)
 
 
-#UPDATE
 @login_required
 def UpdateOficina(request,pk):
     data = {}
@@ -424,8 +422,6 @@ def UpdateOficina(request,pk):
     return render(request, 'roupa/oficina_etapa.html',data)
 
 
-
-#DELETE
 @login_required
 def DeleteOficina(request, pk):
     etapa = Etapa.objects.get(pk=pk)

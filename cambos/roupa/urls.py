@@ -23,7 +23,7 @@ urlpatterns = [
     path('confeccao_list',  ConfeccaoList.as_view(), name='confeccao_list'),
     path('confeccao_detail/<int:pk>/',ConfeccaoDetail.as_view(), name='confeccao_detail_cbv'),
     path('pedido_detail/<int:pk>/',PedidoDetail.as_view(), name='pedido_detail'),
-    path('nova/', CreateOficina, name='oficina_etapa'),
+    path('create/', CreateOficina, name='oficina_etapa'),
     path('update/<int:pk>/', UpdateOficina, name='url_update'),
     path('delete/<int:pk>/', DeleteOficina, name='url_delete'),
 ]
