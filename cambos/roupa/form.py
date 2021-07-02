@@ -1,8 +1,6 @@
-
-
 from django.forms import ModelForm, fields
 from django import forms
-from .models import Etapa, TAG
+from .models import Etapa
 
 
 class EtapaForm(forms.ModelForm):
@@ -17,3 +15,4 @@ class EtapaForm(forms.ModelForm):
                 'tag': forms.SelectMultiple(attrs={'class':'form-control'})
                
                 }
+
