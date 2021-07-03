@@ -7,7 +7,6 @@ from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
 from django.utils.dateparse import parse_date
 import requests
-import json
 from datetime import (datetime, timedelta, date)
 from dateutil import parser
 from collections import Counter
@@ -375,6 +374,7 @@ class ProgramacaoList(TemplateView):
         for produto in dados:
             produto["Status"] = convert_setor(produto["Status"])
             produto["DataEntrega"] = parse(produto["DataEntrega"]).date()
+            produto["QuantPecas"] = produto["QuantPecas"]
         context['producaojs'] = dados        
         return context
 
@@ -389,5 +389,6 @@ class PedidoDetail(TemplateView):
         for produto in dados:
             produto["Status"] = convert_setor(produto["Status"])
             produto["DataEntrega"] = parse(produto["DataEntrega"]).date()
+            
         context['producaojs'] = dados        
         return context
