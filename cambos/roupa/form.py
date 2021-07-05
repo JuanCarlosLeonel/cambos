@@ -6,7 +6,7 @@ from .models import Etapa
 class EtapaForm(forms.ModelForm):
         class Meta:
             model = Etapa
-            fields = ['processo', 'calendario', 'nome', 'interno', 'capacidade', 'linha', 'tag', 'nick_spi']
+            fields = ['processo', 'calendario', 'nome', 'interno', 'capacidade', 'linha', 'score', 'tag', 'nick_spi']
 
             widgets = {                         
                 'nome': forms.TextInput(attrs={'class':'form-control'}),

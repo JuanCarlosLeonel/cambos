@@ -101,8 +101,7 @@
     };
 
     // BOOTSTRAP TABLE CLASS DEFINITION
-    // ======================
-
+    // ======================   
     var BootstrapTable = function (el, options) {
         this.options = options;
         this.$el = $(el);
@@ -144,7 +143,7 @@
         minimumCountColumns: 1,
         idField: undefined,
         cardView: false,
-        clickToSelect: false,
+        clickToSelect: true,
         singleSelect: false,
         toolbar: undefined,
         checkboxHeader: true,
@@ -179,7 +178,7 @@
         },
 
         onAll: function (name, args) {return false;},
-        onClickRow: function (item, $element) {return false;},
+        onClickRow: function (item, $element) {return false},
         onDblClickRow: function (item, $element) {return false;},
         onSort: function (name, order) {return false;},
         onCheck: function (row) {return false;},
@@ -301,6 +300,7 @@
             // save tr's id and class
             row._id = $(this).attr('id');
             row._class = $(this).attr('class');
+            row._url = $(this).attr('data-href');
 
             $(this).find('td').each(function (i) {
                 var field = that.options.columns[i].field;
@@ -309,6 +309,7 @@
                 // save td's id and class
                 row['_' + field + '_id'] = $(this).attr('id');
                 row['_' + field + '_class'] = $(this).attr('class');
+                row['_' + field + '_url'] = $(this).attr('data-href');
             });
             data.push(row);
         });
@@ -878,6 +879,7 @@
                 sprintf(' id="%s"', item._id),
                 sprintf(' class="%s"', style.classes || item._class),
                 sprintf(' data-index="%s"', i),
+                sprintf(' data-href="%s"', item._url),
                 '>'
             );
 
@@ -903,6 +905,9 @@
                 }
                 if (item['_' + field + '_class']) {
                     class_ = sprintf(' class="%s"', item['_' + field + '_class']);
+                }
+                if (item['_' + field + '_url']) {
+                    url_ = sprintf(' data-href="%s"', item['_' + field + '_url']);
                 }
 
                 cellStyle = calculateObjectValue(that.header,
@@ -1457,6 +1462,5 @@
 
     $(function () {
         $('[data-toggle="table"]').bootstrapTable();
-    });
-
+    });    
 }(jQuery);

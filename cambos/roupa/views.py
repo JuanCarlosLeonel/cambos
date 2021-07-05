@@ -1,5 +1,5 @@
-from .form import EtapaForm
 import json
+from .form import EtapaForm
 from django.views.generic.base import TemplateView
 from django.views.generic.list import ListView
 from django.views.generic.detail import DetailView
@@ -8,7 +8,6 @@ from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
 from django.utils.dateparse import parse_date
 import requests
-import json
 from datetime import (datetime, timedelta, date)
 from dateutil import parser
 from collections import Counter
@@ -17,7 +16,8 @@ from .models import (
     Calendario,
     DiasCalendario,
     Etapa,    
-    API 
+    API,
+    TAG 
     )
 from django.http import JsonResponse
 from dateutil.parser import parse
@@ -226,7 +226,6 @@ class ConfeccaoList(TemplateView):
             contador = 0
             atraso = 0
             soma_duracao = 0
-            dias = 0
             for produto in dados:
                 if oficina.nick_spi == produto["Celula"]:
                     dias = produto['DiasPedido'
@@ -377,6 +376,7 @@ class ProgramacaoList(TemplateView):
         for produto in dados:
             produto["Status"] = convert_setor(produto["Status"])
             produto["DataEntrega"] = parse(produto["DataEntrega"]).date()
+            produto["QuantPecas"] = produto["QuantPecas"]
         context['producaojs'] = dados        
         return context
 
@@ -391,6 +391,7 @@ class PedidoDetail(TemplateView):
         for produto in dados:
             produto["Status"] = convert_setor(produto["Status"])
             produto["DataEntrega"] = parse(produto["DataEntrega"]).date()
+            
         context['producaojs'] = dados        
         return context
 

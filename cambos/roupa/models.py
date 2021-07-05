@@ -48,14 +48,20 @@ class Etapa(models.Model):
             ('Pesada', 'Pesada'),             
             ('Pesada Modinha', 'Pesada Modinha'),                         
         )
+    SCORE_CHOICES = (
+        ('A', 'A'),
+        ('B', 'B'),
+        ('C', 'C'),
+        )
     processo   = models.ForeignKey(Processo, on_delete=models.CASCADE)
-    calendario = models.ForeignKey(Calendario, null=True, blank=True, on_delete=models.SET_NULL)
+    calendario = models.ForeignKey(Calendario, null=True, on_delete=models.SET_NULL)
     nome       = models.CharField(max_length=18,unique=True)
     interno    = models.BooleanField(default=True)
     capacidade = models.IntegerField()
-    linha      = models.CharField(max_length=20, choices=LINHA_CHOICES, null=True, blank=True)
+    linha      = models.CharField(max_length=20, choices=LINHA_CHOICES, null=True)
     tag        = models.ManyToManyField(TAG, blank=True)
     nick_spi   = models.CharField(max_length=20, null=True, blank=True)
+    score      = models.CharField(max_length=2, choices=SCORE_CHOICES, null=True)
 
     def __str__(self):
         return f'{self.nome}'
