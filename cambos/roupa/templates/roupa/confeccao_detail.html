@@ -16,15 +16,8 @@
         </ol>
     </div><!--/.row-->
     <div class="row">
-        <div 
-			class="col-lg-12">
+		<div class="col-lg-12">
             <h1 class="page-header">{{object}}<span class="text-muted small">  </span></h1></h1>
-			<div 
-				class="col-lg-12" style="text-align: right;">
-				{% if etapa %}	
-				<a class="btn btn-danger" href="{% url 'url_delete' etapa.id %}" role="button">REMOVER CÉLULA</a>
-				{% endif %}
-			</div>
         </div>
     </div><!--/.row-->
 {% endblock navigation %}
@@ -36,6 +29,7 @@
 			<div class="panel-heading" data-toggle="tooltip" title="Esconder Dados">	
 				Dados      
 				<ul class="pull-right panel-settings panel-button-tab-right">
+
 					<li class="dropdown"><a class="pull-right " data-toggle="tooltip" title="Editar Célula" href="{% url 'url_update' etapa.id %}">
 						<em class="fa fa-pencil"></em>
 					</a>

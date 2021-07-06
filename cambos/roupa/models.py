@@ -49,10 +49,10 @@ class Etapa(models.Model):
             ('Pesada Modinha', 'Pesada Modinha'),                         
         )
     SCORE_CHOICES = (
-        ('A', 'A'),
-        ('B', 'B'),
-        ('C', 'C'),
-        )
+            ('A', 'A'),
+            ('B', 'B'),
+            ('C', 'C'),
+            )
     processo   = models.ForeignKey(Processo, on_delete=models.CASCADE)
     calendario = models.ForeignKey(Calendario, null=True, on_delete=models.SET_NULL)
     nome       = models.CharField(max_length=18,unique=True)
