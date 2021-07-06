@@ -15,7 +15,9 @@ from .models import (
     Calendario,
     DiasCalendario,
     Etapa,    
-    API 
+    API,
+    Pedido,
+    TAG
     )
 from django.http import JsonResponse
 from dateutil.parser import parse
@@ -385,10 +387,33 @@ class PedidoDetail(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        dados = get_url()
+        dados = get_url()        
+        lista = []
         for produto in dados:
-            produto["Status"] = convert_setor(produto["Status"])
-            produto["DataEntrega"] = parse(produto["DataEntrega"]).date()
+            if produto['Lacre']== self.kwargs['pk']:
+                lista = produto
             
-        context['producaojs'] = dados        
+        context['dados'] = lista        
+        return context
+
+@method_decorator(login_required, name='dispatch')
+class PedidoUpdate(TemplateView):    
+    template_name = 'roupa/pedido_update.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        dados = get_url()        
+        lista = []
+        tags = TAG.objects.filter()
+        
+        for produto in dados:
+            if produto['Lacre']== self.kwargs['pk']:
+                try:
+                    pedido = Pedido.objects.get(lacre=produto['Lacre'])
+                except:
+                    pedido = False
+                lista = produto
+        context['object'] = pedido            
+        context['dados'] = lista        
+        context['tags'] = tags            
         return context
