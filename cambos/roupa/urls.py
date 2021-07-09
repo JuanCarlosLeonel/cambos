@@ -10,6 +10,7 @@ from .views import(
     ProgramacaoList,
     PedidoDetail,
     PedidoUpdate,
+    PcpUpdate,
     CreateOficina,
     UpdateOficina,
 
@@ -24,6 +25,7 @@ urlpatterns = [
     path('confeccao_detail/<int:pk>/',ConfeccaoDetail.as_view(), name='confeccao_detail_cbv'),
     path('pedido_detail/<int:pk>/',PedidoDetail.as_view(), name='pedido_detail'),
     path('pedido_update/<int:pk>/',PedidoUpdate.as_view(), name='pedido_update'),
+    path('pcp_update/<int:pk>/',PcpUpdate.as_view(), name='pcp_update'),
     path('create/', CreateOficina, name='oficina_etapa'),
     path('update/<int:pk>/', UpdateOficina, name='url_update'),
 ]

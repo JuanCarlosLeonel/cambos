@@ -18,6 +18,7 @@ from .models import (
     Etapa,    
     API,
     Pedido,
+    Processo,
     TAG
     )
 from django.http import JsonResponse
@@ -397,6 +398,7 @@ class PedidoDetail(TemplateView):
         context['dados'] = lista        
         return context
 
+
 @method_decorator(login_required, name='dispatch')
 class PedidoUpdate(TemplateView):    
     template_name = 'roupa/pedido_update.html'
@@ -446,5 +448,34 @@ def UpdateOficina(request,pk):
     data['form'] = form
     return render(request, 'roupa/oficina_etapa.html',data)
 
-    
-    
+ 
+@method_decorator(login_required, name='dispatch')
+class PcpUpdate(TemplateView):    
+    template_name = 'roupa/pcp_update.html'
+
+    def get(self, request, *args, **kwargs):     
+        context = super().get_context_data(**kwargs)
+        dados = get_url()
+        try:        
+            pcp =  API.objects.get(id=1).pcp 
+        except:
+            pcp = False
+        
+        for produto in dados:
+            if produto['Lacre']== self.kwargs['pk']:
+                try:
+                    detail_pedido = Pedido.objects.get(lacre=produto['Lacre'])
+                except:
+                    detail_pedido = False
+                pedido = produto
+        context['detail'] = detail_pedido            
+        context['pedido'] = pedido      
+        context['pcp'] = pcp
+        context['processo'] = Processo.objects.filter()
+        
+        edit = self.request.GET.get('editar')                 
+        if not edit is None:                
+            model = API.objects.get(id=1)
+            model.pcp = edit
+            model.save()
+        return render(request, 'roupa/pcp_update.html', context)
