@@ -26,25 +26,15 @@
 
 <div class="modal-dialog modal-lg">
     <div class="modal-content">
-        <form method="post" autocomplete="off">
+       
             <div class="modal-header">
             <a href="javascript:void(0)" onClick="history.go(-1); return false;" type="button" class="close" aria-hidden="true">×</a>
             <h3 class="modal-title">FC<strong> {% if dados.FichaCorte %} {{dados.FichaCorte}} {%else%} - {%endif%}</strong></h3>
             </div>
             <div class="modal-body">                
-                <h4> Tags</h4>               
-                {% csrf_token %}                    
-                <div class="form-group">
-                    {% for field in tags %}
-                    <div class="form-check">
-                        <input type="checkbox" class="form-check-input" id="exampleCheck1">
-                        <label class="form-check-label" for="exampleCheck1">{{field}}    </label>
-                    </div>                    
-                    {% endfor %}
-                    <div class="form-check">
-                        <input type="checkbox" class="form-check-input" id="exampleCheck1">
-                        <input type="text" class="" id="exampleCheck1">
-                    </div>  
+                <h4> Processos</h4>                                     
+                <div class="form-group" id="form">
+                   
                 </div>                    
             </div>
             <div class="modal-footer">
@@ -53,22 +43,26 @@
                     <button class="btn btn-success" type="submit" role="button">
                         salvar
                     </button>
-                    <input type="hidden" class="form-control" id="editar" name="editar"
+                    <input type="text" class="form-control" id="editar" name="editar"
 								value="" placeholder="editar"
 								aria-label="editar" aria-describedby="basic-addon1">					
                 </form>
             </div>
-        </form>
+        
        
     </div><!-- /.modal-content -->
 </div><!-- /.modal-dialog -->
-{{pcp}}
+{{processo}}
 {% endblock content %}
 {% block script %}
  {{ form.media.js }}  
+             
+        
         <script>
             var pedido = {{pedido|safe}}					
-        </script>      
+            var processo = {{processo|safe}}					
+           			
+        </script> 
         <script src="{% static 'js/pcp.js' %}"></script>	        
 	    <script>
         $(document).ready(function(){            

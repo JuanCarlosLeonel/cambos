@@ -23,6 +23,7 @@ from .models import (
     )
 from django.http import JsonResponse
 from dateutil.parser import parse
+from django.core import serializers
 
 
 def update_api():
@@ -460,22 +461,28 @@ class PcpUpdate(TemplateView):
             pcp =  API.objects.get(id=1).pcp 
         except:
             pcp = False
-        
+        pk = self.kwargs['pk']
         for produto in dados:
-            if produto['Lacre']== self.kwargs['pk']:
+            if produto['Lacre']== pk:
                 try:
                     detail_pedido = Pedido.objects.get(lacre=produto['Lacre'])
                 except:
                     detail_pedido = False
                 pedido = produto
         context['detail'] = detail_pedido            
-        context['pedido'] = pedido      
-        context['pcp'] = pcp
-        context['processo'] = Processo.objects.filter()
+        context['pedido'] = json.dumps(pedido)
+        context['pcp'] = json.dumps(pcp)
+        dict_obj = serializers.serialize('json',Processo.objects.filter())
+        context['processo'] = dict_obj
         
         edit = self.request.GET.get('editar')                 
         if not edit is None:                
             model = API.objects.get(id=1)
-            model.pcp = edit
+            model.pcp = json.loads(edit)
             model.save()
-        return render(request, 'roupa/pcp_update.html', context)
+        if not edit is None:  
+            return redirect(f'/roupa/pcp_update/{pk}')   
+            
+        else:
+            return render(request, 'roupa/pcp_update.html', context)
+        
