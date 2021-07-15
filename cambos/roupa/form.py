@@ -1,6 +1,6 @@
-from django.forms import ModelForm, fields
+from django.forms import ModelForm, fields, widgets
 from django import forms
-from .models import Etapa
+from .models import Etapa, TAG
 
 
 class EtapaForm(forms.ModelForm):
@@ -16,3 +16,8 @@ class EtapaForm(forms.ModelForm):
                
                 }
 
+
+class TAGForm(forms.ModelForm):
+    class Meta:
+        model = TAG
+        fields = ['nome']

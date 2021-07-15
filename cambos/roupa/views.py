@@ -1,5 +1,6 @@
 import json
-from .form import EtapaForm
+from .form import EtapaForm, TAGForm
+from django.views.generic.edit import UpdateView, CreateView
 from django.views.generic.base import TemplateView
 from django.views.generic.list import ListView
 from django.views.generic.detail import DetailView
@@ -22,6 +23,14 @@ from .models import (
     )
 from django.http import JsonResponse
 from dateutil.parser import parse
+
+
+def get_etapa(pk):
+    try:
+        nome = Etapa.objects.get(pk = pk)
+    except:
+        nome = Etapa.objects.latest('id')
+    return nome
 
 
 def update_api():
@@ -420,31 +429,36 @@ class PedidoUpdate(TemplateView):
         return context
 
 
-@login_required
-def CreateOficina(request):
-    data = {}
-    form = EtapaForm(request.POST or None)
+@method_decorator(login_required, name='dispatch')
+class CreateOficina(CreateView):
+    form_class = EtapaForm
+    template_name = 'roupa/oficina_create.html'
+    model = Etapa
 
-    if form.is_valid():
-        form.save()
-        return redirect('confeccao_list')
-
-    data['form'] = form
-    return render(request, 'roupa/oficina_etapa.html', data)
+    def get_success_url(self):
+        return '/roupa/confeccao_list' 
 
 
-@login_required
-def UpdateOficina(request,pk):
-    data = {}
-    etapa = Etapa.objects.get(pk=pk)
-    form = EtapaForm(request.POST or None, instance=etapa)
+@method_decorator(login_required, name='dispatch')
+class UpdateOficina(UpdateView):
+  model = Etapa
+  template_name = 'roupa/oficina_update.html'
+  form_class = EtapaForm
 
-    if form.is_valid():
-        form.save()
-        return redirect(f'/roupa/confeccao_detail/{etapa.pk}') 
+  def get_success_url(self):
+      pk = self.kwargs['pk']
+      return f'/roupa/oficina_update/{pk}'
 
-    data['form'] = form
-    return render(request, 'roupa/oficina_etapa.html',data)
 
-    
-    
+@method_decorator(login_required, name='dispatch')
+class TagCreate(CreateView):
+    form_class = TAGForm
+    template_name = 'roupa/tag_create.html'
+    model = TAG
+
+    def get_success_url(self):
+        pk = self.kwargs['pk']
+        #etapa = get_etapa(pk)
+        return f'/roupa/oficina_update/{pk}'
+
+        
