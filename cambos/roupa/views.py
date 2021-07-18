@@ -46,6 +46,23 @@ def get_url():
         dados = response.json()
         return dados['value']
 
+def get_pcp_pedido(pk):
+    try:        
+        pcp = API.objects.get(id=1).pcp      
+        pedido = 0     
+        for produto in pcp:        
+            if produto['lacre'] == pk:                                
+                pedido = produto      
+        if pedido == 0 :
+            pedido= {
+                    "lacre": pk,
+                    "prazo": "2021-11-01",
+                    "processo": []                    
+                    }
+            
+    except:
+        pedido = False
+    return pedido
 
 def convert_setor(id):
     lista = [
@@ -456,20 +473,18 @@ class PcpUpdate(TemplateView):
 
     def get(self, request, *args, **kwargs):     
         context = super().get_context_data(**kwargs)
-        dados = get_url()
-        try:        
-            pcp =  API.objects.get(id=1).pcp 
-        except:
-            pcp = False
+        dados = get_url()        
         pk = self.kwargs['pk']
+        pcp = get_pcp_pedido(pk)
         for produto in dados:
             if produto['Lacre']== pk:
+                produto['Status']=convert_setor(produto['Status'])
                 try:
                     detail_pedido = Pedido.objects.get(lacre=produto['Lacre'])
                 except:
                     detail_pedido = False
                 pedido = produto
-        context['detail'] = detail_pedido            
+        
         context['pedido'] = json.dumps(pedido)
         context['pcp'] = json.dumps(pcp)
         dict_obj = serializers.serialize('json',Processo.objects.filter())
@@ -477,9 +492,20 @@ class PcpUpdate(TemplateView):
         
         edit = self.request.GET.get('editar')                 
         if not edit is None:                
+            pedido = json.loads(edit)
             model = API.objects.get(id=1)
-            model.pcp = json.loads(edit)
+            novo = 0
+            cont = 0
+            for item in model.pcp:
+                if item['lacre'] == pk:
+                    model.pcp[cont] = pedido
+                    novo = 1
+                cont += 1
+            if novo == 0:
+                model.pcp.append(pedido)
+            
             model.save()
+            
         if not edit is None:  
             return redirect(f'/roupa/pcp_update/{pk}')   
             

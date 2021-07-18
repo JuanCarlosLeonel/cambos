@@ -52,7 +52,7 @@
        
     </div><!-- /.modal-content -->
 </div><!-- /.modal-dialog -->
-{{processo}}
+{{pedido}}
 {% endblock content %}
 {% block script %}
  {{ form.media.js }}  
@@ -61,6 +61,7 @@
         <script>
             var pedido = {{pedido|safe}}					
             var processo = {{processo|safe}}					
+            var ordemProcesso = {{pcp|safe}}					
            			
         </script> 
         <script src="{% static 'js/pcp.js' %}"></script>	        
