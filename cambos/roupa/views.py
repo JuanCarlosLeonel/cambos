@@ -1,5 +1,5 @@
 import json
-from .form import EtapaForm, TAGForm
+from .form import EtapaForm, PedidoForm, TAGForm
 from django.views.generic.edit import UpdateView, CreateView
 from django.views.generic.base import TemplateView
 from django.views.generic.list import ListView
@@ -19,10 +19,12 @@ from .models import (
     Etapa,    
     API,
     Pedido,
+    Processo,
     TAG
     )
 from django.http import JsonResponse
 from dateutil.parser import parse
+from django.core import serializers
 
 
 def get_etapa(pk):
@@ -53,6 +55,23 @@ def get_url():
         dados = response.json()
         return dados['value']
 
+def get_pcp_pedido(pk):
+    try:        
+        pcp = API.objects.get(id=1).pcp      
+        pedido = 0     
+        for produto in pcp:        
+            if produto['lacre'] == pk:                                
+                pedido = produto      
+        if pedido == 0 :
+            pedido= {
+                    "lacre": pk,
+                    "prazo": "2021-11-01",
+                    "processo": []                    
+                    }
+            
+    except:
+        pedido = False
+    return pedido
 
 def convert_setor(id):
     lista = [
@@ -406,9 +425,12 @@ class PedidoDetail(TemplateView):
         context['dados'] = lista        
         return context
 
+
 @method_decorator(login_required, name='dispatch')
-class PedidoUpdate(TemplateView):    
+class PedidoUpdate(CreateView):    
+    model = Pedido
     template_name = 'roupa/pedido_update.html'
+    form_class = PedidoForm
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -427,6 +449,10 @@ class PedidoUpdate(TemplateView):
         context['dados'] = lista        
         context['tags'] = tags            
         return context
+
+    def get_success_url(self):
+        pk = self.kwargs['pk']
+        return f'/roupa/pedido_detail/{pk}'
 
 
 @method_decorator(login_required, name='dispatch')
@@ -461,4 +487,49 @@ class TagCreate(CreateView):
         #etapa = get_etapa(pk)
         return f'/roupa/oficina_update/{pk}'
 
+ 
+@method_decorator(login_required, name='dispatch')
+class PcpUpdate(TemplateView):    
+    template_name = 'roupa/pcp_update.html'
+
+    def get(self, request, *args, **kwargs):     
+        context = super().get_context_data(**kwargs)
+        dados = get_url()        
+        pk = self.kwargs['pk']
+        pcp = get_pcp_pedido(pk)
+        for produto in dados:
+            if produto['Lacre']== pk:
+                produto['Status']=convert_setor(produto['Status'])
+                try:
+                    detail_pedido = Pedido.objects.get(lacre=produto['Lacre'])
+                except:
+                    detail_pedido = False
+                pedido = produto
+        
+        context['pedido'] = json.dumps(pedido)
+        context['pcp'] = json.dumps(pcp)
+        dict_obj = serializers.serialize('json',Processo.objects.filter())
+        context['processo'] = dict_obj
+        
+        edit = self.request.GET.get('editar')                 
+        if not edit is None:                
+            pedido = json.loads(edit)
+            model = API.objects.get(id=1)
+            novo = 0
+            cont = 0
+            for item in model.pcp:
+                if item['lacre'] == pk:
+                    model.pcp[cont] = pedido
+                    novo = 1
+                cont += 1
+            if novo == 0:
+                model.pcp.append(pedido)
+            
+            model.save()
+            
+        if not edit is None:  
+            return redirect(f'/roupa/pcp_update/{pk}')   
+            
+        else:
+            return render(request, 'roupa/pcp_update.html', context)
         

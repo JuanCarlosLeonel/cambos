@@ -5,6 +5,7 @@ from jsonfield import JSONField
 
 class API(models.Model):
     api = JSONField()
+    pcp = JSONField(null=True, blank=True)
 
 
 class Calendario(models.Model):    
@@ -73,15 +74,4 @@ class Pedido(models.Model):
 
     def __str__(self):
         return f'{self.lacre}'
-
-
-class Programacao(models.Model):
-    pedido  = models.ForeignKey(Pedido, on_delete=models.CASCADE)
-    etapa   = models.ForeignKey(Etapa, on_delete=models.PROTECT)
-    ordem   = models.IntegerField()
-    entrada = models.DateField()
-    saida   = models.DateField()
-
-    def __str__(self):
-        return f'{self.pedido} - {self.etapa}'
     

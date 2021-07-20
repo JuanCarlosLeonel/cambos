@@ -11,6 +11,7 @@ from .views import(
     PedidoDetail,
     PedidoUpdate,
     TagCreate,
+    PcpUpdate,
     CreateOficina,
     UpdateOficina,
 
@@ -28,4 +29,5 @@ urlpatterns = [
     path('tag_create/<int:pk>/',TagCreate.as_view(), name='tag_create'),
     path('oficina_create/', CreateOficina.as_view(), name='oficina_create'),
     path('oficina_update/<int:pk>/', UpdateOficina.as_view(), name='oficina_update'),
+    path('pcp_update/<int:pk>/',PcpUpdate.as_view(), name='pcp_update'),
 ]
