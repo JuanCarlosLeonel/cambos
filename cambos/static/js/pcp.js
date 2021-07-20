@@ -1,56 +1,64 @@
 let pcp = document.getElementById("editar")
 let form = document.getElementById("form")
 
+function reorder(teste){
+    form.innerHTML= teste
+ }
+ 
 
-window.onload = function(){
+
+function const_processos(listaInProcesso){
+    let teste = listaInProcesso
     let opcoes = ''
-    let resposta = []
-    for (var i = 0; i < processo.length; i++) {
-        opcoes += `<div class="">                                
-                        <h3 class="text-success " >${i +1 }
+    for (var i = 0; i < listaInProcesso.length; i++) {
+        let up = ''
+        let down = ''
+        if(i>0){
+            up = `<button class="btn btn-xs" onclick="reorder(${i})"> <em class="fa fa-angle-up"></em> </button>`
+        }
+        if(i < listaInProcesso.length -1 ){
+            down = `<button class="btn btn-xs" onclick="reorder('down',${i},${listaInProcesso})"> <em class="fa fa-angle-down"></em> </button>`
+        }
+        opcoes += `<div class="">                          
+                        <h3 ><strong class="text-success ">${i +1 }</strong>
                         
-                        <span class="text-danger" >${processo[i].fields.nome}    </span>
-                        <a class="btn btn-success btn-xs" type="submit" role="button"> u </a>
+                        <span class="" >${listaInProcesso[i].nome}    </span>
+                        ${up}
+                        ${down}
+                        <a class="btn btn-danger btn-xs" type="submit" role="button"> <em class="fa fa-times"></em> </a>
                         </h3>
                     </div> `
     }
-    form.innerHTML= opcoes
-    resposta.push(
-        [
-            {
-                "lacre": 112209,
-                "prazo": "2021-11-01",
-                "processo": [
-                    {
-                        "etapa": "teset2",
-                        "entrada": "2021-11-01",
-                        "saida": "2021-11-01"
-                    },
-                    {
-                        "etapa": "teset23",
-                        "entrada": "2021-11-01",
-                        "saida": "2021-11-01"
-                    }
-                ]
-            },
-            {
-                "lacre": 112209,
-                "prazo": "2021-11-01",
-                "processo": [
-                    {
-                        "etapa": "teset2",
-                        "entrada": "2021-11-01",
-                        "saida": "2021-11-01"
-                    },
-                    {
-                        "etapa": "teset23",
-                        "entrada": "2021-11-01",
-                        "saida": "2021-11-01"
-                    }
-                ]
+    return form.innerHTML= opcoes
+}
+
+
+
+
+window.onload = function(){
+   
+    
+    let listaInProcesso = []
+    let listaOutProcesso = []
+    if (ordemProcesso.processo == 'new'){
+        for (var i = 0; i < processo.length; i++) {
+            if (processo[i].fields.recorrente){
+                listaInProcesso.push({
+                    'nome': processo[i].fields.nome,
+                    'inicio': ''
+                })
+            }else{
+                listaOutProcesso.push(processo[i].fields.nome)
             }
-        ]
-    )
+
+        }          
+    } else{
+        listaInProcesso = ordemProcesso.processo        
+    }    
+    ordemProcesso.processo = listaInProcesso  
+    
+    const_processos(listaInProcesso)
     
     pcp.value = JSON.stringify(ordemProcesso)
 }
+

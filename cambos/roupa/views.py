@@ -66,7 +66,7 @@ def get_pcp_pedido(pk):
             pedido= {
                     "lacre": pk,
                     "prazo": "2021-11-01",
-                    "processo": []                    
+                    "processo": 'new'                    
                     }
             
     except:
