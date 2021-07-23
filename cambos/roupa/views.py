@@ -66,7 +66,7 @@ def get_pcp_pedido(pk):
             pedido= {
                     "lacre": pk,
                     "prazo": "2021-11-01",
-                    "processo": 'new'                    
+                    "processo": []                    
                     }
             
     except:
@@ -422,14 +422,19 @@ class PedidoDetail(TemplateView):
             if produto['Lacre']== self.kwargs['pk']:
                 lista = produto
             
-        context['dados'] = lista        
+        context['dados'] = lista   
+        try:     
+            pedido=Pedido.objects.get(lacre=self.kwargs['pk'])
+        except:
+            pedido=0
+        context['pedido'] = pedido
         return context
 
 
 @method_decorator(login_required, name='dispatch')
-class PedidoUpdate(CreateView):    
+class PedidoCreate(CreateView):    
     model = Pedido
-    template_name = 'roupa/pedido_update.html'
+    template_name = 'roupa/pedido_create.html'
     form_class = PedidoForm
 
     def get_context_data(self, **kwargs):
@@ -454,6 +459,52 @@ class PedidoUpdate(CreateView):
         pk = self.kwargs['pk']
         return f'/roupa/pedido_detail/{pk}'
 
+    def get_initial(self, *args, **kwargs):
+        initial = super(PedidoCreate, self).get_initial(**kwargs)
+        lacre = self.kwargs['pk']
+        initial['lacre'] = lacre
+        return initial
+
+
+@method_decorator(login_required, name='dispatch')
+class PedidoUpdate(UpdateView):    
+    model = Pedido
+    template_name = 'roupa/pedido_update.html'
+    form_class = PedidoForm
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        dados = get_url()        
+        lista = []
+        tags = TAG.objects.filter()
+        pedido= False
+        for produto in dados:
+            if produto['Lacre']== self.kwargs['pk']:
+                try:
+                    pedido = Pedido.objects.get(lacre=produto['Lacre'])
+                except:
+                    pedido = False
+                lista = produto
+        context['object'] = pedido            
+        context['dados'] = lista        
+        context['tags'] = tags            
+        return context
+
+    def get_success_url(self):
+        pk = self.object.lacre
+        return f'/roupa/pedido_detail/{pk}'
+
+
+@method_decorator(login_required,name='dispatch')
+class PedidoUpdateTag(CreateView):
+    form_class = TAGForm
+    template_name = 'roupa/tag_create.html'
+    model = TAG
+
+    def get_success_url(self):
+        pk = self.kwargs['pk']
+        return f'/roupa/pedido_update/{pk}'
+
 
 @method_decorator(login_required, name='dispatch')
 class CreateOficina(CreateView):
@@ -473,7 +524,7 @@ class UpdateOficina(UpdateView):
 
   def get_success_url(self):
       pk = self.kwargs['pk']
-      return f'/roupa/oficina_update/{pk}'
+      return f'/roupa/confeccao_detail/{pk}'
 
 
 @method_decorator(login_required, name='dispatch')
@@ -484,7 +535,6 @@ class TagCreate(CreateView):
 
     def get_success_url(self):
         pk = self.kwargs['pk']
-        #etapa = get_etapa(pk)
         return f'/roupa/oficina_update/{pk}'
 
  

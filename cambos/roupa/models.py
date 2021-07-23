@@ -69,7 +69,7 @@ class Etapa(models.Model):
         
 
 class Pedido(models.Model):
-    lacre = models.IntegerField(unique=True)
+    lacre = models.IntegerField(unique=True, blank=False)
     tag   = models.ManyToManyField(TAG, blank=True)
 
     def __str__(self):

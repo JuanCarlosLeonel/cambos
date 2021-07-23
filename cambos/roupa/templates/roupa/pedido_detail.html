@@ -18,6 +18,8 @@
     <div class="row">
         <div class="col-lg-12">
             <h1 class="page-header">{{dados.Modelo|safe}}<span class="text-muted small"> {{dados.Nome}} </span></h1></h1>
+			<h3  class="text-body">Tipo: <span class="color-teal">{{dados.Tipo}}</span> / Linha: <span class="color-teal">{{dados.Peso}}</span></h3>
+
         </div>
     </div><!--/.row-->
 {% endblock navigation %}
@@ -29,8 +31,11 @@
 			<div class="panel-heading">	
 				FC {% if dados.FichaCorte %}{{dados.FichaCorte}} {%else%} - {%endif%}
 				<ul class="pull-right panel-settings panel-button-tab-right">
-
-					<li class="dropdown"><a class="pull-right " href="{% url 'pedido_update' dados.Lacre %}">
+				{% if pedido == 0 %}
+					<li class="dropdown"><a class="pull-right " href="{% url 'pedido_create' dados.Lacre %}">
+				{% else %}
+					<li class="dropdown"><a class="pull-right " href="{% url 'pedido_update' pedido.id %}">
+				{% endif %}
 						<em class="fa fa-pencil"></em>
 					</a>
 					</li>
@@ -78,7 +83,7 @@
 						<div class="panel panel-red panel-widget border-right">
 							<div class="row no-padding"><span class="color-red"> Tags</span>
 								<div class="">
-									{% for item in object.tag.all %}
+									{% for item in pedido.tag.all %}
 										{{item}},
 									{%endfor%}
 								</div>								

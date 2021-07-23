@@ -26,4 +26,10 @@ class TAGForm(forms.ModelForm):
 class PedidoForm(forms.ModelForm):
     class Meta:
         model = Pedido
-        fields = ['tag']
+        fields = ['tag', 'lacre']
+
+        widgets = {
+            'tag': forms.SelectMultiple(attrs={'class':'form-control'}),
+            'lacre': forms.TextInput(attrs={'class':'form-control'})
+            
+            }
