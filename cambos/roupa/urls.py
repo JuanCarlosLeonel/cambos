@@ -16,6 +16,7 @@ from .views import(
     PcpUpdate,
     CreateOficina,
     UpdateOficina,
+    UpdateAPI,
 
 )
 
@@ -34,4 +35,5 @@ urlpatterns = [
     path('oficina_create/', CreateOficina.as_view(), name='oficina_create'),
     path('oficina_update/<int:pk>/', UpdateOficina.as_view(), name='oficina_update'),
     path('pcp_update/<int:pk>/',PcpUpdate.as_view(), name='pcp_update'),
+    path('update_api/',UpdateAPI.as_view(), name='update_api'),
 ]

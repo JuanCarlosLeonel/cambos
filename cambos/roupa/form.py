@@ -30,6 +30,6 @@ class PedidoForm(forms.ModelForm):
 
         widgets = {
             'tag': forms.SelectMultiple(attrs={'class':'form-control'}),
-            'lacre': forms.TextInput(attrs={'class':'form-control'})
+            'lacre': forms.HiddenInput(attrs={'class':'form-control'})
             
             }

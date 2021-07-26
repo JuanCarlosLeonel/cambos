@@ -1,4 +1,7 @@
 import json
+from django.http.response import HttpResponse
+
+from requests.api import get
 from .form import EtapaForm, PedidoForm, TAGForm
 from django.views.generic.edit import UpdateView, CreateView
 from django.views.generic.base import TemplateView
@@ -583,3 +586,13 @@ class PcpUpdate(TemplateView):
         else:
             return render(request, 'roupa/pcp_update.html', context)
         
+
+@method_decorator(login_required, name='dispatch')
+class UpdateAPI(TemplateView):    
+    template_name = 'roupa/update_api.html'
+
+    def get(self, request, *args, **kwargs):     
+        context = super().get_context_data(**kwargs)
+        update_api()
+    
+        return render(request, 'roupa/update_api.html')

@@ -31,11 +31,10 @@
             <a href="javascript:void(0)" onClick="history.go(-1); return false;" type="button" class="close" aria-hidden="true">×</a>
             <h3 class="modal-title">FC<strong> {% if dados.FichaCorte %} {{dados.FichaCorte}} {%else%} - {%endif%}</strong></h3>
             </div>
-            <div class="modal-body">                
-                <h4> Tags</h4>               
+            <div class="modal-body">                               
                 {% csrf_token %}                    
                 <div class="form-group">
-                {{form.as_p}}<a href="{% url 'tag_createpedido' pedido.id %}" class="btn btn-info" role="button" >Cadastrar Nova Tag</a> 
+                    <span class="color-teal"{{form.as_p}}</span><a href="{% url 'tag_createpedido' pedido.id %}" class="btn btn-info" role="button" >Cadastrar Nova Tag</a> 
                 </div>                    
             </div>
             <div class="modal-footer">
