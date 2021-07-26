@@ -37,7 +37,7 @@ function const_processos(listaInProcesso){
 }
 
 function const_out(listaOutProcesso){
-    let opcoes = '<br>sem programação'
+    let opcoes = '<br>Sem Programação'
     for (var i = 0; i < listaOutProcesso.length; i++) {
         
         opcoes += `<div class="">                          

@@ -46,10 +46,10 @@
                     <button class="btn btn-success" type="submit" role="button">
                         salvar
                     </button>
-                    <input type="text" class="form-control" id="editar" name="editar"
+                    <input type="hidden" class="form-control" id="editar" name="editar"
                         value="" placeholder="editar"
                         aria-label="editar" aria-describedby="basic-addon1">					
-                   <input type="text" class="form-control" id="ordem" name="ordem"
+                   <input type="hidden" class="form-control" id="ordem" name="ordem"
                         value="" placeholder="ordem"
                         aria-label="ordem" aria-describedby="basic-addon1">					
                 </form>
@@ -58,7 +58,7 @@
        
     </div><!-- /.modal-content -->
 </div><!-- /.modal-dialog -->
-{{pedido}}
+
 {% endblock content %}
 {% block script %}
  {{ form.media.js }}  
