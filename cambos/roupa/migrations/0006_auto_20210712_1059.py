@@ -11,24 +11,5 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.AddField(
-            model_name='etapa',
-            name='score',
-            field=models.CharField(choices=[('A', 'A'), ('B', 'B'), ('C', 'C')], max_length=2, null=True),
-        ),
-        migrations.AlterField(
-            model_name='etapa',
-            name='calendario',
-            field=models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, to='roupa.calendario'),
-        ),
-        migrations.AlterField(
-            model_name='etapa',
-            name='linha',
-            field=models.CharField(choices=[('Leve', 'Leve'), ('Pesada', 'Pesada'), ('Pesada Modinha', 'Pesada Modinha')], max_length=20, null=True),
-        ),
-        migrations.AlterField(
-            model_name='etapa',
-            name='nome',
-            field=models.CharField(max_length=18, unique=True),
-        ),
+        
     ]
