@@ -10,15 +10,5 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.AddField(
-            model_name='oficina',
-            name='divisao',
-            field=models.CharField(choices=[('Oficinas Internas', 'Oficinas Internas'), ('Oficinas Externas', 'Oficinas Externas')], default=1, max_length=20, verbose_name='Divisão'),
-            preserve_default=False,
-        ),
-        migrations.AlterField(
-            model_name='oficina',
-            name='choice',
-            field=models.CharField(max_length=154, unique=True, verbose_name='Oficina'),
-        ),
+       
     ]
