@@ -52,12 +52,9 @@ class Bot(models.Model):
 
 
 class OFICINA(models.Model):
-    DIVISAO_CHOICES = (
-        ('Oficinas Internas', 'Oficinas Internas'),
-        ('Oficinas Externas', 'Oficinas Externas'),    
-    )
+    
     choice = models.CharField(max_length=154, unique=True, verbose_name='Oficina')
-    divisao = models.CharField(max_length=20, choices=DIVISAO_CHOICES, verbose_name='Divisão')
+    
 
     def __str__(self):
         return f'{self.choice}'
