@@ -586,7 +586,6 @@ class PcpUpdate(TemplateView):
             return render(request, 'roupa/pcp_update.html', context)
         
 
-@method_decorator(login_required, name='dispatch')
 class UpdateAPI(TemplateView):    
     template_name = 'roupa/update_api.html'
 
