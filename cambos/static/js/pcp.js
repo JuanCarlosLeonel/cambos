@@ -3,33 +3,63 @@ let form = document.getElementById("form")
 let out = document.getElementById("out")
 let ordemForm = document.getElementById("ordem")
 
+function addProcesso(item){
+    var lista = JSON.parse(ordemForm.value)
+    lista.push({
+        'nome': item,
+        'inicio': ''
+    })
+    ordemForm.value = JSON.stringify(lista)
+    ordemProcesso.processo = lista
+    pcp.value=JSON.stringify(ordemProcesso)
+    lista_out = listOut(lista)
+    const_out(lista_out)
+    return const_processos(lista)
+
+}
+
+function delProcesso(item){
+    lista = JSON.parse(ordemForm.value)
+    lista.splice(item, 1)
+    lista_out = listOut(lista)
+    const_out(lista_out)
+    return const_processos(lista)
+}
+
 function reorder(ordem, posicao){
     var convert = JSON.parse(ordemForm.value)
-
     convert.splice(posicao + ordem, 0, convert.splice(posicao, 1)[0]);
     ordemForm.value = JSON.stringify(convert)
+    ordemProcesso.processo = convert
+    pcp.value=JSON.stringify(ordemProcesso)
     return const_processos(convert)
 }
 
-function const_processos(listaInProcesso){
-    
+
+function const_processos(listaInProcesso){    
     let opcoes = ''
     for (var i = 0; i < listaInProcesso.length; i++) {
         let up = ''
         let down = ''
+        let clear = `<button class="btn btn-xs" onclick="delProcesso(${i})"> 
+                        <em class="fa fa-minus"></em>
+                    </button>`
         if(i>0){
-            up = `<button class="btn btn-xs" onclick="reorder(-1,${i})"> <em class="fa fa-angle-up"></em> </button>`
+            up = `<button class="btn btn-xs" onclick="reorder(-1,${i})">
+                    <em class="fa fa-angle-up"></em>
+                 </button>`
         }
         if(i < listaInProcesso.length -1 ){
-            down = `<button class="btn btn-xs" onclick="reorder(+1,${i})"> <em class="fa fa-angle-down"></em> </button>`
+            down = `<button class="btn btn-xs" onclick="reorder(+1,${i})">
+                        <em class="fa fa-angle-down"></em> 
+                    </button>`
         }
         opcoes += `<div class="">                          
-                        <h3 ><strong class="text-success ">${i +1 }</strong>
-                        
-                        <span class="" >${listaInProcesso[i].nome}    </span>
-                        ${up}
-                        ${down}
-                        <a class="btn btn-danger btn-xs" type="submit" role="button"> <em class="fa fa-times"></em> </a>
+                        <h3 ><strong class="text-success ">${i +1 }</strong>                        
+                            <span class="" >${listaInProcesso[i].nome}    </span>
+                            ${up}
+                            ${down}
+                            ${clear}
                         </h3>
                     </div> `
     }        
@@ -38,13 +68,11 @@ function const_processos(listaInProcesso){
 
 function const_out(listaOutProcesso){
     let opcoes = '<br>Sem Programação'
-    for (var i = 0; i < listaOutProcesso.length; i++) {
-        
+    for (var i = 0; i < listaOutProcesso.length; i++) {        
         opcoes += `<div class="">                          
-                        <h3 ><strong class="">''</strong>
-                        
+                        <h3 ><strong class="">''</strong>                        
                         <span class="" >${listaOutProcesso[i]}    </span>
-                        <button class="btn btn-success btn-xs" onclick="addProcesso(${listaOutProcesso[i]})"> <em class="fa fa-plus"></em> </button>                        
+                        <button class="btn btn-success btn-xs" onclick="addProcesso('${listaOutProcesso[i]}')"> <em class="fa fa-plus"></em> </button>                        
                         </h3>
                     </div> `
     }            
@@ -68,9 +96,7 @@ function listOut(listaInProcesso){
 }
 
 
-window.onload = function(){
-   
-    
+window.onload = function(){       
     let listaInProcesso = []
     let listaOutProcesso = []
     if (ordemProcesso.processo == 'new'){
@@ -83,7 +109,6 @@ window.onload = function(){
             }else{
                 listaOutProcesso.push(processo[i].fields.nome)
             }
-
         }          
     } else{
         listaInProcesso = ordemProcesso.processo  
@@ -93,8 +118,6 @@ window.onload = function(){
     pcp.value = JSON.stringify(ordemProcesso)
     ordemForm.value = JSON.stringify(ordemProcesso.processo)
     const_processos(listaInProcesso)
-    const_out(listaOutProcesso)
-    
-    
+    const_out(listaOutProcesso) 
 }
 

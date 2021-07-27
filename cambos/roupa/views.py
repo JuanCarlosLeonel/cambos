@@ -67,9 +67,8 @@ def get_pcp_pedido(pk):
                 pedido = produto      
         if pedido == 0 :
             pedido= {
-                    "lacre": pk,
-                    "prazo": "2021-11-01",
-                    "processo": []                    
+                    "lacre": pk,                    
+                    "processo": 'new'                    
                     }
             
     except:
