@@ -37,7 +37,7 @@ function reorder(ordem, posicao){
 
 
 function const_processos(listaInProcesso){    
-    let opcoes = ''
+    let opcoes = '<br>Sem Programação'
     for (var i = 0; i < listaInProcesso.length; i++) {
         let up = ''
         let down = ''
