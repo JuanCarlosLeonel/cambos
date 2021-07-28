@@ -20,10 +20,13 @@ function addProcesso(item){
 
 function delProcesso(item){
     lista = JSON.parse(ordemForm.value)
-    lista.splice(item, 1)
-    lista_out = listOut(lista)
+    lista.splice(item, 1)   
+    ordemForm.value = JSON.stringify(lista)   
+    ordemProcesso.processo = lista
+    pcp.value=JSON.stringify(ordemProcesso)    
+    lista_out = listOut(lista)  
     const_out(lista_out)
-    return const_processos(lista)
+    const_processos(lista)
 }
 
 function reorder(ordem, posicao){
