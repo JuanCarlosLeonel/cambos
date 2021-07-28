@@ -49,6 +49,7 @@ def update_api():
     except:
         pass
 
+
 def get_url():  
     try:  
         return  API.objects.get(id=1).api['value']
@@ -57,6 +58,7 @@ def get_url():
         response = requests.get(url)
         dados = response.json()
         return dados['value']
+
 
 def get_pcp_pedido(pk):
     try:        
@@ -75,6 +77,7 @@ def get_pcp_pedido(pk):
         pedido = False
     return pedido
 
+
 def convert_setor(id):
     lista = [
         "Modelagem",
@@ -92,6 +95,24 @@ def convert_setor(id):
     ]
     nome = lista[id-1]
     return nome
+
+
+def dados_pedido(lacre):
+    dados = get_url()        
+    lista = []    
+    for produto in dados:
+        if produto['Lacre']== lacre:
+            lista = produto            
+    return lista  
+
+
+def dados_prog(lacre):
+    dados = get_url()        
+    lista = []    
+    for produto in dados:
+        if produto['Lacre']== lacre:
+            lista = produto            
+    return lista  
 
 
 @method_decorator(login_required, name='dispatch')
@@ -417,19 +438,16 @@ class PedidoDetail(TemplateView):
     template_name = 'roupa/pedido_detail.html'
 
     def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        dados = get_url()        
-        lista = []
-        for produto in dados:
-            if produto['Lacre']== self.kwargs['pk']:
-                lista = produto
-            
+        context = super().get_context_data(**kwargs)                        
+        lacre = self.kwargs['pk']
+        lista = dados_pedido(lacre)        
         context['dados'] = lista   
         try:     
             pedido=Pedido.objects.get(lacre=self.kwargs['pk'])
         except:
             pedido=0
         context['pedido'] = pedido
+        context['programacao'] = get_pcp_pedido(lacre)
         return context
 
 
@@ -480,8 +498,9 @@ class PedidoUpdate(UpdateView):
         lista = []
         tags = TAG.objects.filter()
         pedido= False
+        lacre = self.kwargs['pk']
         for produto in dados:
-            if produto['Lacre']== self.kwargs['pk']:
+            if produto['Lacre']== lacre:
                 try:
                     pedido = Pedido.objects.get(lacre=produto['Lacre'])
                 except:
@@ -580,13 +599,12 @@ class PcpUpdate(TemplateView):
             model.save()
             
         if not edit is None:  
-            return redirect(f'/roupa/pcp_update/{pk}')   
+            return redirect(f'/roupa/pedido_detail/{pk}')   
             
         else:
             return render(request, 'roupa/pcp_update.html', context)
         
 
-@method_decorator(login_required, name='dispatch')
 class UpdateAPI(TemplateView):    
     template_name = 'roupa/update_api.html'
 
