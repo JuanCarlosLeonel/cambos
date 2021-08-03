@@ -210,6 +210,7 @@ def button(update: Update, _: CallbackContext) -> None:
     reply_markup = InlineKeyboardMarkup(keyboard)
     query.edit_message_text('\U0001F4AC escolha uma opção:', reply_markup=reply_markup, parse_mode=ParseMode.HTML)
 
+
 def resumo_diario(context: CallbackContext):
     from core.models import UserBot
     users = UserBot.objects.all()

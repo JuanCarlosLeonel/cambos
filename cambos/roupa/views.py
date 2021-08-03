@@ -68,10 +68,15 @@ def get_pcp_pedido(pk):
             if produto['lacre'] == pk:                                
                 pedido = produto      
         if pedido == 0 :
-            pedido= {
-                    "lacre": pk,                    
-                    "processo": 'new'                    
-                    }
+            dados = get_url()                    
+            for produto in dados:
+                if produto['Lacre']== pk:
+                    pedido= {
+                        "lacre": pk,                    
+                        "pedido": produto['DataPedido'],                    
+                        "entrega": produto['DataEntrega'],                    
+                        "processo": 'new'                    
+                        }
             
     except:
         pedido = False
@@ -98,15 +103,6 @@ def convert_setor(id):
 
 
 def dados_pedido(lacre):
-    dados = get_url()        
-    lista = []    
-    for produto in dados:
-        if produto['Lacre']== lacre:
-            lista = produto            
-    return lista  
-
-
-def dados_prog(lacre):
     dados = get_url()        
     lista = []    
     for produto in dados:
@@ -441,13 +437,17 @@ class PedidoDetail(TemplateView):
         context = super().get_context_data(**kwargs)                        
         lacre = self.kwargs['pk']
         lista = dados_pedido(lacre)        
-        context['dados'] = lista   
+        context['pedido'] = lista
         try:     
-            pedido=Pedido.objects.get(lacre=self.kwargs['pk'])
+            pedido_tag=Pedido.objects.get(lacre=self.kwargs['pk'])
         except:
-            pedido=0
-        context['pedido'] = pedido
-        context['programacao'] = get_pcp_pedido(lacre)
+            pedido_tag=0
+        context['pedido_tag'] = pedido_tag
+        pcp = get_pcp_pedido(lacre)        
+        for item in pcp['processo']:
+            item['inicio'] = ''           
+            item['fim'] = ''           
+        context['programacao'] = json.dumps(pcp)
         return context
 
 
@@ -560,7 +560,7 @@ class TagCreate(CreateView):
 
  
 @method_decorator(login_required, name='dispatch')
-class PcpUpdate(TemplateView):    
+class ListPcpUpdate(TemplateView):    
     template_name = 'roupa/pcp_update.html'
 
     def get(self, request, *args, **kwargs):     
@@ -602,7 +602,48 @@ class PcpUpdate(TemplateView):
             return redirect(f'/roupa/pedido_detail/{pk}')   
             
         else:
+            return render(request, 'roupa/list_pcp_update.html', context)
+
+
+@method_decorator(login_required, name='dispatch')
+class PcpUpdate(TemplateView):    
+    template_name = 'roupa/pcp_update.html'
+
+    def get(self, request, *args, **kwargs):     
+        context = super().get_context_data(**kwargs)             
+        pk = self.kwargs['pk']
+        pcp = get_pcp_pedido(pk)
+        pedido = dados_pedido(pk)
+        pedido['Status']=convert_setor(pedido['Status'])                
+
+        context['pedido'] = json.dumps(pedido)
+        context['pcp'] = json.dumps(pcp)
+        dict_obj = serializers.serialize('json',Processo.objects.filter())
+        context['processo'] = dict_obj
+        
+        edit = self.request.GET.get('editar')                 
+        if not edit is None:                
+            pedido = json.loads(edit)
+            model = API.objects.get(id=1)
+            novo = 0
+            cont = 0
+            for item in model.pcp:
+                if item['lacre'] == pk:
+                    model.pcp[cont] = pedido
+                    novo = 1
+                cont += 1
+            if novo == 0:
+                model.pcp.append(pedido)
+            
+            model.save()
+            
+        if not edit is None:  
+            return redirect(f'/roupa/pedido_detail/{pk}')   
+            
+        else:
             return render(request, 'roupa/pcp_update.html', context)
+        
+
         
 
 class UpdateAPI(TemplateView):    

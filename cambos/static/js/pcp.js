@@ -105,7 +105,7 @@ window.onload = function(){
     if (ordemProcesso.processo == 'new'){
         for (var i = 0; i < processo.length; i++) {
             if (processo[i].fields.recorrente){
-                listaInProcesso.push({
+                listaInProcesso.push({                    
                     'nome': processo[i].fields.nome,
                     'inicio': ''
                 })
