@@ -270,7 +270,7 @@ def main() -> None:
     updater.dispatcher.add_handler(CommandHandler('start', start))
     updater.dispatcher.add_handler(CallbackQueryHandler(button))
 
-    hora = datetime.time(11, 00, 00, 000000) # +3 horas
+    hora = datetime.time(0, 3, 00, 000000) # +3 horas
     up_job = updater.job_queue    
     up_job.run_daily(resumo_diario, time=hora, days=(0, 1, 2, 3, 4))    
     #up_job.run_once(resumo_diario, 10)
