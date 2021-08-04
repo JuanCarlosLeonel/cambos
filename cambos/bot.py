@@ -213,7 +213,7 @@ def button(update: Update, _: CallbackContext) -> None:
 
 def resumo_diario(context: CallbackContext):
     from core.models import UserBot
-    users = UserBot.objects.all()
+    users = UserBot.objects.filter(ativo = True)
     for user in users:        
         resumo = 0
         chat_id = user.user_id
@@ -263,14 +263,15 @@ def resumo_diario(context: CallbackContext):
         context.bot.send_message(chat_id=chat_id, text=text, reply_markup=reply_markup)
 
 def main() -> None:
-        
-    
-    updater = Updater("1852462745:AAF02s1SOqvgZlfxlLX8iFb_uzhgrY5T8cM")    
+    from core.models import Bot
+    bot = Bot.objects.latest('token')
+    token = bot.token      
+    updater = Updater(token)    
     updater.dispatcher.add_handler(MessageHandler(Filters.text, menu))
     updater.dispatcher.add_handler(CommandHandler('start', start))
     updater.dispatcher.add_handler(CallbackQueryHandler(button))
 
-    hora = datetime.time(0, 3, 00, 000000) # +3 horas
+    hora = datetime.time(bot.horas, bot.minutos, 00, 000000) # +3 horas
     up_job = updater.job_queue    
     up_job.run_daily(resumo_diario, time=hora, days=(0, 1, 2, 3, 4))    
     #up_job.run_once(resumo_diario, 10)
