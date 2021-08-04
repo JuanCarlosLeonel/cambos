@@ -17,8 +17,8 @@
     </div><!--/.row-->
     <div class="row">
         <div class="col-lg-12">
-            <h1 class="page-header">{{dados.Modelo|safe}}<span class="text-muted small"> {{dados.Nome}} </span></h1></h1>
-			<h3  class="text-body">Tipo: <span class="color-teal">{{dados.Tipo}}</span> / Linha: <span class="color-teal">{{dados.Peso}}</span> / Lacre: <span class="color-teal">{{dados.Lacre}}</span></h3>
+            <h1 class="page-header">{{pedido.Modelo|safe}}<span class="text-muted small"> {{pedido.Nome}} </span></h1></h1>
+			<h3  class="text-body">Tipo: <span class="color-teal">{{pedido.Tipo}}</span> / Linha: <span class="color-teal">{{pedido.Peso}}</span> / Lacre: <span class="color-teal">{{pedido.Lacre}}</span></h3>
 
         </div>
     </div><!--/.row-->
@@ -29,12 +29,12 @@
 	<div class="col-lg-12">
 		<div class="panel panel-default">
 			<div class="panel-heading">	
-				FC {% if dados.FichaCorte %}{{dados.FichaCorte}} {%else%} - {%endif%}
+				FC {% if pedido.FichaCorte %}{{pedido.FichaCorte}} {%else%} - {%endif%}
 				<ul class="pull-right panel-settings panel-button-tab-right">
-				{% if pedido == 0 %}
-					<li class="dropdown"><a class="pull-right " href="{% url 'pedido_create' dados.Lacre %}">
+				{% if pedido_tag == 0 %}
+					<li class="dropdown"><a class="pull-right " href="{% url 'pedido_create' pedido.Lacre %}">
 				{% else %}
-					<li class="dropdown"><a class="pull-right " href="{% url 'pedido_update' pedido.id %}">
+					<li class="dropdown"><a class="pull-right " href="{% url 'pedido_update' pedido_tag.id %}">
 				{% endif %}
 						<em class="fa fa-pencil"></em>
 					</a>
@@ -47,7 +47,7 @@
 					<div class="col-xs-6 col-md-2 col-lg-2 no-padding">
 						<div class="panel panel-orange panel-widget border-right">
 							<div class="row no-padding"><span class="color-orange"> Artigo</span>
-								<div class="large">{{dados.Tecido}}</div>
+								<div class="large">{{pedido.Tecido}}</div>
 								<div class="text-muted"> </div>							
 							</div>
 						</div>
@@ -56,7 +56,7 @@
 					<div class="col-xs-6 col-md-2 col-lg-2 no-padding">
 						<div class="panel panel-blue panel-widget border-right">
 							<div class="row no-padding"><span class="color-teal"> Volume</span>
-								<div class="large">{{dados.QuantPecas}}</div>
+								<div class="large">{{pedido.QuantPecas}}</div>
 								<div class="text-muted">peças</div>
 							</div>
 						</div>
@@ -65,7 +65,7 @@
 					<div class="col-xs-6 col-md-2 col-lg-2 no-padding">					
 						<div class="panel panel-teal panel-widget border-right">
 							<div class="row no-padding"><span class="color-blue"> Pontuação</span>
-								<div class="large">{{dados.ValorDentro|safe}}</div>
+								<div class="large">{{pedido.ValorDentro|safe}}</div>
 								<div class="text-muted">  </div>							
 							</div>
 						</div>
@@ -74,7 +74,7 @@
 					<div class="col-xs-6 col-md-2 col-lg-2 no-padding">
 						<div class="panel panel-orange panel-widget border-right">
 							<div class="row no-padding"><span class="color-orange"> Situação</span>
-								<div class="large">{{dados.Atrasado}}</div>
+								<div class="large">{{pedido.Atrasado}}</div>
 								<div class="text-muted">  </div>							
 							</div>
 						</div>
@@ -83,7 +83,7 @@
 						<div class="panel panel-red panel-widget border-right">
 							<div class="row no-padding"><span class="color-red"> Tags</span>
 								<div class="">
-									{% for item in pedido.tag.all %}
+									{% for item in pedido_tag.tag.all %}
 										{{item}},
 									{%endfor%}
 								</div>								
@@ -110,12 +110,12 @@
 						<ul class="dropdown-menu dropdown-menu-right">
 							<li>
 								<ul class="dropdown-settings">
-									<li><a href="{% url 'pcp_update' dados.Lacre %}">
+									<li><a href="{% url 'list_pcp_update' pedido.Lacre %}">
 										<em class="fa fa-cog"></em> Processos
 									</a></li>
 									<li class="divider"></li>
-									<li><a href="#">
-										<em class="fa fa-cog"></em> Settings 2
+									<li><a href="{% url 'pcp_update' pedido.Lacre %}">
+										<em class="fa fa-cog"></em> Programação
 									</a></li>
 									<li class="divider"></li>
 									<li><a href="#">
@@ -137,19 +137,16 @@
 	</div>	
 </div>
 	
-	{{programacao}}
+	{{programacao}}	
 
 {%endblock content%}
 
 {% block script %}
 <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
 <script>
-	var lista = '{{lista|safe}}'	
-	var calendar = '{{intervalos|safe}}'					
+	var pcp = {{programacao|safe}}
+					
 </script>
-<script src="{% static 'js/timeline.js' %}"></script>	
-
-
-  
+<script src="{% static 'js/pcpPedido.js' %}"></script>	
   
 {% endblock script %}

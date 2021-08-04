@@ -45,10 +45,11 @@ class User(AbstractUser):
     comercial = models.ManyToManyField(Comercial, blank=True)
 
     
-class Bot(models.Model):
-    last_update_id  = models.CharField(max_length=30)
-    token           = models.CharField(max_length=46)
-    ativo           = models.BooleanField(default=False)
+class Bot(models.Model):    
+    token   = models.CharField(max_length=46)
+    horas   = models.IntegerField(default=0)
+    minutos = models.IntegerField(default=0)
+    ativo   = models.BooleanField(default=False)
 
 
 class OFICINA(models.Model):
@@ -76,6 +77,7 @@ class UserBot(models.Model):
     expedicao  = models.BooleanField(default=False)
     acabamento = models.ManyToManyField(ACABAMENTO, blank=True)
     geral = models.BooleanField(default=False)
+    ativo   = models.BooleanField(default=True)
 
     def __str__(self):
         return f'{self.user_nome}'
