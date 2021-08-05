@@ -102,7 +102,7 @@ function listOut(listaInProcesso){
 window.onload = function(){       
     let listaInProcesso = []
     let listaOutProcesso = []
-    if (ordemProcesso.processo == 'new'){
+    if (ordemProcesso.processo.length == 0){
         for (var i = 0; i < processo.length; i++) {
             if (processo[i].fields.recorrente){
                 listaInProcesso.push({                    

@@ -75,7 +75,7 @@ def get_pcp_pedido(pk):
                         "lacre": pk,                    
                         "pedido": produto['DataPedido'],                    
                         "entrega": produto['DataEntrega'],                    
-                        "processo": 'new'                    
+                        "processo": []
                         }
             
     except:
@@ -445,8 +445,8 @@ class PedidoDetail(TemplateView):
         context['pedido_tag'] = pedido_tag
         pcp = get_pcp_pedido(lacre)        
         for item in pcp['processo']:
-            item['inicio'] = ''           
-            item['fim'] = ''           
+            item['inicio'] = ""           
+            item['fim'] = ""      
         context['programacao'] = json.dumps(pcp)
         return context
 
@@ -615,9 +615,10 @@ class PcpUpdate(TemplateView):
         pcp = get_pcp_pedido(pk)
         pedido = dados_pedido(pk)
         pedido['Status']=convert_setor(pedido['Status'])                
-
+        pcp['pedido'] = parse(pcp["pedido"]).date()
+        pcp['entrega'] = parse(pcp["entrega"]).date()
         context['pedido'] = json.dumps(pedido)
-        context['pcp'] = json.dumps(pcp)
+        context['pcp'] = pcp
         dict_obj = serializers.serialize('json',Processo.objects.filter())
         context['processo'] = dict_obj
         
