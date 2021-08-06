@@ -1,10 +1,7 @@
-from fastapi import BackgroundTasks, FastAPI
-from rest_framework.decorators import api_view
-
 import json
 from django.http.response import HttpResponse
 
-from requests.api import get, put
+from requests.api import get
 from .form import EtapaForm, PedidoForm, TAGForm
 from django.views.generic.edit import UpdateView, CreateView
 from django.views.generic.base import TemplateView
