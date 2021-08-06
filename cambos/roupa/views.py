@@ -1,7 +1,10 @@
+from fastapi import BackgroundTasks, FastAPI
+from rest_framework.decorators import api_view
+
 import json
 from django.http.response import HttpResponse
 
-from requests.api import get
+from requests.api import get, put
 from .form import EtapaForm, PedidoForm, TAGForm
 from django.views.generic.edit import UpdateView, CreateView
 from django.views.generic.base import TemplateView
@@ -680,15 +683,18 @@ class PcpList(TemplateView):
             
         else:
             return render(request, 'roupa/pcp_list.html', context)
-        
-
-        
-
-class UpdateAPI(TemplateView):    
-    template_name = 'roupa/update_api.html'
-
-    def get(self, request, *args, **kwargs):     
-        context = super().get_context_data(**kwargs)
-        update_api()
     
-        return render(request, 'roupa/update_api.html')
+
+class UpdateAPI(HttpResponse):
+
+    def close(self):
+        super(UpdateAPI, self).close()
+        if self.status_code == 200:
+            update_api()
+# this would be the view definition
+def logging_view(request):
+    update_api()
+    response = UpdateAPI('Hello World')
+    return response
+
+
