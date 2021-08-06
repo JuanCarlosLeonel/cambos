@@ -159,6 +159,7 @@ class DesempenhoForm(forms.ModelForm):
             forms.Select(attrs={'class':'form-control'}),                             
             self.fields['total_alvejado'].widget = forms.NumberInput(attrs={'class':'form-control'})                              
             self.fields['total_tingido'].widget = forms.NumberInput(attrs={'class':'form-control'})                                         
+            self.fields['total_chamuscado'].widget = forms.NumberInput(attrs={'class':'form-control'})                                         
         if setor == "Tecelagem":
             self.fields['tempo_total_atendimento'].widget = forms.NumberInput(attrs={'class':'form-control'})
             
@@ -237,7 +238,6 @@ class MaterialConsumoForm(forms.ModelForm):
         if material_tipo == "Insumo":
             self.fields['origem'].widget = forms.HiddenInput()            
             
-
 
 class PerdaModalForm(forms.ModelForm):
     class Meta:

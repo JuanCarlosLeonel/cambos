@@ -253,6 +253,11 @@ class DesempenhoUpdate(UpdateView):
         context['setor'] = setor
         return context
 
+    def get_form_kwargs(self):        
+        setor = get_setor(self)
+        kwargs = super().get_form_kwargs()                
+        kwargs['setor'] = setor.nome
+        return kwargs
 
 @method_decorator(login_required, name='dispatch')
 class CustoCreate(CreateView):
@@ -283,6 +288,7 @@ class CustoCreate(CreateView):
         initial['energia'] = ultimo_desempenho.energia        
         initial['laboratorio'] = ultimo_desempenho.laboratorio        
         initial['manutencao'] = ultimo_desempenho.manutencao
+        initial['mao_de_obra'] = ultimo_desempenho.mao_de_obra
         initial['material_uso_continuo'] = ultimo_desempenho.material_uso_continuo        
         initial['vapor'] = ultimo_desempenho.vapor
         initial['agua'] = ultimo_desempenho.agua
