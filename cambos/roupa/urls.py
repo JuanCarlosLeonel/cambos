@@ -13,6 +13,7 @@ from .views import(
     PedidoUpdate,
     PedidoUpdateTag,
     TagCreate,
+    PcpList,
     PcpUpdate,
     ListPcpUpdate,
     CreateOficina,
@@ -35,7 +36,8 @@ urlpatterns = [
     path('tag_create/<int:pk>/',TagCreate.as_view(), name='tag_create'),
     path('oficina_create/', CreateOficina.as_view(), name='oficina_create'),
     path('oficina_update/<int:pk>/', UpdateOficina.as_view(), name='oficina_update'),
-    path('pcp_update/<int:pk>/',PcpUpdate.as_view(), name='pcp_update'),
+    path('pcp_update/<int:pk>/<str:pk2>/',PcpUpdate.as_view(), name='pcp_update'),
+    path('pcp_list/<int:pk>/',PcpList.as_view(), name='pcp_list'),
     path('list_pcp_update/<int:pk>/',ListPcpUpdate.as_view(), name='list_pcp_update'),
     path('update_api/',UpdateAPI.as_view(), name='update_api'),
 ]

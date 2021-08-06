@@ -570,11 +570,7 @@ class ListPcpUpdate(TemplateView):
         pcp = get_pcp_pedido(pk)
         for produto in dados:
             if produto['Lacre']== pk:
-                produto['Status']=convert_setor(produto['Status'])
-                try:
-                    detail_pedido = Pedido.objects.get(lacre=produto['Lacre'])
-                except:
-                    detail_pedido = False
+                produto['Status']=convert_setor(produto['Status'])                
                 pedido = produto
         
         context['pedido'] = json.dumps(pedido)
@@ -643,6 +639,47 @@ class PcpUpdate(TemplateView):
             
         else:
             return render(request, 'roupa/pcp_update.html', context)
+
+
+@method_decorator(login_required, name='dispatch')
+class PcpList(TemplateView):    
+    template_name = 'roupa/pcp_list.html'
+
+    def get(self, request, *args, **kwargs):     
+        context = super().get_context_data(**kwargs)             
+        pk = self.kwargs['pk']
+        pcp = get_pcp_pedido(pk)
+        pedido = dados_pedido(pk)
+        pedido['Status']=convert_setor(pedido['Status'])                
+        pcp['pedido'] = parse(pcp["pedido"]).date()
+        pcp['entrega'] = parse(pcp["entrega"]).date()
+        context['pedido'] = json.dumps(pedido)
+        context['pcp'] = pcp
+        dict_obj = serializers.serialize('json',Processo.objects.filter())
+        context['processo'] = dict_obj
+        context['lacre'] = pk
+        
+        edit = self.request.GET.get('editar')                 
+        if not edit is None:                
+            pedido = json.loads(edit)
+            model = API.objects.get(id=1)
+            novo = 0
+            cont = 0
+            for item in model.pcp:
+                if item['lacre'] == pk:
+                    model.pcp[cont] = pedido
+                    novo = 1
+                cont += 1
+            if novo == 0:
+                model.pcp.append(pedido)
+            
+            model.save()
+            
+        if not edit is None:  
+            return redirect(f'/roupa/pedido_detail/{pk}')   
+            
+        else:
+            return render(request, 'roupa/pcp_list.html', context)
         
 
         
