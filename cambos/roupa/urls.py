@@ -39,5 +39,5 @@ urlpatterns = [
     path('pcp_update/<int:pk>/<str:pk2>/',PcpUpdate.as_view(), name='pcp_update'),
     path('pcp_list/<int:pk>/',PcpList.as_view(), name='pcp_list'),
     path('list_pcp_update/<int:pk>/',ListPcpUpdate.as_view(), name='list_pcp_update'),
-    path('update_api/',UpdateAPI, name='update_api'),
+    path('update_api/<int:pk>/',UpdateAPI, name='update_api'),
 ]

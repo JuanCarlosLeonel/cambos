@@ -38,7 +38,7 @@ def get_etapa(pk):
     return nome
 
 
-def update_api():
+def update_api(pk):
     try:
         url = 'http://187.45.32.103:20080/spi/intproducaoservice/statusentrega'
         response = requests.get(url)
@@ -680,18 +680,16 @@ class PcpList(TemplateView):
             
         else:
             return render(request, 'roupa/pcp_list.html', context)
-    
 
-class UpdateAPI(HttpResponse):
+
+class LogSuccessResponse(HttpResponse):
 
     def close(self):
-        super(UpdateAPI, self).close()
-        if self.status_code == 200:
-            update_api()
-# this would be the view definition
-def logging_view(request):
-    update_api()
-    response = UpdateAPI('Hello World')
+        super(LogSuccessResponse, self).close()
+        if self.status_code == 200:            
+            update_api(self.content)
+
+
+def UpdateAPI(request, pk):
+    response = LogSuccessResponse(pk)
     return response
-
-
