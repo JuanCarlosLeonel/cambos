@@ -7,7 +7,9 @@ from .models import (
     Etapa,  
     TAG,
     Pedido,
-    API  
+    API,
+    PCP,
+    PedidoTrack  
 )
 
 admin.site.register(Calendario)
@@ -17,5 +19,7 @@ admin.site.register(Etapa)
 admin.site.register(TAG)
 admin.site.register(Pedido)
 admin.site.register(API)
+admin.site.register(PCP)
+admin.site.register(PedidoTrack)
 
 

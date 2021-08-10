@@ -1,11 +1,14 @@
 from django.db import models
 from django.db.models.deletion import CASCADE, PROTECT
 from jsonfield import JSONField
-
+from core.models import User
 
 class API(models.Model):
-    api = JSONField()
-    pcp = JSONField(null=True, blank=True)
+    api = JSONField()    
+
+
+class PCP(models.Model):    
+    pcp = JSONField()
 
 
 class Calendario(models.Model):    
@@ -74,4 +77,9 @@ class Pedido(models.Model):
 
     def __str__(self):
         return f'{self.lacre}'
+
+
+class PedidoTrack(models.Model):
+    pedido = models.ForeignKey(Pedido, on_delete=CASCADE)
+    user   = models.ForeignKey(User, on_delete=models.CASCADE)
     

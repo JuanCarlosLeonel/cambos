@@ -21,6 +21,7 @@ from .models import (
     DiasCalendario,
     Etapa,    
     API,
+    PCP,
     Pedido,
     Processo,
     TAG
@@ -62,7 +63,7 @@ def get_url():
 
 def get_pcp_pedido(pk):
     try:        
-        pcp = API.objects.get(id=1).pcp      
+        pcp = PCP.objects.get(id=1).pcp      
         pedido = 0     
         for produto in pcp:        
             if produto['lacre'] == pk:                                
@@ -581,7 +582,7 @@ class ListPcpUpdate(TemplateView):
         edit = self.request.GET.get('editar')                 
         if not edit is None:                
             pedido = json.loads(edit)
-            model = API.objects.get(id=1)
+            model = PCP.objects.get(id=1)
             novo = 0
             cont = 0
             for item in model.pcp:
@@ -621,7 +622,7 @@ class PcpUpdate(TemplateView):
         edit = self.request.GET.get('editar')                 
         if not edit is None:                
             pedido = json.loads(edit)
-            model = API.objects.get(id=1)
+            model = PCP.objects.get(id=1)
             novo = 0
             cont = 0
             for item in model.pcp:
@@ -662,7 +663,7 @@ class PcpList(TemplateView):
         edit = self.request.GET.get('editar')                 
         if not edit is None:                
             pedido = json.loads(edit)
-            model = API.objects.get(id=1)
+            model = PCP.objects.get(id=1)
             novo = 0
             cont = 0
             for item in model.pcp:

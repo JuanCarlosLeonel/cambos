@@ -1,9 +1,9 @@
 from django.db import models
+from django.db.models.deletion import SET_NULL
 from django_currentuser.db.models import CurrentUserField
 from django.contrib.auth.models import AbstractUser
 from comercial.models import Comercial
 
-### Geral ###
 
 class Periodo(models.Model):
     periodo = models.DateField(verbose_name='Período')
@@ -31,19 +31,6 @@ class Setor(models.Model):
     class Meta:
         verbose_name_plural = "Setores"
 
-
-class User(AbstractUser):
-    COM_CHOICES = (
-            ('Mendes Júnior', 'Mendes Júnior'),
-            ('Xavantes', 'Xavantes'),             
-            ('Cotton Move', 'Cotton Move'),             
-            ('Geral', 'Geral'),             
-        )
-    setor     = models.ForeignKey(Setor, null=True, blank=True, on_delete=models.SET_NULL)
-    textil    = models.BooleanField(default=False)
-    confeccao = models.BooleanField(default=False)
-    comercial = models.ManyToManyField(Comercial, blank=True)
-
     
 class Bot(models.Model):    
     token   = models.CharField(max_length=46)
@@ -52,11 +39,9 @@ class Bot(models.Model):
     ativo   = models.BooleanField(default=False)
 
 
-class OFICINA(models.Model):
-    
+class OFICINA(models.Model):    
     choice = models.CharField(max_length=154, unique=True, verbose_name='Oficina')
     
-
     def __str__(self):
         return f'{self.choice}'
 
@@ -65,8 +50,9 @@ class ACABAMENTO(models.Model):
     choice = models.CharField(max_length=154, unique=True)
     
     def __str__(self):
-        return f'{self.choice}'
-    
+        return f'{self.choice}'    
+
+
 class UserBot(models.Model):
     user_id    = models.IntegerField(unique=True)
     user_nome  = models.CharField(max_length=30)
@@ -81,4 +67,17 @@ class UserBot(models.Model):
 
     def __str__(self):
         return f'{self.user_nome}'
-    
+
+
+class User(AbstractUser):
+    COM_CHOICES = (
+            ('Mendes Júnior', 'Mendes Júnior'),
+            ('Xavantes', 'Xavantes'),             
+            ('Cotton Move', 'Cotton Move'),             
+            ('Geral', 'Geral'),             
+        )
+    setor     = models.ForeignKey(Setor, null=True, blank=True, on_delete=models.SET_NULL)
+    textil    = models.BooleanField(default=False)
+    confeccao = models.BooleanField(default=False)
+    comercial = models.ManyToManyField(Comercial, blank=True)
+    user_bot  = models.ForeignKey(UserBot, null=True, blank=True, on_delete=SET_NULL)
