@@ -448,6 +448,38 @@ class PedidoDetail(TemplateView):
         for item in pcp['processo']:
             item['inicio'] = ""           
             item['fim'] = ""      
+            if item['nome'] == "Costura":
+                if not lista['DataCostura'] is None:
+                    item['inicio'] = lista['DataCostura']                   
+                    if not lista['DataLavanderia'] is None:
+                        item['fim'] = lista['DataLavanderia']
+                    else:
+                        item['fim'] = str(datetime.today())
+            if item['nome'] == "Lavanderia":
+                if not lista['DataLavanderia'] is None:
+                    item['inicio'] = lista['DataLavanderia']                   
+                    if not lista['DataQualidade'] is None:
+                        item['fim'] = lista['DataQualidade']
+                    else:
+                        item['fim'] = str(datetime.today())
+            if item['nome'] == "Qualidade":
+                if not lista['DataQualidade'] is None:
+                    item['inicio'] = lista['DataQualidade']                   
+                    if not lista['DataAcabamento'] is None:
+                        item['fim'] = lista['DataAcabamento']
+                    else:
+                        item['fim'] = str(datetime.today())
+            if item['nome'] == "Acabamento":
+                if not lista['DataAcabamento'] is None:
+                    item['inicio'] = lista['DataAcabamento']                   
+                    if not lista['DataAcabamento'] is None:
+                        item['fim'] = lista['DataExpedicao']
+                    else:
+                        item['fim'] = str(datetime.today())
+            if item['nome'] == "Expedição":
+                if not lista['DataExpedicao'] is None:
+                    item['inicio'] = lista['DataExpedicao']                                           
+                    item['fim'] = str(datetime.today())
         context['programacao'] = json.dumps(pcp)
         return context
 
