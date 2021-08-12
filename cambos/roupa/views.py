@@ -75,9 +75,21 @@ def get_pcp_pedido(pk):
                     pedido= {
                         "lacre": pk,                    
                         "pedido": produto['DataPedido'],                    
-                        "entrega": produto['DataEntrega'],                    
-                        "processo": []
-                        }
+                        "entrega": produto['DataEntrega'],     
+                        'programado': False,               
+                        "processo": [
+                            {'nome':'Modelagem'},
+                            {'nome':'Expedição Tecido'},
+                            {'nome':'Encaixe'},                            
+                            {'nome':'Corte'},
+                            {'nome':'Costura'},
+                            {'nome':'Lavanderia'},
+                            {'nome':'Qualidade'},
+                            {'nome':'Acabamento'},
+                            {'nome':'Expedição'},
+                            {'nome':'Estoque'}
+                        ]
+                    }
             
     except:
         pedido = False
@@ -448,6 +460,34 @@ class PedidoDetail(TemplateView):
         for item in pcp['processo']:
             item['inicio'] = ""           
             item['fim'] = ""      
+            if item['nome'] == "Modelagem":
+                if not lista['DataPedido'] is None:
+                    item['inicio'] = lista['DataPedido']                   
+                    if not lista['DataExpTecido'] is None:
+                        item['fim'] = lista['DataExpTecido']
+                    else:
+                        item['fim'] = str(datetime.today())
+            if item['nome'] == "Expedição Tecido":
+                if not lista['DataExpTecido'] is None:
+                    item['inicio'] = lista['DataExpTecido']                   
+                    if not lista['DataEncaixe'] is None:
+                        item['fim'] = lista['DataEncaixe']
+                    else:
+                        item['fim'] = str(datetime.today())
+            if item['nome'] == "Encaixe":
+                if not lista['DataEncaixe'] is None:
+                    item['inicio'] = lista['DataEncaixe']                   
+                    if not lista['DataProducao'] is None:
+                        item['fim'] = lista['DataProducao']
+                    else:
+                        item['fim'] = str(datetime.today())
+            if item['nome'] == "Corte":
+                if not lista['DataProducao'] is None:
+                    item['inicio'] = lista['DataProducao']                   
+                    if not lista['DataCostura'] is None:
+                        item['fim'] = lista['DataCostura']
+                    else:
+                        item['fim'] = str(datetime.today())
             if item['nome'] == "Costura":
                 if not lista['DataCostura'] is None:
                     item['inicio'] = lista['DataCostura']                   
@@ -472,13 +512,20 @@ class PedidoDetail(TemplateView):
             if item['nome'] == "Acabamento":
                 if not lista['DataAcabamento'] is None:
                     item['inicio'] = lista['DataAcabamento']                   
-                    if not lista['DataAcabamento'] is None:
+                    if not lista['DataExpedicao'] is None:
                         item['fim'] = lista['DataExpedicao']
                     else:
                         item['fim'] = str(datetime.today())
             if item['nome'] == "Expedição":
                 if not lista['DataExpedicao'] is None:
-                    item['inicio'] = lista['DataExpedicao']                                           
+                    item['inicio'] = lista['DataExpedicao']                   
+                    if not lista['DataFimProducao'] is None:
+                        item['fim'] = lista['DataFimProducao']
+                    else:
+                        item['fim'] = str(datetime.today())
+            if item['nome'] == "Estoque":
+                if not lista['DataFimProducao'] is None:
+                    item['inicio'] = lista['DataFimProducao']                                           
                     item['fim'] = str(datetime.today())
         context['programacao'] = json.dumps(pcp)
         return context

@@ -13,6 +13,19 @@ function get_intervals(){
         },
         text: 'agora',
       }
+    },
+    {
+      x: new Date(pcp.entrega).getTime(),
+      strokeDashArray: 0,
+      borderColor: "#b92c28",
+      label: {
+        borderColor: '#b92c28',
+        style: {
+          color: '#fff',
+          background: '#b92c28',
+        },
+        text: 'Entrega',
+      }
     }
   )  
   return intervals
@@ -32,9 +45,9 @@ function data(){
   }
   data.push(        
     {
-      x: "Ciclo",
+      x: "Prazo",
       y: [
-        new Date(pcp.pedido).getTime(),
+        new Date().getTime(),
         new Date(pcp.entrega).getTime()
       ]
     })
