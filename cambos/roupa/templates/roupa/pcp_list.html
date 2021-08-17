@@ -36,31 +36,36 @@
                 <table class="table table-hover">  
                     <thead>
                         <tr>
-                            <th>Processos</th>
-                            <th></th>
-                            <th>Inicio</th>
+                            <th>Processos</th>                            
+                            <th>Início</th>
                             <th>Fim</th>                            
-                            <th></th>
+                            <th>Prog Início</th>
+                            <th>Prog Fim</th>
+                            <td></td>
                         </tr>
                     </thead>                              
                     <tbody>
                         {% for item in pcp.processo %}
                         <tr>
                             <th>{{item.nome}}</th>
+                            <td>{{item.inicio|date:'d/m/Y'}}</td>
+                            <td>{{item.fim|date:'d/m/Y'}}</td>
                             <td></td>
                             <td></td>
-                            <td></td>
+                            {% if not item.fim%}
                             <td><a href="{% url 'pcp_update' lacre item.nome %}">
                                 <em class="fa fa-pencil"></em>
                             </a></td>
+                            {%endif%}
                         </tr>
                         {%endfor%}                        
                         <tr>
-                            <th>Prazo</th>
-                            <td></td>
-                            <td>{{pcp.pedido|date:'d/m/Y'}}</td>
-                            <td>{{pcp.entrega|date:'d/m/Y'}}</td>
-                            <td></td>                            
+                            <th class="text-danger">Prazo</th>                                                        
+                            <td class="text-danger">{{pcp.pedido|date:'d/m/Y'}}</td>
+                            <td class="text-danger">{{pcp.entrega|date:'d/m/Y'}}</td>
+                            <td class="text-danger"></td>                       
+                            <td class="text-danger"></td>                                                   
+                            <td class="text-danger"></td>                       
                         </tr>
                     </tbody>
                 </table>                                  
@@ -83,7 +88,7 @@
        
     </div><!-- /.modal-content -->
 </div><!-- /.modal-dialog -->
-
+{{pcp}}
 {% endblock content %}
 {% block script %}
  {{ form.media.js }}  

@@ -30,6 +30,10 @@ from django.http import JsonResponse
 from dateutil.parser import parse
 from django.core import serializers
 
+def parse_date(item):
+    date = parse(item).date()
+    return date
+
 
 def get_etapa(pk):
     try:
@@ -78,7 +82,11 @@ def get_pcp_pedido(pk):
                         "entrega": produto['DataEntrega'],     
                         'programado': False,               
                         "processo": [
-                            {'nome':'Modelagem'},
+                            {
+                                'nome':'Modelagem',
+                                'p_inicio':produto['DataPedido'],                    
+                                'p_fim':produto['DataEntrega']
+                            },
                             {'nome':'Expedição Tecido'},
                             {'nome':'Encaixe'},                            
                             {'nome':'Corte'},
@@ -87,7 +95,7 @@ def get_pcp_pedido(pk):
                             {'nome':'Qualidade'},
                             {'nome':'Acabamento'},
                             {'nome':'Expedição'},
-                            {'nome':'Estoque'}
+                            {'nome':'Estoque'},                            
                         ]
                     }
             
@@ -695,9 +703,16 @@ class PcpUpdate(TemplateView):
         pcp['entrega'] = parse(pcp["entrega"]).date()
         context['pedido'] = json.dumps(pedido)
         context['pcp'] = pcp
-        dict_obj = serializers.serialize('json',Processo.objects.filter())
-        context['processo'] = dict_obj
-        
+
+        processo = self.kwargs['pk2']
+        etapa_list = []
+        if processo == "Costura":
+            etapa_list = Etapa.objects.filter(
+                processo__nome = "Costura"
+                ).exclude(nome = "Finalização"
+                ).order_by('-interno','nome')
+        context['etapa_list'] = etapa_list
+
         edit = self.request.GET.get('editar')                 
         if not edit is None:                
             pedido = json.loads(edit)
@@ -725,42 +740,71 @@ class PcpUpdate(TemplateView):
 class PcpList(TemplateView):    
     template_name = 'roupa/pcp_list.html'
 
-    def get(self, request, *args, **kwargs):     
-        context = super().get_context_data(**kwargs)             
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)            
         pk = self.kwargs['pk']
         pcp = get_pcp_pedido(pk)
         pedido = dados_pedido(pk)
+        for item in pcp['processo']:
+            item['inicio'] = ""           
+            item['fim'] = ""      
+            if item['nome'] == "Modelagem":
+                if not pedido['DataPedido'] is None:
+                    item['inicio'] = parse_date(pedido['DataPedido'])
+                    if not pedido['DataExpTecido'] is None:
+                        item['fim'] = parse_date(pedido['DataExpTecido'])                    
+            if item['nome'] == "Expedição Tecido":
+                if not pedido['DataExpTecido'] is None:
+                    item['inicio'] = parse_date(pedido['DataExpTecido'])
+                    if not pedido['DataEncaixe'] is None:
+                        item['fim'] = parse_date(pedido['DataEncaixe'])                   
+            if item['nome'] == "Encaixe":
+                if not pedido['DataEncaixe'] is None:
+                    item['inicio'] = parse_date(pedido['DataEncaixe'])
+                    if not pedido['DataProducao'] is None:
+                        item['fim'] = parse_date(pedido['DataProducao'])                   
+            if item['nome'] == "Corte":
+                if not pedido['DataProducao'] is None:
+                    item['inicio'] = parse_date(pedido['DataProducao'])
+                    if not pedido['DataCostura'] is None:
+                        item['fim'] = parse_date(pedido['DataCostura'])
+            if item['nome'] == "Costura":
+                if not pedido['DataCostura'] is None:
+                    item['inicio'] = parse_date(pedido['DataCostura'])                   
+                    if not pedido['DataLavanderia'] is None:
+                        item['fim'] = parse_date(pedido['DataLavanderia'])
+            if item['nome'] == "Lavanderia":
+                if not pedido['DataLavanderia'] is None:
+                    item['inicio'] = parse_date(pedido['DataLavanderia'])                   
+                    if not pedido['DataQualidade'] is None:
+                        item['fim'] = parse_date(pedido['DataQualidade'])
+            if item['nome'] == "Qualidade":
+                if not pedido['DataQualidade'] is None:
+                    item['inicio'] = parse_date(pedido['DataQualidade'])                   
+                    if not pedido['DataAcabamento'] is None:
+                        item['fim'] = parse_date(pedido['DataAcabamento'])
+            if item['nome'] == "Acabamento":
+                if not pedido['DataAcabamento'] is None:
+                    item['inicio'] = parse_date(pedido['DataAcabamento'])                   
+                    if not pedido['DataExpedicao'] is None:
+                        item['fim'] = parse_date(pedido['DataExpedicao'])
+            if item['nome'] == "Expedição":
+                if not pedido['DataExpedicao'] is None:
+                    item['inicio'] = parse_date(pedido['DataExpedicao'])                   
+                    if not pedido['DataFimProducao'] is None:
+                        item['fim'] = parse_date(pedido['DataFimProducao'])
+            if item['nome'] == "Estoque":
+                if not pedido['DataFimProducao'] is None:
+                    item['inicio'] = parse_date(pedido['DataFimProducao'])
+                    item['fim'] = str(datetime.today())
         pedido['Status']=convert_setor(pedido['Status'])                
-        pcp['pedido'] = parse(pcp["pedido"]).date()
-        pcp['entrega'] = parse(pcp["entrega"]).date()
+        pcp['pedido'] = parse_date(pcp["pedido"])
+        pcp['entrega'] = parse_date(pcp["entrega"])
         context['pedido'] = json.dumps(pedido)
-        context['pcp'] = pcp
-        dict_obj = serializers.serialize('json',Processo.objects.filter())
-        context['processo'] = dict_obj
+        context['pcp'] = pcp                
         context['lacre'] = pk
+        return context
         
-        edit = self.request.GET.get('editar')                 
-        if not edit is None:                
-            pedido = json.loads(edit)
-            model = PCP.objects.get(id=1)
-            novo = 0
-            cont = 0
-            for item in model.pcp:
-                if item['lacre'] == pk:
-                    model.pcp[cont] = pedido
-                    novo = 1
-                cont += 1
-            if novo == 0:
-                model.pcp.append(pedido)
-            
-            model.save()
-            
-        if not edit is None:  
-            return redirect(f'/roupa/pedido_detail/{pk}')   
-            
-        else:
-            return render(request, 'roupa/pcp_list.html', context)
-
 
 class LogSuccessResponse(HttpResponse):
 

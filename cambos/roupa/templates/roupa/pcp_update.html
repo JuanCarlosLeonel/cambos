@@ -36,20 +36,20 @@
                 <table class="table table-hover">  
                     <thead>
                         <tr>
-                            <th>Processos</th>
-                            <th></th>
-                            <th>Inicio</th>
-                            <th>Fim</th>                            
+                            <th>Etapas</th>
+                            <th>Primeira Data</th>
+                            <th>Última Data </th>
+                            <th>Tags</th>                            
                             <th></th>
                         </tr>
                     </thead>                              
                     <tbody>
-                        {% for item in pcp.processo %}
+                        {% for item in etapa_list %}
                         <tr>
-                            <th>{{item.nome}}</th>
+                            <th>{{item}}</th>
                             <td></td>
                             <td></td>
-                            <td></td>
+                            <td>{{item.tag.all}}</td>
                             <td><a href="{% url 'roupa_index' %}">
                                 <em class="fa fa-pencil"></em>
                             </a></td>
@@ -83,7 +83,6 @@
        
     </div><!-- /.modal-content -->
 </div><!-- /.modal-dialog -->
-
 {% endblock content %}
 {% block script %}
  {{ form.media.js }}  

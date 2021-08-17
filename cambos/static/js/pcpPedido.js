@@ -32,7 +32,7 @@ function get_intervals(){
 }
 
 
-function data(){
+function data(option){
   let data = []
   for (var i = 0; i < pcp.processo.length; i++) {
     data.push({
@@ -59,7 +59,7 @@ function series(){
   series.push(
     {
       name: "prazo",
-      data: data()
+      data: data("prazo")
     }
   )
   return series
