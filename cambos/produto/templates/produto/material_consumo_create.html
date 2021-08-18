@@ -10,7 +10,7 @@
             <li><a href="{% url 'core_index' %}?setor={{ request.GET.setor }}&periodo={{ request.GET.periodo }}">
                 <em class="fa fa-home"></em>
             </a></li>
-            <li class=""><a href="{% url 'consumo_material_list' %}?setor={{ request.GET.setor }} & periodo={{ request.GET.periodo }}">Material</a></li>
+            <li class=""><a href="{% url 'consumo_material_list' %}?setor={{ request.GET.setor }}&periodo={{ request.GET.periodo }}">Material</a></li>
             <li class="active">Cadastro de Material</li>
         </ol>
     </div><!--/.row-->

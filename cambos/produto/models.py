@@ -139,6 +139,7 @@ class Custo(models.Model):
     material_uso_continuo = models.FloatField(blank=True)
     vapor                 = models.FloatField(blank=True)
     agua                  = models.FloatField(blank=True)
+    patrimonio            = models.FloatField(blank=True, default=0)
     created_by            = CurrentUserField()
     data_criacao          = models.DateField(verbose_name="Data", default=datetime.date.today)
 

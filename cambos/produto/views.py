@@ -291,8 +291,15 @@ class CustoCreate(CreateView):
         initial['mao_de_obra'] = ultimo_desempenho.mao_de_obra
         initial['material_uso_continuo'] = ultimo_desempenho.material_uso_continuo        
         initial['vapor'] = ultimo_desempenho.vapor
+        initial['patrimonio'] = ultimo_desempenho.patrimonio
         initial['agua'] = ultimo_desempenho.agua
         return initial
+    
+    def get_form_kwargs(self):        
+        setor = get_setor(self)
+        kwargs = super().get_form_kwargs()                
+        kwargs['setor'] = setor.nome
+        return kwargs
 
 
 @method_decorator(login_required, name='dispatch')
@@ -312,6 +319,12 @@ class CustoUpdate(UpdateView):
         context['periodo'] = periodo.nome
         context['setor'] = setor
         return context
+    
+    def get_form_kwargs(self):        
+        setor = get_setor(self)
+        kwargs = super().get_form_kwargs()                
+        kwargs['setor'] = setor.nome
+        return kwargs
 
 
 @method_decorator(login_required, name='dispatch')

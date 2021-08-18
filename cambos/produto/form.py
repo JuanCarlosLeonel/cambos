@@ -86,7 +86,8 @@ class CustoForm(forms.ModelForm):
             'mao_de_obra',
             'material_uso_continuo',
             'vapor',
-            'agua',            
+            'agua',  
+            'patrimonio'          
         )
         widgets = {                         
             'periodo': forms.HiddenInput(),
@@ -96,10 +97,18 @@ class CustoForm(forms.ModelForm):
             'manutencao':forms.NumberInput(attrs={'class':'form-control'}),            
             'mao_de_obra':forms.NumberInput(attrs={'class':'form-control'}),            
             'material_uso_continuo':forms.NumberInput(attrs={'class':'form-control'}),            
-            'vapor':forms.NumberInput(attrs={'class':'form-control'}),            
-            'agua':forms.NumberInput(attrs={'class':'form-control'}),                        
+            'vapor': forms.HiddenInput(),            
+            'agua': forms.HiddenInput(),                        
+            'patrimonio':forms.NumberInput(attrs={'class':'form-control'}),                        
         }
-
+    
+    def __init__(self, *args, **kwargs):
+        setor = kwargs.pop('setor', None)                
+        super().__init__(*args, **kwargs)
+        if setor == "Acabamento" or setor == "Tingimento":
+            self.fields['vapor'].widget = forms.NumberInput(attrs={'class':'form-control'})
+            self.fields['agua'].widget = forms.NumberInput(attrs={'class':'form-control'})
+            
 
 class DesempenhoForm(forms.ModelForm):
     class Meta:

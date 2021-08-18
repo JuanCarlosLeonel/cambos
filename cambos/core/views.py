@@ -1073,7 +1073,7 @@ class CustoList(ListView):
                 'nome': 'Consolidado',
             }
         else:
-            opcoes = (
+            opcoes = [
                 {'item': 'energia',
                 'nome': 'Energia',
                 },
@@ -1088,14 +1088,17 @@ class CustoList(ListView):
                 },
                 {'item': 'material_uso_continuo',
                 'nome': 'Material de Uso Contínuo',
-                },
-                {'item': 'vapor',
-                'nome': 'Vapor',
-                },
-                {'item': 'agua',
-                'nome': 'Água',
-                },
-            )
+                }
+            ]
+            if setor.nome == "Tingimento" or setor.nome == "Acabamento":
+                opcoes.append(
+                    {'item': 'vapor',
+                    'nome': 'Vapor',
+                    })
+                opcoes.append(
+                    {'item': 'agua',
+                    'nome': 'Água',
+                    })                    
             try:
                 custo = Custo.objects.get(
                     periodo=periodo.id,
