@@ -9,6 +9,7 @@ from .models import (
     Pedido,
     API,
     PCP,
+    Track,
     PedidoTrack  
 )
 
@@ -20,6 +21,7 @@ admin.site.register(TAG)
 admin.site.register(Pedido)
 admin.site.register(API)
 admin.site.register(PCP)
+admin.site.register(Track)
 admin.site.register(PedidoTrack)
 
 
