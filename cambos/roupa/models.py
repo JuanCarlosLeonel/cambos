@@ -11,6 +11,10 @@ class PCP(models.Model):
     pcp = JSONField()
 
 
+class Track(models.Model):    
+    pcp = JSONField()
+
+
 class Calendario(models.Model):    
     nome    = models.CharField(max_length=18)
 
