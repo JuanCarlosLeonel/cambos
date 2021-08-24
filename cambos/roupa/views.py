@@ -24,7 +24,9 @@ from .models import (
     PCP,
     Pedido,
     Processo,
-    TAG
+    TAG,
+    PedidoTrack,
+    Track
     )
 from django.http import JsonResponse
 from dateutil.parser import parse
@@ -42,8 +44,20 @@ def get_etapa(pk):
         nome = Etapa.objects.latest('id')
     return nome
 
+def update_track(lacre):
+    model = Track.objects.latest('pcp')
+    pedido = PedidoTrack.objects.filter(pedido__lacre=lacre)
+    for item in pedido:
+        user = str(item.user.user_bot.user_id)
+        model.pcp.append(
+            {"lacre":lacre,
+            "user":user
+            }
+        )
+    model.save()
 
-def update_api(pk):
+
+def update_api(lacre):
     try:
         url = 'http://187.45.32.103:20080/spi/intproducaoservice/statusentrega'
         response = requests.get(url)
@@ -812,6 +826,7 @@ class LogSuccessResponse(HttpResponse):
         super(LogSuccessResponse, self).close()
         if self.status_code == 200:            
             update_api(self.content)
+            update_track(self.content)
 
 
 def UpdateAPI(request, pk):
