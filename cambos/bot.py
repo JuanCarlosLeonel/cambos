@@ -213,21 +213,24 @@ def produtos_finalizacao(update, setor):
     return return_menu(update, text)
 
 ########################################
-def pedido_track(context: CallbackContext):
+def pedido_track(context: CallbackContext):    
     from roupa.models import Track
-    from core.models import UserBot
-    users = UserBot.objects.filter(ativo = True)
-    for user in users:
-        chat_id = user.user_id
-        text=f"""\U00002709 Olá, {user.user_nome}! {os.linesep}
-    \U000027a1 Segue o acompanhamento do pedido:{os.linesep}{os.linesep}"""
-        dados = Track.objects.latest('pcp')
-        if dados !=0:
-            text += f"""\U00002714{dados.pcp}{os.linesep}"""
-    # pedido = PedidoTrack.objects.filter(pedido__lacre = lacre)
-    # for item in pedido:
-    #     print(item.user.user_bot.user_id)
-    context.bot.send_message(chat_id=chat_id, text=text, parse_mode=ParseMode.HTML)
+    from core.models import User    
+    track = Track.objects.latest('pcp')
+    for index, requisicao in enumerate(track.pcp):
+        chat_id = requisicao['user']
+        user = User.objects.get(user_bot__user_id = chat_id)
+        text=f"""\U00002709 Olá, {user.first_name}! {os.linesep}
+                    \U000027a1 Segue o acompanhamento do pedido:{os.linesep}{os.linesep}"""
+        """dados = Track.objects.latest('pcp')
+        if dados !=0:"""
+            #text += f"""\U00002714{dados.pcp}{os.linesep}"""
+        # pedido = PedidoTrack.objects.filter(pedido__lacre = lacre)
+        # for item in pedido:
+        #     print(item.user.user_bot.user_id)
+        context.bot.send_message(chat_id=chat_id, text=text, parse_mode=ParseMode.HTML)
+        del track.pcp[index]
+        track.save()
 
 
 logging.basicConfig(
@@ -413,7 +416,7 @@ def main() -> None:
     hora = datetime.time(bot.horas, bot.minutos, 00, 000000) # +3 horas
     up_job = updater.job_queue    
     up_job.run_daily(resumo_diario, time=hora, days=(0, 1, 2, 3, 4))   
-    up_job.run_repeating(pedido_track,interval=10.0,first=hora) 
+    up_job.run_repeating(pedido_track,interval=10.0,first=0) 
     #up_job.run_once(resumo_diario, 10)
     updater.start_polling()
     updater.idle()
