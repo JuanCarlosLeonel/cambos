@@ -16,10 +16,13 @@
         </ol>
     </div><!--/.row-->
     <div class="row">
+			<script src="https://kit.fontawesome.com/dfb3144c94.js" crossorigin="anonymous"></script>
         <div class="col-lg-12">
             <h1 class="page-header">{{pedido.Modelo|safe}}<span class="text-muted small"> {{pedido.Nome}} </span></h1></h1>
 			<h3  class="text-body">Tipo: <span class="color-teal">{{pedido.Tipo}}</span> / Linha: <span class="color-teal">{{pedido.Peso}}</span> / Lacre: <span class="color-teal">{{pedido.Lacre}}</span></h3>
-
+			<div style="text-align: right;">
+				<button ><a href="{% url 'pedidotrack_create' pedido.Lacre %}" style="text-decoration:none"><i class="fas fa-dolly-flatbed"></i> ACOMPANHAR PEDIDO</button></a>
+			</div>
         </div>
     </div><!--/.row-->
 {% endblock navigation %}
@@ -39,7 +42,6 @@
 						<em class="fa fa-pencil"></em>
 					</a>
 					</li>
-					
 				</ul>				
 				<span class="pull-right clickable panel-toggle panel-button-tab-left"><em class="fa fa-toggle-up"></em></span></div>
 			<div class="panel-body ">
