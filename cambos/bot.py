@@ -165,6 +165,7 @@ def producao_por_celula(update, setor):
                 text=f"Produção <b>{celula}:</b> {os.linesep}\U00002757 {dados['contador']} entregas <b>ATRASADAS</b>: <b>{dados['somador']} peças.</b> Fichas:{os.linesep}"
                 for item in dados['listaficha']:
                     text +=f" <b>\U00002714{item}</b>{os.linesep}"
+                    
                 # for item in dados['diasatrasados']:
                 #     text +=f" <b>{item} Dias De Atraso</b>{os.linesep}"
                 
