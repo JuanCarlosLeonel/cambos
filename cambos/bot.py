@@ -162,15 +162,12 @@ def producao_por_celula(update, setor):
             if dados['contador'] != 0:     
                 text=f"Produção <b>{celula}:</b> {os.linesep}\U00002757 {dados['contador']} entregas <b>ATRASADAS</b>: <b>{dados['somador']} peças.</b> Fichas:{os.linesep}"
                 for item in dados['listaficha']:
-<<<<<<< HEAD
                     text +=f" <b>\U00002714{item}</b>{os.linesep}"
                     
                 # for item in dados['diasatrasados']:
                 #     text +=f" <b>{item} Dias De Atraso</b>{os.linesep}"
                 
-=======
                     text +=f" <b>\U00002714{item}{os.linesep}</b>"
->>>>>>> parent of 4a22373... pedido_trackBot
                 if c == 0:
                     update.edit_message_text(text, parse_mode=ParseMode.HTML)
                     c += 1
