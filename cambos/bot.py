@@ -24,7 +24,6 @@ def get_data(setor, context, oficina=None):
     contador = 0
     somador = 0   
     listaficha = [] 
-    diasatrasados = []
     for produto in dados:  
         if setor == 12:
             if context == 'atrasado':
@@ -56,7 +55,6 @@ def get_data(setor, context, oficina=None):
                                 contador += 1
                                 somador += produto['QuantPecas']
                                 listaficha.append(produto['FichaCorte'])
-                                diasatrasados.append(produto['Diasresto'])
                 else:
                     if context == 'atrasado':                        
                         if produto['Atrasado'] == "Em Atraso":            
@@ -98,7 +96,7 @@ def get_data(setor, context, oficina=None):
                         somador += produto['QuantPecas']
                         listaficha.append(produto['FichaCorte'])
 
-    return {'contador':contador,'somador':somador,'listaficha':listaficha,'diasatrasados':diasatrasados}
+    return {'contador':contador,'somador':somador,'listaficha':listaficha}
 
 def return_menu(update, text):
     keyboard = [[InlineKeyboardButton(f'\U000021A9 Menu', callback_data='menu')]]
@@ -164,11 +162,15 @@ def producao_por_celula(update, setor):
             if dados['contador'] != 0:     
                 text=f"Produção <b>{celula}:</b> {os.linesep}\U00002757 {dados['contador']} entregas <b>ATRASADAS</b>: <b>{dados['somador']} peças.</b> Fichas:{os.linesep}"
                 for item in dados['listaficha']:
+<<<<<<< HEAD
                     text +=f" <b>\U00002714{item}</b>{os.linesep}"
                     
                 # for item in dados['diasatrasados']:
                 #     text +=f" <b>{item} Dias De Atraso</b>{os.linesep}"
                 
+=======
+                    text +=f" <b>\U00002714{item}{os.linesep}</b>"
+>>>>>>> parent of 4a22373... pedido_trackBot
                 if c == 0:
                     update.edit_message_text(text, parse_mode=ParseMode.HTML)
                     c += 1
@@ -221,54 +223,19 @@ def produtos_finalizacao(update, setor):
 ########################################
 def pedido_track(context: CallbackContext):    
     from roupa.models import Track
-    from core.models import User
+    from core.models import User    
     track = Track.objects.latest('pcp')
-    setor = True
     for index, requisicao in enumerate(track.pcp):
         chat_id = requisicao['user']
         user = User.objects.get(user_bot__user_id = chat_id)
-        text=f"""\U00002709 Olá, {user.first_name}! {os.linesep} 
-        Segue o acompanhamento do pedido:{os.linesep}{os.linesep}"""
-        dados = Track.objects.latest('pcp')
-        if dados !=0:
-            for item in dados.pcp:
-                text += f"\U0001F516 Lacre: <b>{item['lacre']}</b>{os.linesep}\U0000231B Status:"
-            for produto in get_url():
-                if produto['Lacre'] == int(item['lacre']) :
-                    if produto['Status'] == 1 :
-                        text += f"<b> Modelagem</b>{os.linesep}"
-                        text += f"\U0001F69A Data entrega: <b>{produto['DataEntrega']}</b>"
-                    if produto['Status'] == 2 :
-                        text += f"<b> Encaixe</b>{os.linesep}"
-                        text += f"\U0001F69A Data entrega: <b>{produto['DataEntrega']}</b>"
-                    if produto['Status'] == 3 :
-                        text += f"<b> Expedição Tecido</b>{os.linesep}"
-                        text += f"\U0001F69A Data entrega: <b>{produto['DataEntrega']}</b>"
-                    if produto['Status'] == 4 :
-                        text += f"<b> Corte</b>{os.linesep}"
-                        text += f"\U0001F69A Data entrega: <b>{produto['DataEntrega']}</b>"
-                    if produto['Status'] == 5 :
-                        text += f"<b> Costura</b>{os.linesep}"
-                        text += f"\U0001F69A Data entrega: <b>{produto['DataEntrega']}</b>"
-                    if produto['Status'] == 6 :
-                        text += f"<b> Finalização</b>{os.linesep}"
-                        text += f"\U0001F69A Data entrega: <b>{produto['DataEntrega']}</b>"
-                    if produto['Status'] == 7 :
-                        text += f"<b> Lavanderia</b>{os.linesep}"
-                        text += f"\U0001F69A Data entrega: <b>{produto['DataEntrega']}</b>"
-                    if produto['Status'] == 8 :
-                        text += f"<b> Qualidade</b>{os.linesep}"
-                        text += f"\U0001F69A Data entrega: <b>{produto['DataEntrega']}</b>"
-                    if produto['Status'] == 9 :
-                        text += f"<b> Acabamento</b>{os.linesep}"
-                        text += f"\U0001F69A Data entrega: <b>{produto['DataEntrega']}</b>"
-                    if produto['Status'] == 10 :
-                        text += f"<b> Expedição</b>{os.linesep}"
-                        text += f"\U0001F69A Data entrega: <b>{produto['DataEntrega']}</b>"
-                    if produto['Status'] == 11 :
-                        text += f"<b> Pronto</b>{os.linesep}"
-                        text += f"\U0001F69A Data entrega: <b>{produto['DataEntrega']}</b>"
-
+        text=f"""\U00002709 Olá, {user.first_name}! {os.linesep}
+                    \U000027a1 Segue o acompanhamento do pedido:{os.linesep}{os.linesep}"""
+        """dados = Track.objects.latest('pcp')
+        if dados !=0:"""
+            #text += f"""\U00002714{dados.pcp}{os.linesep}"""
+        # pedido = PedidoTrack.objects.filter(pedido__lacre = lacre)
+        # for item in pedido:
+        #     print(item.user.user_bot.user_id)
         context.bot.send_message(chat_id=chat_id, text=text, parse_mode=ParseMode.HTML)
         del track.pcp[index]
         track.save()
@@ -350,9 +317,7 @@ def button(update: Update, _: CallbackContext) -> None:
         [
             InlineKeyboardButton("Entregas Atrasadas", callback_data='atraso_geral_confeccao'),
             InlineKeyboardButton("Produtos por Oficina", callback_data='producao_por_celula'),   
-                     
-        ],
-        [   InlineKeyboardButton("Produtos Finalização", callback_data='produtos_finalizacao'),
+            InlineKeyboardButton("Produtos Finalização", callback_data='produtos_finalizacao'),         
         ],
         [InlineKeyboardButton("Menu", callback_data='menu')],
         ]

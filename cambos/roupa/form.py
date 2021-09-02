@@ -1,6 +1,6 @@
 from django.forms import ModelForm, fields, widgets
 from django import forms
-from .models import Etapa, TAG, Pedido, PedidoTrack
+from .models import Etapa, TAG, Pedido
 
 
 class EtapaForm(forms.ModelForm):
@@ -33,18 +33,3 @@ class PedidoForm(forms.ModelForm):
             'lacre': forms.HiddenInput(attrs={'class':'form-control'})
             
             }
-
-
-class PedidoTrackForm(forms.ModelForm):
-    class Meta:
-        model = PedidoTrack
-        fields = ['pedido', 'user']
-        labels = {'pedido': 'Lacre',
-                  'user':   'Usuário'
-        }
-
-        widgets = {
-            'pedido': forms.Select(attrs={'class':'form-control'}),
-            'user': forms.Select(attrs={'class':'form-control'})
-        }
-
