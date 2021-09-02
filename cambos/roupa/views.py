@@ -2,7 +2,7 @@ import json
 from django.http.response import HttpResponse
 
 from requests.api import get
-from .form import EtapaForm, PedidoForm, TAGForm
+from .form import EtapaForm, PedidoForm, TAGForm, PedidoTrackForm
 from django.views.generic.edit import UpdateView, CreateView
 from django.views.generic.base import TemplateView
 from django.views.generic.list import ListView
@@ -832,3 +832,14 @@ class LogSuccessResponse(HttpResponse):
 def UpdateAPI(request, pk):
     response = LogSuccessResponse(pk)
     return response
+
+
+@method_decorator(login_required, name='dispatch')
+class PedidoTrackCreate(CreateView):    
+    model = PedidoTrack
+    template_name = 'roupa/pedidotrack_create.html'
+    form_class = PedidoTrackForm
+
+    def get_success_url(self):
+        pk = self.kwargs['pk']
+        return f'/roupa/pedido_detail/{pk}'
