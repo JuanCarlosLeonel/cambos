@@ -47,17 +47,20 @@ def get_etapa(pk):
 def update_track(lacre):
     model = Track.objects.latest('pcp')
     pedido = PedidoTrack.objects.filter(pedido__lacre=lacre)
-    for item in pedido:
-        user = str(item.user.user_bot.user_id)
-        model.pcp.append(
-            {"lacre":lacre,
-            "user":user
-            }
-        )
-    model.save()
+    try:
+        for item in pedido:
+            user = str(item.user.user_bot.user_id)
+            model.pcp.append(
+                {"lacre":lacre,
+                "user":user
+                }
+            )
+        model.save()
+    except:
+        pass
 
 
-def update_api(lacre):
+def update_api():
     try:
         url = 'http://187.45.32.103:20080/spi/intproducaoservice/statusentrega'
         response = requests.get(url)
@@ -78,6 +81,22 @@ def get_url():
         dados = response.json()
         return dados['value']
 
+
+def check_update_api():
+    url = 'http://187.45.32.103:20080/spi/intproducaoservice/statusentrega'
+    response = requests.get(url)
+    dados_spi = response.json()
+    dados_pcp = API.objects.get(id=1).api
+    change = 0
+    for item_spi in dados_spi['value']:
+        for item_pcp in dados_pcp['value']:
+            if item_spi['Lacre'] == item_pcp['Lacre']:
+                if not item_spi['Status'] == item_pcp['Status']:
+                    update_track(item_spi['Lacre'])
+                    change = 1
+    if change == 1:
+        update_api()        
+    
 
 def get_pcp_pedido(pk):
     try:        
@@ -825,7 +844,7 @@ class LogSuccessResponse(HttpResponse):
     def close(self):
         super(LogSuccessResponse, self).close()
         if self.status_code == 200:            
-            update_api(self.content)
+            update_api()
             update_track(self.content)
 
 
