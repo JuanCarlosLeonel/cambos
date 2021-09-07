@@ -267,6 +267,12 @@ def pedido_track(context: CallbackContext):
                     elif produto['Status'] == 11 :
                         text += f"<b> Pronto</b>{os.linesep}"
                         text += f"\U0001F69A Data entrega: <b>{produto['DataEntrega']}</b>"
+                    if produto['Atrasado'] == "Em Dia":
+                        text += f"{os.linesep}\U00002757 Situação: <b>Em dia.</b>"
+                    elif produto['Atrasado'] == "Atrasado":
+                        text += f"{os.linesep}\U00002757 Situação: <b>Atrasado.</b>"
+                    elif produto['Atrasado'] == "Em Atraso":
+                        text += f"{os.linesep}\U00002757 Situação: <b>Em Atraso.</b>"
 
         context.bot.send_message(chat_id=chat_id, text=text, parse_mode=ParseMode.HTML)
         del track.pcp[index]
