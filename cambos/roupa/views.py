@@ -44,6 +44,7 @@ def get_etapa(pk):
         nome = Etapa.objects.latest('id')
     return nome
 
+
 def update_track(lacre):
     model = Track.objects.latest('pcp')
     pedido = PedidoTrack.objects.filter(pedido__lacre=lacre)
@@ -86,14 +87,26 @@ def check_update_api():
     url = 'http://187.45.32.103:20080/spi/intproducaoservice/statusentrega'
     response = requests.get(url)
     dados_spi = response.json()
-    dados_pcp = API.objects.get(id=1).api
-    change = 0
+    dados_api = API.objects.get(id=1).api
+    dados_pcp = PCP.objects.get(id=1)
+    change = 0    
     for item_spi in dados_spi['value']:
-        for item_pcp in dados_pcp['value']:
-            if item_spi['Lacre'] == item_pcp['Lacre']:
-                if not item_spi['Status'] == item_pcp['Status']:
+        match = 0
+        for item_api in dados_api['value']:
+            if item_spi['Lacre'] == item_api['Lacre']:                
+                if not item_spi['Status'] == item_api['Status']:
                     update_track(item_spi['Lacre'])
                     change = 1
+        for item_pcp in dados_pcp.pcp:        
+            if item_spi['Lacre'] == item_pcp['lacre']:
+                match = 1                             
+        if match == 0:            
+            print('achei')
+            novo = get_pcp_pedido(item_spi['Lacre'])                
+            dados_pcp.pcp.append(novo)            
+            dados_pcp.save()
+            print('salvei')
+
     if change == 1:
         update_api()        
     
