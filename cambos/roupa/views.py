@@ -100,12 +100,10 @@ def check_update_api():
         for item_pcp in dados_pcp.pcp:        
             if item_spi['Lacre'] == item_pcp['lacre']:
                 match = 1                             
-        if match == 0:            
-            print('achei')
+        if match == 0:                        
             novo = get_pcp_pedido(item_spi['Lacre'])                
             dados_pcp.pcp.append(novo)            
-            dados_pcp.save()
-            print('salvei')
+            dados_pcp.save()            
 
     if change == 1:
         update_api()        
