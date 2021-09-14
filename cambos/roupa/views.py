@@ -32,6 +32,7 @@ from django.http import JsonResponse
 from dateutil.parser import parse
 from django.core import serializers
 
+
 def parse_date(item):
     date = parse(item).date()
     return date
@@ -47,7 +48,7 @@ def get_etapa(pk):
 
 def update_track(lacre):
     model = Track.objects.latest('pcp')
-    pedido = PedidoTrack.objects.filter(pedido__lacre=lacre)
+    pedido = PedidoTrack.objects.filter(lacre=lacre)
     try:
         for item in pedido:
             user = str(item.user.user_bot.user_id)
@@ -101,9 +102,10 @@ def check_update_api():
             if item_spi['Lacre'] == item_pcp['lacre']:
                 match = 1                             
         if match == 0:                        
-            novo = get_pcp_pedido(item_spi['Lacre'])                
-            dados_pcp.pcp.append(novo)            
-            dados_pcp.save()            
+            novo = get_pcp_pedido(item_spi['Lacre'])  
+            if not novo == 0:                   
+                dados_pcp.pcp.append(novo)            
+                dados_pcp.save()            
 
     if change == 1:
         update_api()        
@@ -111,7 +113,7 @@ def check_update_api():
 
 def get_pcp_pedido(pk):
     try:        
-        pcp = PCP.objects.get(id=1).pcp      
+        pcp = PCP.objects.latest("id").pcp      
         pedido = 0     
         for produto in pcp:        
             if produto['lacre'] == pk:                                
@@ -129,22 +131,58 @@ def get_pcp_pedido(pk):
                             {
                                 'nome':'Modelagem',
                                 'p_inicio':produto['DataPedido'],                    
-                                'p_fim':produto['DataEntrega']
+                                'p_fim':parse_date(produto['DataPedido']) + timedelta(days=1)
                             },
-                            {'nome':'Expedição Tecido'},
-                            {'nome':'Encaixe'},                            
-                            {'nome':'Corte'},
-                            {'nome':'Costura'},
-                            {'nome':'Lavanderia'},
-                            {'nome':'Qualidade'},
-                            {'nome':'Acabamento'},
-                            {'nome':'Expedição'},
-                            {'nome':'Estoque'},                            
+                            {
+                                'nome':'Expedição Tecido',
+                                'p_inicio':parse_date(produto['DataPedido']) + timedelta(days=1),
+                                'p_fim':parse_date(produto['DataPedido']) + timedelta(days=2)
+                            },
+                            {
+                                'nome':'Encaixe',                                
+                                'p_inicio':parse_date(produto['DataPedido']) + timedelta(days=2),
+                                'p_fim':parse_date(produto['DataPedido']) + timedelta(days=3)
+                            },                            
+                            {
+                                'nome':'Corte',                                
+                                'p_inicio':parse_date(produto['DataPedido']) + timedelta(days=3),
+                                'p_fim':parse_date(produto['DataPedido']) + timedelta(days=4)
+                            },
+                            {
+                                'nome':'Costura',                                
+                                'p_inicio':parse_date(produto['DataPedido']) + timedelta(days=4),
+                                'p_fim':parse_date(produto['DataPedido']) + timedelta(days=21)
+                            },
+                            {
+                                'nome':'Lavanderia',                                
+                                'p_inicio':parse_date(produto['DataPedido']) + timedelta(days=21),
+                                'p_fim':parse_date(produto['DataPedido']) + timedelta(days=24)
+                            },
+                            {
+                                'nome':'Qualidade',                                
+                                'p_inicio':parse_date(produto['DataPedido']) + timedelta(days=24),
+                                'p_fim':parse_date(produto['DataPedido']) + timedelta(days=25)
+                            },
+                            {
+                                'nome':'Acabamento',                                
+                                'p_inicio':parse_date(produto['DataPedido']) + timedelta(days=25),
+                                'p_fim':parse_date(produto['DataPedido']) + timedelta(days=28)
+                            },
+                            {
+                                'nome':'Expedição',                                
+                                'p_inicio':parse_date(produto['DataPedido']) + timedelta(days=28),
+                                'p_fim':parse_date(produto['DataPedido']) + timedelta(days=29)
+                            },
+                            {
+                                'nome':'Estoque',                                
+                                'p_inicio':parse_date(produto['DataPedido']) + timedelta(days=29),
+                                'p_fim':parse_date(produto['DataPedido']) + timedelta(days=30)
+                            },
                         ]
-                    }
-            
+                    }                
     except:
         pedido = False
+    
     return pedido
 
 
@@ -795,6 +833,7 @@ class PcpList(TemplateView):
             if item['nome'] == "Modelagem":
                 if not pedido['DataPedido'] is None:
                     item['inicio'] = parse_date(pedido['DataPedido'])
+                    item['p_fim'] = parse_date(pedido['DataPedido'] )
                     if not pedido['DataExpTecido'] is None:
                         item['fim'] = parse_date(pedido['DataExpTecido'])                    
             if item['nome'] == "Expedição Tecido":

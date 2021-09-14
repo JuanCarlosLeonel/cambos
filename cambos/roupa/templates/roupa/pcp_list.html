@@ -48,14 +48,16 @@
                         {% for item in pcp.processo %}
                         <tr>
                             <th>{{item.nome}}</th>
-                            <td>{{item.inicio|date:'d/m/Y'}}</td>
-                            <td>{{item.fim|date:'d/m/Y'}}</td>
-                            <td></td>
-                            <td></td>
+                            <td>{{item.inicio}}</td>
+                            <td>{{item.fim}}</td>
+                            <td>{{item.p_inicio}}</td>
+                            <td>{{item.p_fim}}</td>
                             {% if not item.fim%}
                             <td><a href="{% url 'pcp_update' lacre item.nome %}">
                                 <em class="fa fa-pencil"></em>
                             </a></td>
+                            {%else%}
+                            <td></td>
                             {%endif%}
                         </tr>
                         {%endfor%}                        
