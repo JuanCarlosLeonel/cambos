@@ -48,7 +48,7 @@ def get_etapa(pk):
 
 def update_track(lacre):
     model = Track.objects.latest('pcp')
-    pedido = PedidoTrack.objects.filter(pedido__lacre=lacre)
+    pedido = PedidoTrack.objects.filter(lacre=lacre)
     try:
         for item in pedido:
             user = str(item.user.user_bot.user_id)

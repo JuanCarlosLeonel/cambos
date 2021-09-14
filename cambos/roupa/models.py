@@ -83,7 +83,7 @@ class Pedido(models.Model):
         return f'{self.lacre}'
 
 
-class PedidoTrack(models.Model):
-    pedido = models.ForeignKey(Pedido, on_delete=CASCADE)
+class PedidoTrack(models.Model):    
     user   = models.ForeignKey(User, on_delete=models.CASCADE)
+    lacre = models.IntegerField(default=0)
     
