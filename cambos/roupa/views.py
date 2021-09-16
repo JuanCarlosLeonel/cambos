@@ -64,7 +64,7 @@ def update_track(lacre):
 
 def update_api():
     try:
-        url = 'http://187.45.32.103:20080/spi/intproducaoservice/statusentrega'
+        url = 'http://187.45.32.235:20080/spi/intproducaoservice/statusentrega'
         response = requests.get(url)
         dados = response.json()
         model = API.objects.get(id=1)
@@ -78,14 +78,14 @@ def get_url():
     try:  
         return  API.objects.get(id=1).api['value']
     except:
-        url = 'http://187.45.32.103:20080/spi/intproducaoservice/statusentrega'
+        url = 'http://187.45.32.235:20080/spi/intproducaoservice/statusentrega'
         response = requests.get(url)
         dados = response.json()
         return dados['value']
 
 
 def check_update_api():
-    url = 'http://187.45.32.103:20080/spi/intproducaoservice/statusentrega'
+    url = 'http://187.45.32.235:20080/spi/intproducaoservice/statusentrega'
     response = requests.get(url)
     dados_spi = response.json()
     dados_api = API.objects.get(id=1).api
