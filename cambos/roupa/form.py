@@ -34,16 +34,3 @@ class PedidoForm(forms.ModelForm):
             
             }
 
-
-class PedidoTrackForm(forms.ModelForm):
-    class Meta:
-        model = PedidoTrack
-        fields = ['pedido', 'user']
-        labels = {'pedido': 'Lacre',
-                  'user':   'Usuário'
-        }
-
-        widgets = {
-            'pedido': forms.Select(attrs={'class':'form-control'}),
-            'user': forms.Select(attrs={'class':'form-control'})
-        }

@@ -2,7 +2,7 @@ import json
 from django.http.response import HttpResponse
 
 from requests.api import get
-from .form import EtapaForm, PedidoForm, TAGForm, PedidoTrackForm
+from .form import EtapaForm, PedidoForm, TAGForm
 from django.views.generic.edit import UpdateView, CreateView
 from django.views.generic.base import TemplateView
 from django.views.generic.list import ListView
@@ -32,6 +32,7 @@ from django.http import JsonResponse
 from dateutil.parser import parse
 from django.core import serializers
 
+
 def parse_date(item):
     date = parse(item).date()
     return date
@@ -44,9 +45,10 @@ def get_etapa(pk):
         nome = Etapa.objects.latest('id')
     return nome
 
+
 def update_track(lacre):
     model = Track.objects.latest('pcp')
-    pedido = PedidoTrack.objects.filter(pedido__lacre=lacre)
+    pedido = PedidoTrack.objects.filter(lacre=lacre)
     try:
         for item in pedido:
             user = str(item.user.user_bot.user_id)
@@ -62,7 +64,7 @@ def update_track(lacre):
 
 def update_api():
     try:
-        url = 'http://187.45.32.103:20080/spi/intproducaoservice/statusentrega'
+        url = 'http://187.45.32.235:20080/spi/intproducaoservice/statusentrega'
         response = requests.get(url)
         dados = response.json()
         model = API.objects.get(id=1)
@@ -76,31 +78,42 @@ def get_url():
     try:  
         return  API.objects.get(id=1).api['value']
     except:
-        url = 'http://187.45.32.103:20080/spi/intproducaoservice/statusentrega'
+        url = 'http://187.45.32.235:20080/spi/intproducaoservice/statusentrega'
         response = requests.get(url)
         dados = response.json()
         return dados['value']
 
 
 def check_update_api():
-    url = 'http://187.45.32.103:20080/spi/intproducaoservice/statusentrega'
+    url = 'http://187.45.32.235:20080/spi/intproducaoservice/statusentrega'
     response = requests.get(url)
     dados_spi = response.json()
-    dados_pcp = API.objects.get(id=1).api
-    change = 0
+    dados_api = API.objects.get(id=1).api
+    dados_pcp = PCP.objects.get(id=1)
+    change = 0    
     for item_spi in dados_spi['value']:
-        for item_pcp in dados_pcp['value']:
-            if item_spi['Lacre'] == item_pcp['Lacre']:
-                if not item_spi['Status'] == item_pcp['Status']:
+        match = 0
+        for item_api in dados_api['value']:
+            if item_spi['Lacre'] == item_api['Lacre']:                
+                if not item_spi['Status'] == item_api['Status']:
                     update_track(item_spi['Lacre'])
                     change = 1
+        for item_pcp in dados_pcp.pcp:        
+            if item_spi['Lacre'] == item_pcp['lacre']:
+                match = 1                             
+        if match == 0:                        
+            novo = get_pcp_pedido(item_spi['Lacre'])  
+            if not novo == 0:                   
+                dados_pcp.pcp.append(novo)            
+                dados_pcp.save()            
+
     if change == 1:
         update_api()        
     
 
 def get_pcp_pedido(pk):
     try:        
-        pcp = PCP.objects.get(id=1).pcp      
+        pcp = PCP.objects.latest("id").pcp      
         pedido = 0     
         for produto in pcp:        
             if produto['lacre'] == pk:                                
@@ -118,22 +131,58 @@ def get_pcp_pedido(pk):
                             {
                                 'nome':'Modelagem',
                                 'p_inicio':produto['DataPedido'],                    
-                                'p_fim':produto['DataEntrega']
+                                'p_fim':parse_date(produto['DataPedido']) + timedelta(days=1)
                             },
-                            {'nome':'Expedição Tecido'},
-                            {'nome':'Encaixe'},                            
-                            {'nome':'Corte'},
-                            {'nome':'Costura'},
-                            {'nome':'Lavanderia'},
-                            {'nome':'Qualidade'},
-                            {'nome':'Acabamento'},
-                            {'nome':'Expedição'},
-                            {'nome':'Estoque'},                            
+                            {
+                                'nome':'Expedição Tecido',
+                                'p_inicio':parse_date(produto['DataPedido']) + timedelta(days=1),
+                                'p_fim':parse_date(produto['DataPedido']) + timedelta(days=2)
+                            },
+                            {
+                                'nome':'Encaixe',                                
+                                'p_inicio':parse_date(produto['DataPedido']) + timedelta(days=2),
+                                'p_fim':parse_date(produto['DataPedido']) + timedelta(days=3)
+                            },                            
+                            {
+                                'nome':'Corte',                                
+                                'p_inicio':parse_date(produto['DataPedido']) + timedelta(days=3),
+                                'p_fim':parse_date(produto['DataPedido']) + timedelta(days=4)
+                            },
+                            {
+                                'nome':'Costura',                                
+                                'p_inicio':parse_date(produto['DataPedido']) + timedelta(days=4),
+                                'p_fim':parse_date(produto['DataPedido']) + timedelta(days=21)
+                            },
+                            {
+                                'nome':'Lavanderia',                                
+                                'p_inicio':parse_date(produto['DataPedido']) + timedelta(days=21),
+                                'p_fim':parse_date(produto['DataPedido']) + timedelta(days=24)
+                            },
+                            {
+                                'nome':'Qualidade',                                
+                                'p_inicio':parse_date(produto['DataPedido']) + timedelta(days=24),
+                                'p_fim':parse_date(produto['DataPedido']) + timedelta(days=25)
+                            },
+                            {
+                                'nome':'Acabamento',                                
+                                'p_inicio':parse_date(produto['DataPedido']) + timedelta(days=25),
+                                'p_fim':parse_date(produto['DataPedido']) + timedelta(days=28)
+                            },
+                            {
+                                'nome':'Expedição',                                
+                                'p_inicio':parse_date(produto['DataPedido']) + timedelta(days=28),
+                                'p_fim':parse_date(produto['DataPedido']) + timedelta(days=29)
+                            },
+                            {
+                                'nome':'Estoque',                                
+                                'p_inicio':parse_date(produto['DataPedido']) + timedelta(days=29),
+                                'p_fim':parse_date(produto['DataPedido']) + timedelta(days=30)
+                            },
                         ]
-                    }
-            
+                    }                
     except:
         pedido = False
+    
     return pedido
 
 
@@ -487,10 +536,10 @@ class ProgramacaoList(TemplateView):
 class PedidoDetail(TemplateView):    
     template_name = 'roupa/pedido_detail.html'
 
-    def get_context_data(self, **kwargs):
+    def get(self, request, *args, **kwargs):
         context = super().get_context_data(**kwargs)                        
         lacre = self.kwargs['pk']
-        lista = dados_pedido(lacre)        
+        lista = dados_pedido(lacre)   
         context['pedido'] = lista
         try:     
             pedido_tag=Pedido.objects.get(lacre=self.kwargs['pk'])
@@ -568,8 +617,26 @@ class PedidoDetail(TemplateView):
                 if not lista['DataFimProducao'] is None:
                     item['inicio'] = lista['DataFimProducao']                                           
                     item['fim'] = str(datetime.today())
+
         context['programacao'] = json.dumps(pcp)
-        return context
+        usuario = self.request.user
+        listarastreado = PedidoTrack.objects.filter(user=usuario,lacre=lacre)
+        rastreado = len(listarastreado)
+        context['rastreio'] = rastreado
+        edit = self.request.GET.get('editar') 
+        if edit == 'true':
+            model = PedidoTrack(user = usuario, lacre = lacre)
+            model.save()
+
+        elif edit == 'false':
+            model = PedidoTrack.objects.get(user=usuario,lacre=lacre)
+            model.delete()
+
+        if not edit is None :  
+            return redirect(f'/roupa/pedido_detail/{lacre}')   
+            
+        else:
+            return render(request, 'roupa/pedido_detail.html', context)
 
 
 @method_decorator(login_required, name='dispatch')
@@ -784,6 +851,7 @@ class PcpList(TemplateView):
             if item['nome'] == "Modelagem":
                 if not pedido['DataPedido'] is None:
                     item['inicio'] = parse_date(pedido['DataPedido'])
+                    item['p_fim'] = parse_date(pedido['DataPedido'] )
                     if not pedido['DataExpTecido'] is None:
                         item['fim'] = parse_date(pedido['DataExpTecido'])                    
             if item['nome'] == "Expedição Tecido":
@@ -853,12 +921,3 @@ def UpdateAPI(request, pk):
     return response
 
 
-@method_decorator(login_required, name='dispatch')
-class PedidoTrackCreate(CreateView):    
-    model = PedidoTrack
-    template_name = 'roupa/pedidotrack_create.html'
-    form_class = PedidoTrackForm
-
-    def get_success_url(self):
-        pk = self.kwargs['pk']
-        return f'/roupa/pedido_detail/{pk}'
