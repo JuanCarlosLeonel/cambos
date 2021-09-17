@@ -267,6 +267,12 @@ def pedido_track(context: CallbackContext):
                     elif produto['Status'] == 11 :
                         text += f"<b> Pronto</b>{os.linesep}"
                         text += f"\U0001F69A Data entrega: <b>{produto['DataEntrega']}</b>"
+                    if produto['Atrasado'] == "Em Dia":
+                        text += f"{os.linesep}\U00002757 Situação: <b>Em dia.</b>"
+                    elif produto['Atrasado'] == "Atrasado":
+                        text += f"{os.linesep}\U00002757 Situação: <b>Atrasado.</b>"
+                    elif produto['Atrasado'] == "Em Atraso":
+                        text += f"{os.linesep}\U00002757 Situação: <b>Em Atraso.</b>"
 
         context.bot.send_message(chat_id=chat_id, text=text, parse_mode=ParseMode.HTML)
         del track.pcp[index]
@@ -458,7 +464,7 @@ def main() -> None:
     hora = datetime.time(bot.horas, bot.minutos, 00, 000000) # +3 horas
     up_job = updater.job_queue    
     up_job.run_daily(resumo_diario, time=hora, days=(0, 1, 2, 3, 4))   
-    up_job.run_repeating(pedido_track, interval=60.0, first=0) 
+    up_job.run_repeating(pedido_track, interval=120.0, first=0) 
     #up_job.run_once(resumo_diario, 10)
     updater.start_polling()
     updater.idle()

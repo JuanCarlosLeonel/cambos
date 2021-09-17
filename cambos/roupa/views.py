@@ -2,7 +2,7 @@ import json
 from django.http.response import HttpResponse
 
 from requests.api import get
-from .form import EtapaForm, PedidoForm, TAGForm, PedidoTrackForm
+from .form import EtapaForm, PedidoForm, TAGForm
 from django.views.generic.edit import UpdateView, CreateView
 from django.views.generic.base import TemplateView
 from django.views.generic.list import ListView
@@ -536,10 +536,10 @@ class ProgramacaoList(TemplateView):
 class PedidoDetail(TemplateView):    
     template_name = 'roupa/pedido_detail.html'
 
-    def get_context_data(self, **kwargs):
+    def get(self, request, *args, **kwargs):
         context = super().get_context_data(**kwargs)                        
         lacre = self.kwargs['pk']
-        lista = dados_pedido(lacre)        
+        lista = dados_pedido(lacre)   
         context['pedido'] = lista
         try:     
             pedido_tag=Pedido.objects.get(lacre=self.kwargs['pk'])
@@ -617,8 +617,26 @@ class PedidoDetail(TemplateView):
                 if not lista['DataFimProducao'] is None:
                     item['inicio'] = lista['DataFimProducao']                                           
                     item['fim'] = str(datetime.today())
+
         context['programacao'] = json.dumps(pcp)
-        return context
+        usuario = self.request.user
+        listarastreado = PedidoTrack.objects.filter(user=usuario,lacre=lacre)
+        rastreado = len(listarastreado)
+        context['rastreio'] = rastreado
+        edit = self.request.GET.get('editar') 
+        if edit == 'true':
+            model = PedidoTrack(user = usuario, lacre = lacre)
+            model.save()
+
+        elif edit == 'false':
+            model = PedidoTrack.objects.get(user=usuario,lacre=lacre)
+            model.delete()
+
+        if not edit is None :  
+            return redirect(f'/roupa/pedido_detail/{lacre}')   
+            
+        else:
+            return render(request, 'roupa/pedido_detail.html', context)
 
 
 @method_decorator(login_required, name='dispatch')
@@ -903,12 +921,3 @@ def UpdateAPI(request, pk):
     return response
 
 
-@method_decorator(login_required, name='dispatch')
-class PedidoTrackCreate(CreateView):    
-    model = PedidoTrack
-    template_name = 'roupa/pedidotrack_create.html'
-    form_class = PedidoTrackForm
-
-    def get_success_url(self):
-        pk = self.kwargs['pk']
-        return f'/roupa/pedido_detail/{pk}'

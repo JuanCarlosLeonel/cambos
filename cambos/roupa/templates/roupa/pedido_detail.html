@@ -21,7 +21,35 @@
             <h1 class="page-header">{{pedido.Modelo|safe}}<span class="text-muted small"> {{pedido.Nome}} </span></h1></h1>
 			<h3  class="text-body">Tipo: <span class="color-teal">{{pedido.Tipo}}</span> / Linha: <span class="color-teal">{{pedido.Peso}}</span> / Lacre: <span class="color-teal">{{pedido.Lacre}}</span></h3>
 			<div style="text-align: right;">
-				<button ><a href="{% url 'pedidotrack_create' pedido.Lacre %}" style="text-decoration:none"><i class="fas fa-dolly-flatbed"></i> ACOMPANHAR PEDIDO</button></a>
+                <form class="" id="" method="submit">
+					{% if rastreio == 0 %}
+					<button class="fas fa-dolly-flatbed btn btn-success" type="submit" role="button" value="null" onclick="acpedido()">
+						<script>
+							function acpedido(){
+							   alert('Em breve você receberá uma notificação em seu Telegram com o Status de acompanhamento!');
+							}
+						</script>
+                        Acompanhar Pedido
+                    </button>
+					<input type="hidden" class="form-control" id="editar" name="editar"
+                        value="true" placeholder="editar"
+                        aria-label="editar" aria-describedby="basic-addon1">
+					{% else %}
+                    <button class="fas fa-window-close btn btn-danger" type="submit" role="button" value="null" onclick="cpedido()">
+						<script>
+							function cpedido(){
+							   alert('Acompanhamento de Pedido cancelado com sucesso! Você não receberá mais notificações sobre seu Status.');
+							}
+						</script>
+                        Cancelar Acompanhamento
+                    </button>
+					<input type="hidden" class="form-control" id="editar" name="editar"
+                        value="false" placeholder="editar"
+                        aria-label="editar" aria-describedby="basic-addon1">
+					{% endif %}
+
+
+					</form>
 			</div>
         </div>
     </div><!--/.row-->
