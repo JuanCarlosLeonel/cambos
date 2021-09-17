@@ -464,7 +464,7 @@ def main() -> None:
     hora = datetime.time(bot.horas, bot.minutos, 00, 000000) # +3 horas
     up_job = updater.job_queue    
     up_job.run_daily(resumo_diario, time=hora, days=(0, 1, 2, 3, 4))   
-    up_job.run_repeating(pedido_track, interval=60.0, first=0) 
+    up_job.run_repeating(pedido_track, interval=120.0, first=0) 
     #up_job.run_once(resumo_diario, 10)
     updater.start_polling()
     updater.idle()
