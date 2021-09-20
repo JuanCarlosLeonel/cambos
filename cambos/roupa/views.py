@@ -96,6 +96,7 @@ def check_update_api():
         for item_api in dados_api['value']:
             if item_spi['Lacre'] == item_api['Lacre']:                
                 if not item_spi['Status'] == item_api['Status']:
+                    update_api()
                     update_track(item_spi['Lacre'])
                     change = 1
         for item_pcp in dados_pcp.pcp:        

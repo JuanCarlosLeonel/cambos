@@ -11,8 +11,8 @@ from .models import (
 
 
 class UserAdmin(admin.ModelAdmin):
-    list_filter = ['setor']
-    list_display = ['username','email']
+    list_filter = ['setor','is_active']
+    list_display = ['username','email','is_staff']
 
 
 admin.site.register(User,UserAdmin)

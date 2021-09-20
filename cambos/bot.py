@@ -168,7 +168,7 @@ def producao_por_celula(update, setor):
                 # for item in dados['diasatrasados']:
                 #     text +=f" <b>{item} Dias De Atraso</b>{os.linesep}"
                 
-                    text +=f" <b>\U00002714{item}{os.linesep}</b>"
+                    # text +=f" <b>\U00002714{item}{os.linesep}</b>"
                 if c == 0:
                     update.edit_message_text(text, parse_mode=ParseMode.HTML)
                     c += 1
@@ -228,51 +228,46 @@ def pedido_track(context: CallbackContext):
         user = User.objects.get(user_bot__user_id = chat_id)
         text=f"""\U00002709 Olá, {user.first_name}! {os.linesep} 
         Segue o acompanhamento do pedido:{os.linesep}{os.linesep}"""
-        dados = Track.objects.latest('pcp')
-        if dados !=0:
-            for item in dados.pcp:
-                text += f"\U0001F516 Lacre: <b>{item['lacre']}</b>{os.linesep}\U0000231B Status:"
-            for produto in get_url():
-                if produto['Lacre'] == int(item['lacre']) :
-                    if produto['Status'] == 1 :
-                        text += f"<b> Modelagem</b>{os.linesep}"
-                        text += f"\U0001F69A Data entrega: <b>{produto['DataEntrega']}</b>"
-                    elif produto['Status'] == 2 :
-                        text += f"<b> Encaixe</b>{os.linesep}"
-                        text += f"\U0001F69A Data entrega: <b>{produto['DataEntrega']}</b>"
-                    elif produto['Status'] == 3 :
-                        text += f"<b> Expedição Tecido</b>{os.linesep}"
-                        text += f"\U0001F69A Data entrega: <b>{produto['DataEntrega']}</b>"
-                    elif produto['Status'] == 4 :
-                        text += f"<b> Corte</b>{os.linesep}"
-                        text += f"\U0001F69A Data entrega: <b>{produto['DataEntrega']}</b>"
-                    elif produto['Status'] == 5 :
-                        text += f"<b> Costura</b>{os.linesep}"
-                        text += f"\U0001F69A Data entrega: <b>{produto['DataEntrega']}</b>"
-                    elif produto['Status'] == 6 :
-                        text += f"<b> Finalização</b>{os.linesep}"
-                        text += f"\U0001F69A Data entrega: <b>{produto['DataEntrega']}</b>"
-                    elif produto['Status'] == 7 :
-                        text += f"<b> Lavanderia</b>{os.linesep}"
-                        text += f"\U0001F69A Data entrega: <b>{produto['DataEntrega']}</b>"
-                    elif produto['Status'] == 8 :
-                        text += f"<b> Qualidade</b>{os.linesep}"
-                        text += f"\U0001F69A Data entrega: <b>{produto['DataEntrega']}</b>"
-                    elif produto['Status'] == 9 :
-                        text += f"<b> Acabamento</b>{os.linesep}"
-                        text += f"\U0001F69A Data entrega: <b>{produto['DataEntrega']}</b>"
-                    elif produto['Status'] == 10 :
-                        text += f"<b> Expedição</b>{os.linesep}"
-                        text += f"\U0001F69A Data entrega: <b>{produto['DataEntrega']}</b>"
-                    elif produto['Status'] == 11 :
-                        text += f"<b> Pronto</b>{os.linesep}"
-                        text += f"\U0001F69A Data entrega: <b>{produto['DataEntrega']}</b>"
-                    if produto['Atrasado'] == "Em Dia":
-                        text += f"{os.linesep}\U00002757 Situação: <b>Em dia.</b>"
-                    elif produto['Atrasado'] == "Atrasado":
-                        text += f"{os.linesep}\U00002757 Situação: <b>Atrasado.</b>"
-                    elif produto['Atrasado'] == "Em Atraso":
-                        text += f"{os.linesep}\U00002757 Situação: <b>Em Atraso.</b>"
+        dadoslacre = requisicao['lacre']
+        text += f"\U0001F516 Lacre: <b>{dadoslacre}</b>{os.linesep}"
+
+        for produto in get_url():
+            if produto['Lacre'] == int(dadoslacre) :
+                if produto['Status'] == 1 :
+                    text += f"\U0000231B Status: <b> Modelagem</b>{os.linesep}"
+                    text += f"\U0001F69A Data entrega: <b>{produto['DataEntrega']}</b>"
+                elif produto['Status'] == 2 :
+                    text += f"\U0000231B Status: <b> Encaixe</b>{os.linesep}"
+                    text += f"\U0001F69A Data entrega: <b>{produto['DataEntrega']}</b>"
+                elif produto['Status'] == 3 :
+                    text += f"\U0000231B Status: <b> Expedição Tecido</b>{os.linesep}"
+                    text += f"\U0001F69A Data entrega: <b>{produto['DataEntrega']}</b>"
+                elif produto['Status'] == 4 :
+                    text += f"\U0000231B Status: <b> Corte</b>{os.linesep}"
+                    text += f"\U0001F69A Data entrega: <b>{produto['DataEntrega']}</b>"
+                elif produto['Status'] == 5 :
+                    text += f"\U0000231B Status: <b> Costura</b>{os.linesep}"
+                    text += f"\U0001F69A Data entrega: <b>{produto['DataEntrega']}</b>"
+                elif produto['Status'] == 6 :
+                    text += f"\U0000231B Status: <b> Finalização</b>{os.linesep}"
+                    text += f"\U0001F69A Data entrega: <b>{produto['DataEntrega']}</b>"
+                elif produto['Status'] == 7 :
+                    text += f"\U0000231B Status: <b> Lavanderia</b>{os.linesep}"
+                    text += f"\U0001F69A Data entrega: <b>{produto['DataEntrega']}</b>"
+                elif produto['Status'] == 8 :
+                    text += f"<b> Qualidade</b>{os.linesep}"
+                    text += f"\U0001F69A Data entrega: <b>{produto['DataEntrega']}</b>"
+                elif produto['Status'] == 9 :
+                    text += f"\U0000231B Status: <b> Acabamento</b>{os.linesep}"
+                    text += f"\U0001F69A Data entrega: <b>{produto['DataEntrega']}</b>"
+                elif produto['Status'] == 10 :
+                    text += f"<b> Expedição</b>{os.linesep}"
+                    text += f"\U0001F69A Data entrega: <b>{produto['DataEntrega']}</b>"
+                elif produto['Status'] == 11 :
+                    text += f"\U0000231B Status: <b> Pronto</b>{os.linesep}"
+                    text += f"\U0001F69A Data entrega: <b>{produto['DataEntrega']}</b>"
+                else :
+                    pass
 
         context.bot.send_message(chat_id=chat_id, text=text, parse_mode=ParseMode.HTML)
         del track.pcp[index]
@@ -464,7 +459,7 @@ def main() -> None:
     hora = datetime.time(bot.horas, bot.minutos, 00, 000000) # +3 horas
     up_job = updater.job_queue    
     up_job.run_daily(resumo_diario, time=hora, days=(0, 1, 2, 3, 4))   
-    up_job.run_repeating(pedido_track, interval=120.0, first=0) 
+    up_job.run_repeating(pedido_track, interval=60.0, first=0) 
     #up_job.run_once(resumo_diario, 10)
     updater.start_polling()
     updater.idle()
