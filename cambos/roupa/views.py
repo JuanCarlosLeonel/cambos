@@ -67,7 +67,7 @@ def update_api():
         url = 'http://187.45.32.235:20080/spi/intproducaoservice/statusentrega'
         response = requests.get(url)
         dados = response.json()
-        model = API.objects.get(id=1)
+        model = API.objects.latest("id")
         model.api = dados
         model.save()
     except:
@@ -76,7 +76,7 @@ def update_api():
 
 def get_url():  
     try:  
-        return  API.objects.get(id=1).api['value']
+        return  API.objects.latest("id").api['value']
     except:
         url = 'http://187.45.32.235:20080/spi/intproducaoservice/statusentrega'
         response = requests.get(url)
@@ -88,8 +88,8 @@ def check_update_api():
     url = 'http://187.45.32.235:20080/spi/intproducaoservice/statusentrega'
     response = requests.get(url)
     dados_spi = response.json()
-    dados_api = API.objects.get(id=1).api
-    dados_pcp = PCP.objects.get(id=1)
+    dados_api = API.objects.latest("id").api
+    dados_pcp = PCP.objects.latest("id")
     change = 0    
     for item_spi in dados_spi['value']:
         match = 0
@@ -103,6 +103,7 @@ def check_update_api():
             if item_spi['Lacre'] == item_pcp['lacre']:
                 match = 1                             
         if match == 0:                        
+            change = 1
             novo = get_pcp_pedido(item_spi['Lacre'])  
             if not novo == 0:                   
                 dados_pcp.pcp.append(novo)            
@@ -770,7 +771,7 @@ class ListPcpUpdate(TemplateView):
         edit = self.request.GET.get('editar')                 
         if not edit is None:                
             pedido = json.loads(edit)
-            model = PCP.objects.get(id=1)
+            model = PCP.objects.latest("id")
             novo = 0
             cont = 0
             for item in model.pcp:
@@ -817,7 +818,7 @@ class PcpUpdate(TemplateView):
         edit = self.request.GET.get('editar')                 
         if not edit is None:                
             pedido = json.loads(edit)
-            model = PCP.objects.get(id=1)
+            model = PCP.objects.latest("id")
             novo = 0
             cont = 0
             for item in model.pcp:
@@ -852,7 +853,7 @@ class PcpList(TemplateView):
             if item['nome'] == "Modelagem":
                 if not pedido['DataPedido'] is None:
                     item['inicio'] = parse_date(pedido['DataPedido'])
-                    item['p_fim'] = parse_date(pedido['DataPedido'] )
+                    item['p_fim'] = parse_date(item['p_fim'])
                     if not pedido['DataExpTecido'] is None:
                         item['fim'] = parse_date(pedido['DataExpTecido'])                    
             if item['nome'] == "Expedição Tecido":
