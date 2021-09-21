@@ -48,8 +48,8 @@
                         {% for item in pcp.processo %}
                         <tr>
                             <th>{{item.nome}}</th>
-                            <td>{{item.inicio}}</td>
-                            <td>{{item.fim}}</td>
+                            <td>{{item.inicio|date:'d/m/Y'}}</td>
+                            <td>{{item.fim|date:'d/m/Y'}}</td>
                             <td>{{item.p_inicio}}</td>
                             <td>{{item.p_fim}}</td>
                             {% if not item.fim%}
