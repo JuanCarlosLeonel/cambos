@@ -10,12 +10,13 @@ from .models import (
     API,
     PCP,
     Track,
-    PedidoTrack  
+    PedidoTrack,
+    UserEtapa  
 )
 
 
 class PedidoTrackAdmin(admin.ModelAdmin):
-    list_filter = ['user__user_bot']
+    list_filter = ['user']
     list_display =['lacre']
 
 admin.site.register(Calendario)
@@ -28,5 +29,6 @@ admin.site.register(API)
 admin.site.register(PCP)
 admin.site.register(Track)
 admin.site.register(PedidoTrack, PedidoTrackAdmin)
+admin.site.register(UserEtapa)
 
 
