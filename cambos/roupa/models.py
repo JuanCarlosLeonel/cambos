@@ -87,4 +87,9 @@ class Pedido(models.Model):
 class PedidoTrack(models.Model):    
     user   = models.ForeignKey(User, on_delete=models.CASCADE)
     lacre = models.IntegerField(default=0)
+
+
+class UserEtapa (models.Model):
+    user   = models.ForeignKey(User, on_delete=models.CASCADE)
+    etapa  = models.ManyToManyField(Etapa, blank=True)
     
