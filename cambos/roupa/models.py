@@ -37,7 +37,7 @@ class Processo(models.Model):
     nome           = models.CharField(max_length=18)    
     ordem_esperada = models.IntegerField()
     recorrente     = models.BooleanField(default=False)
-    status_spi     = models.IntegerField() 
+    status_spi     = models.IntegerField(null=True,blank=True) 
 
     def __str__(self):
         return f'{self.nome}'
@@ -70,6 +70,7 @@ class Etapa(models.Model):
     tag        = models.ManyToManyField(TAG, blank=True)
     nick_spi   = models.CharField(max_length=20, null=True, blank=True)
     score      = models.CharField(max_length=2, choices=SCORE_CHOICES, null=True)
+    padrao     = models.BooleanField(default=False, verbose_name='Padrão')
 
     def __str__(self):
         return f'{self.nome}'
