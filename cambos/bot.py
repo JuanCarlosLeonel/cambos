@@ -557,38 +557,20 @@ def resumo_diario(context: CallbackContext):
                 setor = "GERAL"
                 text += f"""\U00002757<b>{setor}:
                 {dados['contador']} </b>lotes: <b>{dados['somador']} peças.</b>{os.linesep}{os.linesep}"""
-                
-        if user.oficina:  
-            useretapa = UserEtapa.objects.get(user = user.id).etapa
-            if context=='atrasado' and context=='diascostura>18':
-                text += f"""\U00002757<b>COSTURA:
-                {dados['contador']} </b>lotes: <b>{dados['somador']} peças.</b> {os.linesep}"""
-
-            dados = get_data(setor=5,context='atrasado', context2 = useretapa)
+                        
+        try: 
+            user_etapa = UserEtapa.objects.get(user = user.id).etapa
+        except:
+            user_etapa = None           
+        if user_etapa:             
+            dados = get_data(setor=5,context='diascostura>18', context2 = user_etapa)
             if dados['contador'] != 0:
                 resumo = 1
                 setor = "COSTURA"
                 text += f"""\U00002757<b>{setor}:
                 {dados['contador']} </b>lotes: <b>{dados['somador']} peças.</b> {os.linesep}"""
                 for item1,item2,item3 in zip (dados['listaficha'],dados['listadiascostura'],dados['celcostura']):
-                    text +=f" \U00002714FC: <b>{item1}</b>, <b>{item2}</b> dias na costura. ({item3}){os.linesep}"
-            dados = get_data(setor=5,context='diascostura>18', context2 = useretapa)
-            if dados['contador'] != 0:
-                resumo = 1
-                setor = "COSTURA"
-                text += f"""\U00002757<b>{setor}:
-                {dados['contador']} </b>lotes: <b>{dados['somador']} peças.</b> {os.linesep}"""
-                for item1,item2,item3 in zip (dados['listaficha'],dados['listadiascostura'],dados['celcostura']):
-                    text +=f" \U00002714FC: <b>{item1}</b>, <b>{item2}</b> dias na costura. ({item3}){os.linesep}"
-            dados = get_data(6,'diascostura>18', context2 = useretapa)
-            if dados['contador'] != 0:
-                resumo = 1
-                setor = "FINALIZAÇÃO"
-                text += f"""{os.linesep}\U00002757<b>{setor}:
-                {dados['contador']} </b>lotes: <b>{dados['somador']} peças.</b>{os.linesep}"""
-                for item1,item2 in zip (dados['listaficha'],dados['listadiascostura']):
-                    text +=f" \U00002714FC: <b>{item1}</b>, <b>{item2}</b> dias na costura.{os.linesep}"
-            
+                    text +=f" \U00002714FC: <b>{item1}</b>, <b>{item2}</b> dias na costura. ({item3}){os.linesep}"            
         if user.lavanderia:
             dados = get_data(7, 'atrasado')
             if dados['contador'] != 0:
