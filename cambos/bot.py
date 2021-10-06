@@ -522,9 +522,6 @@ def resumo_diario(context: CallbackContext):
                         
         try: 
             user_etapa = UserEtapa.objects.get(user = user.id).etapa
-        except:
-            user_etapa = None           
-        if user_etapa:             
             dados = get_data(setor=5,context='atrasado', context2 = user_etapa)
             if dados['contador'] != 0:
                 resumo = 1
@@ -533,7 +530,9 @@ def resumo_diario(context: CallbackContext):
                 {dados['contador']}</b>lotes: <b>{dados['somador']} peças.</b> {os.linesep}"""
                 for item1,item2,item3 in zip (dados['listaficha'],dados['listadiascostura'],dados['celcostura']):
                     text +=f"<b>FC</b>:{item1},<b>{item2}</b> dias costura<b>({item3})</b>{os.linesep}"
-
+        except:
+            pass
+            
         if user.lavanderia:
             dados = get_data(7, 'atrasado')
             if dados['contador'] != 0:
@@ -557,17 +556,20 @@ def resumo_diario(context: CallbackContext):
         if resumo == 0:
             text  += f"Tudo certo!!!{os.linesep}"
         
-        context.bot.send_message(chat_id=chat_id, text=text, parse_mode=ParseMode.HTML)
+        try:
+            context.bot.send_message(chat_id=chat_id, text=text, parse_mode=ParseMode.HTML)
 
-        keyboard = [
-        [
-            InlineKeyboardButton("Menu", callback_data='menu'),
-            InlineKeyboardButton("CAMBOS-BI", url='http://scbi.us-west-2.elasticbeanstalk.com/roupa/index'),
-        ]
-        ]
-        reply_markup = InlineKeyboardMarkup(keyboard)
-        text= f"\U0001F4AC Para mais informações:"    
-        context.bot.send_message(chat_id=chat_id, text=text, reply_markup=reply_markup)
+            keyboard = [
+                [
+                    InlineKeyboardButton("Menu", callback_data='menu'),
+                    InlineKeyboardButton("CAMBOS-BI", url='http://scbi.us-west-2.elasticbeanstalk.com/roupa/index'),
+                ]
+            ]
+            reply_markup = InlineKeyboardMarkup(keyboard)
+            text= f"\U0001F4AC Para mais informações:"    
+            context.bot.send_message(chat_id=chat_id, text=text, reply_markup=reply_markup)
+        except:
+            pass
 
 def main() -> None:
     from core.models import Bot
