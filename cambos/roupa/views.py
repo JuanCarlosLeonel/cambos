@@ -113,6 +113,22 @@ def check_update_api():
         update_api()        
     
 
+def update_pcp(lacre):
+    
+    dados_api = API.objects.latest("id").api
+    dados_pcp = PCP.objects.latest("id")    
+    for item_api in dados_api['value']:
+        match = 0                
+        for item_pcp in dados_pcp.pcp:        
+            if item_api['Lacre'] == item_pcp['lacre']:
+                match = 1                             
+        if match == 0:                        
+            novo = get_pcp_pedido(item_api['Lacre'])  
+            if not novo == 0:                   
+                dados_pcp.pcp.append(novo)            
+                dados_pcp.save()            
+    
+
 def get_pcp_pedido(pk):
     try:        
         pcp = PCP.objects.latest("id").pcp      
