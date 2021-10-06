@@ -49,7 +49,7 @@ def get_data(setor, context, oficina=None, context2 = None):
                                 somador += produto['QuantPecas']   
                                 listaficha.append(produto['FichaCorte'])
                                 listadiascostura.append(produto['DiasCostura']) 
-                            if produto['DiasCostura'] >= 18:
+                            elif produto['DiasCostura'] >= 18:
                                 contador += 1
                                 somador += produto['QuantPecas']
                                 listaficha.append(produto['FichaCorte'])
@@ -88,7 +88,7 @@ def get_data(setor, context, oficina=None, context2 = None):
                                     listaficha.append(produto['FichaCorte'])
                                     listadiascostura.append(produto['DiasCostura'])
                                     celcostura.append(produto['Celula'])
-                                if produto['DiasCostura'] >= 18:
+                                elif produto['DiasCostura'] >= 18:
                                     contador += 1
                                     somador += produto['QuantPecas']
                                     listaficha.append(produto['FichaCorte'])
@@ -113,6 +113,12 @@ def get_data(setor, context, oficina=None, context2 = None):
                             listaficha.append(produto['FichaCorte'])
                             listadiascostura.append(produto['DiasCostura'])
                             celcostura.append(produto['Celula'])
+                        elif produto['DiasCostura>18'] >=18:
+                            contador +=1
+                            somador += produto['QuantPecas']
+                            listaficha.append(produto['FichaCorte'])
+                            listadiascostura.append(produto['DiasCostura'])
+                            celcostura.append(produto['Celula'])
                     elif context == 'emdia':
                         if produto['Atrasado'] == "Em Dia":
                             contador += 1
@@ -126,13 +132,6 @@ def get_data(setor, context, oficina=None, context2 = None):
                             listaficha.append(produto['FichaCorte'])
                             listadiascostura.append(produto['DiasCostura'])
                             celcostura.append(produto['Celula'])
-                    elif context == 'diascostura>18':
-                        if produto['DiasCostura'] >= 18:
-                            contador += 1
-                            somador += produto['QuantPecas']
-                            listaficha.append(produto['FichaCorte'])
-                            listadiascostura.append(produto['DiasCostura'])
-                            celcostura.append(produto['Celula'])                 
         elif setor == 6:
             if produto['Status'] == setor:
                 if context == 'atrasado':                        
@@ -141,7 +140,7 @@ def get_data(setor, context, oficina=None, context2 = None):
                         somador += produto['QuantPecas']   
                         listaficha.append(produto['FichaCorte'])
                         listadiascostura.append(produto['DiasCostura']) 
-                    if produto['DiasCostura'] >= 18:
+                    elif produto['DiasCostura'] >= 18:
                         contador += 1
                         somador += produto['QuantPecas']
                         listaficha.append(produto['FichaCorte'])
@@ -531,9 +530,9 @@ def resumo_diario(context: CallbackContext):
                 resumo = 1
                 setor = "COSTURA"
                 text += f"""\U00002757<b>{setor}:
-                {dados['contador']} </b>lotes: <b>{dados['somador']} peças.</b> {os.linesep}"""
+                {dados['contador']}</b>lotes: <b>{dados['somador']} peças.</b> {os.linesep}"""
                 for item1,item2,item3 in zip (dados['listaficha'],dados['listadiascostura'],dados['celcostura']):
-                    text +=f"\U00002714FC: <b>{item1}</b>, <b>{item2}</b> dias na costura. ({item3}){os.linesep}"
+                    text +=f"<b>FC</b>:{item1},<b>{item2}</b> dias costura<b>({item3})</b>{os.linesep}"
 
         if user.lavanderia:
             dados = get_data(7, 'atrasado')
