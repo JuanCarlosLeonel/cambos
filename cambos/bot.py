@@ -521,7 +521,7 @@ def resumo_diario(context: CallbackContext):
                 {dados['contador']} </b>lotes: <b>{dados['somador']} peças.</b>{os.linesep}{os.linesep}"""
                         
         try: 
-            user_etapa = UserEtapa.objects.get(user = user.id).etapa
+            user_etapa = UserEtapa.objects.get(user__user_bot = user).etapa
             dados = get_data(setor=5,context='atrasado', context2 = user_etapa)
             if dados['contador'] != 0:
                 resumo = 1
