@@ -10,8 +10,8 @@ from .models import (
     API,
     PCP,
     Track,
-    PedidoTrack,
-    UserEtapa  
+    PedidoTrack,    
+    RoupaBot  
 )
 
 
@@ -29,6 +29,6 @@ admin.site.register(API)
 admin.site.register(PCP)
 admin.site.register(Track)
 admin.site.register(PedidoTrack, PedidoTrackAdmin)
-admin.site.register(UserEtapa)
+admin.site.register(RoupaBot)
 
 

@@ -26,7 +26,8 @@ from .models import (
     Processo,
     TAG,
     PedidoTrack,
-    Track
+    Track,
+    RoupaBot
     )
 from django.http import JsonResponse
 from dateutil.parser import parse
@@ -51,7 +52,7 @@ def update_track(lacre):
     pedido = PedidoTrack.objects.filter(lacre=lacre)
     try:
         for item in pedido:
-            user = str(item.user.user_bot.user_id)
+            user = str(RoupaBot.objects.get(usuario = item.user).user_id)            
             model.pcp.append(
                 {"lacre":lacre,
                 "user":user

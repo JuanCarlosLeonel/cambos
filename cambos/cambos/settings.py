@@ -28,7 +28,7 @@ DEBUG = True
 ALLOWED_HOSTS = [
     'scbi.us-west-2.elasticbeanstalk.com',
     '127.0.0.1',
-    '192.168.0.192',
+    '192.168.0.190',
 ]
 
 

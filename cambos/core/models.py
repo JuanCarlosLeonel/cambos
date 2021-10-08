@@ -2,7 +2,6 @@ from django.db import models
 from django.db.models.deletion import SET_NULL
 from django_currentuser.db.models import CurrentUserField
 from django.contrib.auth.models import AbstractUser
-from comercial.models import Comercial
 
 
 class Periodo(models.Model):
@@ -53,31 +52,7 @@ class ACABAMENTO(models.Model):
         return f'{self.choice}'    
 
 
-class UserBot(models.Model):
-    user_id    = models.IntegerField(unique=True)
-    user_nome  = models.CharField(max_length=30)
-    user_tel   = models.CharField(max_length=30, blank=True)
-    oficina    = models.ManyToManyField(OFICINA, blank=True)
-    lavanderia = models.BooleanField(default=False)
-    corte      = models.BooleanField(default=False)
-    expedicao  = models.BooleanField(default=False)
-    acabamento = models.ManyToManyField(ACABAMENTO, blank=True)
-    geral = models.BooleanField(default=False)
-    ativo   = models.BooleanField(default=True)
-
-    def __str__(self):
-        return f'{self.user_nome}'
-
-
 class User(AbstractUser):
-    COM_CHOICES = (
-            ('Mendes Júnior', 'Mendes Júnior'),
-            ('Xavantes', 'Xavantes'),             
-            ('Cotton Move', 'Cotton Move'),             
-            ('Geral', 'Geral'),             
-        )
     setor     = models.ForeignKey(Setor, null=True, blank=True, on_delete=models.SET_NULL)
     textil    = models.BooleanField(default=False)
     confeccao = models.BooleanField(default=False)
-    comercial = models.ManyToManyField(Comercial, blank=True)
-    user_bot  = models.ForeignKey(UserBot, null=True, blank=True, on_delete=SET_NULL)

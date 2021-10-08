@@ -1,4 +1,4 @@
-import requests
+"""import requests
 import time
 import json
 import os
@@ -157,4 +157,4 @@ class TelegramBot():
             
 
     def responder(self,resposta,chat_id):   
-        self.bot.sendMessage(chat_id,text = resposta)
+        self.bot.sendMessage(chat_id,text = resposta)"""

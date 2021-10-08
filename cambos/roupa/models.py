@@ -89,10 +89,14 @@ class PedidoTrack(models.Model):
     lacre = models.IntegerField(default=0)
 
 
-class UserEtapa (models.Model):
-    user   = models.ForeignKey(User, on_delete=models.CASCADE)
-    etapa  = models.ManyToManyField(Etapa, blank=True)
-
+class RoupaBot(models.Model):    
+    user_id    = models.IntegerField(unique=True)
+    user_nome  = models.CharField(max_length=30)    
+    costura    = models.ManyToManyField(Etapa, blank=True)
+    lavanderia = models.BooleanField(default=False)    
+    expedicao  = models.BooleanField(default=False)    
+    geral      = models.BooleanField(default=False)
+    ativo      = models.BooleanField(default=True)
+    usuario       = models.ForeignKey(User, on_delete=models.SET_NULL, blank=True, null=True)
     def __str__(self):
-        return f'{self.user}'
-    
+        return f'{self.user_nome}'

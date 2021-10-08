@@ -1,4 +1,3 @@
-from roupa.models import UserEtapa
 import os
 import logging
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup, Update, ParseMode
@@ -15,9 +14,9 @@ from dateutil import parser
 import datetime
 
 def get_user(update):
-    from core.models import UserBot
+    from roupa.models import RoupaBot
     user_id = update.message.chat_id
-    userbot = UserBot.objects.get(user_id = user_id)
+    userbot = RoupaBot.objects.get(user_id = user_id)
     return userbot
 
 def get_data(setor, context, oficina=None, context2 = None):
@@ -79,7 +78,7 @@ def get_data(setor, context, oficina=None, context2 = None):
                             listaficha.append(produto['FichaCorte']) 
                             listadiascostura.append(produto['DiasCostura'])           
                 if not context2 is None:
-                    for oficina in context2.all():
+                    for oficina in context2:
                         if produto['Celula'] == oficina.nick_spi:
                             if context == 'atrasado':                        
                                 if produto['Atrasado'] == "Em Atraso":            
@@ -184,8 +183,8 @@ def producao_em_atraso(update, setor):
     if setor == 5:
         user = get_user(update)
         c = 0
-        for oficina in user.oficina.all():            
-            celula = oficina.choice       
+        for oficina in user.costura.all():            
+            celula = oficina.nick_spi       
             dados = get_data(setor, context = 'atrasado', oficina = celula, context2=None)
             if dados['contador'] != 0:     
                 text=f"Produção <b>{celula}:</b>{os.linesep}\U00002757{dados['contador']} entregas EM ATRASO:<b>{dados['somador']} peças.</b>{os.linesep}"
@@ -223,8 +222,8 @@ def producao_por_celula(update, setor):
     if setor == 5:
         user = get_user(update)
         c = 0
-        for oficina in user.oficina.all():           
-            celula = oficina.choice       
+        for oficina in user.costura.all():           
+            celula = oficina.nick_spi       
             dados = get_data(setor,context = 'tudo', oficina = celula)
             if dados['contador'] != 0:     
                 text=f"Produção <b>{celula}:</b>{os.linesep}\U00002757{dados['contador']} entregas: <b>{dados['somador']} peças.</b>{os.linesep}"
@@ -241,8 +240,8 @@ def prazos_estourados_confeccao(update, setor):
     if setor == 5:
         user = get_user(update)
         c = 0
-        for oficina in user.oficina.all():            
-            celula = oficina.choice       
+        for oficina in user.costura.all():            
+            celula = oficina.nick_spi      
             dados = get_data(setor, context = 'atrasados', oficina = celula, context2=None)
             if dados['contador'] != 0:     
                 text=f"Entregas com <b>PRAZO ESTOURADO</b>:{os.linesep}\U00002757{dados['contador']} entregas:<b>{dados['somador']} peças.</b>{os.linesep}"
@@ -297,12 +296,10 @@ def atrasados_finalizacao(update,setor):
     return return_menu(update, text)
 
 def pedido_track(context: CallbackContext):    
-    from roupa.models import Track
-    from core.models import User
+    from roupa.models import Track    
     track = Track.objects.latest('pcp')
     for index, requisicao in enumerate(track.pcp):
-        chat_id = requisicao['user']
-        user = User.objects.get(user_bot__user_id = chat_id)
+        chat_id = requisicao['user']        
         dadoslacre = requisicao['lacre']
         text=f"\U00002757Acompanhamento do pedido <b>{dadoslacre}:</b>{os.linesep}"
         for produto in get_url():
@@ -376,7 +373,7 @@ def start():
     return menu()
 
 def menu(update, context):
-    from core.models import UserBot
+    from roupa.models import RoupaBot
     chat_id = update.message.chat_id    
     first_name = update.message.chat.first_name
     mensagem = update.message.text  
@@ -387,7 +384,7 @@ def menu(update, context):
         if userbot.geral:
              dict['Geral']='geral'
 
-        if userbot.oficina.count() > 0:
+        if userbot.costura.count() > 0:
             dict['Confecção']='confeccao'
 
         if userbot.lavanderia:
@@ -409,7 +406,7 @@ def menu(update, context):
             update.message.reply_text(text, reply_markup=reply_markup, parse_mode=ParseMode.HTML)
 
     except:
-        p = UserBot(user_id = chat_id, user_nome = first_name)
+        p = RoupaBot(user_id = chat_id, user_nome = first_name)
         p.save() 
         text = f'Olá {first_name}!{os.linesep}Obrigado por acessar nosso sistema.{os.linesep}Já já seu acesso será liberado.'   
         update.message.reply_text(text)    
@@ -504,8 +501,8 @@ def button(update: Update, _: CallbackContext) -> None:
     query.edit_message_text('\U0001F4AC escolha uma opção:', reply_markup=reply_markup, parse_mode=ParseMode.HTML)
 
 def resumo_diario(context: CallbackContext):
-    from core.models import UserBot
-    users = UserBot.objects.filter(ativo = True)
+    from roupa.models import RoupaBot
+    users = RoupaBot.objects.filter(ativo = True)
     for user in users:        
         resumo = 0
         chat_id = user.user_id
@@ -521,8 +518,8 @@ def resumo_diario(context: CallbackContext):
                 {dados['contador']} </b>lotes: <b>{dados['somador']} peças.</b>{os.linesep}{os.linesep}"""
                         
         try: 
-            user_etapa = UserEtapa.objects.get(user__user_bot = user).etapa
-            dados = get_data(setor=5,context='atrasado', context2 = user_etapa)
+            user_etapa = user.costura.all()
+            dados = get_data(setor=5,context='atrasado', context2 = user_etapa)            
             if dados['contador'] != 0:
                 resumo = 1
                 setor = "COSTURA"
@@ -531,7 +528,7 @@ def resumo_diario(context: CallbackContext):
                 for item1,item2,item3 in zip (dados['listaficha'],dados['listadiascostura'],dados['celcostura']):
                     text +=f"<b>FC</b>:{item1},<b>{item2}</b> dias costura<b>({item3})</b>{os.linesep}"
         except:
-            pass
+            text += "erro costura"
             
         if user.lavanderia:
             dados = get_data(7, 'atrasado')
