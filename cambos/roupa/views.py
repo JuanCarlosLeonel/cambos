@@ -77,7 +77,7 @@ def update_api():
 
 def get_url():  
     try:  
-        return  API.objects.latest("id").api['value']
+        return API.objects.latest("id").api['value']
     except:
         url = 'http://187.45.32.235:20080/spi/intproducaoservice/statusentrega'
         response = requests.get(url)
