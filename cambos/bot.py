@@ -67,6 +67,7 @@ def get_data(setor, context, oficina=None, oficina2 = None):
                                     contador += 1
                                     somador += produto['QuantPecas']
                                     listaficha.append(produto['FichaCorte'])
+                                    listadiascostura.append(produto['DiasCostura'])
                                     dataentrega.append(produto['DataEntrega'])
                                     celcostura.append(produto['Celula'])
                             elif context == 'parado':
@@ -82,7 +83,7 @@ def get_data(setor, context, oficina=None, oficina2 = None):
                                 listaficha.append(produto['FichaCorte']) 
                                 listadiascostura.append(produto['DiasCostura']) 
                                 celcostura.append(produto['Celula'])           
-                if not oficina2 is None:
+                if not oficina2 is None:  #producao por celula
                     if produto['Celula'] == oficina2:
                         if context == 'atrasado':                          
                             if produto['Atrasado'] == "Em Atraso":            
@@ -223,7 +224,7 @@ def producao_por_celula(update, setor):
             if dados['contador'] != 0:     
                 text=f"Produção <b>{celula}:</b>{os.linesep}\U00002757{dados['contador']} entregas: <b>{dados['somador']} peças.</b>{os.linesep}"
                 for item1,item2 in zip (dados['listaficha'],dados['listadiascostura']):
-                    text +=f"<b>\U00002714FC: {item1}, {item2} dias na costura.{os.linesep}</b>"
+                    text +=f"<b>\U00002714FC</b>: {item1}, <b>{item2}</b> dias na costura.{os.linesep}"
                 if c == 0:
                     update.edit_message_text(text, parse_mode=ParseMode.HTML)
                     c += 1
@@ -244,8 +245,8 @@ def prazos_estourados_confeccao(update, setor):
                 setor = "COSTURA"
                 text = f"""\U00002757Entregas com <b>PRAZO ESTOURADO</b> no setor:
                 <b>{dados['contador']}</b> lotes: <b>{dados['somador']} peças.</b> {os.linesep}"""
-                for item1,item2,item3 in zip (dados['listaficha'],dados['listadiascostura'],dados['celcostura']):
-                    text +=f"<b>FC</b>:{item1},<b>{item2}</b> dias costura<b>({item3})</b>{os.linesep}"
+                for item1,item2,item3 in zip (dados['listaficha'],dados['dataentrega'],dados['celcostura']):
+                    text +=f"<b>FC</b>:{item1},<b>DATA:</b>{item2}<b>({item3})</b>{os.linesep}"
                 if c == 0:
                         update.edit_message_text(text, parse_mode=ParseMode.HTML)
                         c += 1
