@@ -82,7 +82,12 @@ def get_data(setor, context, oficina=None, oficina2 = None):
                                 somador += produto['QuantPecas']
                                 listaficha.append(produto['FichaCorte']) 
                                 listadiascostura.append(produto['DiasCostura']) 
-                                celcostura.append(produto['Celula'])           
+                                celcostura.append(produto['Celula'])    
+                            elif context == 'datacostura':
+                                if produto['DataCostura'] == f"{datetime.date.today()}":
+                                    contador += 1
+                                    listaficha.append(produto['FichaCorte'])  
+                                    celcostura.append(produto['Celula'])  
                 if not oficina2 is None:  #producao por celula
                     if produto['Celula'] == oficina2:
                         if context == 'atrasado':                          
@@ -174,24 +179,21 @@ def return_menu(update, text):
 
 def producao_em_atraso(update, setor):            
     if setor == 5:
-        from roupa.models import RoupaBot
-        users = RoupaBot.objects.filter(ativo = True)
+        user = get_user(update)
         c = 0
         text = ""
-        for user in users:  
-            celula = user.costura.all()
-            dados = get_data(setor=5, context='atrasado', oficina = celula)            
-            if dados['contador'] != 0:
-                setor = "COSTURA"
-                text = f"""\U00002757Entregas <b>ATRASADAS</b> no setor:
-                <b>{dados['contador']}</b> lotes: <b>{dados['somador']} peças.</b> {os.linesep}"""
-                for item1,item2,item3 in zip (dados['listaficha'],dados['listadiascostura'],dados['celcostura']):
-                    text +=f"<b>FC</b>:{item1},<b>{item2}</b> dias costura<b>({item3})</b>{os.linesep}"
-                if c == 0:
-                        update.edit_message_text(text, parse_mode=ParseMode.HTML)
-                        c += 1
-                else:
-                    update.message.reply_text(text, parse_mode=ParseMode.HTML)
+        celula = user.costura.all()
+        dados = get_data(setor, context='atrasado', oficina = celula)            
+        if dados['contador'] != 0:
+            text = f"""\U00002757Entregas <b>EM ATRASO</b> no setor:
+            <b>{dados['contador']}</b> lotes: <b>{dados['somador']}</b> peças. {os.linesep}"""
+            for item1,item2,item3 in zip (dados['listaficha'],dados['listadiascostura'],dados['celcostura']):
+                text +=f"<b>FC</b>:{item1},<b>{item2}</b> dias costura<b>({item3})</b>{os.linesep}"
+            if c == 0:
+                update.edit_message_text(text, parse_mode=ParseMode.HTML)
+                c += 1
+            else:
+                update.message.reply_text(text, parse_mode=ParseMode.HTML)
     elif setor == 7:
         dados = get_data(setor, context = 'atrasado') 
         setor = convert_setor(setor)           
@@ -234,24 +236,21 @@ def producao_por_celula(update, setor):
 
 def prazos_estourados_confeccao(update, setor):
     if setor == 5:
-        from roupa.models import RoupaBot
-        users = RoupaBot.objects.filter(ativo = True)
+        user = get_user(update)
         c = 0
-        text = ""
-        for user in users:  
-            celula = user.costura.all()
-            dados = get_data(setor=5, context='atrasados', oficina = celula)            
-            if dados['contador'] != 0:
-                setor = "COSTURA"
-                text = f"""\U00002757Entregas com <b>PRAZO ESTOURADO</b> no setor:
-                <b>{dados['contador']}</b> lotes: <b>{dados['somador']} peças.</b> {os.linesep}"""
-                for item1,item2,item3 in zip (dados['listaficha'],dados['dataentrega'],dados['celcostura']):
-                    text +=f"<b>FC</b>:{item1},<b>DATA:</b>{item2}<b>({item3})</b>{os.linesep}"
-                if c == 0:
-                        update.edit_message_text(text, parse_mode=ParseMode.HTML)
-                        c += 1
-                else:
-                    update.message.reply_text(text, parse_mode=ParseMode.HTML)
+        text = "" 
+        celula = user.costura.all()
+        dados = get_data(setor, context='atrasados', oficina = celula)            
+        if dados['contador'] != 0:
+            text = f"""\U00002757Entregas com <b>PRAZO ESTOURADO</b> no setor:
+            <b>{dados['contador']}</b> lotes: <b>{dados['somador']} peças.</b> {os.linesep}"""
+            for item1,item2,item3 in zip (dados['listaficha'],dados['dataentrega'],dados['celcostura']):
+                text +=f"<b>FC</b>:{item1},<b>DATA:</b>{item2}<b>({item3})</b>{os.linesep}"
+            if c == 0:
+                update.edit_message_text(text, parse_mode=ParseMode.HTML)
+                c += 1
+            else:
+                update.message.reply_text(text, parse_mode=ParseMode.HTML)
     return return_menu(update, text)
 
 def producao_parada(update, setor):
@@ -265,24 +264,21 @@ def producao_parada(update, setor):
 
 def producao_parada_costura(update, setor):
     if setor == 5:
-        from roupa.models import RoupaBot
-        users = RoupaBot.objects.filter(ativo = True)
+        user = get_user(update)
         c = 0
         text = ""
-        for user in users:  
-            celula = user.costura.all()
-            dados = get_data(setor=5, context='parado', oficina = celula)            
-            if dados['contador'] != 0:
-                setor = "COSTURA"
-                text = f"""\U00002757Entregas <b>PARADAS</b> no setor:
-                <b>{dados['contador']}</b> lotes: <b>{dados['somador']} peças.</b> {os.linesep}"""
-                for item1,item2,item3 in zip (dados['listaficha'],dados['listadiascostura'],dados['celcostura']):
-                    text +=f"<b>FC</b>:{item1},<b>{item2}</b> dias costura<b>({item3})</b>{os.linesep}"
-                if c == 0:
-                        update.edit_message_text(text, parse_mode=ParseMode.HTML)
-                        c += 1
-                else:
-                    update.message.reply_text(text, parse_mode=ParseMode.HTML)
+        celula = user.costura.all()
+        dados = get_data(setor, context='parado', oficina = celula)            
+        if dados['contador'] != 0:
+            text = f"""\U00002757Entregas <b>PARADAS</b> no setor:
+            <b>{dados['contador']}</b> lotes: <b>{dados['somador']} peças.</b> {os.linesep}"""
+            for item1,item2,item3 in zip (dados['listaficha'],dados['listadiascostura'],dados['celcostura']):
+                text +=f"<b>FC</b>:{item1},<b>{item2}</b> dias costura<b>({item3})</b>{os.linesep}"
+            if c == 0:
+                update.edit_message_text(text, parse_mode=ParseMode.HTML)
+                c += 1
+            else:
+                update.message.reply_text(text, parse_mode=ParseMode.HTML)
     return return_menu(update, text)
 
 def produtos_finalizacao(update, setor): 
@@ -290,7 +286,7 @@ def produtos_finalizacao(update, setor):
     setor = convert_setor(setor)
     text=f"Produção <b>{setor}:</b>{os.linesep}\U00002757{dados['contador']} produtos no setor: <b>{dados['somador']} peças.</b>{os.linesep}"
     for item1,item2 in zip (dados['listaficha'],dados['listadiascostura']):
-        text +=f" <b>\U00002714FC: {item1}, {item2} dias na costura.{os.linesep}</b>"
+        text +=f"\U00002714<b>FC</b>: {item1}, <b>{item2}</b> dias na costura.{os.linesep}"
 
     update.edit_message_text(text, parse_mode=ParseMode.HTML)
     return return_menu(update, text)
@@ -300,10 +296,36 @@ def atrasados_finalizacao(update,setor):
     setor = convert_setor(setor)
     text=f"Produção <b>Em Atraso</b> setor <b>{setor}:</b>{os.linesep}\U00002757{dados['contador']} produtos no setor: <b>{dados['somador']} peças.</b>{os.linesep}"
     for item1,item2 in zip (dados['listaficha'],dados['listadiascostura']):
-        text +=f" <b>\U00002714FC: {item1}, {item2} dias na confecção.{os.linesep}</b>"
+        text +=f"\U00002714<b>FC</b>: {item1}, <b>{item2}</b> dias na confecção.{os.linesep}"
 
     update.edit_message_text(text, parse_mode=ParseMode.HTML)
     return return_menu(update, text)
+
+# def entrada_costura(context: CallbackContext):
+    from roupa.models import RoupaBot
+    users = RoupaBot.objects.filter(ativo = True)
+    for user in users:        
+        chat_id = user.user_id
+        text = f""          
+        celula = user.costura.all()
+        dados = get_data(setor=5,context='datacostura', oficina = celula)            
+        if dados['contador'] != 0:
+            for item,item2 in zip (dados['listaficha'], dados['celcostura']):
+                text +=f"<b>FC</b>:{item} entrou hoje para <b>{item2}</b>!{os.linesep}"
+    try:
+        context.bot.send_message(chat_id=chat_id, text=text, parse_mode=ParseMode.HTML)
+
+        keyboard = [
+            [
+                InlineKeyboardButton("Menu", callback_data='menu'),
+                InlineKeyboardButton("CAMBOS-BI", url='http://scbi.us-west-2.elasticbeanstalk.com/roupa/index'),
+            ]
+        ]
+        reply_markup = InlineKeyboardMarkup(keyboard)
+        text= f"\U0001F4AC Para mais informações:"    
+        context.bot.send_message(chat_id=chat_id, text=text, reply_markup=reply_markup)
+    except:
+        pass
 
 def pedido_track(context: CallbackContext):    
     from roupa.models import Track    
@@ -311,9 +333,9 @@ def pedido_track(context: CallbackContext):
     for index, requisicao in enumerate(track.pcp):
         chat_id = requisicao['user']        
         dadoslacre = requisicao['lacre']
-        text=f"\U00002757Acompanhamento do pedido <b>{dadoslacre}:</b>{os.linesep}"
         for produto in get_url():
             if produto['Lacre'] == int(dadoslacre) :
+                text=f"\U00002757Acompanhamento do código <b>{produto['Modelo']}:</b>{os.linesep}"
                 if produto['Status'] == 1 :
                     text += f"\U0001F3EC Cliente: <b>{produto['Nome']}</b>{os.linesep}"
                     text += f"\U0000231B Status: <b> Modelagem</b>{os.linesep}"
@@ -589,7 +611,8 @@ def main() -> None:
 
     hora = datetime.time(bot.horas, bot.minutos, 00, 000000) # +3 horas
     up_job = updater.job_queue    
-    up_job.run_daily(resumo_diario, time=hora, days=(0, 1, 2, 3, 4, 5))   
+    up_job.run_daily(resumo_diario, time=hora, days=(0, 1, 2, 3, 4, 5)) 
+    # up_job.run_daily(entrada_costura, datetime.time(hour=17, minute=24), days=(0, 1, 2, 3, 4, 5))  
     up_job.run_repeating(pedido_track, interval=60.0, first=0) 
     #up_job.run_once(resumo_diario, 10)
     updater.start_polling()
