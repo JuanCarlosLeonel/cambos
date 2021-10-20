@@ -29,7 +29,10 @@ ALLOWED_HOSTS = [
     'scbi.us-west-2.elasticbeanstalk.com',
     '127.0.0.1',
     '192.168.0.190',
-    '96.30.197.152'
+    '96.30.197.152',
+    'www.carretel.tk',
+    'carretel.tk',
+    '45.32.211.66'
 ]
 
 
