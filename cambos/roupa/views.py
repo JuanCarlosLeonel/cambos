@@ -406,10 +406,18 @@ class ConfeccaoList(TemplateView):
                     if produto["Status"] == 5:
                         if produto['Atrasado'] == "Em Atraso":
                             atraso +=1
+                        elif produto['DiasCostura'] >=18:
+                            atraso +=1
                         contador += 1
                         quant_un += produto["QuantPecas"]
                         quant_pt += produto["ValorDentro"] * produto["QuantPecas"]
                         soma_duracao += produto["DiasCostura"]
+                elif oficina.nick_spi == "finalizacao":                
+                    if produto["Status"] == 6:  
+                        if produto['Atrasado'] == "Em Atraso":
+                            atraso +=1
+                        elif produto['DiasCostura'] >= 18:
+                            atraso +=1
             try:
                 duracao = soma_duracao / contador
             except:
