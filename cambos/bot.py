@@ -138,17 +138,17 @@ def get_data(setor, context, oficina=None, oficina2 = None):
                         contador += 1
                         somador += produto['QuantPecas']   
                         listaficha.append(produto['FichaCorte'])
-                        listadiascostura.append(produto['DiasCostura']) 
+                        dataentrega.append(produto['DataEntrega']) 
                     elif produto['DiasCostura'] >= 18:
                         contador += 1
                         somador += produto['QuantPecas']
                         listaficha.append(produto['FichaCorte'])
-                        listadiascostura.append(produto['DiasCostura'])
+                        dataentrega.append(produto['DataEntrega'])
                 if context =='pecas':
                     contador +=1
                     somador += produto['QuantPecas']
                     listaficha.append(produto['FichaCorte'])
-                    listadiascostura.append(produto['DiasCostura'])                     
+                    dataentrega.append(produto['DataEntrega'])                     
         else:
             if produto['Status'] == setor:
                 if context == 'atrasado':                        
@@ -307,8 +307,8 @@ def produtos_finalizacao(update, setor):
     dados = get_data(setor, context= 'pecas')
     setor = convert_setor(setor)
     text=f"Produção <b>{setor}:</b>{os.linesep}\U00002757{dados['contador']} produtos no setor: <b>{dados['somador']} peças.</b>{os.linesep}"
-    for item1,item2 in zip (dados['listaficha'],dados['listadiascostura']):
-        text +=f"\U00002714<b>FC</b>: {item1}, <b>{item2}</b> dias na costura.{os.linesep}"
+    for item1,item2 in zip (dados['listaficha'],dados['dataentrega']):
+        text +=f"<b>FC</b>:{item1},<b>DATAENTREGA:</b>{item2}{os.linesep}"
 
     update.edit_message_text(text, parse_mode=ParseMode.HTML)
     return return_menu(update, text)
@@ -317,13 +317,13 @@ def atrasados_finalizacao(update,setor):
     dados = get_data(setor, context= 'atrasado')
     setor = convert_setor(setor)
     text=f"Produção <b>Em Atraso</b> setor <b>{setor}:</b>{os.linesep}\U00002757{dados['contador']} produtos no setor: <b>{dados['somador']} peças.</b>{os.linesep}"
-    for item1,item2 in zip (dados['listaficha'],dados['listadiascostura']):
-        text +=f"\U00002714<b>FC</b>: {item1}, <b>{item2}</b> dias na confecção.{os.linesep}"
+    for item1,item2 in zip (dados['listaficha'],dados['dataentrega']):
+        text +=f"<b>FC</b>:{item1},<b>DATAENTREGA:</b>{item2}{os.linesep}"
 
     update.edit_message_text(text, parse_mode=ParseMode.HTML)
     return return_menu(update, text)
 
-def entrada_costura(context: CallbackContext):
+# def entrada_costura(context: CallbackContext):
     from roupa.models import RoupaBot
     users = RoupaBot.objects.filter(ativo = True)
     for user in users:        
@@ -565,7 +565,7 @@ def button(update: Update, _: CallbackContext) -> None:
         return producao_parada(query,12)
 
     reply_markup = InlineKeyboardMarkup(keyboard)
-    query.edit_message_text('\U0001F4AC escolha uma opção:', reply_markup=reply_markup, parse_mode=ParseMode.HTML)
+    query.edit_message_text('\U0001F4AC Escolha uma opção:', reply_markup=reply_markup, parse_mode=ParseMode.HTML)
 
 def resumo_diario(context: CallbackContext):
     from roupa.models import RoupaBot
@@ -631,19 +631,50 @@ def resumo_diario(context: CallbackContext):
         except:
             pass
 
+
+def pesquisaficha(update, context):
+    chat_id = update.message.chat_id
+    mensagem = update.message.text
+    for produto in get_url():
+        if produto['FichaCorte'] == mensagem :
+            text = f"\U00002714<b>Detalhes FC {produto['FichaCorte']}:</b>{os.linesep}"
+            text += f"\U0001F522 QuantPeças: <b>{produto['QuantPecas']}</b>{os.linesep}"
+            text += f"\U0001F4CB Código: <b>{produto['Modelo']}</b>{os.linesep}"
+            text += f"\U00002712 Valor: <b>{produto['ValorDentro']}</b>{os.linesep}"
+            text += f"\U0001F3EC Cliente: <b>{produto['Nome']}</b>{os.linesep}"
+            text += f"\U00002702 Célula Costura: <b>{produto['Celula']}</b>{os.linesep}"
+            text += f"\U0001F5D3 Dias na Costura: <b>{produto['DiasCostura']}</b>{os.linesep}"
+            text += f"\U000023F3 Prazo Restante: <b>{produto['Diasresto']}</b>{os.linesep}"
+            text += f"\U0001F69A Data entrega: <b>{produto['DataEntrega']}</b>{os.linesep}"
+            context.bot.send_chat_action(chat_id, "typing")
+            update.message.reply_text(text, parse_mode=ParseMode.HTML)
+        else:
+            pass
+    keyboard = [
+        [
+            InlineKeyboardButton("Menu", callback_data='menu'),
+            InlineKeyboardButton("CAMBOS-BI", url='http://scbi.us-west-2.elasticbeanstalk.com/roupa/index'),
+        ]
+    ]
+    reply_markup = InlineKeyboardMarkup(keyboard)
+    text= f"\U0001F4AC Escolha uma opção:"    
+    context.bot.send_chat_action(chat_id, "typing")
+    context.bot.send_message(chat_id=chat_id, text=text, reply_markup=reply_markup)
+    
 def main() -> None:
     from core.models import Bot
     bot = Bot.objects.latest('token')
     token = bot.token      
-    updater = Updater(token)    
-    updater.dispatcher.add_handler(MessageHandler(Filters.text, menu))
+    updater = Updater(token)  
+    # updater.dispatcher.add_handler(MessageHandler(Filters.text, menu))  
+    updater.dispatcher.add_handler(MessageHandler(Filters.text, pesquisaficha))
     updater.dispatcher.add_handler(CommandHandler('start', start))
     updater.dispatcher.add_handler(CallbackQueryHandler(button))
 
     hora = datetime.time(bot.horas, bot.minutos, 00, 000000) # +3 horas
     up_job = updater.job_queue    
     up_job.run_daily(resumo_diario, time=hora, days=(0, 1, 2, 3, 4, 5)) 
-    up_job.run_daily(entrada_costura, datetime.time(hour=12, minute=35), days=(0, 1, 2, 3, 4, 5))  
+    # up_job.run_daily(entrada_costura, datetime.time(hour=12, minute=35), days=(0, 1, 2, 3, 4, 5))  
     up_job.run_repeating(pedido_track, interval=60.0, first=0) 
     #up_job.run_once(resumo_diario, 10)
     updater.start_polling()
