@@ -32,7 +32,8 @@ ALLOWED_HOSTS = [
     '96.30.197.152',
     'www.carretel.tk',
     'carretel.tk',
-    '45.32.211.66'
+    '45.32.211.66',    
+    'localhost',
 ]
 
 
