@@ -34,6 +34,7 @@ ALLOWED_HOSTS = [
     'carretel.tk',
     '45.32.211.66',    
     'localhost',
+    'indicador.tk',
 ]
 
 
