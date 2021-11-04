@@ -247,16 +247,21 @@ class Index(TemplateView):
         produto_parado = 0        
         hoje = datetime.today()
         semana_atual = datetime.isocalendar(hoje)[1]+1
+        ano_atual = datetime.isocalendar(hoje)[0]
+        data_atual = int( str(ano_atual) + str(semana_atual).zfill(2))
         for produto in dados:            
             decoder = parser.parse(produto['DataEntrega'])
             semana_entrega = datetime.isocalendar(decoder)[1]+1            
-            if semana_entrega < semana_atual:
-                if produto['Status'] == 11:
+            ano_entrega = datetime.isocalendar(decoder)[0]
+            data_entrega = int(str(ano_entrega) + str(semana_entrega).zfill(2))        
+            if data_entrega < data_atual:
+                if produto['Status'] >= 10:
                     lista.append({
                         'em_dia': 0,
                         'em_atraso': 0,                              
                         'estocado': produto['QuantPecas'],             
                         'entrega':semana_atual,                    
+                        'ordem':data_atual
                     })
                 else:
                     lista.append({
@@ -264,13 +269,15 @@ class Index(TemplateView):
                         'em_atraso': 0,             
                         'estocado': 0,             
                         'entrega':semana_atual,                    
+                        'ordem':data_atual
                     })
-            elif produto['Status'] == 11:
+            elif produto['Status'] >= 10:
                 lista.append({
                     'em_dia': 0,
                     'em_atraso': 0,                              
                     'estocado': produto['QuantPecas'],             
                     'entrega':semana_entrega,                    
+                    'ordem':data_entrega
                 })
             elif produto['Atrasado'] == "Em Atraso":
                 lista.append({
@@ -278,6 +285,7 @@ class Index(TemplateView):
                     'em_atraso': produto['QuantPecas'],                              
                     'estocado': 0,             
                     'entrega':semana_entrega,                    
+                    'ordem':data_entrega
                 })
             else:
                 lista.append({
@@ -285,12 +293,13 @@ class Index(TemplateView):
                     'em_atraso': 0,            
                     'estocado': 0,                
                     'entrega':semana_entrega,                    
+                    'ordem':data_entrega
                 })
             total_pecas += produto['QuantPecas']
-            if produto['Atrasado'] == "Atrasado" and produto['Status'] != 11:
+            if produto['Atrasado'] == "Atrasado" and produto['Status'] < 10:
                 entrega_atraso += 1
                 quantidade_atraso += produto['QuantPecas']
-            if produto['Parado'] == "1" and produto['Status'] != 11:
+            if produto['Parado'] == "1" and produto['Status'] < 10:
                 produto_parado += 1
         
         em_dia = Counter()
@@ -298,9 +307,9 @@ class Index(TemplateView):
         estocado = Counter()
         
         for i in lista:
-            em_dia [i['entrega']] += i['em_dia']
-            em_atraso [i['entrega']] += i['em_atraso']
-            estocado [i['entrega']] += i['estocado']
+            em_dia [i['ordem']] += i['em_dia']
+            em_atraso [i['ordem']] += i['em_atraso']
+            estocado [i['ordem']] += i['estocado']
            
         em_dia = collections.OrderedDict(sorted(em_dia.items()))
         em_atraso = collections.OrderedDict(sorted(em_atraso.items()))        
