@@ -121,7 +121,7 @@
 				<span class="pull-right clickable panel-toggle panel-button-tab-left"><em class="fa fa-toggle-up"></em></span></div>
 			<div class="panel-body">
 				<div class="canvas-wrapper">
-					<canvas class="chart" id="chartCarteira" height="150" width="558" style="width: 558px; height: 150px;"></canvas>
+					<canvas class="chart" id="chartCarteira" height="150" width="558"></canvas>
 					<script>
 						var labels1 = {{label|safe}}
 						var data1 = {{em_dia|safe}}								
@@ -513,7 +513,14 @@
 {% block script %}
 <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
 
+<script>
+	var label = {{clientes_label|safe}}
+	var value = {{clientes_quant|safe}}
+					
+</script>
 <script src="{% static 'js/treemaps.js' %}"></script>	
+
+
 
 
   

@@ -249,6 +249,8 @@ class Index(TemplateView):
         semana_atual = datetime.isocalendar(hoje)[1]+1
         ano_atual = datetime.isocalendar(hoje)[0]
         data_atual = int( str(ano_atual) + str(semana_atual).zfill(2))
+        client_list = Counter()
+        
         for produto in dados:            
             decoder = parser.parse(produto['DataEntrega'])
             semana_entrega = datetime.isocalendar(decoder)[1]+1            
@@ -302,18 +304,19 @@ class Index(TemplateView):
             if produto['Parado'] == "1" and produto['Status'] < 10:
                 produto_parado += 1
         
+            client_list [produto['Nome']] += produto['QuantPecas']
+        
         em_dia = Counter()
         em_atraso = Counter()
         estocado = Counter()
-        
-        for i in lista:
-            em_dia [i['ordem']] += i['em_dia']
-            em_atraso [i['ordem']] += i['em_atraso']
-            estocado [i['ordem']] += i['estocado']
+        newlist = sorted(lista, key=lambda d: d['ordem']) 
+        client_list = collections.OrderedDict(client_list.most_common())
+        for i in newlist:
+            em_dia [i['entrega']] += i['em_dia']
+            em_atraso [i['entrega']] += i['em_atraso']
+            estocado [i['entrega']] += i['estocado']
            
-        em_dia = collections.OrderedDict(sorted(em_dia.items()))
-        em_atraso = collections.OrderedDict(sorted(em_atraso.items()))        
-        estocado = collections.OrderedDict(sorted(estocado.items()))        
+             
         context['semana_atual'] = semana_atual
         context['label'] = list(em_dia.keys())
         context['em_dia'] = list(em_dia.values())
@@ -323,6 +326,9 @@ class Index(TemplateView):
         context['total'] = total_pecas
         context['entrega_atraso'] = entrega_atraso
         context['parado'] = produto_parado  
+        context['clientes_label'] = list(client_list.keys())
+        context['clientes_quant'] = list(client_list.values())
+
         """d = dados.to_dict()    
         df=pd.DataFrame.from_dict(d, orient='index')  
         context['teste'] = df[df["Atrasado"]=="Em Dia"]"""

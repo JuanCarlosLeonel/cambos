@@ -1,60 +1,19 @@
+function data(){
+    let data = []
+    for (var i = 0; i < label.length; i++) {
+      data.push({
+          x: label[i],
+          y: value[i]          
+      })
+    }    
+    return data
+  }
+
+
 var options = {
     series: [
     {
-        data: [
-        {
-            x: 'LOJAS MARISA',
-            y: 218 
-        },
-        {
-            x: 'C&A',
-            y: 149
-        },
-        {
-            x: 'CAEDU',
-            y: 184
-        },
-        {
-            x: 'TORRA-TORRA',
-            y: 55
-        },
-        {
-            x: 'LOJA XAVANTES',
-            y: 84
-        },
-        {
-            x: 'RIP CURL',
-            y: 31
-        },
-        {
-            x: 'LOJA MENDES JUNIOR',
-            y: 70
-        },
-        {
-            x: 'TESOURA DE OURO',
-            y: 30
-        },
-        {
-            x: 'SOB MEDIDA',
-            y: 44
-        },
-        {
-            x: 'PURA ESSÊNCIA',
-            y: 68
-        },
-        {
-            x: 'LINS FERRÃO',
-            y: 28
-        },
-        {
-            x: 'SINO MODAS',
-            y: 19
-        },
-        {
-            x: 'CANAL CONCEPT',
-            y: 30
-        }
-        ]
+        data: data()
     }
     ],
     legend: {
@@ -63,11 +22,7 @@ var options = {
     chart: {
     height: 500,
     type: 'treemap'
-    },
-    title: {
-    text: 'RELAÇÃO DE CLIENTES',
-    align: 'center'
-    },
+    },    
     colors: [
     '#3B93A5',
     '#F7B844',
