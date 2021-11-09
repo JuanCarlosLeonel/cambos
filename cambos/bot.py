@@ -12,7 +12,6 @@ from telegram.ext import (
 from roupa.views import get_url, convert_setor
 from dateutil import parser
 import datetime
-from termcolor import colored
 
 def get_user(update):
     from roupa.models import RoupaBot
