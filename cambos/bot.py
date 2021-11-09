@@ -12,6 +12,7 @@ from telegram.ext import (
 from roupa.views import get_url, convert_setor
 from dateutil import parser
 import datetime
+from termcolor import colored
 
 def get_user(update):
     from roupa.models import RoupaBot
@@ -340,7 +341,7 @@ def atrasados_finalizacao(update,setor):
         keyboard = [
             [
                 InlineKeyboardButton("Menu", callback_data='menu'),
-                InlineKeyboardButton("CAMBOS-BI", url='http://scbi.us-west-2.elasticbeanstalk.com/roupa/index'),
+                InlineKeyboardButton("CAMBOS-BI", url='https://indicador.tk/'),
             ]
         ]
         reply_markup = InlineKeyboardMarkup(keyboard)
@@ -632,19 +633,22 @@ def resumo_diario(context: CallbackContext):
             pass
 
 
-def pesquisaficha(update, context):
+def pesquisa_corte(update, context):
     chat_id = update.message.chat_id
     mensagem = update.message.text
     for produto in get_url():
-        if produto['FichaCorte'] == mensagem :
+        produto["Status"] = convert_setor(produto["Status"])
+        if produto['FichaCorte'] == mensagem or str(produto['Modelo']) == mensagem:
             text = f"\U00002714<b>Detalhes FC {produto['FichaCorte']}:</b>{os.linesep}"
             text += f"\U0001F522 QuantPeças: <b>{produto['QuantPecas']}</b>{os.linesep}"
             text += f"\U0001F4CB Código: <b>{produto['Modelo']}</b>{os.linesep}"
             text += f"\U00002712 Valor: <b>{produto['ValorDentro']}</b>{os.linesep}"
             text += f"\U0001F3EC Cliente: <b>{produto['Nome']}</b>{os.linesep}"
             text += f"\U00002702 Célula Costura: <b>{produto['Celula']}</b>{os.linesep}"
-            text += f"\U0001F5D3 Dias na Costura: <b>{produto['DiasCostura']}</b>{os.linesep}"
-            text += f"\U000023F3 Prazo Restante: <b>{produto['Diasresto']}</b>{os.linesep}"
+            text += f"\U0001F5D3 Dias na Costura: <b>{produto['DiasCostura']} dias</b>{os.linesep}"
+            text += f"\U000023F0 Prazo Restante: <b>{produto['Diasresto']} dias</b>{os.linesep}"
+            text += f"\U000023F3 Status: <b>{produto['Status']}</b>{os.linesep}"
+            text += f"\U0000203C Situação: <b>{produto['Atrasado'].upper()}</b>{os.linesep}"
             text += f"\U0001F69A Data entrega: <b>{produto['DataEntrega'][8:] + '/' + produto['DataEntrega'][5:7] + '/' + produto['DataEntrega'][0:4]}</b>{os.linesep}"
             context.bot.send_chat_action(chat_id, "typing")
             update.message.reply_text(text, parse_mode=ParseMode.HTML)
@@ -667,7 +671,7 @@ def main() -> None:
     token = bot.token      
     updater = Updater(token)  
     # updater.dispatcher.add_handler(MessageHandler(Filters.text, menu))  
-    updater.dispatcher.add_handler(MessageHandler(Filters.text, pesquisaficha))
+    updater.dispatcher.add_handler(MessageHandler(Filters.text, pesquisa_corte))
     updater.dispatcher.add_handler(CommandHandler('start', start))
     updater.dispatcher.add_handler(CallbackQueryHandler(button))
 
