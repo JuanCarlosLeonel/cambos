@@ -356,62 +356,16 @@ def pedido_track(context: CallbackContext):
         chat_id = requisicao['user']        
         dadoslacre = requisicao['lacre']
         for produto in get_url():
+            produto["Status"] = convert_setor(produto["Status"])
             if produto['Lacre'] == int(dadoslacre) :
                 text=f"\U00002757Acompanhamento do código <b>{produto['Modelo']}:</b>{os.linesep}"
-                if produto['Status'] == 1 :
-                    text += f"\U0001F3EC Cliente: <b>{produto['Nome']}</b>{os.linesep}"
-                    text += f"\U0000231B Status: <b> Modelagem</b>{os.linesep}"
-                    text += f"\U0001F69A Data entrega: <b>{produto['DataEntrega']}</b>"
-                elif produto['Status'] == 2 :
-                    text += f"\U0001F3EC Cliente: <b>{produto['Nome']}</b>{os.linesep}"
-                    text += f"\U0000231B Status: <b> Encaixe</b>{os.linesep}"
-                    text += f"\U0001F69A Data entrega: <b>{produto['DataEntrega']}</b>"
-                elif produto['Status'] == 3 :
-                    text += f"\U0001F3EC Cliente: <b>{produto['Nome']}</b>{os.linesep}"
-                    text += f"\U0000231B Status: <b> Expedição Tecido</b>{os.linesep}"
-                    text += f"\U0001F69A Data entrega: <b>{produto['DataEntrega']}</b>"
-                elif produto['Status'] == 4 :
+                text += f"\U000023F3 Status: <b>{produto['Status']}</b>{os.linesep}"
+                if produto['FichaCorte'] != None:
                     text += f"\U00002714 FC: <b>{produto['FichaCorte']}</b>{os.linesep}"
-                    text += f"\U0000231B Status: <b> Corte</b>{os.linesep}"
-                    text += f"\U0001F3EC Cliente: <b>{produto['Nome']}</b>{os.linesep}"
-                    text += f"\U0001F69A Data entrega: <b>{produto['DataEntrega']}</b>"
-                elif produto['Status'] == 5 :
-                    text += f"\U00002714 FC: <b>{produto['FichaCorte']}</b>{os.linesep}"
-                    text += f"\U0000231B Status: <b> Costura</b>{os.linesep}"
-                    text += f"\U0001F3EC Cliente: <b>{produto['Nome']}</b>{os.linesep}"
-                    text += f"\U0001F69A Data entrega: <b>{produto['DataEntrega']}</b>"
-                elif produto['Status'] == 6 :
-                    text += f"\U00002714 FC: <b>{produto['FichaCorte']}</b>{os.linesep}"
-                    text += f"\U0000231B Status: <b> Finalização</b>{os.linesep}"
-                    text += f"\U0001F3EC Cliente: <b>{produto['Nome']}</b>{os.linesep}"
-                    text += f"\U0001F69A Data entrega: <b>{produto['DataEntrega']}</b>"
-                elif produto['Status'] == 7 :
-                    text += f"\U00002714 FC: <b>{produto['FichaCorte']}</b>{os.linesep}"
-                    text += f"\U0000231B Status: <b> Lavanderia</b>{os.linesep}"
-                    text += f"\U0001F3EC Cliente: <b>{produto['Nome']}</b>{os.linesep}"
-                    text += f"\U0001F69A Data entrega: <b>{produto['DataEntrega']}</b>"
-                elif produto['Status'] == 8 :
-                    text += f"\U00002714 FC: <b>{produto['FichaCorte']}</b>{os.linesep}"
-                    text += f"\U0000231B Status: <b> Qualidade</b>{os.linesep}"
-                    text += f"\U0001F3EC Cliente: <b>{produto['Nome']}</b>{os.linesep}"
-                    text += f"\U0001F69A Data entrega: <b>{produto['DataEntrega']}</b>"
-                elif produto['Status'] == 9 :
-                    text += f"\U00002714 FC: <b>{produto['FichaCorte']}</b>{os.linesep}"
-                    text += f"\U0000231B Status: <b> Acabamento</b>{os.linesep}"
-                    text += f"\U0001F3EC Cliente: <b>{produto['Nome']}</b>{os.linesep}"
-                    text += f"\U0001F69A Data entrega: <b>{produto['DataEntrega']}</b>"
-                elif produto['Status'] == 10 :
-                    text += f"\U00002714 FC: <b>{produto['FichaCorte']}</b>{os.linesep}"
-                    text += f"\U0000231B Status: <b> Expedição</b>{os.linesep}"
-                    text += f"\U0001F3EC Cliente: <b>{produto['Nome']}</b>{os.linesep}"
-                    text += f"\U0001F69A Data entrega: <b>{produto['DataEntrega']}</b>"
-                elif produto['Status'] == 11 :
-                    text += f"\U00002714 FC: <b>{produto['FichaCorte']}</b>{os.linesep}"
-                    text += f"\U0000231B Status: <b> Pronto</b>{os.linesep}"
-                    text += f"\U0001F3EC Cliente: <b>{produto['Nome']}</b>{os.linesep}"
-                    text += f"\U0001F69A Data entrega: <b>{produto['DataEntrega']}</b>"
-                else :
-                    pass
+                text += f"\U0001F3EC Cliente: <b>{produto['Nome']}</b>{os.linesep}"
+                text += f"\U0001F69A Data entrega: <b>{produto['DataEntrega'][8:] + '/' + produto['DataEntrega'][5:7] + '/' + produto['DataEntrega'][0:4]}</b>"
+            else :
+                pass
         context.bot.send_message(chat_id=chat_id, text=text, parse_mode=ParseMode.HTML)
         keyboard = [
             [
@@ -638,13 +592,26 @@ def pesquisa_corte(update, context):
     for produto in get_url():
         produto["Status"] = convert_setor(produto["Status"])
         if produto['FichaCorte'] == mensagem or str(produto['Modelo']) == mensagem:
-            text = f"\U00002714<b>Detalhes FC {produto['FichaCorte']}:</b>{os.linesep}"
+            text = f"\U00002714<b>Detalhes do Pedido:</b>{os.linesep}"
+            if produto['FichaCorte'] != None:
+                text += f"\U000027a1 FC: <b>{produto['FichaCorte']}</b>{os.linesep}"
+            else:
+                text += f"\U000027a1 FC: <b>Em elaboração.</b>{os.linesep}"
             text += f"\U0001F522 QuantPeças: <b>{produto['QuantPecas']}</b>{os.linesep}"
             text += f"\U0001F4CB Código: <b>{produto['Modelo']}</b>{os.linesep}"
-            text += f"\U00002712 Valor: <b>{produto['ValorDentro']}</b>{os.linesep}"
+            if produto['ValorDentro'] != None:
+                text += f"\U00002712 Valor: <b>{produto['ValorDentro']}</b>{os.linesep}"
+            else:
+                text += f"\U00002712 Valor: <b>Em definição</b>{os.linesep}"
             text += f"\U0001F3EC Cliente: <b>{produto['Nome']}</b>{os.linesep}"
-            text += f"\U00002702 Célula Costura: <b>{produto['Celula']}</b>{os.linesep}"
-            text += f"\U0001F5D3 Dias na Costura: <b>{produto['DiasCostura']} dias</b>{os.linesep}"
+            if produto['Celula'] != None:
+                text += f"\U00002702 Célula Costura: <b>{produto['Celula']}</b>{os.linesep}"
+            else:
+                text += f"\U00002702 Cél Costura:<b> Não definida.</b>{os.linesep}"
+            if produto['DiasCostura'] != None:
+                text += f"\U0001F5D3 Dias na Costura: <b>{produto['DiasCostura']} dias</b>{os.linesep}"
+            else:
+                text += f"\U0001F5D3 Dias na Costura: <b> 0 dias</b>{os.linesep}"
             text += f"\U000023F0 Prazo Restante: <b>{produto['Diasresto']} dias</b>{os.linesep}"
             text += f"\U000023F3 Status: <b>{produto['Status']}</b>{os.linesep}"
             text += f"\U0000203C Situação: <b>{produto['Atrasado'].upper()}</b>{os.linesep}"
