@@ -91,6 +91,50 @@ def check_update_api():
     dados_spi = response.json()
     dados_api = API.objects.latest("id").api
     dados_pcp = PCP.objects.latest("id")
+    change_status = []
+    new_api = []
+    new_pcp = []
+    old_api = []
+    for item_spi in dados_spi['value']:        
+        match_spi = 0        
+        match_pcp = 0
+        for item_api in dados_api['value']:            
+            if item_spi['Lacre'] == item_api['Lacre']:
+                match_spi = 1
+                if not item_spi['Status'] == item_api['Status']:
+                    change_status.append(item_spi['Lacre'])
+        if match_spi == 0:
+            new_api.append(dados_spi['Lacre'])
+        for item_pcp in dados_pcp.pcp:
+            if item_spi['Lacre'] == item_pcp['lacre']:
+                match_pcp = 1
+        if match_pcp == 0:
+            new_pcp.append(item_spi['Lacre'])
+    for item_api in dados_api['value']:
+        match_api = 0
+        for item_spi in dados_spi['value']:
+            if item_api['Lacre'] == item_spi['Lacre']:
+                match_api = 1
+        if match_api == 0:
+            old_api.append(item_api['Lacre'])
+    if len(new_api) > 0:
+        update_api()
+        for item in new_api:
+            update_track(item)
+    if len(new_pcp) > 0:
+        for item in new_pcp:
+            novo = get_pcp_pedido(item)  
+            if not novo == 0:                   
+                dados_pcp.pcp.append(novo)            
+                dados_pcp.save()
+
+
+def check_update_api2():
+    url = 'http://187.45.32.235:20080/spi/intproducaoservice/statusentrega'
+    response = requests.get(url)
+    dados_spi = response.json()
+    dados_api = API.objects.latest("id").api
+    dados_pcp = PCP.objects.latest("id")
     change = 0    
     for item_spi in dados_spi['value']:
         match = 0
@@ -114,8 +158,7 @@ def check_update_api():
         update_api()        
     
 
-def update_pcp(lacre):
-    
+def update_pcp(lacre):    
     dados_api = API.objects.latest("id").api
     dados_pcp = PCP.objects.latest("id")    
     for item_api in dados_api['value']:
@@ -200,7 +243,7 @@ def get_pcp_pedido(pk):
                         ]
                     }                
     except:
-        pedido = False
+        pedido = 0
     
     return pedido
 
