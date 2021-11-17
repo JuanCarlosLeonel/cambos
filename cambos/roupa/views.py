@@ -97,15 +97,15 @@ def check_update_api():
     old_api = []
     for item_spi in dados_spi['value']:        
         match_spi = 0        
-        match_pcp = 0
-        for item_api in dados_api['value']:            
-            if item_spi['Lacre'] == item_api['Lacre']:
+        match_pcp = 0        
+        for item_api in dados_api['value']:                        
+            if item_spi['Lacre'] == item_api['Lacre']:                
                 match_spi = 1
-                if not item_spi['Status'] == item_api['Status']:
-                    change_status.append(item_spi['Lacre'])
-        if match_spi == 0:
-            new_api.append(dados_spi['Lacre'])
-        for item_pcp in dados_pcp.pcp:
+                if not item_spi['Status'] == item_api['Status']:                                        
+                    change_status.append(item_spi['Lacre'])        
+        if match_spi == 0:            
+            new_api.append(item_spi['Lacre'])                    
+        for item_pcp in dados_pcp.pcp:            
             if item_spi['Lacre'] == item_pcp['lacre']:
                 match_pcp = 1
         if match_pcp == 0:
@@ -117,16 +117,20 @@ def check_update_api():
                 match_api = 1
         if match_api == 0:
             old_api.append(item_api['Lacre'])
-    if len(new_api) > 0:
-        update_api()
-        for item in new_api:
+
+    if len(new_api) > 0 or len(change_status) > 0:
+        update_api()        
+
+    if len(change_status) > 0:        
+        for item in change_status:
             update_track(item)
+    
     if len(new_pcp) > 0:
         for item in new_pcp:
             novo = get_pcp_pedido(item)  
             if not novo == 0:                   
                 dados_pcp.pcp.append(novo)            
-                dados_pcp.save()
+                dados_pcp.save()    
 
 
 def check_update_api2():
