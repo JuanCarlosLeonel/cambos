@@ -92,40 +92,7 @@ def get_data(setor, context, oficina=None, oficina2 = None):
                                     celcostura.append(produto['Celula'])  
                 if not oficina2 is None:  #producao por celula
                     if produto['Celula'] == oficina2:
-                        if context == 'atrasado':                          
-                            if produto['Atrasado'] == "Em Atraso":            
-                                contador += 1
-                                somador += produto['QuantPecas']    
-                                listaficha.append(produto['FichaCorte'])
-                                listadiascostura.append(produto['DiasCostura'])
-                                celcostura.append(produto['Celula'])
-                            elif produto['DiasCostura>18'] >=18:
-                                contador +=1
-                                somador += produto['QuantPecas']
-                                listaficha.append(produto['FichaCorte'])
-                                listadiascostura.append(produto['DiasCostura'])
-                                celcostura.append(produto['Celula'])
-                        elif context == 'emdia':
-                            if produto['Atrasado'] == "Em Dia":
-                                contador += 1
-                                somador += produto['QuantPecas']
-                                listaficha.append(produto['FichaCorte'])
-                                celcostura.append(produto['Celula'])
-                        elif context == 'atrasados':
-                            if produto['Atrasado'] == "Atrasado":
-                                contador += 1
-                                somador += produto['QuantPecas']
-                                listaficha.append(produto['FichaCorte'])
-                                dataentrega.append(produto['DataEntrega'][8:] + '/' + produto['DataEntrega'][5:7] + '/' + produto['DataEntrega'][0:4])
-                                celcostura.append(produto['Celula'])
-                        elif context == 'parado':
-                            if produto['Parado'] == "1":
-                                contador += 1
-                                somador += produto['QuantPecas']
-                                listaficha.append(produto['FichaCorte'])
-                                listadiascostura.append(produto['DiasCostura'])
-                                celcostura.append(produto['Celula'])
-                        elif context == 'tudo':
+                        if context == 'tudo':
                             contador += 1
                             somador += produto['QuantPecas']
                             listaficha.append(produto['FichaCorte']) 
