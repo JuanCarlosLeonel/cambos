@@ -337,7 +337,7 @@ def pedido_track(context: CallbackContext):
         keyboard = [
             [
                 InlineKeyboardButton("Menu", callback_data='menu'),
-                InlineKeyboardButton("CAMBOS-BI", url='https://indicador.tk/'),
+                InlineKeyboardButton("CAMBOS-BI", url='https://indicador.souzacambos.com.br/'),
             ]
         ]
         reply_markup = InlineKeyboardMarkup(keyboard)
@@ -543,7 +543,7 @@ def resumo_diario(context: CallbackContext):
             keyboard = [
                 [
                     InlineKeyboardButton("Menu", callback_data='menu'),
-                    InlineKeyboardButton("CAMBOS-BI", url='https://indicador.tk/'),
+                    InlineKeyboardButton("CAMBOS-BI", url='https://indicador.souzacambos.com.br/'),
                 ]
             ]
             reply_markup = InlineKeyboardMarkup(keyboard)
@@ -590,7 +590,7 @@ def pesquisa_corte(update, context):
     keyboard = [
         [
             InlineKeyboardButton("Menu", callback_data='menu'),
-            InlineKeyboardButton("CAMBOS-BI", url='https://indicador.tk/'),
+            InlineKeyboardButton("CAMBOS-BI", url='https://indicador.souzacambos.com.br/'),
         ]
     ]
     reply_markup = InlineKeyboardMarkup(keyboard)
