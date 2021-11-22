@@ -101,9 +101,6 @@ if 'RDS_DB_NAME' in os.environ:
         'default': {
             'ENGINE': 'django.db.backends.postgresql_psycopg2',
             'NAME': os.environ['RDS_DB_NAME'],
-            'OPTIONS': {
-              'options': '-c search_path=producao'
-            },
             'USER': os.environ['RDS_USERNAME'],
             'PASSWORD': os.environ['RDS_PASSWORD'],
             'HOST': os.environ['RDS_HOSTNAME'],
@@ -114,14 +111,14 @@ else:
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.postgresql_psycopg2',
-            'NAME': 'souzacambos',
+            'NAME': 'testcambos',
             'OPTIONS': {
-              'options': '-c search_path=producao'
+                'options': '-c search_path=producao'
             },
-            'USER': 'root',
-            'PASSWORD': 'WSXcamb0s741',
-            'HOST': 'souzacambos.cikueqmxcjhz.sa-east-1.rds.amazonaws.com',
-            'PORT': '5432',
+            'USER': 'postgres',
+            'PASSWORD': '1234',
+            'HOST': 'localhost',
+            'PORT': '5433',
         }
     }
 
