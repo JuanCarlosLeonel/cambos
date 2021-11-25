@@ -79,17 +79,6 @@ def get_data(setor, context, oficina=None, oficina2 = None):
                                     listaficha.append(produto['FichaCorte'])
                                     dataentrega.append(produto['DataEntrega'][8:] + '/' + produto['DataEntrega'][5:7] + '/' + produto['DataEntrega'][0:4])
                                     celcostura.append(produto['Celula'])
-                            elif context == 'tudo':
-                                contador += 1
-                                somador += produto['QuantPecas']
-                                listaficha.append(produto['FichaCorte']) 
-                                listadiascostura.append(produto['DiasCostura']) 
-                                celcostura.append(produto['Celula'])    
-                            elif context == 'datacostura':
-                                if produto['DataCostura'] == f"{datetime.date.today()}":
-                                    contador += 1
-                                    listaficha.append(produto['FichaCorte'])  
-                                    celcostura.append(produto['Celula'])  
                 if not oficina2 is None:  #producao por celula
                     if produto['Celula'] == oficina2:
                         if context == 'tudo':
@@ -232,6 +221,15 @@ def prazos_estourados(update, setor):
         for item1,item2 in zip (dados['listaficha'],dados['dataentrega']):
             text +=f"<b>FC</b>:{item1}, <b>PRAZO: </b>{item2}{os.linesep}"
         update.edit_message_text(text, parse_mode=ParseMode.HTML)
+    elif setor == 10:
+        dados = get_data(setor, context = 'atrasados')
+        setor = convert_setor(setor)
+        text = f"""\U00002757Entregas com <b>PRAZO ESTOURADO</b> no setor:
+        <b>{dados['contador']}</b> lotes: <b>{dados['somador']} peças.</b>{os.linesep}"""
+        for item1,item2 in zip (dados['listaficha'],dados['dataentrega']):
+            text +=f"<b>FC</b>:{item1}, <b>PRAZO: </b>{item2}{os.linesep}"
+        update.edit_message_text(text, parse_mode=ParseMode.HTML)
+
     return return_menu(update, text)
 
 def producao_parada(update, setor):
@@ -243,7 +241,7 @@ def producao_parada(update, setor):
     update.edit_message_text(text, parse_mode=ParseMode.HTML)
     return return_menu(update, text)
 
-def producao_parada_costuralavan(update, setor):
+def producao_parada_costuralavanexp(update, setor):
     if setor == 5:
         user = get_user(update)
         c = 0
@@ -268,6 +266,15 @@ def producao_parada_costuralavan(update, setor):
         for item1,item2 in zip (dados['listaficha'],dados['dataentrega']):
             text +=f"<b>FC</b>:{item1}, <b>PRAZO: </b>{item2}{os.linesep}"
         update.edit_message_text(text, parse_mode=ParseMode.HTML)
+    elif setor == 10:
+        dados = get_data(setor, context = 'parado')
+        setor = convert_setor(setor)
+        text = f"""\U00002757Entregas <b>PARADAS</b> no setor:
+        <b>{dados['contador']}</b> lotes: <b>{dados['somador']} peças.</b>{os.linesep}"""
+        for item1,item2 in zip (dados['listaficha'],dados['dataentrega']):
+            text +=f"<b>FC</b>:{item1}, <b>PRAZO: </b>{item2}{os.linesep}"
+        update.edit_message_text(text, parse_mode=ParseMode.HTML)
+    
     return return_menu(update, text)
 
 def produtos_finalizacao(update, setor): 
@@ -289,32 +296,6 @@ def atrasados_finalizacao(update,setor):
 
     update.edit_message_text(text, parse_mode=ParseMode.HTML)
     return return_menu(update, text)
-
-# def entrada_costura(context: CallbackContext):
-    from roupa.models import RoupaBot
-    users = RoupaBot.objects.filter(ativo = True)
-    for user in users:        
-        chat_id = user.user_id
-        text = f""          
-        celula = user.costura.all()
-        dados = get_data(setor=5,context='datacostura', oficina = celula)            
-        if dados['contador'] != 0:
-            for item,item2 in zip (dados['listaficha'], dados['celcostura']):
-                text +=f"<b>FC</b>:{item} entrou hoje para <b>{item2}</b>!{os.linesep}"
-    try:
-        context.bot.send_message(chat_id=chat_id, text=text, parse_mode=ParseMode.HTML)
-
-        keyboard = [
-            [
-                InlineKeyboardButton("Menu", callback_data='menu'),
-                InlineKeyboardButton("CAMBOS-BI", url='https://indicador.tk/'),
-            ]
-        ]
-        reply_markup = InlineKeyboardMarkup(keyboard)
-        text= f"\U0001F4AC Para mais informações:"    
-        context.bot.send_message(chat_id=chat_id, text=text, reply_markup=reply_markup)
-    except:
-        pass
 
 def pedido_track(context: CallbackContext):    
     from roupa.models import Track    
@@ -437,8 +418,10 @@ def button(update: Update, _: CallbackContext) -> None:
     elif query.data == 'expedicao':
         keyboard = [
         [
-            InlineKeyboardButton("Entregas Atrasadas", callback_data='atraso_geral_expedicao'),
-            InlineKeyboardButton("Produtos Parados", callback_data='produtos_parados_expedicao'),
+            InlineKeyboardButton("Atrasados Expedição", callback_data='atraso_geral_expedicao'),
+            InlineKeyboardButton("\U0000274C Produtos Parados", callback_data='produtos_parados_expedicao'),
+        ],
+        [   InlineKeyboardButton("\U0000203C Prazos Estourados", callback_data='prazos_estourados_expedicao'),
         ],
         [InlineKeyboardButton("Menu", callback_data='menu')],
         ]
@@ -459,7 +442,7 @@ def button(update: Update, _: CallbackContext) -> None:
         return prazos_estourados(query,5)
 
     elif query.data == 'produtos_parados_confeccao':
-        return producao_parada_costuralavan(query,5)
+        return producao_parada_costuralavanexp(query,5)
 
     elif query.data == 'produtos_finalizacao':
         return produtos_finalizacao(query,6)
@@ -474,13 +457,16 @@ def button(update: Update, _: CallbackContext) -> None:
         return prazos_estourados(query,7)
     
     elif query.data == 'produtos_parados_lavanderia':
-        return producao_parada_costuralavan(query,7)
+        return producao_parada_costuralavanexp(query,7)
     
     elif query.data == 'atraso_geral_expedicao':        
         return producao_em_atraso(query,10)
 
+    elif query.data == 'prazos_estourados_expedicao':        
+        return prazos_estourados(query,10)
+
     elif query.data == 'produtos_parados_expedicao':
-        return producao_parada(query,10)
+        return producao_parada_costuralavanexp(query,10)
 
     elif query.data == 'parado_geral':        
         return producao_parada(query,12)
@@ -558,7 +544,7 @@ def pesquisa_corte(update, context):
     mensagem = update.message.text
     for produto in get_url():
         produto["Status"] = convert_setor(produto["Status"])
-        if produto['FichaCorte'] == mensagem or str(produto['Modelo']) == mensagem:
+        if produto['FichaCorte'] == mensagem or str(produto['Modelo']) == mensagem or str(produto['Lacre']) == mensagem or produto['Atrasado'] == mensagem:
             text = f"\U00002714<b>Detalhes do Pedido:</b>{os.linesep}"
             if produto['FichaCorte'] != None:
                 text += f"\U000027a1 FC: <b>{produto['FichaCorte']}</b>{os.linesep}"
@@ -624,7 +610,5 @@ def iniciar():
         return main()   
 
       
-
 if __name__ == '__main__':
     main()
-
