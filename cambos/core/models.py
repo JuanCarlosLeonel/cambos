@@ -54,6 +54,7 @@ class User(AbstractUser):
     setor     = models.ForeignKey(Setor, null=True, blank=True, on_delete=models.SET_NULL)
     textil    = models.BooleanField(default=False)
     confeccao = models.BooleanField(default=False)
+    frota     = models.BooleanField(default=False)
 
 
 class Pessoa(models.Model):    

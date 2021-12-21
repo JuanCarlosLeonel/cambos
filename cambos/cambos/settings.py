@@ -39,7 +39,8 @@ ALLOWED_HOSTS = [
     'localhost',
     'indicador.tk',
     'indicador.souzacambos.com.br',
-    '18.230.108.17'
+    '18.230.108.17',
+    '192.168.0.6',
 ]
 
 
