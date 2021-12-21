@@ -56,3 +56,14 @@ class User(AbstractUser):
     setor     = models.ForeignKey(Setor, null=True, blank=True, on_delete=models.SET_NULL)
     textil    = models.BooleanField(default=False)
     confeccao = models.BooleanField(default=False)
+
+
+class Pessoa(models.Model):    
+    nome = models.CharField(db_column='nomecolaborador', max_length=50, blank=True, unique=True, primary_key=True)      
+
+    def __str__(self):
+        return self.nome
+
+    class Meta:
+        managed = False
+        db_table = 'souzacambos"."colaboradors' 

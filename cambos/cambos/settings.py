@@ -58,6 +58,7 @@ INSTALLED_APPS = [
     'produto',
     'comercial',
     'roupa',
+    'frota',
     'django_select2',  
     'django_apscheduler',
 ]
@@ -105,7 +106,29 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': config('DB_NAME'),
         'OPTIONS': {
-            'options': '-c search_path=producao'
+            'options': '-c search_path=producao,public'
+        },
+        'USER': config('DB_USER'),
+        'PASSWORD': config('DB_PASSWORD'),
+        'HOST': config('DB_HOST'),
+        'PORT': config('DB_PORT'),
+    },
+    'frota': {
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': config('DB_NAME'),
+        'OPTIONS': {
+            'options': '-c search_path=frota'
+        },
+        'USER': config('DB_USER'),
+        'PASSWORD': config('DB_PASSWORD'),
+        'HOST': config('DB_HOST'),
+        'PORT': config('DB_PORT'),
+    },
+    'souzacambos': {
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': config('DB_NAME'),
+        'OPTIONS': {
+            'options': '-c search_path=souzacambos'
         },
         'USER': config('DB_USER'),
         'PASSWORD': config('DB_PASSWORD'),
