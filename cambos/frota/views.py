@@ -43,5 +43,6 @@ class ViagemCreate(CreateView):
     
     def get_initial(self, *args, **kwargs):
         initial = super(ViagemCreate, self).get_initial(**kwargs)
+        initial['data'] = '12/01/2022'
         
         return initial

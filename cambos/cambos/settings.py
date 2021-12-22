@@ -32,15 +32,13 @@ ALLOWED_HOSTS = [
     'scbi.us-west-2.elasticbeanstalk.com',
     '127.0.0.1',
     '192.168.0.188',
-    '96.30.197.152',
-    'www.carretel.tk',
-    'carretel.tk',
+    '96.30.197.152',    
     '45.32.211.66',    
-    'localhost',
-    'indicador.tk',
+    'localhost',    
     'indicador.souzacambos.com.br',
     '18.230.108.17',
     '192.168.0.6',
+    '192.168.0.190',
 ]
 
 
