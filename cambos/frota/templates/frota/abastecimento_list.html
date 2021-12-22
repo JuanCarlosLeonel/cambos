@@ -10,12 +10,12 @@
 			<li><a href="{% url 'frota_index' %}">
                 <em class="fa fa-home"></em>
             </a></li>
-            <li class="active">Viagens</li>
+            <li class="active">Frota</li>
         </ol>
     </div><!--/.row-->
     <div class="row">
         <div class="col-lg-12">
-            <h1 class="page-header">Viagens<span class="text-muted small"> </span></h1></h1>
+            <h1 class="page-header">Abastecimento<span class="text-muted small"> </span></h1></h1>
         </div>
     </div><!--/.row-->
 {% endblock navigation %}
@@ -30,7 +30,7 @@
 				<div id="toolbar">
 					
 						
-					<a href="{% url 'viagem_create' %}" class="btn btn-success">
+					<a href="{% url 'abastecimento_create' %}" class="btn btn-success">
 						<i class="fa fa-plus"></i> Novo
 						</a>
 						
@@ -50,23 +50,23 @@
 					<thead>
 						<tr>
 							<th data-field="Data"  data-formatter="dateFormat" data-sortable="true" class='text-center'>Data</th>														
-							<th data-field="Origem"  data-sortable="true" class='text-center'>Origem</th>							
-							<th data-field="Destino" data-sortable="true" class='text-center'>Destino</th>																					
+							<th data-field="Veiculo"  data-sortable="true" class='text-center'>Veículo</th>							
+							<th data-field="Destino" data-sortable="true" class='text-center'>Quantidade</th>																					
 						</tr>
 					</thead>
 					<tbody>
 						{% for data in object_list %}
 							
-							<tr data-href="{% url 'viagem_update' data.pk %}"
+							<tr data-href="{% url 'abastecimento_update' data.pk %}"
 							 class="trLink" >							
 								<td class='text-center' >									
 									{{data.data|safe}}									
 								</td>								
 								<td class='text-center' >									
-									{{data.origem}}									
+									{{data.veiculo}}									
 								</td>								
 								<td class='text-center'>
-									{{data.destino}}
+									{{data.quantidade}}
 								</td>																																
 						{%endfor%}
 					</tbody>					

@@ -2,8 +2,10 @@ from django.db import models
 from core.models import Pessoa, Ativo
 
 class Motorista(models.Model):
-    nome    = models.ForeignKey(Pessoa, null=True, on_delete=models.DO_NOTHING, db_constraint=False)
-    cnh     = models.CharField(max_length=20)
+    nome     = models.ForeignKey(Pessoa, null=True, on_delete=models.DO_NOTHING, db_constraint=False)
+    cnh      = models.CharField(max_length=20)
+    caminhao = models.BooleanField(default=False)
+    carro    = models.BooleanField(default=True)
 
     def __str__(self):
         return f'{self.nome}'
@@ -67,7 +69,7 @@ class Abastecimento(models.Model):
 
 class Corrida(models.Model):
     veiculo    = models.ForeignKey(Veiculo, on_delete=models.DO_NOTHING)
-    motorista  = models.CharField(max_length=40)
+    motorista  = models.ForeignKey(Motorista, on_delete=models.DO_NOTHING)
     data       = models.DateField()    
     km_inicial = models.IntegerField()
     km_final   = models.IntegerField()
