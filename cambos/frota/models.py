@@ -17,6 +17,7 @@ class Motorista(models.Model):
 class Veiculo(models.Model):
     descricao   = models.ForeignKey(Ativo, null=True, on_delete=models.DO_NOTHING, db_constraint=False)
     placa       = models.CharField(max_length=20, null=True, blank=True)    
+    caminhao    = models.BooleanField(default=False)
 
     def __str__(self):
         return f'{self.descricao}'

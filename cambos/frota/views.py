@@ -4,7 +4,7 @@ from django.views.generic.edit import UpdateView, CreateView, DeleteView
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
 from django.views.generic.list import ListView
-from .models import Abastecimento, Viagem, Corrida
+from .models import Abastecimento, Viagem, Corrida, Veiculo
 from .form import ViagemForm, AbastecimentoForm, CorridaForm
 
 @method_decorator(login_required, name='dispatch')
@@ -142,3 +142,23 @@ class AbastecimentoDelete(DeleteView):
     def get_success_url(self):
         return '/frota/abastecimento_list'
 
+
+@method_decorator(login_required, name='dispatch')
+class VeiculoList(ListView):
+    model = Veiculo
+    template_name = 'frota/veiculo_list.html'
+
+
+@method_decorator(login_required, name='dispatch')
+class ViagemListFilter(ListView):
+    model = Viagem
+    template_name = 'frota/viagem_list_filter.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)   
+        pk = self.kwargs['pk']     
+        lista_viagem = Viagem.objects.filter(veiculo = pk)
+        veiculo = Veiculo.objects.get(id = pk)
+        context['veiculo']=veiculo
+        context['lista']=lista_viagem
+        return context  

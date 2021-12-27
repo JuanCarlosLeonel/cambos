@@ -23,7 +23,7 @@ class ViagemForm(forms.ModelForm):
                 attrs={'class':'form-control', 'autofocus': 'autofocus'},                
             ),
             'motorista': Select2Widget(                
-                attrs={'class':'form-control', 'autofocus': 'autofocus'},                
+                attrs={'class':'form-control'},                
             ),
             'data': forms.DateInput(attrs={'class':'form-control'}),
             'peso': forms.NumberInput(attrs={'class':'form-control'}),
