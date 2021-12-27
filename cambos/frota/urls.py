@@ -12,15 +12,13 @@ from .views import(
     AbastecimentoCreate,
     AbastecimentoUpdate,
     AbastecimentoDelete,
-    VeiculoList,
-    ViagemListFilter
+    VeiculoList,    
 )
 
 urlpatterns = [
-    path('index', Index.as_view(), name='frota_index'),    
-    path('viagem_list',  ViagemList.as_view(), name='viagem_list'),
-    path('viagem_list_filter/<str:pk>/',  ViagemListFilter.as_view(), name='viagem_list_filter'),
-    path('viagem_create/', ViagemCreate.as_view(), name = 'viagem_create'),
+    path('index', Index.as_view(), name='frota_index'),        
+    path('viagem_list/<str:pk>/',  ViagemList.as_view(), name='viagem_list'),
+    path('viagem_create/<str:pk>/', ViagemCreate.as_view(), name = 'viagem_create'),
     path('viagem_update/<str:pk>/', ViagemUpdate.as_view(), name='viagem_update'),    
     path('viagem_delete/<int:pk>/',ViagemDelete.as_view(), name='viagem_delete_cbv'),
     path('corrida_list',  CorridaList.as_view(), name='corrida_list'),

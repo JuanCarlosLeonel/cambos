@@ -17,27 +17,22 @@ class Index(TemplateView):
 
 
 @method_decorator(login_required, name='dispatch')
-class ViagemList(ListView):
-    model = Viagem
-    template_name = 'frota/viagem_list.html'
-
-
-@method_decorator(login_required, name='dispatch')
 class ViagemCreate(CreateView):
     model = Viagem
     form_class = ViagemForm
 
-    def get_success_url(self):        
-        return '/frota/viagem_list'
+    def get_success_url(self):                
+        return f'/frota/viagem_list/{self.kwargs["pk"]}'
     
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)                
-        
+        context['veiculo'] = self.kwargs['pk']
         return context        
     
     def get_initial(self, *args, **kwargs):
         initial = super(ViagemCreate, self).get_initial(**kwargs)
-        initial['data'] = '12/01/2022'
+        veiculo = Veiculo.objects.get(pk = self.kwargs['pk'])
+        initial['veiculo'] = veiculo
         
         return initial
 
@@ -93,10 +88,11 @@ class ViagemUpdate(UpdateView):
     form_class = ViagemForm
     
     def get_success_url(self):        
-        return '/frota/viagem_list'
+        return f'/frota/viagem_list/{self.object.veiculo.id}'
     
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)                
+        context['veiculo'] = self.object.veiculo.id
         return context
 
 
@@ -150,9 +146,9 @@ class VeiculoList(ListView):
 
 
 @method_decorator(login_required, name='dispatch')
-class ViagemListFilter(ListView):
+class ViagemList(ListView):
     model = Viagem
-    template_name = 'frota/viagem_list_filter.html'
+    template_name = 'frota/viagem_list.html'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)   

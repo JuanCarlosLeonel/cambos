@@ -10,7 +10,7 @@
             <li><a href="{% url 'frota_index' %}">
                 <em class="fa fa-home"></em>
             </a></li>
-            <li class=""><a href="{% url 'viagem_list' %}">Viagem</a></li>
+            <li class=""><a href="{% url 'viagem_list' veiculo%}">Viagem</a></li>
             <li class="active">Cadastro de Viagem</li>
         </ol>
     </div><!--/.row-->
@@ -73,5 +73,24 @@
             $(".date").css('pointer-events', 'none');       
         });
       </script>
-
+     
+      <script>
+       $(document).ready(function(){
+            $('.datepicker').datepicker({
+                format: 'dd/mm/yyyy',
+                minViewMode: "days",
+                todayBtn: true,
+                todayHighlight: true,
+                
+            });            
+            $('.datepicker2').datepicker({
+                format: 'hh:mm',
+                minViewMode: "hours",
+                todayBtn: true,
+                todayHighlight: true,
+                
+            });            
+        });
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.10/jquery.mask.js"></script>
 {% endblock script %}

@@ -24,7 +24,7 @@
 		
 		{%for item in object_list%}
 		{%if not item.caminhao%}
-		<a href="{% url 'viagem_list_filter' item.pk  %}">		
+		<a href="{% url 'viagem_list' item.pk  %}">		
 			<div class="col-xs-6 no-padding">
 				<div class="panel panel-blue panel-widget border-right border-bottom">
 					<div class="row no-padding"><span class="color-teal"> <em class="fa fa-car fa-2x"></em></span>
@@ -44,7 +44,7 @@
 		
 		{%for item in object_list%}
 		{%if item.caminhao%}
-		<a href="{% url 'viagem_list_filter' item.pk  %}">		
+		<a href="{% url 'viagem_list' item.pk  %}">		
 			<div class="col-xs-6 no-padding">
 				<div class="panel panel-blue panel-widget border-right border-bottom">
 					<div class="row no-padding"><span class="color-red"> <em class="fa fa-truck fa-2x"></em></span>
