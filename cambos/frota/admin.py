@@ -4,8 +4,7 @@ from .models import (
     Veiculo,
     VeiculoAbastecimento,
     Viagem,
-    Abastecimento,
-    Corrida,
+    Abastecimento,    
     Infracao,
     Seguro,
     Rastreio,
@@ -17,7 +16,6 @@ admin.site.register(Veiculo)
 admin.site.register(VeiculoAbastecimento)
 admin.site.register(Viagem)
 admin.site.register(Abastecimento)
-admin.site.register(Corrida)
 admin.site.register(Infracao)
 admin.site.register(Seguro)
 admin.site.register(Rastreio)

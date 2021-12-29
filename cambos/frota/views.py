@@ -4,8 +4,8 @@ from django.views.generic.edit import UpdateView, CreateView, DeleteView
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
 from django.views.generic.list import ListView
-from .models import Abastecimento, Viagem, Corrida, Veiculo
-from .form import ViagemForm, AbastecimentoForm, CorridaForm
+from .models import Abastecimento, Viagem, Veiculo
+from .form import ViagemForm, AbastecimentoForm
 
 @method_decorator(login_required, name='dispatch')
 class Index(TemplateView):
@@ -33,32 +33,6 @@ class ViagemCreate(CreateView):
         initial = super(ViagemCreate, self).get_initial(**kwargs)
         veiculo = Veiculo.objects.get(pk = self.kwargs['pk'])
         initial['veiculo'] = veiculo
-        
-        return initial
-
-
-@method_decorator(login_required, name='dispatch')
-class CorridaList(ListView):
-    model = Corrida
-    template_name = 'frota/Corrida_list.html'
-
-
-@method_decorator(login_required, name='dispatch')
-class CorridaCreate(CreateView):
-    model = Corrida
-    form_class = CorridaForm
-
-    def get_success_url(self):        
-        return '/frota/corrida_list'
-    
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)                
-        
-        return context        
-    
-    def get_initial(self, *args, **kwargs):
-        initial = super(CorridaCreate, self).get_initial(**kwargs)
-        initial['data'] = '12/01/2022'
         
         return initial
 

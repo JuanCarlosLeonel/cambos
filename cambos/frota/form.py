@@ -1,5 +1,5 @@
 from django import forms
-from .models import Viagem, Abastecimento, Corrida
+from .models import Viagem, Abastecimento
 from django_select2.forms import Select2Widget
 
 
@@ -28,32 +28,6 @@ class ViagemForm(forms.ModelForm):
             'hora_inicial': forms.TimeInput(attrs={'data-mask':'00:00','class':'form-control'}),            
             'hora_final': forms.TimeInput(attrs={'data-mask':'00:00','class':'form-control'}),            
             'destino': forms.TextInput(attrs={'class':'form-control'}),            
-            'km_inicial': forms.NumberInput(attrs={'class':'form-control'}),
-            'km_final': forms.NumberInput(attrs={'class':'form-control'}),
-        }
-
-
-class CorridaForm(forms.ModelForm):
-    class Meta:
-        model = Corrida
-        fields = (
-            'data',
-            'veiculo',
-            'motorista',                                    
-            'km_inicial',
-            'km_final',
-            'observacao',
-        )
-         
-        widgets = {                                     
-            'veiculo': Select2Widget(                
-                attrs={'class':'form-control', 'autofocus': 'autofocus'},                
-            ),
-            'motorista': Select2Widget(                
-                attrs={'class':'form-control', 'autofocus': 'autofocus'},                
-            ),
-            'data': forms.DateInput(attrs={'class':'form-control'}),
-            'observacao': forms.TextInput(attrs={'class':'form-control'}),
             'km_inicial': forms.NumberInput(attrs={'class':'form-control'}),
             'km_final': forms.NumberInput(attrs={'class':'form-control'}),
         }

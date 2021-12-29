@@ -77,21 +77,6 @@ class Abastecimento(models.Model):
         db_table = 'frota"."abastecimento'
 
 
-class Corrida(models.Model):
-    veiculo    = models.ForeignKey(Veiculo, on_delete=models.DO_NOTHING)
-    motorista  = models.ForeignKey(Motorista, on_delete=models.DO_NOTHING)
-    data       = models.DateField()    
-    km_inicial = models.IntegerField()
-    km_final   = models.IntegerField()
-    observacao = models.CharField(max_length=40, blank=True)
-
-    def __str__(self):
-        return f'{self.veiculo} - {self.motorista}'
-    
-    class Meta:        
-        db_table = 'frota"."corrida'
-
-
 class Infracao(models.Model):    
     veiculo    = models.ForeignKey(Veiculo, on_delete=models.DO_NOTHING)
     data       = models.DateField()    
