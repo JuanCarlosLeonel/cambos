@@ -126,3 +126,4 @@ class DespesaViagem(models.Model):
     
     class Meta:        
         db_table = 'frota"."despesa_viagem'
+

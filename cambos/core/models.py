@@ -36,20 +36,6 @@ class Bot(models.Model):
     ativo   = models.BooleanField(default=False)
 
 
-class OFICINA(models.Model):    
-    choice = models.CharField(max_length=154, unique=True, verbose_name='Oficina')
-    
-    def __str__(self):
-        return f'{self.choice}'
-
-
-class ACABAMENTO(models.Model):
-    choice = models.CharField(max_length=154, unique=True)
-    
-    def __str__(self):
-        return f'{self.choice}'    
-
-
 class User(AbstractUser):
     setor     = models.ForeignKey(Setor, null=True, blank=True, on_delete=models.SET_NULL)
     textil    = models.BooleanField(default=False)
@@ -80,5 +66,4 @@ class Ativo(models.Model):
     class Meta:
         managed = False
         db_table = 'souzacambos"."compras_produtos' 
-
 
