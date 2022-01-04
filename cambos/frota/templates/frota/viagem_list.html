@@ -63,7 +63,11 @@
 							<tr data-href="{% url 'viagem_update' data.pk %}"
 							 class="trLink" >							
 								<td class='text-center' >									
-									
+									{%if data.data_final%}
+										Concluído
+									{% else %}
+										Em Trânsito
+									{%endif%}
 								</td>
 								<td class='text-center' >	
 									{% if data.data_inicial %}								
@@ -76,10 +80,8 @@
 								<td class='text-center'>
 									{{data.motorista}}
 								</td>				
-								<td class='text-center' >									
-									{% if data.data_final %}								
-									{{data.data_final|safe}}									
-									{% endif %}
+								<td class='text-center' >																					
+									{{data.data_final|safe}}																		
 								</td>																																				
 						{%endfor%}
 					</tbody>					

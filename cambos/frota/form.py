@@ -23,7 +23,7 @@ class ViagemForm(forms.ModelForm):
             'motorista': Select2Widget(                
                 attrs={'class':'form-control'},                
             ),
-            'data_inicial':forms.DateInput(attrs={'class':'form-control datepicker'}),            
+            'data_inicial':forms.DateInput(attrs={'data-mask':'00/00/0000','class':'form-control datepicker'}),            
             'data_final':forms.DateInput(attrs={'class':'form-control datepicker'}),     
             'hora_inicial': forms.TimeInput(attrs={'data-mask':'00:00','class':'form-control'}),            
             'hora_final': forms.TimeInput(attrs={'data-mask':'00:00','class':'form-control'}),            
