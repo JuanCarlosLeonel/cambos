@@ -9,12 +9,12 @@ class ViagemForm(forms.ModelForm):
         fields = (            
             'veiculo',
             'motorista',            
+            'destino',                        
             'data_inicial',
-            'data_final',
             'hora_inicial',
-            'hora_final',            
-            'destino',            
             'km_inicial',
+            'data_final',            
+            'hora_final',                        
             'km_final'
         )
          
@@ -31,7 +31,13 @@ class ViagemForm(forms.ModelForm):
             'km_inicial': forms.NumberInput(attrs={'class':'form-control'}),
             'km_final': forms.NumberInput(attrs={'class':'form-control'}),
         }
-
+        
+    def __init__(self, *args, **kwargs):
+        super(ViagemForm, self).__init__(*args, **kwargs)
+        self.fields['data_inicial'].label = "Data Saída"
+        self.fields['hora_inicial'].label = "Hora Saída"
+        self.fields['data_final'].label = "Data Retorno"
+        self.fields['hora_final'].label = "Hora Retorno"
 
 class AbastecimentoForm(forms.ModelForm):
     class Meta:

@@ -8,24 +8,24 @@
             <li><a href="{% url 'frota_index' %}">
                 <em class="fa fa-home"></em>
             </a></li>
-            <li class="active">menu</li>
+			<li class="active"><a href="{% url 'veiculo_list' %}">Veículos</a></li>
         </ol>	
     </div><!--/.row-->
 	
 	<div class="row">
         <div class="col-lg-12">
-            <h1 class="page-header">Frota<span class="text-muted small"> Menu </span></h1>
+            <h1 class="page-header">{{veiculo}}<span class="text-muted small"> </span></h1>
         </div>
     </div><!--/.row-->
 {% endblock navigation %}
 
 {% block content %}
 <div class="panel panel-container">
-	<a href="{% url 'veiculo_list' %}">												
+	<a href="{% url 'viagem_list' veiculo.pk %}">												
 		<div class="col-xs-6 no-padding">					
 			<div class="panel panel-teal panel-widget border-right border-bottom">
 				<div class="row no-padding"><span class="color-blue"> <em class="fa fa-truck fa-2x"></em></span>
-					<h2>Veículos</h2>						
+					<h2>Viagens</h2>						
 				</div>
 			</div>
 		</div>
@@ -40,8 +40,9 @@
 					</div>
 				</div>
 			</div>
-		</a>				
-		<a href="{% url 'programacao_list' %}">				
+		</a>
+		<!--				
+		<a href="">				
 		<div class="col-xs-6 no-padding">
 			<div class="panel panel-red panel-widget border-right border-bottom">
 				<div class="row no-padding"><span class="color-red"> <em class="fa fa-wrench fa-2x"></em></span>
@@ -62,7 +63,7 @@
 			</div>
 			</a>			
 				
-			<a href="{% url 'producao_roupa_list' %}">												
+			<a href="">												
 				<div class="col-xs-6 no-padding">					
 					<div class="panel panel-teal panel-widget border-right border-bottom">
 						<div class="row no-padding"><span class="color-blue"> <em class="fa fa-line-chart fa-2x"></em></span>
@@ -71,6 +72,7 @@
 					</div>
 				</div>
 			</a>	
+		-->
 		
 	</div><!--/.row-->
 

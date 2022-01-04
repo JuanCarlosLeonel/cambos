@@ -2,6 +2,7 @@ from django.urls import path
 from django.views.generic.base import View
 from .views import(
     Index,
+    VeiculoIndex,
     ViagemList,
     ViagemCreate,
     ViagemUpdate,
@@ -15,6 +16,7 @@ from .views import(
 
 urlpatterns = [
     path('index', Index.as_view(), name='frota_index'),        
+    path('veiculo_index/<str:pk>/', VeiculoIndex.as_view(), name='veiculo_index'),        
     path('viagem_list/<str:pk>/',  ViagemList.as_view(), name='viagem_list'),
     path('viagem_create/<str:pk>/', ViagemCreate.as_view(), name = 'viagem_create'),
     path('viagem_update/<str:pk>/', ViagemUpdate.as_view(), name='viagem_update'),    

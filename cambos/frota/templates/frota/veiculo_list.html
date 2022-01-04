@@ -5,10 +5,10 @@
 {% block navigation %}
     <div class="row">		
         <ol class="breadcrumb ">
-            <li><a href="{% url 'core_home' %}">
+            <li><a href="{% url 'frota_index' %}">
                 <em class="fa fa-home"></em>
             </a></li>
-            <li class="active">Frota</li>
+            <li class="active">Veículos</li>
         </ol>	
     </div><!--/.row-->
 	
@@ -24,7 +24,7 @@
 		
 		{%for item in object_list%}
 		{%if not item.caminhao%}
-		<a href="{% url 'viagem_list' item.pk  %}">		
+		<a href="{% url 'veiculo_index' item.pk  %}">		
 			<div class="col-xs-6 no-padding">
 				<div class="panel panel-blue panel-widget border-right border-bottom">
 					<div class="row no-padding"><span class="color-teal"> <em class="fa fa-car fa-2x"></em></span>
@@ -44,7 +44,7 @@
 		
 		{%for item in object_list%}
 		{%if item.caminhao%}
-		<a href="{% url 'viagem_list' item.pk  %}">		
+		<a href="{% url 'veiculo_index' item.pk  %}">		
 			<div class="col-xs-6 no-padding">
 				<div class="panel panel-blue panel-widget border-right border-bottom">
 					<div class="row no-padding"><span class="color-red"> <em class="fa fa-truck fa-2x"></em></span>
@@ -63,19 +63,7 @@
 {%endblock content%}
 
 {% block script %}
-<script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
-
-<script>
-	var label = {{clientes_label|safe}}
-	var value = {{clientes_quant|safe}}
-					
-</script>
-<script src="{% static 'js/treemaps.js' %}"></script>	
-
-
-
-
-  
+ 
   
 {% endblock script %}
 
