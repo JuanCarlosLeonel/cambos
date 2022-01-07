@@ -18,6 +18,7 @@
 {% endblock navigation %}
 
 {% block content %}
+{% if permissoes.ver_carro %}
 <h1 class="page-header"><span class="text-muted small">Carros </span></h1>
 <div class="panel panel-container">
 	<div class="row">		
@@ -38,26 +39,29 @@
 		{%endfor%}		
 	</div><!--/.row-->
 </div>
+{% endif %}
+{% if permissoes.ver_caminhao %}
 <h1 class="page-header"><span class="text-muted small">Caminhões </span></h1>
 <div class="panel panel-container">
 	<div class="row">		
 		
-		{%for item in object_list%}
-		{%if item.caminhao%}
-		<a href="{% url 'veiculo_index' item.pk  %}">		
-			<div class="col-xs-6 no-padding">
-				<div class="panel panel-blue panel-widget border-right border-bottom">
-					<div class="row no-padding"><span class="color-red"> <em class="fa fa-truck fa-2x"></em></span>
-						<h2>{{item.descricao}}</h2>
-						
-					</div>
-				</div>
-			</div>
-		</a>			
-		{%endif%}
-		{%endfor%}		
+			{%for item in object_list%}
+				{%if item.caminhao%}
+					<a href="{% url 'veiculo_index' item.pk  %}">		
+						<div class="col-xs-6 no-padding">
+							<div class="panel panel-blue panel-widget border-right border-bottom">
+								<div class="row no-padding"><span class="color-red"> <em class="fa fa-truck fa-2x"></em></span>
+									<h2>{{item.descricao}}</h2>
+									
+								</div>
+							</div>
+						</div>
+					</a>			
+				{%endif%}
+			{%endfor%}				
 	</div><!--/.row-->
 </div>
+{% endif %}
 
 
 {%endblock content%}

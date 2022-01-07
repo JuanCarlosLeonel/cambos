@@ -1,5 +1,5 @@
 from django.db import models
-from core.models import Pessoa, Ativo
+from core.models import Pessoa, Ativo, User
 from django_currentuser.db.models import CurrentUserField
 import datetime
 
@@ -127,3 +127,19 @@ class DespesaViagem(models.Model):
     class Meta:        
         db_table = 'frota"."despesa_viagem'
 
+
+class FrotaPermissao(models.Model):
+    usuario     = models.ForeignKey(User, on_delete=models.CASCADE)       
+    ver_veiculo = models.BooleanField(default=True)    
+    ver_manutencao = models.BooleanField(default=False)    
+    ver_despesa = models.BooleanField(default=False)    
+    ver_relatorio = models.BooleanField(default=False)    
+    ver_carro = models.BooleanField(default=True)    
+    ver_caminhao = models.BooleanField(default=True)    
+    ver_empilhadeira = models.BooleanField(default=False)    
+
+    def __str__(self):
+        return f'{self.usuario}'
+    
+    class Meta:        
+        db_table = 'frota"."frota_permissao' 

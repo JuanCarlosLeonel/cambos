@@ -4,7 +4,7 @@ from django.views.generic.edit import UpdateView, CreateView, DeleteView
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
 from django.views.generic.list import ListView
-from .models import Abastecimento, Viagem, Veiculo
+from .models import Abastecimento, Viagem, Veiculo, FrotaPermissao
 from .form import ViagemForm, AbastecimentoForm
 import datetime
 
@@ -14,6 +14,11 @@ class Index(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)                
+        try:
+            user_permission = FrotaPermissao.objects.get(usuario = self.request.user)
+        except:
+            user_permission = {}
+        context['permissoes'] = user_permission
         return context
 
 
@@ -135,6 +140,14 @@ class VeiculoList(ListView):
     model = Veiculo
     template_name = 'frota/veiculo_list.html'
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)                
+        try:
+            user_permission = FrotaPermissao.objects.get(usuario = self.request.user)
+        except:
+            user_permission = {}
+        context['permissoes'] = user_permission
+        return context
 
 @method_decorator(login_required, name='dispatch')
 class ViagemList(ListView):
