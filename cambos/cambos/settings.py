@@ -112,9 +112,9 @@ else:
         'default': {
             'ENGINE': 'django.db.backends.postgresql_psycopg2',
             'NAME': 'cambos',
-            # 'OPTIONS': {
-            #     'options': '-c search_path=producao'
-            # },
+            'OPTIONS': {
+                'options': '-c search_path=producao'
+            },
             'USER': 'postgres',
             'PASSWORD': '1234',
             'HOST': 'localhost',
