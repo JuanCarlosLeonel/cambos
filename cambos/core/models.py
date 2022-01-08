@@ -1,6 +1,4 @@
 from django.db import models
-from django.db.models.deletion import SET_NULL
-from django_currentuser.db.models import CurrentUserField
 from django.contrib.auth.models import AbstractUser
 
 
@@ -38,21 +36,34 @@ class Bot(models.Model):
     ativo   = models.BooleanField(default=False)
 
 
-class OFICINA(models.Model):    
-    choice = models.CharField(max_length=154, unique=True, verbose_name='Oficina')
-    
-    def __str__(self):
-        return f'{self.choice}'
-
-
-class ACABAMENTO(models.Model):
-    choice = models.CharField(max_length=154, unique=True)
-    
-    def __str__(self):
-        return f'{self.choice}'    
-
-
 class User(AbstractUser):
     setor     = models.ForeignKey(Setor, null=True, blank=True, on_delete=models.SET_NULL)
     textil    = models.BooleanField(default=False)
     confeccao = models.BooleanField(default=False)
+    frota     = models.BooleanField(default=False)
+
+
+class Pessoa(models.Model):    
+    id = models.AutoField(db_column='id', primary_key=True)
+    matricula = models.CharField(db_column='matriculacolaborador', max_length=10, blank=True)      
+    nome = models.CharField(db_column='nomecolaborador', max_length=50, blank=True)      
+
+    def __str__(self):
+        return f'{self.nome} ({self.matricula})'
+
+    class Meta:
+        managed = False
+        db_table = 'souzacambos"."colaboradors' 
+
+
+class Ativo(models.Model):    
+    id = models.AutoField(db_column='id', primary_key=True)
+    descricao = models.CharField(db_column='descricao', max_length=70, blank=True)      
+
+    def __str__(self):
+        return self.descricao
+
+    class Meta:
+        managed = False
+        db_table = 'souzacambos"."compras_produtos' 
+

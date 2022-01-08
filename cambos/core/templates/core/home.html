@@ -50,6 +50,20 @@
 			</div><!--/.row-->
 		</div>
 		{% endif %}		
+		{% if user.frota%}
+		<div class="col-6">
+			<div class="panel panel-default">
+				<div class="panel-body">				
+					<a href="{% url 'frota_index' %}">																		
+						<div class="panel panel-teal panel-widget">															
+							<div class="large"><em class="fa fa-truck color-orange"></em></div>								
+							<h3 class=""> Frota </h3>																
+						</div>						
+					</a>								
+				</div>
+			</div>
+		{% endif%}
+
 		</div>
 	</div>		
 </div>

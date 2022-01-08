@@ -90,7 +90,7 @@ class PedidoTrack(models.Model):
 
 
 class RoupaBot(models.Model):    
-    user_id    = models.IntegerField(unique=True)
+    user_id    = models.BigIntegerField(unique=True)
     user_nome  = models.CharField(max_length=30)    
     costura    = models.ManyToManyField(Etapa, blank=True)
     lavanderia = models.BooleanField(default=False)    

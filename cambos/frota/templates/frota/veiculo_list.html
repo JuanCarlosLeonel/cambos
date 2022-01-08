@@ -1,0 +1,69 @@
+{% extends "cambos/base_frota.html" %}
+{% load static %}
+{% block css %}{% endblock css %}
+
+{% block navigation %}
+    <div class="row">		
+        <ol class="breadcrumb ">
+            <li><a href="{% url 'frota_index' %}">
+                <em class="fa fa-home"></em>
+            </a></li>
+            <li class="active">Veículos</li>
+        </ol>	
+    </div><!--/.row-->
+	
+	<div class="row">
+       
+    </div><!--/.row-->
+{% endblock navigation %}
+
+{% block content %}
+<h1 class="page-header"><span class="text-muted small">Carros </span></h1>
+<div class="panel panel-container">
+	<div class="row">		
+		
+		{%for item in object_list%}
+		{%if not item.caminhao%}
+		<a href="{% url 'veiculo_index' item.pk  %}">		
+			<div class="col-xs-6 no-padding">
+				<div class="panel panel-blue panel-widget border-right border-bottom">
+					<div class="row no-padding"><span class="color-teal"> <em class="fa fa-car fa-2x"></em></span>
+						<h2>{{item.descricao}}</h2>
+						
+					</div>
+				</div>
+			</div>
+		</a>			
+		{%endif%}
+		{%endfor%}		
+	</div><!--/.row-->
+</div>
+<h1 class="page-header"><span class="text-muted small">Caminhões </span></h1>
+<div class="panel panel-container">
+	<div class="row">		
+		
+		{%for item in object_list%}
+		{%if item.caminhao%}
+		<a href="{% url 'veiculo_index' item.pk  %}">		
+			<div class="col-xs-6 no-padding">
+				<div class="panel panel-blue panel-widget border-right border-bottom">
+					<div class="row no-padding"><span class="color-red"> <em class="fa fa-truck fa-2x"></em></span>
+						<h2>{{item.descricao}}</h2>
+						
+					</div>
+				</div>
+			</div>
+		</a>			
+		{%endif%}
+		{%endfor%}		
+	</div><!--/.row-->
+</div>
+
+
+{%endblock content%}
+
+{% block script %}
+ 
+  
+{% endblock script %}
+

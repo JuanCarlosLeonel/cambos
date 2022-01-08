@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/3.0/ref/settings/
 """
 
 import os
+from decouple import config
 
 from requests.api import options
 
@@ -22,21 +23,22 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # See https://docs.djangoproject.com/en/3.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = '2fscwuwx((@*edd7t=&_je8oy=lo3g39s4162^!o0m5d(t6$92'
+SECRET_KEY = config('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = config('DEBUG', default=False, cast=bool)
 
 ALLOWED_HOSTS = [
     'scbi.us-west-2.elasticbeanstalk.com',
     '127.0.0.1',
     '192.168.0.188',
-    '96.30.197.152',
-    'www.carretel.tk',
-    'carretel.tk',
+    '96.30.197.152',    
     '45.32.211.66',    
-    'localhost',
-    'indicador.tk',
+    'localhost',    
+    'indicador.souzacambos.com.br',
+    '18.230.108.17',
+    '192.168.0.6',
+    '192.168.0.190',
 ]
 
 
@@ -55,6 +57,7 @@ INSTALLED_APPS = [
     'produto',
     'comercial',
     'roupa',
+    'frota',
     'django_select2',  
     'django_apscheduler',
 ]
@@ -93,34 +96,45 @@ TEMPLATES = [
 WSGI_APPLICATION = 'cambos.wsgi.application'
 
 
+
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
 
-if 'RDS_DB_NAME' in os.environ:
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.postgresql_psycopg2',
-            'NAME': os.environ['RDS_DB_NAME'],
-            'USER': os.environ['RDS_USERNAME'],
-            'PASSWORD': os.environ['RDS_PASSWORD'],
-            'HOST': os.environ['RDS_HOSTNAME'],
-            'PORT': os.environ['RDS_PORT'],
-        }
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': config('DB_NAME'),
+        'OPTIONS': {
+            'options': '-c search_path=producao,public'
+        },
+        'USER': config('DB_USER'),
+        'PASSWORD': config('DB_PASSWORD'),
+        'HOST': config('DB_HOST'),
+        'PORT': config('DB_PORT'),
+    },
+    'frota': {
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': config('DB_NAME'),
+        'OPTIONS': {
+            'options': '-c search_path=frota'
+        },
+        'USER': config('DB_USER'),
+        'PASSWORD': config('DB_PASSWORD'),
+        'HOST': config('DB_HOST'),
+        'PORT': config('DB_PORT'),
+    },
+    'souzacambos': {
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': config('DB_NAME'),
+        'OPTIONS': {
+            'options': '-c search_path=souzacambos'
+        },
+        'USER': config('DB_USER'),
+        'PASSWORD': config('DB_PASSWORD'),
+        'HOST': config('DB_HOST'),
+        'PORT': config('DB_PORT'),
     }
-else:
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.postgresql_psycopg2',
-            'NAME': 'cambos',
-            'OPTIONS': {
-                'options': '-c search_path=producao'
-            },
-            'USER': 'postgres',
-            'PASSWORD': '1234',
-            'HOST': 'localhost',
-            'PORT': '5432',
-        }
-    }
+}
 
 
 # Password validation
