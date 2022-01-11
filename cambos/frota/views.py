@@ -4,8 +4,10 @@ from django.views.generic.edit import UpdateView, CreateView, DeleteView
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
 from django.views.generic.list import ListView
-from .models import Abastecimento, Viagem, Veiculo
-from .form import ViagemForm, AbastecimentoForm
+from .models import Abastecimento, Manutencao, VeiculoAbastecimento, Viagem, Veiculo
+from .form import ManutencaoForm, ViagemForm, AbastecimentoForm
+from django.http import JsonResponse
+from django.db.models import Sum
 import datetime
 
 @method_decorator(login_required, name='dispatch')
@@ -149,3 +151,103 @@ class ViagemList(ListView):
         context['veiculo']=veiculo
         context['lista']=lista_viagem
         return context  
+
+
+@method_decorator(login_required, name='dispatch')
+class ViagemListALL(ListView):
+    model = Viagem
+    template_name = 'frota/viagem_listALL.html'
+
+
+def relatorio_despesa(request):
+    from datetime import datetime
+    x = Abastecimento.objects.all()
+    meses = ['jan', 'fev', 'mar', 'abr', 'mai', 'jun', 'jul', 'ago', 'set', 'out', 'nov', 'dez']
+    data = []
+    labels = []
+    mes = datetime.now().month + 1
+    ano = datetime.now().year
+    for i in range(12): 
+        mes -= 1
+        if mes == 0:
+            mes = 12
+            ano -= 1
+        y = sum([i.valor_unitario for i in x if i.data.month == mes and i.data.year == ano])
+        labels.append(meses[mes-1])
+        data.append(y)
+    data_json = {'data': data[::-1], 'labels': labels[::-1]}
+    return JsonResponse(data_json)
+
+def relatorio_despesa_porveiculo(request):
+    produtos = VeiculoAbastecimento.objects.all()
+    label = []
+    data = []
+    for produto in produtos:
+        vendas = Abastecimento.objects.filter(veiculo=produto).aggregate(Sum('valor_unitario'))
+        if not vendas['valor_unitario__sum']:
+            vendas['valor_unitario__sum'] = 0
+        label.append(produto.veiculo.descricao.descricao)
+        data.append(vendas['valor_unitario__sum'])
+
+    x = list(zip(label, data))
+    x.sort(key=lambda x: x[1], reverse=True)
+    x = list(zip(*x))
+    
+    return JsonResponse({'labels': x[0][:7], 'data': x[1][:7]})
+
+
+@method_decorator(login_required, name='dispatch')
+class IndexDespesas(TemplateView):
+    template_name = 'frota/despesas.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)                
+        return context
+
+
+@method_decorator(login_required, name='dispatch')
+class ManutencaoList(ListView):
+    model = Manutencao
+    template_name = 'frota/manutencao_list.html'
+
+
+@method_decorator(login_required, name='dispatch')
+class ManutencaoCreate(CreateView):
+    model = Manutencao
+    form_class = ManutencaoForm
+
+    def get_success_url(self):        
+        return '/frota/manutencao_list'
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)                
+        
+        return context        
+    
+    def get_initial(self, *args, **kwargs):
+        initial = super(ManutencaoCreate, self).get_initial(**kwargs)
+        initial['data'] = '12/01/2022'
+        return initial
+
+@method_decorator(login_required, name='dispatch')
+class ManutencaoUpdate(UpdateView):
+    model = Manutencao
+    form_class = ManutencaoForm
+    
+    def get_success_url(self):        
+        return '/frota/manutencao_list'
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)                
+        return context
+
+@method_decorator(login_required, name='dispatch')
+class ManutencaoDelete(DeleteView):
+    model = Manutencao
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)        
+        return context   
+
+    def get_success_url(self):
+        return '/frota/manutencao_list'

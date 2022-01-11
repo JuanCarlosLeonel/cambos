@@ -40,8 +40,18 @@
 					</div>
 				</div>
 			</div>
-		</a>				
-		<a href="{% url 'programacao_list' %}">				
+		</a>
+		<a href="{% url 'viagem_listall' %}">				
+			<div class="col-xs-6 no-padding">
+				<div class="panel panel-red panel-widget border-right border-bottom">
+					<div class="row no-padding"><span class="color-red"> <em class="fa fa-plane fa-2x"></em></span>
+						<h2>Viagens</h2>
+						
+					</div>
+				</div>
+			</div>
+			</a>				
+		<a href="{% url 'manutencao_list' %}">				
 		<div class="col-xs-6 no-padding">
 			<div class="panel panel-red panel-widget border-right border-bottom">
 				<div class="row no-padding"><span class="color-red"> <em class="fa fa-wrench fa-2x"></em></span>
@@ -51,7 +61,7 @@
 			</div>
 		</div>
 		</a>
-		<a href="">				
+		<a href="{% url 'despesas_frota' %}">				
 			<div class="col-xs-6 no-padding">
 				<div class="panel panel-red panel-widget border-right border-bottom">
 					<div class="row "><span class="color-red"> <em class="fa fa-money fa-2x"></em></span>

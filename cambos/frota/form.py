@@ -1,5 +1,5 @@
 from django import forms
-from .models import Viagem, Abastecimento
+from .models import Manutencao, Viagem, Abastecimento
 from django_select2.forms import Select2Widget
 
 
@@ -56,5 +56,26 @@ class AbastecimentoForm(forms.ModelForm):
             'data': forms.DateInput(attrs={'class':'form-control'}),
             'valor_unitario': forms.NumberInput(attrs={'class':'form-control'}),            
             'quantidade': forms.NumberInput(attrs={'class':'form-control'}),
+        }
+
+class ManutencaoForm(forms.ModelForm):
+    class Meta:
+        model = Manutencao
+        fields = (            
+            'veiculo',
+            'manutencao',
+            'valor',            
+            'descricao', 
+            'data_criacao',           
+        )
+         
+        widgets = {                                     
+            'veiculo': Select2Widget(                
+                attrs={'class':'form-control', 'autofocus': 'autofocus'},                
+            ),            
+            'manutencao': forms.Select(attrs={'class':'form-control'}),
+            'data_criacao': forms.DateInput(attrs={'class':'form-control'}),
+            'valor': forms.NumberInput(attrs={'class':'form-control'}),            
+            'descricao': forms.TextInput(attrs={'class':'form-control'}),
         }
 

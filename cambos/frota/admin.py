@@ -8,7 +8,8 @@ from .models import (
     Infracao,
     Seguro,
     Rastreio,
-    DespesaViagem
+    DespesaViagem,
+    Manutencao,
 )
 
 admin.site.register(Motorista)
@@ -20,3 +21,4 @@ admin.site.register(Infracao)
 admin.site.register(Seguro)
 admin.site.register(Rastreio)
 admin.site.register(DespesaViagem)
+admin.site.register(Manutencao)
