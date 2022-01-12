@@ -134,5 +134,3 @@ dmypy.json
 !.elasticbeanstalk/*.global.yml
 
 .vscode
-
-cambos/cambos/settings.py
