@@ -53,7 +53,7 @@ class AbastecimentoForm(forms.ModelForm):
             'veiculo': Select2Widget(                
                 attrs={'class':'form-control', 'autofocus': 'autofocus'},                
             ),            
-            'data': forms.DateInput(attrs={'class':'form-control'}),
+            'data': forms.DateInput(attrs={'class':'form-control datepicker'}),
             'valor_unitario': forms.NumberInput(attrs={'class':'form-control'}),            
             'quantidade': forms.NumberInput(attrs={'class':'form-control'}),
         }
@@ -74,7 +74,7 @@ class ManutencaoForm(forms.ModelForm):
                 attrs={'class':'form-control', 'autofocus': 'autofocus'},                
             ),            
             'manutencao': forms.Select(attrs={'class':'form-control'}),
-            'data_criacao': forms.DateInput(attrs={'class':'form-control'}),
+            'data_criacao': forms.DateInput(attrs={'class':'form-control datepicker'}),
             'valor': forms.NumberInput(attrs={'class':'form-control'}),            
             'descricao': forms.TextInput(attrs={'class':'form-control'}),
         }

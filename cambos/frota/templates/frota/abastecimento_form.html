@@ -62,16 +62,36 @@
 {% endblock content %}
 {% block script %}
  {{ form.media.js }}
-	<script>
-        let option = document.getElementById('setor{{setor.id}}');        
-        option.setAttribute('class', 'active');					           
-      </script>
-      <script>
-        $(document).ready(function(){            
-            $(".enabled").attr("class", "disabled");
-            $(".disabled a").removeAttr("href");    
-            $(".date").css('pointer-events', 'none');       
-        });
-      </script>
+ <script>
+    let option = document.getElementById('setor{{setor.id}}');        
+    option.setAttribute('class', 'active');					           
+  </script>
+  <script>
+    $(document).ready(function(){            
+        $(".enabled").attr("class", "disabled");
+        $(".disabled a").removeAttr("href");    
+        $(".date").css('pointer-events', 'none');       
+    });
+  </script>
+ 
+  <script>
+   $(document).ready(function(){
+        $('.datepicker').datepicker({
+            format: 'dd/mm/yyyy',
+            minViewMode: "days",
+            todayBtn: true,
+            todayHighlight: true,
+            
+        });            
+        $('.datepicker2').datepicker({
+            format: 'hh:mm',
+            minViewMode: "hours",
+            todayBtn: true,
+            todayHighlight: true,
+            
+        });            
+    });
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.10/jquery.mask.js"></script>
 
 {% endblock script %}

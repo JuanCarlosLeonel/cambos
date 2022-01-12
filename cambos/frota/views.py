@@ -71,7 +71,7 @@ class AbastecimentoCreate(CreateView):
     
     def get_initial(self, *args, **kwargs):
         initial = super(AbastecimentoCreate, self).get_initial(**kwargs)
-        initial['data'] = '12/01/2022'
+        initial['data'] = datetime.date.today()
         return initial
 
 
@@ -226,7 +226,6 @@ class ManutencaoCreate(CreateView):
     
     def get_initial(self, *args, **kwargs):
         initial = super(ManutencaoCreate, self).get_initial(**kwargs)
-        initial['data'] = '12/01/2022'
         return initial
 
 @method_decorator(login_required, name='dispatch')
