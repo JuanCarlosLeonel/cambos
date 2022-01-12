@@ -98,7 +98,7 @@ class ViagemDelete(DeleteView):
         return context   
 
     def get_success_url(self):
-        return '/frota/viagem_list'
+        return f'/frota/viagem_list/{self.object.veiculo.id}'
 
 
 @method_decorator(login_required, name='dispatch')
