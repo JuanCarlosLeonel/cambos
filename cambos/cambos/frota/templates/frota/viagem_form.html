@@ -1,0 +1,96 @@
+{% extends "cambos/base_frota.html" %}
+
+{% block css %}
+{{ form.media.css }}
+{% endblock css %}
+
+{% block navigation %}
+    <div class="row">
+        <ol class="breadcrumb">
+            <li><a href="{% url 'frota_index' %}">
+                <em class="fa fa-home"></em>
+            </a></li>
+            <li class=""><a href="{% url 'viagem_list' veiculo%}">Viagem</a></li>
+            <li class="active">Cadastro-Atualização de Viagem</li>
+        </ol>
+    </div><!--/.row-->
+    <div class="row">
+        <div class="col-lg-12">
+            <h1 class="page-header">{{viagem.veiculo}}</h1></h1>
+        </div>
+    </div><!--/.row-->
+{% endblock navigation %}
+
+{% block content %}		
+
+<div class="modal-dialog modal-lg">
+    <div class="modal-content">
+        <form method="post" autocomplete="off">
+              <div class="modal-header">
+                <a href="javascript:void(0)" onClick="history.go(-1); return false;" type="button" class="close" aria-hidden="true">×</a>
+                <h3 class="modal-title">Cadastro/Atualização de Viagem</h3>
+              </div>
+              <div class="modal-body">                
+                    {% csrf_token %}
+                    {{ form.non_field_errors }}
+                    <div class="form-group">
+                    {% for field in form %}
+                        <div class="form-group">
+                            {% if field.errors %}
+                                <ul class="form-errors">
+                                {% for error in field.errors %}
+                                    <li><span class="fa fa-exclamation-triangle"></span> <strong>{{ error|escape }}</strong></li>
+                                {% endfor %}
+                                </ul>
+                            {% endif %}                            
+                            {% if field.help_text %}<div class="form-helptext">{{ field.help_text }}</div>{% endif %}                    
+                        </div>
+                    {% endfor %}
+                    {{form}}
+              </div>
+              <div class="modal-footer">
+                <a href="javascript:void(0)" onClick="history.go(-1); return false;" type="button" class="btn btn-primary">Retornar</a>
+                <input type="submit" class="btn btn-success" value="Salvar"  />
+                {% if object  %}
+                <a href="{% url 'viagem_delete_cbv' object.pk %}" type="button" class="btn btn-danger">Deletar</a>                                
+                {% endif %}
+              </div>
+        </form>
+       
+    </div><!-- /.modal-content -->
+</div><!-- /.modal-dialog -->
+{% endblock content %}
+{% block script %}
+ {{ form.media.js }}
+	<script>
+        let option = document.getElementById('setor{{setor.id}}');        
+        option.setAttribute('class', 'active');					           
+      </script>
+      <script>
+        $(document).ready(function(){            
+            $(".enabled").attr("class", "disabled");
+            $(".disabled a").removeAttr("href");    
+            $(".date").css('pointer-events', 'none');       
+        });
+      </script>
+     
+      <script>
+       $(document).ready(function(){
+            $('.datepicker').datepicker({
+                format: 'dd/mm/yyyy',
+                minViewMode: "days",
+                todayBtn: true,
+                todayHighlight: true,
+                
+            });            
+            $('.datepicker2').datepicker({
+                format: 'hh:mm',
+                minViewMode: "hours",
+                todayBtn: true,
+                todayHighlight: true,
+                
+            });            
+        });
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.10/jquery.mask.js"></script>
+{% endblock script %}
