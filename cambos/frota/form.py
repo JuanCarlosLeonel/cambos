@@ -8,7 +8,8 @@ class ViagemForm(forms.ModelForm):
         model = Viagem
         fields = (            
             'veiculo',
-            'motorista',            
+            'motorista',
+            'origem',            
             'destino',                        
             'data_inicial',
             'hora_inicial',
@@ -26,7 +27,8 @@ class ViagemForm(forms.ModelForm):
             'data_inicial':forms.DateInput(attrs={'data-mask':'00/00/0000','class':'form-control datepicker'}),            
             'data_final':forms.DateInput(attrs={'class':'form-control datepicker'}),     
             'hora_inicial': forms.TimeInput(attrs={'data-mask':'00:00','class':'form-control'}),            
-            'hora_final': forms.TimeInput(attrs={'data-mask':'00:00','class':'form-control'}),            
+            'hora_final': forms.TimeInput(attrs={'data-mask':'00:00','class':'form-control'}),   
+            'origem': forms.TextInput(attrs={'class':'form-control'}),         
             'destino': forms.TextInput(attrs={'class':'form-control'}),            
             'km_inicial': forms.NumberInput(attrs={'class':'form-control'}),
             'km_final': forms.NumberInput(attrs={'class':'form-control'}),
