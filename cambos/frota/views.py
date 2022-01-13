@@ -178,7 +178,7 @@ def relatorio_despesa(request):
     data_json = {'data': data[::-1], 'labels': labels[::-1]}
     return JsonResponse(data_json)
 
-def relatorio_despesa_porveiculo(request):
+def relatorio_abastecimento_porveiculo(request):
     produtos = VeiculoAbastecimento.objects.all()
     label = []
     data = []
@@ -188,6 +188,24 @@ def relatorio_despesa_porveiculo(request):
             vendas['valor_unitario__sum'] = 0
         label.append(produto.veiculo.descricao.descricao)
         data.append(vendas['valor_unitario__sum'])
+
+    x = list(zip(label, data))
+    x.sort(key=lambda x: x[1], reverse=True)
+    x = list(zip(*x))
+    
+    return JsonResponse({'labels': x[0][:7], 'data': x[1][:7]})
+
+
+def relatorio_manutencao_porveiculo(request):
+    produtos = Veiculo.objects.all()
+    label = []
+    data = []
+    for produto in produtos:
+        valor = Manutencao.objects.filter(veiculo=produto).aggregate(Sum('valor'))
+        if not valor['valor__sum']:
+            valor['valor__sum'] = 0
+        label.append(produto.descricao.descricao)
+        data.append(valor['valor__sum'])
 
     x = list(zip(label, data))
     x.sort(key=lambda x: x[1], reverse=True)

@@ -29,7 +29,11 @@
 		</div>
         <div class="panel panel-default">
 			<h2>Abastecimento por Veículo</h2>
-            <canvas class="chart" id="despesa_mensal_porveiculo" height="150" width="700"></canvas>
+            <canvas class="chart" id="despesa_abastecimento_porveiculo" height="150" width="700"></canvas>
+		</div>
+        <div class="panel panel-default">
+			<h2>Manutenção por Veículo</h2>
+            <canvas class="chart" id="despesa_manutencao_porveiculo" height="150" width="700"></canvas>
 		</div>
 	</div>	
 </div>
@@ -45,7 +49,8 @@
     window.onload = function(event){
         
         renderiza_despesa_mensal('{% url "retorna_despesas" %}')
-        renderiza_despesa_porveiculo('{% url "retorna_despesas_porveiculo" %}')
+        renderiza_abastecimento_porveiculo('{% url "retorna_abastecimento_porveiculo" %}')
+        renderiza_manutencao_porveiculo('{% url "retorna_manutencao_porveiculo" %}')
     }
 </script>
 

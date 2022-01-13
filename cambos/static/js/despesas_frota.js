@@ -39,15 +39,15 @@ function renderiza_despesa_mensal(url){
 }
 
 
-// Despesa por veiculo
-function renderiza_despesa_porveiculo(url){
+// Despesa por veiculo(ABASTECIMENTO)
+function renderiza_abastecimento_porveiculo(url){
     fetch(url, {
         method: 'get',
     }).then(function(result){
         return result.json()
     }).then(function(data){
-        const ctx = document.getElementById('despesa_mensal_porveiculo').getContext('2d');
-        var cores_produtos_mais_vendidos = gera_cor(qtd=7)
+        const ctx = document.getElementById('despesa_abastecimento_porveiculo').getContext('2d');
+        var cores_abastecimento = gera_cor(qtd=7)
         const myChart = new Chart(ctx, {
             type: 'doughnut',
             data: {
@@ -55,8 +55,34 @@ function renderiza_despesa_porveiculo(url){
                 datasets: [{
                     label: 'Despesas',
                     data: data.data,
-                    backgroundColor: cores_produtos_mais_vendidos[0],
-                    borderColor: cores_produtos_mais_vendidos[1],
+                    backgroundColor: cores_abastecimento[0],
+                    borderColor: cores_abastecimento[1],
+                    borderWidth: 1
+                }]
+            }, 
+        });
+    }) 
+}
+
+
+// Despesa por veiculo(MANUTENÇÃO)
+function renderiza_manutencao_porveiculo(url){
+    fetch(url, {
+        method: 'get',
+    }).then(function(result){
+        return result.json()
+    }).then(function(data){
+        const ctx = document.getElementById('despesa_manutencao_porveiculo').getContext('2d');
+        var cores_manutencao = gera_cor(qtd=7)
+        const myChart = new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                labels: data.labels,
+                datasets: [{
+                    label: 'Despesas',
+                    data: data.data,
+                    backgroundColor: cores_manutencao[0],
+                    borderColor: cores_manutencao[1],
                     borderWidth: 1
                 }]
             }, 
