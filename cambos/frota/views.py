@@ -4,7 +4,7 @@ from django.views.generic.edit import UpdateView, CreateView, DeleteView
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
 from django.views.generic.list import ListView
-from .models import Abastecimento, Manutencao, VeiculoAbastecimento, Viagem, Veiculo
+from .models import Abastecimento, Manutencao, VeiculoAbastecimento, Viagem, Veiculo, FrotaPermissao
 from .form import ManutencaoForm, ViagemForm, AbastecimentoForm
 from django.http import JsonResponse
 from django.db.models import Sum
