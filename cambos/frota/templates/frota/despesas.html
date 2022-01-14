@@ -1,0 +1,68 @@
+{% extends "cambos/base_frota.html" %}
+{% load static %}
+{% block css %}{% endblock css %}
+
+{% block navigation %}
+    <div class="row">		
+        <ol class="breadcrumb ">
+            <li><a href="{% url 'frota_index' %}">
+                <em class="fa fa-home"></em>
+            </a></li>
+            <li class="active">menu</li>
+        </ol>	
+    </div><!--/.row-->
+	
+	<div class="row">
+        <div class="col-lg-12">
+            <h1 class="page-header">Frota<span class="text-muted small"> Despesa </span></h1>
+        </div>
+    </div><!--/.row-->
+{% endblock navigation %}
+
+{% block content %}			
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<div class="row">
+	<div class="col-lg-12">
+		<div class="panel panel-default">
+			<h2>Gasto mensal com Abastecimento</h2>
+            <canvas class="chart" id="despesa_mensal" height="150" width="900"></canvas>
+		</div>
+        <div class="panel panel-default">
+			<h2>Abastecimento por Veículo</h2>
+            <div
+                style="width: 100%; height: 40px; position: absolute; top: 50%; left: 0; margin-top: -20px; line-height:19px; text-align: center; z-index: 999999999999999">
+                {{totabastecimento.valor_unitario__sum}}<Br/>
+                Total
+            </div>
+            <canvas class="chart" id="despesa_abastecimento_porveiculo" height="150" width="700"></canvas>
+		</div>
+        <div class="panel panel-default">
+			<h2>Manutenção por Veículo</h2>
+            <div
+                style="width: 100%; height: 40px; position: absolute; top: 85%; left: 0; margin-top: -20px; line-height:19px; text-align: center; z-index: 999999999999999">
+                {{totmanutencao.valor__sum}}<Br/>
+                Total
+            </div>
+            <canvas class="chart" id="despesa_manutencao_porveiculo" height="150" width="700"></canvas>
+		</div>
+	</div>	
+</div>
+
+
+{%endblock content%}
+
+{% block script %}
+
+<script src="{% static 'js/despesas_frota.js' %}"></script>
+
+<script>
+    window.onload = function(event){
+        
+        renderiza_despesa_mensal('{% url "retorna_despesas" %}')
+        renderiza_abastecimento_porveiculo('{% url "retorna_abastecimento_porveiculo" %}')
+        renderiza_manutencao_porveiculo('{% url "retorna_manutencao_porveiculo" %}')
+    }
+</script>
+
+{% endblock script %}
+

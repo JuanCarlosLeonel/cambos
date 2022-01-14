@@ -96,6 +96,7 @@ class RoupaBot(models.Model):
     lavanderia = models.BooleanField(default=False)    
     expedicao  = models.BooleanField(default=False)    
     geral      = models.BooleanField(default=False)
+    frota      = models.BooleanField(default=False)
     ativo      = models.BooleanField(default=True)
     usuario       = models.ForeignKey(User, on_delete=models.SET_NULL, blank=True, null=True)
     def __str__(self):

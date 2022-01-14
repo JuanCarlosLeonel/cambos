@@ -8,7 +8,7 @@
             <li><a href="{% url 'frota_index' %}">
                 <em class="fa fa-home"></em>
             </a></li>
-            <li class="active"><a href="{% url 'abastecimento_list' %}">Abastecimento</a></li>
+            <li class="active"><a href="{% url 'manutencao_list' %}">Manutenção</a></li>
         </ol>
     </div><!--/.row-->
     
@@ -21,12 +21,12 @@
         <form method="post" autocomplete="off">
               <div class="modal-header">
                 <a href="javascript:void(0)" onClick="history.go(-1); return false;" type="button" class="close" aria-hidden="true">×</a>
-                <h3 class="modal-title">Apagar Abastecimento</h3>
+                <h3 class="modal-title">Apagar Manutenção</h3>
               </div>
               <div class="modal-body">
 
               
-               <h4> <strong></strong> <b>{{object.veiculo}} - {{object.quantidade}}</b> </h4>
+               <h4> <strong></strong> <b>{{object.veiculo}} - {{object.descricao}}</b> </h4>
                <h5>Confirmação de Exclusão</h5>
                 <p>Você quer mesmo deletar o registro?</p>        
                

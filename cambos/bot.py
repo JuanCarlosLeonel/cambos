@@ -337,7 +337,7 @@ def start():
     return menu()
 
 def menu(update, context):
-    from roupa.models import RoupaBot
+    from roupa.models import RoupaBot, User
     chat_id = update.message.chat_id    
     first_name = update.message.chat.first_name
     mensagem = update.message.text  
@@ -356,6 +356,9 @@ def menu(update, context):
         
         if userbot.expedicao:
              dict['Expedição']='expedicao'
+
+        if userbot.frota:
+            dict['Frota']='frota'
 
         keyboard = []
         for key, value in dict.items():
@@ -422,6 +425,16 @@ def button(update: Update, _: CallbackContext) -> None:
             InlineKeyboardButton("\U0000274C Produtos Parados", callback_data='produtos_parados_expedicao'),
         ],
         [   InlineKeyboardButton("\U0000203C Prazos Estourados", callback_data='prazos_estourados_expedicao'),
+        ],
+        [InlineKeyboardButton("Menu", callback_data='menu')],
+        ]
+    elif query.data == 'frota':
+        keyboard = [
+        [
+            InlineKeyboardButton("\U0001F68C Veículos", callback_data='menu'),
+            InlineKeyboardButton("\U00002708 Viagens", callback_data='menu'),
+        ],
+        [   InlineKeyboardButton("\U000026FD Abastecimento", callback_data='menu'),
         ],
         [InlineKeyboardButton("Menu", callback_data='menu')],
         ]
@@ -583,7 +596,12 @@ def pesquisa_corte(update, context):
     text= f"\U0001F4AC Escolha uma opção:"    
     context.bot.send_chat_action(chat_id, "typing")
     context.bot.send_message(chat_id=chat_id, text=text, reply_markup=reply_markup)
-    
+
+# def frota(update):
+#     from frota.models import Veiculo, Viagem ,Abastecimento
+#     user = get_user(update)
+
+
 def main() -> None:
     from core.models import Bot
     bot = Bot.objects.latest('token')

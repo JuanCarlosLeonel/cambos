@@ -10,6 +10,7 @@ from .models import (
     Rastreio,
     DespesaViagem,
     FrotaPermissao,
+    Manutencao,
 )
 
 admin.site.register(Motorista)
@@ -22,3 +23,4 @@ admin.site.register(Seguro)
 admin.site.register(Rastreio)
 admin.site.register(DespesaViagem)
 admin.site.register(FrotaPermissao)
+admin.site.register(Manutencao)

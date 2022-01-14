@@ -31,8 +31,14 @@ class Veiculo(models.Model):
 
 
 class VeiculoAbastecimento(models.Model):
+    COMBUSTIVEL = (
+            ('Diesel', 'Diesel'),
+            ('Gasolina', 'Gasolina'),             
+            ('Álcool', 'Álcool'),                         
+            ('Gasolina/Álcool', 'Gasolina/Álcool')
+        )
     veiculo    = models.ForeignKey(Veiculo, on_delete=models.DO_NOTHING)
-    combustivel = models.CharField(max_length=40)
+    combustivel = models.CharField(max_length=40, choices=COMBUSTIVEL)
 
     def __str__(self):
         return f'{self.veiculo} - {self.combustivel}'
@@ -143,3 +149,23 @@ class FrotaPermissao(models.Model):
     
     class Meta:        
         db_table = 'frota"."frota_permissao' 
+
+        
+class Manutencao(models.Model):
+    MANUTENCAO = (
+            ('Preventiva', 'Preventiva'),
+            ('Corretiva', 'Corretiva'),             
+        )
+    veiculo    = models.ForeignKey(Veiculo, on_delete=models.DO_NOTHING)
+    manutencao = models.CharField(max_length=40, choices=MANUTENCAO)
+    valor      = models.FloatField()
+    descricao  = models.CharField(max_length=40)
+    created_by   = CurrentUserField()
+    data_criacao = models.DateField(verbose_name="Data", default=datetime.date.today)
+    
+
+    def __str__(self):
+        return f'{self.veiculo} - {self.manutencao}'
+    
+    class Meta:        
+        db_table = 'frota"."manutencao'

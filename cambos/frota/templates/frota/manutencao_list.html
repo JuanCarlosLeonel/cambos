@@ -10,13 +10,12 @@
 			<li><a href="{% url 'frota_index' %}">
                 <em class="fa fa-home"></em>
             </a></li>
-            <li class="active"><a href="{% url 'veiculo_list' %}">Veículos</a></li>
-			<li class="active"><a href="{% url 'veiculo_index' veiculo.pk %}">Menu</a></li>
+            <li class="active">Frota</li>
         </ol>
     </div><!--/.row-->
     <div class="row">
         <div class="col-lg-12">
-            <h1 class="page-header">{{veiculo}}<span class="text-muted small"> Viagens</span></h1></h1>
+            <h1 class="page-header">Manutenções dos Veículos<span class="text-muted small"> </span></h1></h1>
         </div>
     </div><!--/.row-->
 {% endblock navigation %}
@@ -31,8 +30,8 @@
 				<div id="toolbar">
 					
 						
-					<a href="{% url 'viagem_create' veiculo.id %}" class="btn btn-success">
-						<i class="fa fa-plus"></i> Novo
+					<a href="{% url 'manutencao_create' %}" class="btn btn-success">
+						<i class="fa fa-plus"></i> Nova Manutenção
 						</a>
 						
 					
@@ -50,39 +49,29 @@
 				 >
 					<thead>
 						<tr>
-							<th data-field="Situação" data-sortable="true" class='text-center'>Situação</th>								
-							<th data-field="Data Saída" data-formatter="dateFormat" data-sortable="true" class='text-center'>Data Saída</th>																												
-							<th data-field="Destino" class='text-center'>Destino</th>																					
-							<th data-field="Motorista" data-sortable="true" class='text-center'>Motorista</th>														
-							<th data-field="Data Chegada"  data-formatter="dateFormat" data-sortable="true" class='text-center'>Data Chegada</th>														
+							<th data-field="Data"  data-formatter="dateFormat" data-sortable="true" class='text-center'>Data</th>														
+							<th data-field="Veiculo"  data-sortable="true" class='text-center'>Veículo</th>							
+							<th data-field="Manutenção" data-sortable="true" class='text-center'>Manutenção</th>	
+							<th data-field="Valor" data-sortable="true" class='text-center'>Valor</th>																				
 						</tr>
 					</thead>
 					<tbody>
-						{% for data in lista %}
+						{% for data in object_list %}
 							
-							<tr data-href="{% url 'viagem_update' data.pk %}"
+							<tr data-href="{% url 'manutencao_update' data.pk %}"
 							 class="trLink" >							
 								<td class='text-center' >									
-									{%if data.data_final%}
-										Concluído
-									{% else %}
-										<lu class="text-danger">Em Trânsito</lu>
-									{%endif%}
-								</td>
-								<td class='text-center' >	
-									{% if data.data_inicial %}								
-									{{data.data_inicial|safe}}								
-									{% endif %}	
+									{{data.data_criacao|safe}}									
 								</td>								
 								<td class='text-center' >									
-									{{data.destino}}									
+									{{data.veiculo}}									
 								</td>								
 								<td class='text-center'>
-									{{data.motorista}}
-								</td>				
-								<td class='text-center' >																					
-									{{data.data_final|safe}}																		
-								</td>																																				
+									{{data.descricao}}
+								</td>	
+								<td class='text-center'>
+									{{data.valor}}
+								</td>																															
 						{%endfor%}
 					</tbody>					
 				</table>								
