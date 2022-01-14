@@ -219,7 +219,11 @@ class IndexDespesas(TemplateView):
     template_name = 'frota/despesas.html'
 
     def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)                
+        context = super().get_context_data(**kwargs)   
+        totabastecimento = Abastecimento.objects.aggregate(Sum('valor_unitario'))
+        totmanutencao = Manutencao.objects.aggregate(Sum('valor'))
+        context['totabastecimento']=totabastecimento
+        context['totmanutencao']=totmanutencao       
         return context
 
 

@@ -596,7 +596,12 @@ def pesquisa_corte(update, context):
     text= f"\U0001F4AC Escolha uma opção:"    
     context.bot.send_chat_action(chat_id, "typing")
     context.bot.send_message(chat_id=chat_id, text=text, reply_markup=reply_markup)
-    
+
+# def frota(update):
+#     from frota.models import Veiculo, Viagem ,Abastecimento
+#     user = get_user(update)
+
+
 def main() -> None:
     from core.models import Bot
     bot = Bot.objects.latest('token')
