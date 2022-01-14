@@ -141,7 +141,9 @@ class FrotaPermissao(models.Model):
     ver_despesa = models.BooleanField(default=False)    
     ver_relatorio = models.BooleanField(default=False)    
     ver_carro = models.BooleanField(default=True)    
-    ver_caminhao = models.BooleanField(default=True)    
+    ver_caminhao = models.BooleanField(default=True)   
+    ver_abastecimento = models.BooleanField(default=True)
+    ver_viagemlist = models.BooleanField(default=True) 
     ver_empilhadeira = models.BooleanField(default=False)    
 
     def __str__(self):

@@ -21,44 +21,31 @@
 
 {% block content %}
 <div class="panel panel-container">
-<<<<<<< HEAD
-	<div class="row">				
-	{% if permissoes.ver_veiculo%}
-=======
 	<div class="row">
->>>>>>> f0926124ed451a36d1bf9392e19d412d7c996037
+		{% if permissoes.ver_veiculo%}
 		<a href="{% url 'veiculo_list' %}">												
 			<div class="col-xs-6 no-padding">					
 				<div class="panel panel-teal panel-widget border-right border-bottom">
 					<div class="row no-padding"><span class="color-blue"> <em class="fa fa-truck fa-2x"></em></span>
 						<h2>Veículos</h2>						
-<<<<<<< HEAD
-=======
 					</div>
 				</div>
 			</div>
-		</a>								
+		</a>
+		{% endif%}	
+		{% if permissoes.ver_abastecimento%}							
 		<a href="{% url 'abastecimento_list' %}">				
 			<div class="col-xs-6 no-padding">
 				<div class="panel panel-orange panel-widget border-right border-bottom">
 					<div class="row no-padding"><span class="color-orange"><em class="fa fa-dashboard fa-2x"></em></span>
 						<h2>Abastecimento</h2>
 						
->>>>>>> f0926124ed451a36d1bf9392e19d412d7c996037
 					</div>
 				</div>
 			</div>
 		</a>
-<<<<<<< HEAD
-	{% endif%}
-	{% if permissoes.ver_manutencao%}								
-		<a href="{% url 'programacao_list' %}">				
-		<div class="col-xs-6 no-padding">
-			<div class="panel panel-red panel-widget border-right border-bottom">
-				<div class="row no-padding"><span class="color-red"> <em class="fa fa-wrench fa-2x"></em></span>
-					<h2>Manutenção</h2>
-					
-=======
+		{%endif%}
+		{% if permissoes.ver_viagemlist %}
 		<a href="{% url 'viagem_listall' %}">				
 			<div class="col-xs-6 no-padding">
 				<div class="panel panel-red panel-widget border-right border-bottom">
@@ -68,7 +55,9 @@
 					</div>
 				</div>
 			</div>
-		</a>				
+		</a>			
+		{%endif%}
+		{% if permissoes.ver_manutencao%}
 		<a href="{% url 'manutencao_list' %}">				
 			<div class="col-xs-6 no-padding">
 				<div class="panel panel-red panel-widget border-right border-bottom">
@@ -76,17 +65,12 @@
 						<h2>Manutenção</h2>
 						
 					</div>
->>>>>>> f0926124ed451a36d1bf9392e19d412d7c996037
 				</div>
 			</div>
 		</a>
-<<<<<<< HEAD
-	{% endif %}
-	{% if permissoes.ver_despesa%}
-		<a href="">				
-=======
+		{%endif%}
+		{% if permissoes.ver_despesa%}
 		<a href="{% url 'despesas_frota' %}">				
->>>>>>> f0926124ed451a36d1bf9392e19d412d7c996037
 			<div class="col-xs-6 no-padding">
 				<div class="panel panel-red panel-widget border-right border-bottom">
 					<div class="row "><span class="color-red"> <em class="fa fa-money fa-2x"></em></span>
@@ -95,15 +79,10 @@
 					</div>
 				</div>
 			</div>
-<<<<<<< HEAD
-		</a>			
-	{% endif %}		
-	{% if permissoes.ver_veiculo%}
-		<a href="{% url 'producao_roupa_list' %}">												
-=======
-		</a>					
+		</a>
+		{%endif%}	
+		{% if permissoes.ver_relatorio%}				
 		<a href="">												
->>>>>>> f0926124ed451a36d1bf9392e19d412d7c996037
 			<div class="col-xs-6 no-padding">					
 				<div class="panel panel-teal panel-widget border-right border-bottom">
 					<div class="row no-padding"><span class="color-blue"> <em class="fa fa-line-chart fa-2x"></em></span>
@@ -112,15 +91,9 @@
 				</div>
 			</div>
 		</a>	
-<<<<<<< HEAD
-	{% endif %}
-	</div>
-</div><!--/.row-->
-
-=======
+		{%endif%}
 	</div><!--/.row-->
 </div>
->>>>>>> f0926124ed451a36d1bf9392e19d412d7c996037
 
 
 {%endblock content%}
