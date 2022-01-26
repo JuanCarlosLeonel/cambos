@@ -18,7 +18,7 @@
 {% endblock navigation %}
 
 {% block content %}
-<h1 class="page-header"><span class="text-muted small">Viagens </span></h1>
+<h1 class="page-header"><span class="text-muted small">Abastecimento </span></h1>
 	<div class="col-12">
 		<div class="panel panel-default">
 			<div class="panel-body">	
@@ -34,37 +34,25 @@
 				data-sort-order="desc"
 				>
 					<thead>
-						<tr>	
-							<th data-field="Situação" data-sortable="true" class='text-center'>Situação</th>						
-							<th data-field="Data Saída" data-formatter="dateFormat" data-sortable="true" class='text-center'>Data Saída</th>
-							<th data-field="FichaCorte"  data-sortable="true" class='text-center'>Veiculo</th>							
-							<th data-field="Modelo" data-sortable="true" class='text-center'>Origem</th>														
-							<th data-field="Nome"  data-sortable="true" class='text-center'>Destino</th>
-							<th data-field="Status" data-sortable="true" class='text-center'>Motorista</th>
-							<th data-field="Data Chegada"  data-formatter="dateFormat" data-sortable="true" class='text-center'>Data Chegada</th>
+						<tr>							
+							<th data-field="data" data-formatter="dateFormat" data-sortable="true" class='text-center'>Data</th>
+							<th data-field="Veiculo"  data-sortable="true" class='text-center'>Veiculo</th>							
+							<th data-field="Combustivel" data-sortable="true" class='text-center'>Combustível</th>														
+							<th data-field="Valor"  data-sortable="true" class='text-center'>Valor Abas.</th>
+							<th data-field="Quantidade" data-sortable="true" class='text-center'>Quantidade(l)</th>
 						</tr>
 					</thead>
 					<tbody>
 						{%for item in object_list%}		
 							<tr data-href="#"	
 							class="trLink" >
-								<td class='text-center' >								
-									{%if item.data_final%}
-										Concluído
-									{% else %}
-										<lu class="text-danger">Em Trânsito</lu>
-									{%endif%}
-								</td>
 								<td class='text-center' >									
-									{{item.data_inicial|safe}}									
+									{{item.data|safe}}									
 								</td>
 								<td class='text-center'>{{item.veiculo}}</td>								
-								<td class='text-center' >{{item.origem}}</td>
-								<td class='text-center'>{{item.destino}}</td>
-								<td class='text-center'>{{item.motorista.nome}}</td>
-								<td class='text-center' >																					
-									{{data.data_final|safe}}																		
-								</td>
+								<td class='text-center' >{{item.combustivel}}</td>
+								<td class='text-center'>{{item.valor_unitario}}</td>
+								<td class='text-center'>{{item.quantidade}}</td>
 						{% endfor %}
 					</tbody>
 				</table>			
@@ -101,7 +89,9 @@ tr.onclick = function (e) {
 		onClickRow: function (item, $element) {return  window.location = $element.data('href');},
 	});
 
+
+
 </script>
-  
+
 {% endblock script %}
 

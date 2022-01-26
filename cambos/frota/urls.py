@@ -21,6 +21,7 @@ from .views import(
     ManutencaoCreate,
     ManutencaoUpdate,
     ManutencaoDelete,
+    AbastecimentoListALL,
 )
 
 urlpatterns = [
@@ -31,8 +32,9 @@ urlpatterns = [
     path('viagem_create/<str:pk>/', ViagemCreate.as_view(), name = 'viagem_create'),
     path('viagem_update/<str:pk>/', ViagemUpdate.as_view(), name='viagem_update'),    
     path('viagem_delete/<int:pk>/',ViagemDelete.as_view(), name='viagem_delete_cbv'),
-    path('abastecimento_list',  AbastecimentoList.as_view(), name='abastecimento_list'),
-    path('abastecimento_create/', AbastecimentoCreate.as_view(), name = 'abastecimento_create'),
+    path('abastecimento_listall',  AbastecimentoListALL.as_view(), name='abastecimento_listall'),
+    path('abastecimento_list/<str:pk>/',  AbastecimentoList.as_view(), name='abastecimento_list'),
+    path('abastecimento_create/<str:pk>/', AbastecimentoCreate.as_view(), name = 'abastecimento_create'),
     path('abastecimento_update/<str:pk>/', AbastecimentoUpdate.as_view(), name='abastecimento_update'),    
     path('abastecimento_delete/<int:pk>/',AbastecimentoDelete.as_view(), name='abastecimento_delete_cbv'),
     path('veiculo_list',  VeiculoList.as_view(), name='veiculo_list'),

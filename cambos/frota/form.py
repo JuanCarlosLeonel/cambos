@@ -46,16 +46,16 @@ class AbastecimentoForm(forms.ModelForm):
         model = Abastecimento
         fields = (            
             'veiculo',
+            'combustivel',
             'data',
             'valor_unitario',            
             'quantidade',            
         )
          
         widgets = {                                     
-            'veiculo': Select2Widget(                
-                attrs={'class':'form-control', 'autofocus': 'autofocus'},                
-            ),            
-            'data': forms.DateInput(attrs={'class':'form-control datepicker'}),
+            'veiculo': forms.HiddenInput(),            
+            'combustivel': forms.Select(attrs={'class':'form-control'}),
+            'data': forms.DateInput(attrs={'data-mask':'00/00/0000','class':'form-control datepicker'}),
             'valor_unitario': forms.NumberInput(attrs={'class':'form-control'}),            
             'quantidade': forms.NumberInput(attrs={'class':'form-control'}),
         }

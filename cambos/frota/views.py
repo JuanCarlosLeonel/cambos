@@ -4,7 +4,7 @@ from django.views.generic.edit import UpdateView, CreateView, DeleteView
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
 from django.views.generic.list import ListView
-from .models import Abastecimento, Manutencao, VeiculoAbastecimento, Viagem, Veiculo, FrotaPermissao
+from .models import Abastecimento, Manutencao, Viagem, Veiculo, FrotaPermissao
 from .form import ManutencaoForm, ViagemForm, AbastecimentoForm
 from django.http import JsonResponse
 from django.db.models import Sum
@@ -52,7 +52,10 @@ class ViagemCreate(CreateView):
     def get_initial(self, *args, **kwargs):
         initial = super(ViagemCreate, self).get_initial(**kwargs)
         veiculo = Veiculo.objects.get(pk = self.kwargs['pk'])
-        km = Viagem.objects.filter(veiculo = veiculo).latest("km_final").km_final
+        try:
+            km = Viagem.objects.filter(veiculo = veiculo).latest("km_final").km_final
+        except:
+            km =0
         initial['veiculo'] = veiculo
         initial['data_inicial'] = datetime.date.today()
         initial['hora_inicial'] = datetime.datetime.now()
@@ -67,15 +70,17 @@ class AbastecimentoCreate(CreateView):
     form_class = AbastecimentoForm
 
     def get_success_url(self):        
-        return '/frota/abastecimento_list'
+        return f'/frota/abastecimento_list/{self.kwargs["pk"]}'
     
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)                
-        
+        context['veiculo'] = self.kwargs['pk']
         return context        
     
     def get_initial(self, *args, **kwargs):
         initial = super(AbastecimentoCreate, self).get_initial(**kwargs)
+        veiculo = Veiculo.objects.get(pk = self.kwargs['pk'])
+        initial['veiculo'] = veiculo
         initial['data'] = datetime.date.today()
         return initial
 
@@ -111,6 +116,15 @@ class AbastecimentoList(ListView):
     model = Abastecimento
     template_name = 'frota/abastecimento_list.html'
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)   
+        pk = self.kwargs['pk']     
+        lista_abastecimento = Abastecimento.objects.filter(veiculo = pk).order_by("-id")
+        veiculo = Veiculo.objects.get(id = pk)
+        context['veiculo']=veiculo
+        context['lista']=lista_abastecimento
+        return context  
+
 
 @method_decorator(login_required, name='dispatch')
 class AbastecimentoUpdate(UpdateView):
@@ -118,12 +132,12 @@ class AbastecimentoUpdate(UpdateView):
     form_class = AbastecimentoForm
     
     def get_success_url(self):        
-        return '/frota/abastecimento_list'
+        return f'/frota/abastecimento_list/{self.object.veiculo.id}'
     
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)                
+        context['veiculo'] = self.object.veiculo.id
         return context
-
 
 @method_decorator(login_required, name='dispatch')
 class AbastecimentoDelete(DeleteView):
@@ -134,7 +148,7 @@ class AbastecimentoDelete(DeleteView):
         return context   
 
     def get_success_url(self):
-        return '/frota/abastecimento_list'
+        return f'/frota/abastecimento_list/{self.object.veiculo.id}'
 
 
 @method_decorator(login_required, name='dispatch')
@@ -171,6 +185,11 @@ class ViagemListALL(ListView):
     model = Viagem
     template_name = 'frota/viagem_listALL.html'
 
+@method_decorator(login_required, name='dispatch')
+class AbastecimentoListALL(ListView):
+    model = Abastecimento
+    template_name = 'frota/abastecimento_listALL.html'
+
 
 def relatorio_despesa(request):
     from datetime import datetime
@@ -192,14 +211,14 @@ def relatorio_despesa(request):
     return JsonResponse(data_json)
 
 def relatorio_abastecimento_porveiculo(request):
-    produtos = VeiculoAbastecimento.objects.all()
+    produtos = Veiculo.objects.all()
     label = []
     data = []
     for produto in produtos:
         vendas = Abastecimento.objects.filter(veiculo=produto).aggregate(Sum('valor_unitario'))
         if not vendas['valor_unitario__sum']:
             vendas['valor_unitario__sum'] = 0
-        label.append(produto.veiculo.descricao.descricao)
+        label.append(produto.descricao.descricao)
         data.append(vendas['valor_unitario__sum'])
 
     x = list(zip(label, data))

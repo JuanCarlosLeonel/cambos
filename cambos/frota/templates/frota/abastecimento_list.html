@@ -10,12 +10,13 @@
 			<li><a href="{% url 'frota_index' %}">
                 <em class="fa fa-home"></em>
             </a></li>
-            <li class="active">Frota</li>
+            <li class="active"><a href="{% url 'veiculo_list' %}">Veículos</a></li>
+			<li class="active"><a href="{% url 'veiculo_index' veiculo.pk %}">Menu</a></li>
         </ol>
     </div><!--/.row-->
     <div class="row">
         <div class="col-lg-12">
-            <h1 class="page-header">Abastecimento<span class="text-muted small"> </span></h1></h1>
+            <h1 class="page-header">{{veiculo}}<span class="text-muted small"> Abastecimento</span></h1></h1>
         </div>
     </div><!--/.row-->
 {% endblock navigation %}
@@ -30,7 +31,7 @@
 				<div id="toolbar">
 					
 						
-					<a href="{% url 'abastecimento_create' %}" class="btn btn-success">
+					<a href="{% url 'abastecimento_create' veiculo.id %}" class="btn btn-success">
 						<i class="fa fa-plus"></i> Novo
 						</a>
 						
@@ -50,12 +51,14 @@
 					<thead>
 						<tr>
 							<th data-field="Data"  data-formatter="dateFormat" data-sortable="true" class='text-center'>Data</th>														
-							<th data-field="Veiculo"  data-sortable="true" class='text-center'>Veículo</th>							
-							<th data-field="Destino" data-sortable="true" class='text-center'>Quantidade</th>																					
+							<th data-field="Veiculo"  data-sortable="true" class='text-center'>Veículo</th>		
+							<th data-field="Combustivel"  data-sortable="true" class='text-center'>Combustível</th>	
+							<th data-field="Valor"  data-sortable="true" class='text-center'>Valor Abas.</th>				
+							<th data-field="Destino" data-sortable="true" class='text-center'>Quantidade(l)</th>																					
 						</tr>
 					</thead>
 					<tbody>
-						{% for data in object_list %}
+						{% for data in lista %}
 							
 							<tr data-href="{% url 'abastecimento_update' data.pk %}"
 							 class="trLink" >							
@@ -64,7 +67,13 @@
 								</td>								
 								<td class='text-center' >									
 									{{data.veiculo}}									
-								</td>								
+								</td>		
+								<td class='text-center' >									
+									{{data.combustivel}}									
+								</td>	
+								<td class='text-center'>
+									{{data.valor_unitario}}
+								</td>					
 								<td class='text-center'>
 									{{data.quantidade}}
 								</td>																																
