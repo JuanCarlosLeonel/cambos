@@ -179,7 +179,7 @@ STATICFILES_DIRS = [
 
 
 LOGIN_URL = 'login'
-LOGIN_REDIRECT_URL = 'core_index'
+LOGIN_REDIRECT_URL = 'core_home'
 LOGOUT_REDIRECT_URL = 'login'
 
 DECIMAL_SEPARATOR = ','
