@@ -112,14 +112,28 @@
 			<li class="parent"><a data-toggle="collapse" href="#sub-item-2">
 				<em class="fa fa-truck">&nbsp;</em>Opções <span data-toggle="collapse" href="#sub-item-2" class="icon pull-right"><em class="fa fa-minus"></em></span>
 				</a>
-				<ul class="children collapse in" id="sub-item-2">					
-					<li class=" enabled"><a id="" href="{% url 'viagem_listall' %}"><em class="fa fa-circle">&nbsp;</em> Viagens </a></li>				
-					<li class=" enabled"><a id="" href=""><em class="fa fa-circle">&nbsp;</em> Corridas </a></li>				
-					<li class=" enabled"><a id="" href="{% url 'abastecimento_listall' %}"><em class="fa fa-circle">&nbsp;</em> Abastecimento </a></li>				
-					<li class=" enabled"><a id="" href="{% url 'manutencao_list' %}"><em class="fa fa-circle">&nbsp;</em> Manutenção </a></li>				
-					<li class=" enabled"><a id="" href="{% url 'despesas_frota' %}"><em class="fa fa-circle">&nbsp;</em> Despesas </a></li>				
-					<li class=" enabled"><a id="" href=""><em class="fa fa-circle">&nbsp;</em> Relatório </a></li>				
-					<li class=" enabled"><a id="" href="{% url 'veiculo_list' %}"><em class="fa fa-circle">&nbsp;</em> Veículos </a></li>				
+				<ul class="children collapse in" id="sub-item-2">	
+					{% if permissoes.ver_viagemlist %}				
+						<li class=" enabled"><a id="" href="{% url 'viagem_listall' %}"><em class="fa fa-circle">&nbsp;</em> Viagens </a></li>
+					{% endif %}	
+					{% if permissoes.ver_viagemlist %}			
+					<li class=" enabled"><a id="" href=""><em class="fa fa-circle">&nbsp;</em> Corridas </a></li>	
+					{% endif %}
+					{% if permissoes.ver_abastecimento %}			
+						<li class=" enabled"><a id="" href="{% url 'abastecimento_listall' %}"><em class="fa fa-circle">&nbsp;</em> Abastecimento </a></li>	
+					{% endif %}			
+					{% if permissoes.ver_manutencao %}
+						<li class=" enabled"><a id="" href="{% url 'manutencao_list' %}"><em class="fa fa-circle">&nbsp;</em> Manutenção </a></li>
+					{% endif %}
+					{% if permissoes.ver_despesa %}}				
+						<li class=" enabled"><a id="" href="{% url 'despesas_frota' %}"><em class="fa fa-circle">&nbsp;</em> Despesas </a></li>	
+					{% endif %}			
+					{% if permissoes.ver_relatorio %}
+						<li class=" enabled"><a id="" href=""><em class="fa fa-circle">&nbsp;</em> Relatório </a></li>	
+					{% endif %}
+					{% if permissoes.ver_veiculo %}			
+						<li class=" enabled"><a id="" href="{% url 'veiculo_list' %}"><em class="fa fa-circle">&nbsp;</em> Veículos </a></li>
+					{% endif %}				
 					<li class="divider"></li>
 				</ul>
 				
