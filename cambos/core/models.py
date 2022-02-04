@@ -46,7 +46,8 @@ class User(AbstractUser):
 class Pessoa(models.Model):    
     id = models.AutoField(db_column='id', primary_key=True)
     matricula = models.CharField(db_column='matriculacolaborador', max_length=10, blank=True)      
-    nome = models.CharField(db_column='nomecolaborador', max_length=50, blank=True)      
+    nome = models.CharField(db_column='nomecolaborador', max_length=50, blank=True)
+    status = models.CharField(db_column='status',max_length=1)      
 
     def __str__(self):
         return f'{self.nome} ({self.matricula})'

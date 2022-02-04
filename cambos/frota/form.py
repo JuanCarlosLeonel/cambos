@@ -1,6 +1,10 @@
 from django import forms
+
+
 from .models import Manutencao, Viagem, Abastecimento
 from django_select2.forms import Select2Widget
+
+from frota import models
 
 
 class ViagemForm(forms.ModelForm):
@@ -40,6 +44,7 @@ class ViagemForm(forms.ModelForm):
         self.fields['hora_inicial'].label = "Hora Saída"
         self.fields['data_final'].label = "Data Retorno"
         self.fields['hora_final'].label = "Hora Retorno"
+        self.fields['motorista'].queryset = models.Pessoa.objects.filter(status = 0) #PEGAR APENAS COLABORADORES ATIVOS DA TABELA SOUZACAMBOS.COLABORADORS
 
 class AbastecimentoForm(forms.ModelForm):
     class Meta:
