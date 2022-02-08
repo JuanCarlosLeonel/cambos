@@ -27,7 +27,6 @@ from produto.views import(
 )
 
 urlpatterns = [
-    path("select2/", include("django_select2.urls")),
 
     path('producao_material_create', ProducaoMaterialCreate.as_view(), name = 'producao_material_create'),
     path('producao_modal_create/<str:pk>/', ProducaoModalCreate.as_view(), name = 'producao_modal_create'),
