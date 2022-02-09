@@ -46,7 +46,8 @@ class ViagemCreate(CreateView):
         return f'/frota/viagem_list/{self.kwargs["pk"]}'
     
     def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)                
+        context = super().get_context_data(**kwargs)   
+        context['nomeveiculo'] = Veiculo.objects.get(pk = self.kwargs['pk'])     
         context['veiculo'] = self.kwargs['pk']
         return context        
     
@@ -83,7 +84,8 @@ class AbastecimentoCreate(CreateView):
         return f'/frota/abastecimento_list/{self.kwargs["pk"]}'
     
     def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)                
+        context = super().get_context_data(**kwargs)  
+        context['nomeveiculo'] = Veiculo.objects.get(pk = self.kwargs['pk'])              
         context['veiculo'] = self.kwargs['pk']
         return context        
     
@@ -111,6 +113,16 @@ class ViagemUpdate(UpdateView):
         context = super().get_context_data(**kwargs)                
         context['veiculo'] = self.object.veiculo.id
         return context
+
+    def get_form_kwargs(self):
+        veiculo = self.object.veiculo
+        if veiculo.caminhao:
+            motoristas = Motorista.objects.filter().values('nome__id')
+        else:
+            motoristas = False
+        kwargs = super().get_form_kwargs()
+        kwargs['list_motorista'] = motoristas
+        return kwargs
 
 
 @method_decorator(login_required, name='dispatch')
