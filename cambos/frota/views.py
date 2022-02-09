@@ -4,7 +4,7 @@ from django.views.generic.edit import UpdateView, CreateView, DeleteView
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
 from django.views.generic.list import ListView
-from .models import Abastecimento, Manutencao, Viagem, Veiculo, FrotaPermissao
+from .models import Abastecimento, Manutencao, Motorista, Viagem, Veiculo, FrotaPermissao
 from .form import ManutencaoForm, ViagemForm, AbastecimentoForm
 from django.http import JsonResponse
 from django.db.models import Sum
@@ -60,8 +60,17 @@ class ViagemCreate(CreateView):
         initial['data_inicial'] = datetime.date.today()
         initial['hora_inicial'] = datetime.datetime.now()
         initial['km_inicial'] = km
-        
         return initial
+
+    def get_form_kwargs(self):
+        veiculo = Veiculo.objects.get(id = self.kwargs['pk'])
+        if veiculo.caminhao:
+            motoristas = Motorista.objects.all()
+        else:
+            motoristas = False
+        kwargs = super().get_form_kwargs()
+        kwargs['list_motorista'] = motoristas
+        return kwargs
 
 
 @method_decorator(login_required, name='dispatch')

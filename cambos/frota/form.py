@@ -39,12 +39,16 @@ class ViagemForm(forms.ModelForm):
         }
         
     def __init__(self, *args, **kwargs):
+        list_motorista = kwargs.pop('list_motorista', None)
         super(ViagemForm, self).__init__(*args, **kwargs)
         self.fields['data_inicial'].label = "Data Saída"
         self.fields['hora_inicial'].label = "Hora Saída"
         self.fields['data_final'].label = "Data Retorno"
         self.fields['hora_final'].label = "Hora Retorno"
-        self.fields['motorista'].queryset = models.Pessoa.objects.filter(status = 0) #PEGAR APENAS COLABORADORES ATIVOS DA TABELA SOUZACAMBOS.COLABORADORS
+        if list_motorista:
+            self.fields['motorista'].queryset = models.Motorista.objects.all()
+        else:
+            self.fields['motorista'].queryset = models.Pessoa.objects.filter(status = 0) #PEGAR APENAS COLABORADORES ATIVOS DA TABELA SOUZACAMBOS.COLABORADORS
 
 class AbastecimentoForm(forms.ModelForm):
     class Meta:
