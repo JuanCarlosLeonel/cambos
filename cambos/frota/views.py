@@ -1,3 +1,4 @@
+from random import choices
 from django.shortcuts import render
 from django.views.generic.base import TemplateView
 from django.views.generic.edit import UpdateView, CreateView, DeleteView
@@ -90,6 +91,10 @@ class AbastecimentoCreate(CreateView):
         initial = super(AbastecimentoCreate, self).get_initial(**kwargs)
         veiculo = Veiculo.objects.get(pk = self.kwargs['pk'])
         initial['veiculo'] = veiculo
+        if veiculo.caminhao:
+            initial['combustivel'] = 'Diesel'
+        else:
+            initial['combustivel'] = 'Álcool','Gasolina'
         initial['data'] = datetime.date.today()
         return initial
 

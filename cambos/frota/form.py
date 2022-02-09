@@ -1,3 +1,4 @@
+from random import choices
 from django import forms
 
 
@@ -68,6 +69,7 @@ class AbastecimentoForm(forms.ModelForm):
             'valor_unitario': forms.NumberInput(attrs={'class':'form-control'}),            
             'quantidade': forms.NumberInput(attrs={'class':'form-control'}),
         }
+
 
 class ManutencaoForm(forms.ModelForm):
     class Meta:
