@@ -46,7 +46,7 @@ class ViagemForm(forms.ModelForm):
         self.fields['data_final'].label = "Data Retorno"
         self.fields['hora_final'].label = "Hora Retorno"
         if list_motorista:
-            self.fields['motorista'].queryset = models.Motorista.objects.all()
+            self.fields['motorista'].queryset = models.Pessoa.objects.filter(id__in = list_motorista)
         else:
             self.fields['motorista'].queryset = models.Pessoa.objects.filter(status = 0) #PEGAR APENAS COLABORADORES ATIVOS DA TABELA SOUZACAMBOS.COLABORADORS
 

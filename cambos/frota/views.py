@@ -65,7 +65,7 @@ class ViagemCreate(CreateView):
     def get_form_kwargs(self):
         veiculo = Veiculo.objects.get(id = self.kwargs['pk'])
         if veiculo.caminhao:
-            motoristas = Motorista.objects.all()
+            motoristas = Motorista.objects.filter().values('nome__id')
         else:
             motoristas = False
         kwargs = super().get_form_kwargs()
