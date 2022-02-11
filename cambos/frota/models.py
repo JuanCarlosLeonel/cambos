@@ -1,7 +1,10 @@
-from django.db import models
+from django.db import IntegrityError, models
+from django.db.models.constraints import CheckConstraint, UniqueConstraint
+from django.db.models import Q, F
 from core.models import Pessoa, Ativo, User
 from django_currentuser.db.models import CurrentUserField
 import datetime
+from django.core.exceptions import ValidationError
 
 
 class Veiculo(models.Model):
@@ -40,13 +43,28 @@ class Viagem(models.Model):
     km_final     = models.IntegerField(blank=True, null=True)
     created_by   = CurrentUserField()
     data_criacao = models.DateField(verbose_name="Data", default=datetime.date.today)
+    
+    class Meta:        
+        constraints = [
+            models.CheckConstraint(check=Q(data_final__gte=F('data_inicial')), name="datafinal_menor_datainicial"),
+            models.CheckConstraint(check=Q(km_final__gt=F('km_inicial')), name="kmfinal_menor_kminicial"),
+            models.UniqueConstraint(fields=['veiculo'], condition=Q(data_final = None ), name="Veiculo Em Uso")
+        ]
+        db_table = 'frota"."viagem'
+        ordering = ["-data_criacao"]
+
+    def clean(self):
+        if self.data_final == None:
+            pass
+        elif self.data_final < self.data_inicial:
+            raise ValidationError({'data_final':('Data final tem que ser maior que data inicial')})
+        if self.km_final == None:
+            pass
+        elif self.km_final <= self.km_inicial:
+            raise ValidationError({'km_final':('Km final tem que ser maior que Km inicial.')})
 
     def __str__(self):
         return f'{self.origem} - {self.destino}'
-    
-    class Meta:        
-        db_table = 'frota"."viagem'
-        ordering = ["-data_criacao"]
 
 
 class Abastecimento(models.Model):

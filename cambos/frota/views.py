@@ -67,7 +67,7 @@ class ViagemCreate(CreateView):
     def get_form_kwargs(self):
         veiculo = Veiculo.objects.get(id = self.kwargs['pk'])
         if veiculo.caminhao:
-            motoristas = Motorista.objects.filter().values('nome__id')
+            motoristas = Motorista.objects.filter().values('nome')
         else:
             motoristas = False
         kwargs = super().get_form_kwargs()
@@ -200,6 +200,11 @@ class ViagemList(ListView):
         context = super().get_context_data(**kwargs)   
         pk = self.kwargs['pk']     
         lista_viagem = Viagem.objects.filter(veiculo = pk).order_by("-id")
+        try:
+            ultima = Viagem.objects.filter(veiculo=pk).latest('id')
+            context['ultima']=ultima
+        except:
+            pass
         veiculo = Veiculo.objects.get(id = pk)
         context['veiculo']=veiculo
         context['lista']=lista_viagem

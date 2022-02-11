@@ -29,13 +29,15 @@
 			
 			<div class="panel-body">
 				<div id="toolbar">
-					
 						
-					<a href="{% url 'viagem_create' veiculo.id %}" class="btn btn-success">
-						<i class="fa fa-plus"></i> Novo
+					{% if ultima.data_final == None and ultima.data_inicial != None %}
+						<lu class="text-danger">O veículo está em uso.</lu>
+					{% else %}
+						<a href="{% url 'viagem_create' veiculo.id %}" class="btn btn-success">
+							<i class="fa fa-plus"></i> Novo
 						</a>
-						
-					
+					{%endif%} 
+
 				  </div>
 				<table id="table"				
 					data-toolbar="#toolbar"
