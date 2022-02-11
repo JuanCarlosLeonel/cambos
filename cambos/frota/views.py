@@ -10,6 +10,10 @@ from .form import ManutencaoForm, ViagemForm, AbastecimentoForm
 from django.http import JsonResponse
 from django.db.models import Sum
 import datetime
+from django.core import serializers
+import json
+from django.http import HttpResponse
+from core.models import Pessoa
 
 @method_decorator(login_required, name='dispatch')
 class Index(TemplateView):
@@ -183,12 +187,14 @@ class VeiculoList(ListView):
     template_name = 'frota/veiculo_list.html'
 
     def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)                
+        context = super().get_context_data(**kwargs)  
+        lista_viagem = Viagem.objects.all().order_by("-id")              
         try:
             user_permission = FrotaPermissao.objects.get(usuario = self.request.user)
         except:
             user_permission = {}
         context['permissoes'] = user_permission
+        context['lista_viagem'] = lista_viagem
         return context
 
 @method_decorator(login_required, name='dispatch')
@@ -200,11 +206,6 @@ class ViagemList(ListView):
         context = super().get_context_data(**kwargs)   
         pk = self.kwargs['pk']     
         lista_viagem = Viagem.objects.filter(veiculo = pk).order_by("-id")
-        try:
-            ultima = Viagem.objects.filter(veiculo=pk).latest('id')
-            context['ultima']=ultima
-        except:
-            pass
         veiculo = Veiculo.objects.get(id = pk)
         context['veiculo']=veiculo
         context['lista']=lista_viagem
@@ -335,3 +336,9 @@ class ManutencaoDelete(DeleteView):
 
     def get_success_url(self):
         return '/frota/manutencao_list'
+
+
+def fazer_api(request):
+    repositories = Pessoa.objects.all()
+    response_json = serializers.serialize('json', Pessoa.obj)
+    return HttpResponse(response_json)
