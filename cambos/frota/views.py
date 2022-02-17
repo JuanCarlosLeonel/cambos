@@ -10,10 +10,6 @@ from .form import ManutencaoForm, ViagemForm, AbastecimentoForm
 from django.http import JsonResponse
 from django.db.models import Sum
 import datetime
-from django.core import serializers
-import json
-from django.http import HttpResponse
-from core.models import Pessoa
 
 @method_decorator(login_required, name='dispatch')
 class Index(TemplateView):
@@ -206,6 +202,11 @@ class ViagemList(ListView):
         context = super().get_context_data(**kwargs)   
         pk = self.kwargs['pk']     
         lista_viagem = Viagem.objects.filter(veiculo = pk).order_by("-id")
+        try:
+            ultima = Viagem.objects.filter(veiculo=pk).latest('id')
+            context['ultima']=ultima
+        except:
+            pass
         veiculo = Veiculo.objects.get(id = pk)
         context['veiculo']=veiculo
         context['lista']=lista_viagem
@@ -336,4 +337,3 @@ class ManutencaoDelete(DeleteView):
 
     def get_success_url(self):
         return '/frota/manutencao_list'
-

@@ -77,10 +77,10 @@ class Viagem(models.Model):
     @property
     def diagasto(self):
         from datetime import datetime, date
-        # if self.data_final is None:
-        #     pass
-        # else:
-        return datetime.combine(date(self.data_final)) - datetime.combine(date(self.data_inicial))
+        if self.data_final is None:
+            pass
+        else:
+            return (self.data_final - self.data_inicial)
     @property
     def horagasto(self):
         from datetime import datetime, date
