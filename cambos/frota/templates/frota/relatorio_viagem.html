@@ -71,11 +71,11 @@
 									{%endif%}																		
 								</td>
 								<td class='text-center' >
-									{% comment %} {%if item.diagasto != none%} {% endcomment %}
-										{{ item.diagasto}} ,
-									{% comment %} {%endif%} {% endcomment %}
+									{%if item.diagasto != none%}
+										{{ item.diagasto}} dias
+									{%endif%}
 									{%if item.horagasto != none%}																			
-										{{item.horagasto}}		
+										,{{item.horagasto}}		
 									{%endif%}																
 								</td>
 						{% endfor %}

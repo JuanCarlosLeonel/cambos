@@ -76,11 +76,11 @@ class Viagem(models.Model):
         return (self.km_final - self.km_inicial)
     @property
     def diagasto(self):
-        from datetime import datetime, date
+        # import datetime , time
         if self.data_final is None:
             pass
         else:
-            return (self.data_final - self.data_inicial)
+            return (self.data_final - self.data_inicial).days
     @property
     def horagasto(self):
         from datetime import datetime, date
