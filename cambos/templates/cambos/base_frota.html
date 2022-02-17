@@ -114,7 +114,7 @@
 				</a>
 				<ul class="children collapse in" id="sub-item-2">	
 					{% if permissoes.ver_viagemlist %}				
-						<li class=" enabled"><a id="" href="{% url 'viagem_listall' %}"><em class="fa fa-circle">&nbsp;</em> Viagens </a></li>
+						<li class=" enabled"><a id="" href=""><em class="fa fa-circle">&nbsp;</em> Viagens </a></li>
 					{% endif %}	
 					{% if permissoes.ver_viagemlist %}			
 					<li class=" enabled"><a id="" href=""><em class="fa fa-circle">&nbsp;</em> Corridas </a></li>	
@@ -129,7 +129,7 @@
 						<li class=" enabled"><a id="" href="{% url 'despesas_frota' %}"><em class="fa fa-circle">&nbsp;</em> Despesas </a></li>	
 					{% endif %}			
 					{% if permissoes.ver_relatorio %}
-						<li class=" enabled"><a id="" href=""><em class="fa fa-circle">&nbsp;</em> Relatório </a></li>	
+						<li class=" enabled"><a id="" href="{% url 'relatorio_viagem' %}"><em class="fa fa-circle">&nbsp;</em> Relatório </a></li>	
 					{% endif %}
 					{% if permissoes.ver_veiculo %}			
 						<li class=" enabled"><a id="" href="{% url 'veiculo_list' %}"><em class="fa fa-circle">&nbsp;</em> Veículos </a></li>

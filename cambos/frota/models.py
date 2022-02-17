@@ -1,3 +1,6 @@
+import math
+from statistics import mode
+from django import db
 from django.db import IntegrityError, models
 from django.db.models.constraints import CheckConstraint, UniqueConstraint
 from django.db.models import Q, F
@@ -31,12 +34,14 @@ class Motorista(models.Model):
 class Viagem(models.Model):
     veiculo      = models.ForeignKey(Veiculo, on_delete=models.DO_NOTHING, blank=True)
     motorista    = models.ForeignKey(Pessoa, on_delete=models.DO_NOTHING, db_constraint=False)
+    motorista2   = models.ForeignKey(Pessoa, on_delete=models.DO_NOTHING, db_constraint=False, related_name='motorista2', blank=True, null=True)
+    ajudante     = models.ForeignKey(Pessoa, on_delete=models.DO_NOTHING, db_constraint=False, related_name='ajudante', blank=True, null=True)
     data_inicial = models.DateField(blank=True, null=True)
     data_final   = models.DateField(blank=True, null=True)
     hora_inicial = models.TimeField(blank=True, null=True)
     hora_final   = models.TimeField(blank=True, null=True)
     origem       = models.CharField(max_length=40, blank=True)
-    destino      = models.CharField(max_length=40)
+    destino      = models.CharField(max_length=250)
     carga        = models.CharField(max_length=40, blank=True)
     peso         = models.FloatField(blank=True, null=True)
     km_inicial   = models.IntegerField(blank=True, null=True)
@@ -65,6 +70,24 @@ class Viagem(models.Model):
 
     def __str__(self):
         return f'{self.origem} - {self.destino}'
+
+    @property
+    def kmfinalmenosinicial(self):
+        return (self.km_final - self.km_inicial)
+    @property
+    def diagasto(self):
+        from datetime import datetime, date
+        # if self.data_final is None:
+        #     pass
+        # else:
+        return datetime.combine(date(self.data_final)) - datetime.combine(date(self.data_inicial))
+    @property
+    def horagasto(self):
+        from datetime import datetime, date
+        if self.hora_final is None:
+            pass
+        else:
+            return datetime.combine(date.today(),self.hora_final) - datetime.combine(date.today(),self.hora_inicial)
 
 
 class Abastecimento(models.Model):

@@ -14,6 +14,8 @@ class ViagemForm(forms.ModelForm):
         fields = (            
             'veiculo',
             'motorista',
+            'motorista2',
+            'ajudante',
             'origem',            
             'destino',                        
             'data_inicial',
@@ -27,6 +29,12 @@ class ViagemForm(forms.ModelForm):
         widgets = {                                     
             'veiculo': forms.HiddenInput(),
             'motorista': Select2Widget(                
+                attrs={'class':'form-control'},                
+            ),
+            'motorista2': Select2Widget(                
+                attrs={'class':'form-control'},                
+            ),
+            'ajudante': Select2Widget(                
                 attrs={'class':'form-control'},                
             ),
             'data_inicial':forms.DateInput(attrs={'data-mask':'00/00/0000','class':'form-control datepicker'}),            
@@ -48,8 +56,12 @@ class ViagemForm(forms.ModelForm):
         self.fields['hora_final'].label = "Hora Retorno"
         if list_motorista:
             self.fields['motorista'].queryset = models.Pessoa.objects.filter(id__in = list_motorista)
+            self.fields['motorista2'].queryset = models.Pessoa.objects.filter(id__in = list_motorista)
+            self.fields['ajudante'].queryset = models.Pessoa.objects.filter(status = 0) #PEGAR APENAS COLABORADORES ATIVOS DA TABELA SOUZACAMBOS.COLABORADORS
         else:
             self.fields['motorista'].queryset = models.Pessoa.objects.filter(status = 0) #PEGAR APENAS COLABORADORES ATIVOS DA TABELA SOUZACAMBOS.COLABORADORS
+            self.fields['motorista2'].widget = forms.HiddenInput()
+            self.fields['ajudante'].widget = forms.HiddenInput()
 
 class AbastecimentoForm(forms.ModelForm):
     class Meta:

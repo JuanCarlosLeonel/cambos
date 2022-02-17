@@ -46,7 +46,7 @@
 		</a>
 		{%endif%}
 		{% if permissoes.ver_viagemlist %}
-		<a href="{% url 'viagem_listall' %}">				
+		<a href="">				
 			<div class="col-xs-6 no-padding">
 				<div class="panel panel-red panel-widget border-right border-bottom">
 					<div class="row no-padding"><span class="color-red"> <em class="fa fa-plane fa-2x"></em></span>
@@ -82,7 +82,7 @@
 		</a>
 		{%endif%}	
 		{% if permissoes.ver_relatorio%}				
-		<a href="">												
+		<a href="{% url 'relatorio_viagem' %}">												
 			<div class="col-xs-6 no-padding">					
 				<div class="panel panel-teal panel-widget border-right border-bottom">
 					<div class="row no-padding"><span class="color-blue"> <em class="fa fa-line-chart fa-2x"></em></span>

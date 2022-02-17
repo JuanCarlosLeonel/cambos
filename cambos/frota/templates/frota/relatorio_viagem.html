@@ -37,11 +37,12 @@
 						<tr>	
 							<th data-field="Situação" data-sortable="true" class='text-center'>Situação</th>						
 							<th data-field="Data Saída" data-formatter="dateFormat" data-sortable="true" class='text-center'>Data Saída</th>
-							<th data-field="FichaCorte"  data-sortable="true" class='text-center'>Veiculo</th>							
-							<th data-field="Modelo" data-sortable="true" class='text-center'>Origem</th>														
+							<th data-field="FichaCorte"  data-sortable="true" class='text-center'>Veiculo</th>																					
 							<th data-field="Nome"  data-sortable="true" class='text-center'>Destino</th>
 							<th data-field="Status" data-sortable="true" class='text-center'>Motorista</th>
 							<th data-field="Data Chegada"  data-formatter="dateFormat" data-sortable="true" class='text-center'>Data Chegada</th>
+							<th data-field="km" data-sortable="true" class='text-center'>km</th>
+							<th data-field="tempo gasto" data-sortable="true" class='text-center'>Tempo gasto</th>
 						</tr>
 					</thead>
 					<tbody>
@@ -59,11 +60,23 @@
 									{{item.data_inicial|safe}}									
 								</td>
 								<td class='text-center'>{{item.veiculo}}</td>								
-								<td class='text-center' >{{item.origem}}</td>
 								<td class='text-center'>{{item.destino}}</td>
 								<td class='text-center'>{{item.motorista.nome}}</td>
 								<td class='text-center' >																					
-									{{data.data_final|safe}}																		
+									{{item.data_final|safe}}																		
+								</td>
+								<td class='text-center' >
+									{%if item.kmfinalmenosinicial != none %}																					
+										{{item.kmfinalmenosinicial}}
+									{%endif%}																		
+								</td>
+								<td class='text-center' >
+									{% comment %} {%if item.diagasto != none%} {% endcomment %}
+										{{ item.diagasto}} ,
+									{% comment %} {%endif%} {% endcomment %}
+									{%if item.horagasto != none%}																			
+										{{item.horagasto}}		
+									{%endif%}																
 								</td>
 						{% endfor %}
 					</tbody>

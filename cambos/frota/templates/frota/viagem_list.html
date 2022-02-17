@@ -80,7 +80,11 @@
 									{{data.destino}}									
 								</td>								
 								<td class='text-center'>
-									{{data.motorista}}
+									{% if data.motorista2 != none %}
+										{{data.motorista}} | {{data.motorista2}}
+									{% elif data.motorista2 == none %}
+										{{data.motorista}}
+									{%endif%}
 								</td>				
 								<td class='text-center' >																					
 									{{data.data_final|safe}}																		

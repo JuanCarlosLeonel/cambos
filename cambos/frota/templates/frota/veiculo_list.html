@@ -32,7 +32,9 @@
 						<h2>{{item.descricao}}</h2>
 						{%for lista in lista_viagem%}
 							{%if lista.veiculo.id == item.id%}
-								{{lista.veiculo.id}}
+								{%if lista.data_final == none%}
+									<lu class="text-danger">O veículo está em uso.</lu>
+								{%endif%}
 							{%endif%}
 						{%endfor%}
 						

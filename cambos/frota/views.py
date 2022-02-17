@@ -213,9 +213,9 @@ class ViagemList(ListView):
 
 
 @method_decorator(login_required, name='dispatch')
-class ViagemListALL(ListView):
+class RelatorioViagem(ListView):
     model = Viagem
-    template_name = 'frota/viagem_listALL.html'
+    template_name = 'frota/relatorio_viagem.html'
 
 @method_decorator(login_required, name='dispatch')
 class AbastecimentoListALL(ListView):
@@ -337,8 +337,3 @@ class ManutencaoDelete(DeleteView):
     def get_success_url(self):
         return '/frota/manutencao_list'
 
-
-def fazer_api(request):
-    repositories = Pessoa.objects.all()
-    response_json = serializers.serialize('json', Pessoa.obj)
-    return HttpResponse(response_json)

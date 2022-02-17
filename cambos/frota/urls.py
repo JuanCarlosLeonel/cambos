@@ -12,7 +12,7 @@ from .views import(
     AbastecimentoUpdate,
     AbastecimentoDelete,
     VeiculoList,    
-    ViagemListALL,
+    RelatorioViagem,
     relatorio_despesa,
     relatorio_abastecimento_porveiculo,
     relatorio_manutencao_porveiculo,
@@ -27,7 +27,7 @@ from .views import(
 urlpatterns = [
     path('index', Index.as_view(), name='frota_index'),        
     path('veiculo_index/<str:pk>/', VeiculoIndex.as_view(), name='veiculo_index'), 
-    path('viagem_listall',  ViagemListALL.as_view(), name='viagem_listall'),
+    path('relatorio_viagem',  RelatorioViagem.as_view(), name='relatorio_viagem'),
     path('viagem_list/<str:pk>/',  ViagemList.as_view(), name='viagem_list'),
     path('viagem_create/<str:pk>/', ViagemCreate.as_view(), name = 'viagem_create'),
     path('viagem_update/<str:pk>/', ViagemUpdate.as_view(), name='viagem_update'),    
