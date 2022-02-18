@@ -76,8 +76,9 @@ class Viagem(models.Model):
         return (self.km_final - self.km_inicial)
     @property
     def diagasto(self):
-        # import datetime , time
         if self.data_final is None:
+            pass
+        elif (self.data_final - self.data_inicial).days == 0:
             pass
         else:
             return (self.data_final - self.data_inicial).days

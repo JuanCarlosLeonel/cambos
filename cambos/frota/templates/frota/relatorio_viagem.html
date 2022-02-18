@@ -19,9 +19,16 @@
 
 {% block content %}
 <h1 class="page-header"><span class="text-muted small">Viagens </span></h1>
+<h4 class="text-danger"><span  class="fa fa-stop"></i> Em Trânsito</span></h4>
 	<div class="col-12">
 		<div class="panel panel-default">
 			<div class="panel-body">	
+				<div class="card card-body">
+					<form method="GET">
+						{{filter.form}}
+					<button class="btn btn-primary" type="submit">Pesquisar</button>
+					</form>
+				</div>
 				<table id="table"				
 				data-toolbar="#toolbar"
 				data-toggle="table"
@@ -34,48 +41,51 @@
 				data-sort-order="desc"
 				>
 					<thead>
-						<tr>	
-							<th data-field="Situação" data-sortable="true" class='text-center'>Situação</th>						
+						<tr>							
 							<th data-field="Data Saída" data-formatter="dateFormat" data-sortable="true" class='text-center'>Data Saída</th>
 							<th data-field="FichaCorte"  data-sortable="true" class='text-center'>Veiculo</th>																					
 							<th data-field="Nome"  data-sortable="true" class='text-center'>Destino</th>
 							<th data-field="Status" data-sortable="true" class='text-center'>Motorista</th>
 							<th data-field="Data Chegada"  data-formatter="dateFormat" data-sortable="true" class='text-center'>Data Chegada</th>
-							<th data-field="km" data-sortable="true" class='text-center'>km</th>
+							<th data-field="km" data-sortable="true" class='text-center'>Km Rodado</th>
 							<th data-field="tempo gasto" data-sortable="true" class='text-center'>Tempo gasto</th>
 						</tr>
 					</thead>
 					<tbody>
-						{%for item in object_list%}		
+						{%for item in filter.qs%}	
 							<tr data-href="#"	
 							class="trLink" >
-								<td class='text-center' >								
-									{%if item.data_final%}
-										Concluído
-									{% else %}
-										<lu class="text-danger">Em Trânsito</lu>
-									{%endif%}
-								</td>
 								<td class='text-center' >									
 									{{item.data_inicial|safe}}									
 								</td>
-								<td class='text-center'>{{item.veiculo}}</td>								
+								<td class='text-center'>
+									{%if item.data_final%}
+										{{item.veiculo}}</td>	
+									{% else %}
+										<lu class="trLink text-danger negrito">{{item.veiculo}}</lu>
+									{%endif%}							
 								<td class='text-center'>{{item.destino}}</td>
-								<td class='text-center'>{{item.motorista.nome}}</td>
+								<td class='text-center'>
+									{% if item.motorista2 != none %}
+										{{item.motorista.nome}} | {{item.motorista2.nome}}
+									{% elif item.motorista2 == none %}
+										{{item.motorista.nome}}
+									{%endif%}
+								</td>
 								<td class='text-center' >																					
 									{{item.data_final|safe}}																		
 								</td>
 								<td class='text-center' >
 									{%if item.kmfinalmenosinicial != none %}																					
-										{{item.kmfinalmenosinicial}}
+										{{item.kmfinalmenosinicial}} km
 									{%endif%}																		
 								</td>
 								<td class='text-center' >
 									{%if item.diagasto != none%}
-										{{ item.diagasto}} dias
+										{{ item.diagasto}} dias,
 									{%endif%}
 									{%if item.horagasto != none%}																			
-										,{{item.horagasto}}		
+										{{item.horagasto}}		
 									{%endif%}																
 								</td>
 						{% endfor %}

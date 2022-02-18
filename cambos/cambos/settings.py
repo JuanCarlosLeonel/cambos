@@ -57,6 +57,7 @@ INSTALLED_APPS = [
     'frota',
     'django_select2',  
     'django_apscheduler',
+    'django_filters',
 ]
 
 MIDDLEWARE = [

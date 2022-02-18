@@ -59,6 +59,13 @@
 							<div class="panel panel-blue panel-widget border-right border-bottom">
 								<div class="row no-padding"><span class="color-red"> <em class="fa fa-truck fa-2x"></em></span>
 									<h2>{{item.descricao}}</h2>
+									{%for lista in lista_viagem%}
+										{%if lista.veiculo.id == item.id%}
+											{%if lista.data_final == none%}
+												<lu class="text-danger">O veículo está em uso.</lu>
+											{%endif%}
+										{%endif%}
+									{%endfor%}
 									
 								</div>
 							</div>
