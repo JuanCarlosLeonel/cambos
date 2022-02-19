@@ -52,7 +52,7 @@
 						</tr>
 					</thead>
 					<tbody>
-						{%for item in filter.qs%}	
+						{%for item in filter.qs|dictsortreversed:"data_inicial"%}	
 							<tr data-href="#"	
 							class="trLink" >
 								<td class='text-center' >									
