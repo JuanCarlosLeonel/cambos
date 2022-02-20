@@ -18,30 +18,27 @@
 {% endblock navigation %}
 
 {% block content %}
-<h1 class="page-header"><span class="text-muted small">Viagens </span></h1>
-<h4 class="text-danger"><span  class="fa fa-stop"></i> Em Trânsito</span></h4>
+<h1 class="page-header">Viagens<span class="text-muted small"> </span></h1></h1>
 	<div class="col-12">
 		<div class="panel panel-default">
-			<div class="panel-body">	
-				<div class="card card-body">
-					<form method="GET">
-						{{filter.form}}
-					<button class="btn btn-primary" type="submit">Pesquisar</button>
-					</form>
-				</div>
+			<div class="panel-body">
+				<h4><b> Filtros:</b></h4>	
+				<form method="GET">
+					{{filter.form}}
+				<button class="btn btn-success" type="submit">Pesquisar</button>
+				</form>
+				<div id="toolbar">	
+					<strong class="text-danger"><i class="fa fa-plane"></i> Em trânsito</strong>
+			  	</div>
 				<table id="table"				
 				data-toolbar="#toolbar"
-				data-toggle="table"
-				data-show-refresh="true"
 				data-show-toggle="false"
 				data-show-columns="true"
-				data-search="true"
 				data-select-item-name="toolbar"
 				data-pagination="true"				 
-				data-sort-order="desc"
 				>
 					<thead>
-						<tr>							
+						<tr>						
 							<th data-field="Data Saída" data-formatter="dateFormat" data-sortable="true" class='text-center'>Data Saída</th>
 							<th data-field="FichaCorte"  data-sortable="true" class='text-center'>Veiculo</th>																					
 							<th data-field="Nome"  data-sortable="true" class='text-center'>Destino</th>
