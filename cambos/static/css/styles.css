@@ -1051,3 +1051,32 @@ li.disabled > a:focus {
 .negrito {
   font-weight: bold;  
 }
+
+.btn_filtrar{
+
+  border: none;
+  background-color: transparent;
+  border: 2px solid #30CD9E;
+  color: #30CD9E;
+  padding: 5px 10px 5px 10px;
+  font-weight: bold;
+
+}
+
+.btn_filtrar_modal{
+
+  border: none;
+  color: white;
+  background-color: #30CD9E;
+  font-weight: bold;
+  font-size: 20px;
+
+}
+
+.titulo_filtrar{
+
+  color:#30CD9E;
+  font-weight: bold;
+  font-size: 30px;
+
+}
