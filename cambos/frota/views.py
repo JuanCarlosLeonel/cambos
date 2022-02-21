@@ -215,6 +215,16 @@ class ViagemList(ListView):
 
 
 @method_decorator(login_required, name='dispatch')
+class RelatorioList(ListView):
+    model = Abastecimento
+    template_name = 'frota/relatorio_index.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)   
+        return context
+
+
+@method_decorator(login_required, name='dispatch')
 class RelatorioViagem(ListView):
     model = Viagem
     template_name = 'frota/relatorio_viagem.html'

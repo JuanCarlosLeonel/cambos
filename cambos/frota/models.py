@@ -1,5 +1,6 @@
 import math
 from statistics import mode
+from time import time
 from django import db
 from django.db import IntegrityError, models
 from django.db.models.constraints import CheckConstraint, UniqueConstraint
@@ -74,17 +75,21 @@ class Viagem(models.Model):
     @property
     def kmfinalmenosinicial(self):
         return (self.km_final - self.km_inicial)
+
     @property
     def diagasto(self):
         if self.data_final is None:
             pass
         elif (self.data_final - self.data_inicial).days == 0:
             pass
+        elif self.hora_final < self.hora_inicial:
+            return (self.data_final - self.data_inicial).days -1
         else:
             return (self.data_final - self.data_inicial).days
+
     @property
     def horagasto(self):
-        from datetime import datetime, date
+        from datetime import datetime, date, time
         if self.hora_final is None:
             pass
         else:

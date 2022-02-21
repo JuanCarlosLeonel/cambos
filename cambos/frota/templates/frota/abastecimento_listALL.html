@@ -43,7 +43,7 @@
 						</tr>
 					</thead>
 					<tbody>
-						{%for item in object_list%}		
+						{%for item in object_list|dictsortreversed:"data"%}		
 							<tr data-href="#"	
 							class="trLink" >
 								<td class='text-center' >									

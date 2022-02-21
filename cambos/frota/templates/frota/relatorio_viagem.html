@@ -8,7 +8,9 @@
             <li><a href="{% url 'frota_index' %}">
                 <em class="fa fa-home"></em>
             </a></li>
-            <li class="active">Veículos</li>
+            <li class="active"><a href="{% url 'relatorio_index' %}">
+                Voltar para Relatórios
+            </a></li>
         </ol>	
     </div><!--/.row-->
 	
@@ -49,41 +51,50 @@
 					</thead>
 					<tbody>
 						{%for item in filter.qs|dictsortreversed:"data_inicial"%}	
-							<tr data-href="#"	
-							class="trLink" >
-								<td class='text-center' >									
-									{{item.data_inicial|safe}}									
-								</td>
-								<td class='text-center'>
-									{%if item.data_final%}
-										{{item.veiculo}}</td>	
-									{% else %}
-										<lu class="trLink text-danger negrito">{{item.veiculo}}</lu>
-									{%endif%}							
-								<td class='text-center'>{{item.destino}}</td>
-								<td class='text-center'>
-									{% if item.motorista2 != none %}
-										{{item.motorista.nome}} | {{item.motorista2.nome}}
-									{% elif item.motorista2 == none %}
-										{{item.motorista.nome}}
-									{%endif%}
-								</td>
-								<td class='text-center' >																					
-									{{item.data_final|safe}}																		
-								</td>
-								<td class='text-center' >
-									{%if item.kmfinalmenosinicial != none %}																					
-										{{item.kmfinalmenosinicial}} km
-									{%endif%}																		
-								</td>
-								<td class='text-center' >
-									{%if item.diagasto != none%}
-										{{ item.diagasto}} dias,
-									{%endif%}
-									{%if item.horagasto != none%}																			
-										{{item.horagasto}}		
-									{%endif%}																
-								</td>
+							{%if item.veiculo.caminhao%}
+								<tr data-href="#"	
+								class="trLink" >
+									<td class='text-center' >									
+										{{item.data_inicial|safe}}									
+									</td>
+									<td class='text-center'>
+										{%if item.data_final%}
+											{{item.veiculo}}</td>	
+										{% else %}
+											<lu class="trLink text-danger negrito">{{item.veiculo}}</lu>
+										{%endif%}							
+									<td class='text-center'>{{item.destino}}</td>
+									<td class='text-center'>
+										{% if item.motorista2 != none %}
+											{{item.motorista.nome}} | {{item.motorista2.nome}}
+										{% elif item.motorista2 == none %}
+											{{item.motorista.nome}}
+										{%endif%}
+									</td>
+									<td class='text-center' >																					
+										{{item.data_final|safe}}																		
+									</td>
+									<td class='text-center' >
+										{%if item.kmfinalmenosinicial != none %}																					
+											{{item.kmfinalmenosinicial}} km
+										{%endif%}																		
+									</td>
+									<td class='text-center'>
+										{%if item.diagasto != none%}
+											{{ item.diagasto}} dias,
+										{%endif%}
+										<div class="with-js">
+										{%if item.hora_final > item.hora_inicial%}
+											{%if item.horagasto != none%}																			
+												{{item.horagasto}}		
+											{%endif%}	
+										</div>		
+										{%endif%}	
+										{%if item.horagasto != none%}																			
+											{{item.horagasto}}		
+										{%endif%}												
+									</td>
+							{%endif%}
 						{% endfor %}
 					</tbody>
 				</table>			
@@ -95,10 +106,7 @@
 	<div class="modal-dialog" role="document">
 		<div class="modal-content">
 		<div class="modal-header">
-			<h5 class="modal-title titulo_filtrar" id="exampleModalLabel">FILTRAR</h5>
-			<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-			<span aria-hidden="true">&times;</span>
-			</button>
+			<h5 class="modal-title titulo_filtrar" id="exampleModalLabel">Selecione os Filtros</h5>
 		</div>
 		<div class="modal-body">
 			<form method="GET">
@@ -113,6 +121,12 @@
 {% endblock content%}
 
 {% block script %}
+<script>
+	const elements = document.querySelectorAll('.with-js')
+	for (let p of elements) {
+		p.innerText = p.innerText.substring(7, 20)
+	}
+</script>
 
 <script>	
 	var tr = document.getElementsByClassName('tr-id');
