@@ -41,16 +41,17 @@
 					<thead>
 						<tr>						
 							<th data-field="Data Saída" data-formatter="dateFormat" data-sortable="true" class='text-center'>Data Saída</th>
-							<th data-field="FichaCorte"  data-sortable="true" class='text-center'>Veiculo</th>																					
-							<th data-field="Nome"  data-sortable="true" class='text-center'>Destino</th>
-							<th data-field="Status" data-sortable="true" class='text-center'>Motorista</th>
+							<th data-field="Veiculo"  data-sortable="true" class='text-center'>Veiculo</th>																					
+							<th data-field="Destino"  data-sortable="true" class='text-center'>Destino</th>
+							<th data-field="Motorista" data-sortable="true" class='text-center'>Motorista</th>
+							<th data-field="Ajudante" data-sortable="true" class='text-center'>Ajudante</th>
 							<th data-field="Data Chegada"  data-formatter="dateFormat" data-sortable="true" class='text-center'>Data Chegada</th>
 							<th data-field="km" data-sortable="true" class='text-center'>Km Rodado</th>
 							<th data-field="tempo gasto" data-sortable="true" class='text-center'>Tempo gasto</th>
 						</tr>
 					</thead>
 					<tbody>
-						{%for item in filter.qs|dictsortreversed:"data_inicial"%}	
+						{%for item in filter.qs|dictsortreversed:"data_inicial"%}
 							{%if item.veiculo.caminhao%}
 								<tr data-href="#"	
 								class="trLink" >
@@ -71,12 +72,21 @@
 											{{item.motorista.nome}}
 										{%endif%}
 									</td>
+									<td class='text-center' >
+										{% if item.ajudante%}
+											{{item.ajudante}}
+										{%else%}
+									 		-
+										{%endif%}																		
+									</td>
 									<td class='text-center' >																					
 										{{item.data_final|safe}}																		
 									</td>
 									<td class='text-center' >
 										{%if item.kmfinalmenosinicial != none %}																					
 											{{item.kmfinalmenosinicial}} km
+										{%else%}
+											-
 										{%endif%}																		
 									</td>
 									<td class='text-center'>
@@ -102,6 +112,16 @@
 		</div>
 	</div>
 
+
+	{% comment %} <div class="panel panel-default">
+		<div class="panel-body">
+			<h4>Total de Viagens Realizadas: {{totalviagemfeitas}}</h4>
+		</div>
+	</div> {% endcomment %}
+
+
+
+
 <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
 	<div class="modal-dialog" role="document">
 		<div class="modal-content">
@@ -118,6 +138,7 @@
 		</div>
 	</div>
 </div>
+
 {% endblock content%}
 
 {% block script %}
@@ -127,6 +148,7 @@
 		p.innerText = p.innerText.substring(7, 20)
 	}
 </script>
+
 
 <script>	
 	var tr = document.getElementsByClassName('tr-id');
