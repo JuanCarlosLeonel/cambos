@@ -74,7 +74,10 @@ class Viagem(models.Model):
 
     @property
     def kmfinalmenosinicial(self):
-        return (self.km_final - self.km_inicial)
+        if self.km_final is None:
+            pass
+        else:
+            return (self.km_final - self.km_inicial)
 
     @property
     def diagasto(self):
@@ -89,7 +92,7 @@ class Viagem(models.Model):
 
     @property
     def horagasto(self):
-        from datetime import datetime, date, time
+        from datetime import datetime, date
         if self.hora_final is None:
             pass
         else:

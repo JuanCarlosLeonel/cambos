@@ -1,3 +1,4 @@
+from itertools import count
 from random import choices
 from django.shortcuts import render
 from django.views.generic.base import TemplateView
@@ -232,9 +233,17 @@ class RelatorioViagem(ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         lista = ViagemFilter(self.request.GET, queryset=self.get_queryset())
-        listaviagenscaminhao = Viagem.objects.filter(veiculo__caminhao = True).count()
+        count = 0
+        somakm = 0
+        for item in lista.qs:
+            if item.veiculo.caminhao:
+                count += 1
+                if item.kmfinalmenosinicial:																					
+                    somakm += item.kmfinalmenosinicial
+
+        context['somakm'] = somakm
+        context['counter'] = count
         context['filter'] = lista
-        context['totalviagemfeitas'] = listaviagenscaminhao
         return context  
 
 @method_decorator(login_required, name='dispatch')
