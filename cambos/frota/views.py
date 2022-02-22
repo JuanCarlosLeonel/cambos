@@ -232,8 +232,9 @@ class RelatorioViagem(ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         lista = ViagemFilter(self.request.GET, queryset=self.get_queryset())
+        listaviagenscaminhao = Viagem.objects.filter(veiculo__caminhao = True).count()
         context['filter'] = lista
-        context['totalviagemfeitas'] = Viagem.objects.filter(veiculo__caminhao = True).count()
+        context['totalviagemfeitas'] = listaviagenscaminhao
         return context  
 
 @method_decorator(login_required, name='dispatch')
