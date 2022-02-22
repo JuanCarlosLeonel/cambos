@@ -321,9 +321,25 @@ class IndexDespesas(TemplateView):
 
 
 @method_decorator(login_required, name='dispatch')
+class ManutencaoListALL(ListView):
+    model = Manutencao
+    template_name = 'frota/manutencao_listALL.html'
+
+
+
+@method_decorator(login_required, name='dispatch')
 class ManutencaoList(ListView):
     model = Manutencao
     template_name = 'frota/manutencao_list.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)   
+        pk = self.kwargs['pk']     
+        lista_manutencao = Manutencao.objects.filter(veiculo = pk).order_by("-id")
+        veiculo = Veiculo.objects.get(id = pk)
+        context['veiculo']=veiculo
+        context['lista']=lista_manutencao
+        return context  
 
 
 @method_decorator(login_required, name='dispatch')
@@ -332,16 +348,23 @@ class ManutencaoCreate(CreateView):
     form_class = ManutencaoForm
 
     def get_success_url(self):        
-        return '/frota/manutencao_list'
+        return f'/frota/manutencao_list/{self.kwargs["pk"]}'
     
     def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)                
-        
+        context = super().get_context_data(**kwargs)  
+        context['nomeveiculo'] = Veiculo.objects.get(pk = self.kwargs['pk'])              
+        context['veiculo'] = self.kwargs['pk']
         return context        
     
     def get_initial(self, *args, **kwargs):
         initial = super(ManutencaoCreate, self).get_initial(**kwargs)
+        veiculo = Veiculo.objects.get(pk = self.kwargs['pk'])
+        initial['veiculo'] = veiculo
+        initial['data'] = datetime.date.today()
         return initial
+
+    
+
 
 @method_decorator(login_required, name='dispatch')
 class ManutencaoUpdate(UpdateView):
@@ -349,10 +372,11 @@ class ManutencaoUpdate(UpdateView):
     form_class = ManutencaoForm
     
     def get_success_url(self):        
-        return '/frota/manutencao_list'
+        return f'/frota/manutencao_list/{self.object.veiculo.id}'
     
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)                
+        context['veiculo'] = self.object.veiculo.id
         return context
 
 @method_decorator(login_required, name='dispatch')
@@ -364,4 +388,4 @@ class ManutencaoDelete(DeleteView):
         return context   
 
     def get_success_url(self):
-        return '/frota/manutencao_list'
+        return f'/frota/viagem_list/{self.object.veiculo.id}'

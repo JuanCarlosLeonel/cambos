@@ -10,33 +10,20 @@
 			<li><a href="{% url 'frota_index' %}">
                 <em class="fa fa-home"></em>
             </a></li>
-            <li class="active"><a href="{% url 'veiculo_list' %}">Veículos</a></li>
-			<li class="active"><a href="{% url 'veiculo_index' veiculo.pk %}">Menu</a></li>
+            <li class="active">Frota</li>
         </ol>
     </div><!--/.row-->
     <div class="row">
         <div class="col-lg-12">
-            <h1 class="page-header">{{veiculo}}<span class="text-muted small"> Manutenção</span></h1></h1>
+            <h1 class="page-header">Manutenções dos Veículos<span class="text-muted small"> </span></h1></h1>
         </div>
     </div><!--/.row-->
 {% endblock navigation %}
 
 {% block content %}		
-
 	<div class="col-12">
-		
 		<div class="panel panel-default">
-			
 			<div class="panel-body">
-				<div id="toolbar">
-					
-						
-					<a href="{% url 'manutencao_create' veiculo.id %}" class="btn btn-success">
-						<i class="fa fa-plus"></i> Novo
-						</a>
-						
-					
-				  </div>
 				<table id="table"				
 					data-toolbar="#toolbar"
 					data-toggle="table"
@@ -51,32 +38,28 @@
 					<thead>
 						<tr>
 							<th data-field="Data"  data-formatter="dateFormat" data-sortable="true" class='text-center'>Data</th>														
-							<th data-field="Veiculo"  data-sortable="true" class='text-center'>Veículo</th>		
-							<th data-field="Combustivel"  data-sortable="true" class='text-center'>Manutencao</th>	
-							<th data-field="Valor"  data-sortable="true" class='text-center'>Descricao</th>				
-							<th data-field="Destino" data-sortable="true" class='text-center'>Criado por</th>																					
+							<th data-field="Veiculo"  data-sortable="true" class='text-center'>Veículo</th>							
+							<th data-field="Manutenção" data-sortable="true" class='text-center'>Manutenção</th>	
+							<th data-field="Valor" data-sortable="true" class='text-center'>Criado por</th>																				
 						</tr>
 					</thead>
 					<tbody>
-						{% for data in lista %}
+						{% for data in object_list %}
 							
-							<tr data-href="{% url 'manutencao_update' data.pk %}"
+							<tr data-href="#"
 							 class="trLink" >							
 								<td class='text-center' >									
 									{{data.data_criacao|safe}}									
 								</td>								
 								<td class='text-center' >									
 									{{data.veiculo}}									
-								</td>		
-								<td class='text-center' >									
-									{{data.manutencao}}									
-								</td>	
+								</td>								
 								<td class='text-center'>
 									{{data.descricao}}
-								</td>					
+								</td>	
 								<td class='text-center'>
 									{{data.created_by}}
-								</td>																																
+								</td>																															
 						{%endfor%}
 					</tbody>					
 				</table>								

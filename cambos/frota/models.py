@@ -105,6 +105,7 @@ class Abastecimento(models.Model):
             ('Gasolina', 'Gasolina'),             
             ('Álcool', 'Álcool'),                         
         )
+    interno = models.BooleanField(default=False)
     veiculo        = models.ForeignKey(Veiculo, on_delete=models.DO_NOTHING, blank=True)
     combustivel = models.CharField(max_length=40, choices=COMBUSTIVEL)
     data           = models.DateField()        
@@ -194,6 +195,7 @@ class Manutencao(models.Model):
             ('Corretiva', 'Corretiva'),             
         )
     veiculo    = models.ForeignKey(Veiculo, on_delete=models.DO_NOTHING)
+    km = models.IntegerField(blank=True, null=True)
     manutencao = models.CharField(max_length=40, choices=MANUTENCAO)
     valor      = models.FloatField()
     descricao  = models.CharField(max_length=40)

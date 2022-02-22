@@ -40,15 +40,14 @@
 					</div>
 				</div>
 			</div>
-		</a>
-		<!--				
-		<a href="">				
+		</a>				
+		<a href="{% url 'manutencao_list' veiculo.pk %}">				
 		<div class="col-xs-6 no-padding">
 			<div class="panel panel-red panel-widget border-right border-bottom">
 				<div class="row no-padding"><span class="color-red"> <em class="fa fa-wrench fa-2x"></em></span>
 					<h2>Manutenção</h2>
 					
-				</div>
+				{% comment %} </div>
 			</div>
 		</div>
 		</a>
@@ -74,7 +73,7 @@
 			</a>	
 		-->
 		
-	</div><!--/.row-->
+	</div> {% endcomment %}
 
 
 

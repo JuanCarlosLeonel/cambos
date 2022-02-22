@@ -66,16 +66,17 @@ class ViagemForm(forms.ModelForm):
 class AbastecimentoForm(forms.ModelForm):
     class Meta:
         model = Abastecimento
-        fields = (            
+        fields = (         
             'veiculo',
+            'interno',
             'combustivel',
             'data',
             'valor_unitario',            
             'quantidade',            
         )
          
-        widgets = {                                     
-            'veiculo': forms.HiddenInput(),            
+        widgets = {                                    
+            'veiculo': forms.HiddenInput(),        
             'combustivel': forms.Select(attrs={'class':'form-control'}),
             'data': forms.DateInput(attrs={'data-mask':'00/00/0000','class':'form-control datepicker'}),
             'valor_unitario': forms.NumberInput(attrs={'class':'form-control'}),            
@@ -88,6 +89,7 @@ class ManutencaoForm(forms.ModelForm):
         model = Manutencao
         fields = (            
             'veiculo',
+            'km',
             'manutencao',
             'valor',            
             'descricao', 
@@ -97,7 +99,8 @@ class ManutencaoForm(forms.ModelForm):
         widgets = {                                     
             'veiculo': Select2Widget(                
                 attrs={'class':'form-control', 'autofocus': 'autofocus'},                
-            ),            
+            ),       
+            'km': forms.TextInput(attrs={'class':'form-control'}),  
             'manutencao': forms.Select(attrs={'class':'form-control'}),
             'data_criacao': forms.DateInput(attrs={'class':'form-control datepicker'}),
             'valor': forms.NumberInput(attrs={'class':'form-control'}),            

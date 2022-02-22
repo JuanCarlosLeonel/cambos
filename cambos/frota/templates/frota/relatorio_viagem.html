@@ -44,6 +44,7 @@
 							<th data-field="Veiculo"  data-sortable="true" class='text-center'>Veiculo</th>																					
 							<th data-field="Destino"  data-sortable="true" class='text-center'>Destino</th>
 							<th data-field="Motorista" data-sortable="true" class='text-center'>Motorista</th>
+							<th data-field="Motorista2" data-sortable="true" class='text-center'>Motorista2</th>
 							<th data-field="Ajudante" data-sortable="true" class='text-center'>Ajudante</th>
 							<th data-field="Data Chegada"  data-formatter="dateFormat" data-sortable="true" class='text-center'>Data Chegada</th>
 							<th data-field="km" data-sortable="true" class='text-center'>Km Rodado</th>
@@ -66,10 +67,17 @@
 										{%endif%}							
 									<td class='text-center'>{{item.destino}}</td>
 									<td class='text-center'>
-										{% if item.motorista2 != none %}
-											{{item.motorista.nome}} | {{item.motorista2.nome}}
-										{% elif item.motorista2 == none %}
+										{% if item.motorista %}
 											{{item.motorista.nome}}
+										{% else %}
+											-
+										{%endif%}
+									</td>
+									<td class='text-center'>
+										{% if item.motorista2 %}
+											{{item.motorista2.nome}}
+										{% else %}
+											-
 										{%endif%}
 									</td>
 									<td class='text-center' >
@@ -90,7 +98,7 @@
 										{%endif%}																		
 									</td>
 									<td class='text-center'>
-										{%if item.diagasto != none%}
+										{%if item.diagasto%}
 											{{ item.diagasto}} dias,
 										{%endif%}
 										<div class="with-js">
@@ -146,7 +154,7 @@
 <script>
 	const elements = document.querySelectorAll('.with-js')
 	for (let p of elements) {
-		p.innerText = p.innerText.substring(7, 20)
+		p.innerText = p.innerText.substring(8, 20)
 	}
 </script>
 

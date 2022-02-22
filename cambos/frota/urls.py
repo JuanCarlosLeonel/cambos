@@ -23,6 +23,7 @@ from .views import(
     ManutencaoUpdate,
     ManutencaoDelete,
     AbastecimentoListALL,
+    ManutencaoListALL,
 )
 
 urlpatterns = [
@@ -35,6 +36,7 @@ urlpatterns = [
     path('viagem_update/<str:pk>/', ViagemUpdate.as_view(), name='viagem_update'),    
     path('viagem_delete/<int:pk>/',ViagemDelete.as_view(), name='viagem_delete_cbv'),
     path('abastecimento_listall',  AbastecimentoListALL.as_view(), name='abastecimento_listall'),
+    path('manutencaoo_listall',  ManutencaoListALL.as_view(), name='manutencao_listall'),
     path('abastecimento_list/<str:pk>/',  AbastecimentoList.as_view(), name='abastecimento_list'),
     path('abastecimento_create/<str:pk>/', AbastecimentoCreate.as_view(), name = 'abastecimento_create'),
     path('abastecimento_update/<str:pk>/', AbastecimentoUpdate.as_view(), name='abastecimento_update'),    
@@ -44,8 +46,8 @@ urlpatterns = [
     path('retorna_abastecimento_porveiculo', relatorio_abastecimento_porveiculo ,name='retorna_abastecimento_porveiculo'),
     path('retorna_manutencao_porveiculo', relatorio_manutencao_porveiculo ,name='retorna_manutencao_porveiculo'),
     path('despesas_frota', IndexDespesas.as_view(), name='despesas_frota'),
-    path('manutencao_list',  ManutencaoList.as_view(), name='manutencao_list'),
-    path('manutencao_create', ManutencaoCreate.as_view(), name = 'manutencao_create'),
+    path('manutencao_list/<str:pk>/',  ManutencaoList.as_view(), name='manutencao_list'),
+    path('manutencao_create/<str:pk>/', ManutencaoCreate.as_view(), name = 'manutencao_create'),
     path('manutencao_update/<str:pk>/', ManutencaoUpdate.as_view(), name='manutencao_update'),    
     path('manutencao_delete/<int:pk>/',ManutencaoDelete.as_view(), name='manutencao_delete_cbv'),
 ]
