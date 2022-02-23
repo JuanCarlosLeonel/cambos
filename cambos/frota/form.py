@@ -83,6 +83,11 @@ class AbastecimentoForm(forms.ModelForm):
             'quantidade': forms.NumberInput(attrs={'class':'form-control'}),
         }
 
+    def __init__(self, *args, **kwargs):
+        inter = kwargs.pop('inter', None)                
+        super().__init__(*args, **kwargs)
+        if not inter:
+            self.fields['interno'].widget = forms.HiddenInput()
 
 class ManutencaoForm(forms.ModelForm):
     class Meta:

@@ -102,6 +102,13 @@ class AbastecimentoCreate(CreateView):
         initial['data'] = datetime.date.today()
         return initial
 
+    def get_form_kwargs(self):        
+        veiculo = Veiculo.objects.get(pk = self.kwargs['pk'])
+        kwargs = super().get_form_kwargs()                
+        kwargs['inter'] = veiculo.caminhao
+        return kwargs
+
+
 
 @method_decorator(login_required, name='dispatch')
 class ViagemUpdate(UpdateView):
@@ -239,7 +246,7 @@ class RelatorioViagem(ListView):
             if item.veiculo.caminhao:
                 count += 1
                 if item.kmfinalmenosinicial:																					
-                    somakm += item.kmfinalmenosinicial
+                    somakm += item.kmfinalmenosiniciale
 
         context['somakm'] = somakm
         context['counter'] = count
