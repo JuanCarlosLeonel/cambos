@@ -246,7 +246,7 @@ class RelatorioViagem(ListView):
             if item.veiculo.caminhao:
                 count += 1
                 if item.kmfinalmenosinicial:																					
-                    somakm += item.kmfinalmenosiniciale
+                    somakm += item.kmfinalmenosinicial
 
         context['somakm'] = somakm
         context['counter'] = count
