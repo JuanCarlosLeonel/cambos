@@ -31,7 +31,7 @@
 				<div id="toolbar">
 						
 					{% if ultima.data_final == None and ultima.data_inicial != None %}
-						<lu class="text-danger">O veículo está em uso.</lu>
+						<strong class="text-danger"><i class="fa fa-road"></i>Veículo em uso,aguarde sua chegada.</strong>
 					{% else %}
 						<a href="{% url 'viagem_create' veiculo.id %}" class="btn btn-success">
 							<i class="fa fa-plus"></i> Novo

@@ -1080,3 +1080,15 @@ li.disabled > a:focus {
   font-size: 30px;
 
 }
+
+div#identificado {
+  background-color: rgb(232, 235, 236);
+}
+
+div#identificado2 {
+  background-color: rgb(214, 217, 219);
+}
+
+div#identificado2:hover {
+  background-color: #fcfdfd;
+}

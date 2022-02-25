@@ -24,18 +24,19 @@
 	<div class="col-12">												
 			<div id="identificado" class="col-xs-6 no-padding">					
 				<div class="panel panel-teal panel-widget border-right border-bottom">
-					<h2>Relatório de Viagens <em class="fa fa-truck"></em></h2>						
+					<h2>Relatório de Viagens <em class="fa fa-car"></em></h2>						
 				</div>
 			</div>						
-		<a href="{% url 'relatorio_abastecimentocaminhao' %}">				
+		<a href="{% url 'relatorio_abastecimentocarro' %}">				
 			<div id="identificado2" class="col-xs-6 no-padding">
 				<div class="panel panel-orange panel-widget border-right border-bottom">
-						<h2>Ir para Relatório de Abastecimento<i class="fas fa-gas-pump"></i></h2>
+					<h2>Ir para Relatório de Abastecimento<i class="fas fa-gas-pump"></i></h2>
 				</div>
 			</div>
 		</a>
 	</div>
 </div>
+
 	<div class="col-12">
 		<div class="panel panel-default">
 			<div class="panel-body">
@@ -59,8 +60,6 @@
 							<th data-field="Veiculo"  data-sortable="true" class='text-center'>Veiculo</th>																					
 							<th data-field="Destino"  data-sortable="true" class='text-center'>Destino</th>
 							<th data-field="Motorista" data-sortable="true" class='text-center'>Motorista</th>
-							<th data-field="Motorista2" data-sortable="true" class='text-center'>Motorista2</th>
-							<th data-field="Ajudante" data-sortable="true" class='text-center'>Ajudante</th>
 							<th data-field="Data Chegada"  data-formatter="dateFormat" data-sortable="true" class='text-center'>Data Chegada</th>
 							<th data-field="km" data-sortable="true" class='text-center'>Km Rodado</th>
 							<th data-field="tempo gasto" data-sortable="true" class='text-center'>Tempo gasto</th>
@@ -68,7 +67,7 @@
 					</thead>
 					<tbody>
 						{%for item in filter.qs|dictsortreversed:"data_inicial"%}
-							{%if item.veiculo.caminhao%}
+							{%if not item.veiculo.caminhao%}
 								<tr data-href="#"	
 								class="trLink" >
 									<td class='text-center' >									
@@ -80,27 +79,15 @@
 										{% else %}
 											<lu class="trLink text-danger negrito">{{item.veiculo}}</lu>
 										{%endif%}							
-									<td class='text-center'>{{item.destino}}</td>
+									<td class='text-center'>
+										{{item.destino}}
+									</td>
 									<td class='text-center'>
 										{% if item.motorista %}
 											{{item.motorista.nome}}
 										{% else %}
 											-
 										{%endif%}
-									</td>
-									<td class='text-center'>
-										{% if item.motorista2 %}
-											{{item.motorista2.nome}}
-										{% else %}
-											-
-										{%endif%}
-									</td>
-									<td class='text-center' >
-										{% if item.ajudante%}
-											{{item.ajudante}}
-										{%else%}
-									 		-
-										{%endif%}																		
 									</td>
 									<td class='text-center' >	
 										{% if item.data_final%}																				
@@ -140,14 +127,12 @@
 	</div>
 
 
-	<div class="panel panel-default">
-		<div class="panel-body">
-			<h3><i class="fa fa-plane"></i> Total de Viagens Realizadas: <b>{{counter}}</b></h3>
-			<h3><i class="fa fa-tachometer"></i> Total de KM Rodados: <b>{{somakm}}</b></h3>
-		</div>
+<div class="panel panel-default">
+	<div class="panel-body">
+		<h3><i class="fa fa-plane"></i> Total de Viagens Realizadas: <b>{{counter}}</b></h3>
+		<h3><i class="fa fa-tachometer"></i> Total de KM Rodados: <b>{{somakm}}</b></h3>
 	</div>
-
-
+</div>
 
 
 <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -166,6 +151,7 @@
 		</div>
 	</div>
 </div>
+
 
 {% endblock content%}
 

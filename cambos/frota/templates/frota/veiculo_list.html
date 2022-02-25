@@ -33,7 +33,7 @@
 						{%for lista in lista_viagem%}
 							{%if lista.veiculo.id == item.id%}
 								{%if lista.data_final == none%}
-									<lu class="text-danger">O veículo está em uso.</lu>
+									<strong class="text-danger"><i class="fa fa-road"></i> O veículo está em uso</strong>
 								{%endif%}
 							{%endif%}
 						{%endfor%}
@@ -62,7 +62,7 @@
 									{%for lista in lista_viagem%}
 										{%if lista.veiculo.id == item.id%}
 											{%if lista.data_final == none%}
-												<lu class="text-danger">O veículo está em uso.</lu>
+												<strong class="text-danger"><i class="fa fa-road"></i> O veículo está em uso</strong>
 											{%endif%}
 										{%endif%}
 									{%endfor%}

@@ -1,5 +1,3 @@
-from itertools import count
-from random import choices
 from django.shortcuts import render
 from django.views.generic.base import TemplateView
 from django.views.generic.edit import UpdateView, CreateView, DeleteView
@@ -11,7 +9,7 @@ from .form import ManutencaoForm, ViagemForm, AbastecimentoForm
 from django.http import JsonResponse
 from django.db.models import Sum
 import datetime
-from .filters import ViagemFilter
+from .filters import ViagemFilter, ViagemFilterCarro, AbastecimentoFilter, AbastecimentoFilterCaminhao
 
 @method_decorator(login_required, name='dispatch')
 class Index(TemplateView):
@@ -252,6 +250,69 @@ class RelatorioViagem(ListView):
         context['counter'] = count
         context['filter'] = lista
         return context  
+
+
+@method_decorator(login_required, name='dispatch')
+class RelatorioViagemCarro(ListView):
+    model = Viagem
+    template_name = 'frota/relatorio_viagemcarro.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        lista = ViagemFilterCarro(self.request.GET, queryset=self.get_queryset())
+        count = 0
+        somakm = 0
+        for item in lista.qs:
+            if not item.veiculo.caminhao :
+                count += 1
+                if item.kmfinalmenosinicial:																					
+                    somakm += item.kmfinalmenosinicial
+
+        context['somakm'] = somakm
+        context['counter'] = count
+        context['filter'] = lista
+        return context  
+
+
+@method_decorator(login_required, name='dispatch')
+class RelatorioAbastecimento(ListView):
+    model = Abastecimento
+    template_name = 'frota/relatorio_abastecimentocarro.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        abastecimento = AbastecimentoFilter(self.request.GET, queryset=self.get_queryset())
+        tot = 0
+        valor = 0
+        for item in abastecimento.qs:
+            if not item.veiculo.caminhao:
+                tot += item.quantidade
+                valor += item.valor_unitario
+
+        context['valor'] = valor
+        context['tot'] = tot
+        context['filter'] = abastecimento
+        return context
+
+@method_decorator(login_required, name='dispatch')
+class RelatorioAbastecimentoCaminhao(ListView):
+    model = Abastecimento
+    template_name = 'frota/relatorio_abastecimentocaminhao.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        abastecimento = AbastecimentoFilterCaminhao(self.request.GET, queryset=self.get_queryset())
+        tot = 0
+        valor = 0
+        for item in abastecimento.qs:
+            if item.veiculo.caminhao:
+                tot += item.quantidade
+                valor += item.valor_unitario
+
+        context['valor'] = valor
+        context['tot'] = tot
+        context['filter'] = abastecimento
+        return context
 
 @method_decorator(login_required, name='dispatch')
 class AbastecimentoListALL(ListView):
