@@ -16,85 +16,89 @@
     </div><!--/.row-->
     <div class="row">
         <div class="col-lg-12">
-            <h1 class="page-header">{{veiculo}}<span class="text-muted small"> Viagens</span></h1></h1>
+            <h1 class="page-header">{{veiculo}}<span class="text-muted small"> Calendário de Uso</span></h1></h1>
         </div>
     </div><!--/.row-->
 {% endblock navigation %}
 
 {% block content %}		
 
-	<div class="col-12">
+<div class="col-12">
+	
+	<div class="panel panel-default">
 		
-		<div class="panel panel-default">
-			
-			<div class="panel-body">
-				<div id="toolbar">
-						
-					{% if ultima.data_final == None and ultima.data_inicial != None %}
-						<strong class="text-danger"><i class="fa fa-road"></i>Veículo em uso,aguarde sua chegada.</strong>
-					{% else %}
-						<a href="{% url 'viagem_create' veiculo.id %}" class="btn btn-success">
-							<i class="fa fa-plus"></i> Novo
-						</a>
-					{%endif%} 
+		<div class="panel-body">
+			<div id="toolbar">
+					
+				{% if ultima.data_final == None and ultima.data_inicial != None %}
+					<strong class="text-danger"><i class="fa fa-road"></i>Veículo em uso,aguarde sua chegada ou faça uma nova reserva.</strong>
+					<a href="{% url 'viagem_create' veiculo.id %}" class="btn btn-success">
+						<i class="fa fa-plus"></i>Reservar {{veiculo}}
+					</a>
+				{% else %}
+					<a href="{% url 'viagem_create' veiculo.id %}" class="btn btn-success">
+						<i class="fa fa-plus"></i> Nova Viagem/Reservar {{veiculo}}
+					</a>
+				{%endif%} 
 
-				  </div>
-				<table id="table"				
-					data-toolbar="#toolbar"
-					data-toggle="table"
-					data-show-refresh="false"
-					data-show-toggle="false"
-					data-show-columns="true"
-					data-search="true"
-					data-select-item-name="toolbar"
-					data-pagination="true"				 
-					data-sort-order="desc"
-				 >
-					<thead>
-						<tr>
-							<th data-field="Situação" data-sortable="true" class='text-center'>Situação</th>								
-							<th data-field="Data Saída" data-formatter="dateFormat" data-sortable="true" class='text-center'>Data Saída</th>																												
-							<th data-field="Destino" class='text-center'>Destino</th>																					
-							<th data-field="Motorista" data-sortable="true" class='text-center'>Motorista</th>														
-							<th data-field="Data Chegada"  data-formatter="dateFormat" data-sortable="true" class='text-center'>Data Chegada</th>														
-						</tr>
-					</thead>
-					<tbody>
-						{% for data in lista %}
-							
-							<tr data-href="{% url 'viagem_update' data.pk %}"
-							 class="trLink" >							
-								<td class='text-center' >									
-									{%if data.data_final%}
-										Concluído
-									{% else %}
-										<lu class="text-danger">Em Trânsito</lu>
-									{%endif%}
-								</td>
-								<td class='text-center' >	
-									{% if data.data_inicial %}								
-									{{data.data_inicial|safe}}								
-									{% endif %}	
-								</td>								
-								<td class='text-center' >									
-									{{data.destino}}									
-								</td>								
-								<td class='text-center'>
-									{% if data.motorista2 != none %}
-										{{data.motorista}} | {{data.motorista2}}
-									{% elif data.motorista2 == none %}
-										{{data.motorista}}
-									{%endif%}
-								</td>				
-								<td class='text-center' >																					
-									{{data.data_final|safe}}																		
-								</td>																																				
-						{%endfor%}
-					</tbody>					
-				</table>								
 			</div>
+			<!-- <table id="table"				
+				data-toolbar="#toolbar"
+				data-toggle="table"
+				data-show-refresh="false"
+				data-show-toggle="false"
+				data-show-columns="true"
+				data-search="true"
+				data-select-item-name="toolbar"
+				data-pagination="true"				 
+				data-sort-order="desc"
+				>
+				<thead>
+					<tr>
+						<th data-field="Situação" data-sortable="true" class='text-center'>Situação</th>								
+						<th data-field="Data Saída" data-formatter="dateFormat" data-sortable="true" class='text-center'>Data Saída</th>																												
+						<th data-field="Destino" class='text-center'>Destino</th>																					
+						<th data-field="Motorista" data-sortable="true" class='text-center'>Motorista</th>														
+						<th data-field="Data Chegada"  data-formatter="dateFormat" data-sortable="true" class='text-center'>Data Chegada</th>														
+					</tr>
+				</thead>
+				<tbody>
+					{% for data in lista %}
+						
+						<tr data-href="{% url 'viagem_update' data.pk %}"
+							class="trLink" >							
+							<td class='text-center' >									
+								{%if data.data_final%}
+									Concluído
+								{% else %}
+									<lu class="text-danger">Em Trânsito</lu>
+								{%endif%}
+							</td>
+							<td class='text-center' >	
+								{% if data.data_inicial %}								
+								{{data.data_inicial|safe}}								
+								{% endif %}	
+							</td>								
+							<td class='text-center' >									
+								{{data.destino}}									
+							</td>								
+							<td class='text-center'>
+								{% if data.motorista2 != none %}
+									{{data.motorista}} | {{data.motorista2}}
+								{% elif data.motorista2 == none %}
+									{{data.motorista}}
+								{%endif%}
+							</td>				
+							<td class='text-center' >																					
+								{{data.data_final|safe}}																		
+							</td>																																				
+					{%endfor%}
+				</tbody>					
+			</table>								 -->
+			<div id="calendar" class="card" style="padding: 20px;"></div>
 		</div>
-	</div>	
+	</div>
+</div>	
 	
 {%endblock content%}
 
@@ -126,6 +130,34 @@ tr.onclick = function (e) {
 		onClickRow: function (item, $element) {return  window.location = $element.data('href');},
 	});
 
+</script>
+
+<script>
+	document.addEventListener('DOMContentLoaded', function() {
+		var calendarUI = document.getElementById('calendar');
+		
+		var calendar = new FullCalendar.Calendar(calendarUI,{
+			headerToolbar: {
+			left: 'prev,next today',
+			center: 'title',
+			right: 'dayGridMonth,timeGridWeek,timeGridDay,listWeek'
+			},
+			events: [
+				{% for data in lista %}
+					{
+						url : '{% url "viagem_update" data.pk %}',
+						title: '{{data.destino}}',
+						start: '{{data.data_inicial|date:"Y-m-d"}}T{{ data.hora_inicial|time:"H:i"}}',
+						end:   '{{data.data_final|date:"Y-m-d"}}T{{ data.hora_final|time:"H:i"}}',
+					},
+				{% endfor %}
+			]
+		});
+		calendar.render();
+		calendar.setOption('locale','pt-br');
+
+		
+	});
 </script>
 	
 {% endblock script %}
