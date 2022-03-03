@@ -24,95 +24,135 @@
 {% block content %}		
 
 <div class="col-12">
-	
 	<div class="panel panel-default">
-		
 		<div class="panel-body">
-			<div id="toolbar">
-					
-				{% if ultima.data_final == None and ultima.data_inicial != None %}
-					<strong class="text-danger"><i class="fa fa-road"></i>Veículo em uso,aguarde sua chegada ou faça uma nova reserva.</strong>
+			<div id="toolbar">		
 					<a href="{% url 'viagem_create' veiculo.id %}" class="btn btn-success">
-						<i class="fa fa-plus"></i>Reservar {{veiculo}}
+						<i class="fa fa-plus"></i>Nova Viagem/Reservar {{veiculo}}
 					</a>
-				{% else %}
-					<a href="{% url 'viagem_create' veiculo.id %}" class="btn btn-success">
-						<i class="fa fa-plus"></i> Nova Viagem/Reservar {{veiculo}}
-					</a>
-				{%endif%} 
-
 			</div>
-			<!-- <table id="table"				
-				data-toolbar="#toolbar"
-				data-toggle="table"
-				data-show-refresh="false"
-				data-show-toggle="false"
-				data-show-columns="true"
-				data-search="true"
-				data-select-item-name="toolbar"
-				data-pagination="true"				 
-				data-sort-order="desc"
-				>
-				<thead>
-					<tr>
-						<th data-field="Situação" data-sortable="true" class='text-center'>Situação</th>								
-						<th data-field="Data Saída" data-formatter="dateFormat" data-sortable="true" class='text-center'>Data Saída</th>																												
-						<th data-field="Destino" class='text-center'>Destino</th>																					
-						<th data-field="Motorista" data-sortable="true" class='text-center'>Motorista</th>														
-						<th data-field="Data Chegada"  data-formatter="dateFormat" data-sortable="true" class='text-center'>Data Chegada</th>														
-					</tr>
-				</thead>
-				<tbody>
-					{% for data in lista %}
-						
-						<tr data-href="{% url 'viagem_update' data.pk %}"
-							class="trLink" >							
-							<td class='text-center' >									
-								{%if data.data_final%}
-									Concluído
-								{% else %}
-									<lu class="text-danger">Em Trânsito</lu>
-								{%endif%}
-							</td>
-							<td class='text-center' >	
-								{% if data.data_inicial %}								
-								{{data.data_inicial|safe}}								
-								{% endif %}	
-							</td>								
-							<td class='text-center' >									
-								{{data.destino}}									
-							</td>								
-							<td class='text-center'>
-								{% if data.motorista2 != none %}
-									{{data.motorista}} | {{data.motorista2}}
-								{% elif data.motorista2 == none %}
-									{{data.motorista}}
-								{%endif%}
-							</td>				
-							<td class='text-center' >																					
-								{{data.data_final|safe}}																		
-							</td>																																				
-					{%endfor%}
-				</tbody>					
-			</table>								 -->
 		</div>
 	</div>
 </div>	
-<div class="container-fluid">
-	<div class="row">
-		<div class="col-md-7">
-			<h4><b>Calendário de uso do veículo {{veiculo}}</b></h4>
-			<hr>
-			<div id="calendar" class="fc fc-media-screen fc-direction-ltr fc-theme-bootstrap"></div>
-		</div>
-		<div class="col-md-5">
-			<h4><b>Regras de Uso</b></h4>
-			<hr>
-			<ul><h3>Para evitar imprevistos,faça sua reserva com dias de antecedência</h3></ul>
-			<ul><h3>Os porteiros levam funcionários todos os dias em horários programados,por isso a importância de se fazer a reserva,para ambos de programarem.</h3></ul>
+{%if not veiculo.caminhao%}
+	<div class="container-fluid">
+		<div class="row">
+			<div class="col-md-6">
+				<table id="table"				
+					data-toolbar="#toolbar"
+					data-toggle="table"
+					data-show-refresh="false"
+					data-show-toggle="false"
+					data-show-columns="true"
+					data-search="true"
+					data-select-item-name="toolbar"
+					data-pagination="true"				 
+					data-sort-order="desc"
+					>
+					<thead>
+						<tr>
+							<th data-field="Situação" data-sortable="true" class='text-center'>Situação</th>								
+							<th data-field="Data Saída" data-formatter="dateFormat" data-sortable="true" class='text-center'>Data Saída</th>																												
+							<th data-field="Destino" class='text-center'>Destino</th>																					
+							<th data-field="Motorista" data-sortable="true" class='text-center'>Motorista</th>														
+							<th data-field="Data Chegada"  data-formatter="dateFormat" data-sortable="true" class='text-center'>Data Chegada</th>														
+						</tr>
+					</thead>
+					<tbody>
+						{% for data in lista %}
+							<tr data-href="{% url 'viagem_update' data.pk %}"
+								class="trLink" >							
+								<td class='text-center' >									
+									{%if data.data_final%}
+										Concluído
+									{% else %}
+										<lu class="text-danger">Em Trânsito</lu>
+									{%endif%}
+								</td>
+								<td class='text-center' >	
+									{% if data.data_inicial %}								
+									{{data.data_inicial|safe}}								
+									{% endif %}	
+								</td>								
+								<td class='text-center' >									
+									{{data.destino}}									
+								</td>								
+								<td class='text-center'>
+									{% if data.motorista2 != none %}
+										{{data.motorista}} | {{data.motorista2}}
+									{% elif data.motorista2 == none %}
+										{{data.motorista}}
+									{%endif%}
+								</td>				
+								<td class='text-center' >																					
+									{{data.data_final|safe}}																		
+								</td>																																				
+						{%endfor%}
+					</tbody>					
+				</table>
+			</div>
+			<div class="col-md-6">
+				<h4><b>Calendário de uso do veículo {{veiculo}}</b></h4>
+				<hr>
+				<div id="calendar" class="fc fc-media-screen fc-direction-ltr fc-theme-bootstrap"></div>
+			</div>
 		</div>
 	</div>
-</div>
+{%endif%}
+{%if veiculo.caminhao%}
+	<table id="table"				
+		data-toolbar="#toolbar"
+		data-toggle="table"
+		data-show-refresh="false"
+		data-show-toggle="false"
+		data-show-columns="true"
+		data-search="true"
+		data-select-item-name="toolbar"
+		data-pagination="true"				 
+		data-sort-order="desc"
+		>
+		<thead>
+			<tr>
+				<th data-field="Situação" data-sortable="true" class='text-center'>Situação</th>								
+				<th data-field="Data Saída" data-formatter="dateFormat" data-sortable="true" class='text-center'>Data Saída</th>																												
+				<th data-field="Destino" class='text-center'>Destino</th>																					
+				<th data-field="Motorista" data-sortable="true" class='text-center'>Motorista</th>														
+				<th data-field="Data Chegada"  data-formatter="dateFormat" data-sortable="true" class='text-center'>Data Chegada</th>														
+			</tr>
+		</thead>
+		<tbody>
+			{% for data in lista %}
+				<tr data-href="{% url 'viagem_update' data.pk %}"
+					class="trLink" >							
+					<td class='text-center' >									
+						{%if data.data_final%}
+							Concluído
+						{% else %}
+							<lu class="text-danger">Em Trânsito</lu>
+						{%endif%}
+					</td>
+					<td class='text-center' >	
+						{% if data.data_inicial %}								
+						{{data.data_inicial|safe}}								
+						{% endif %}	
+					</td>								
+					<td class='text-center' >									
+						{{data.destino}}									
+					</td>								
+					<td class='text-center'>
+						{% if data.motorista2 != none %}
+							{{data.motorista}} | {{data.motorista2}}
+						{% elif data.motorista2 == none %}
+							{{data.motorista}}
+						{%endif%}
+					</td>				
+					<td class='text-center' >																					
+						{{data.data_final|safe}}																		
+					</td>																																				
+			{%endfor%}
+		</tbody>					
+	</table>
+{%endif%}
 	
 {%endblock content%}
 
@@ -148,21 +188,17 @@ tr.onclick = function (e) {
 
 <script>
 	document.addEventListener('DOMContentLoaded', function() {
+		$('div').unbind('click');
 		var calendarEl = document.getElementById('calendar');
 		var calendar = new FullCalendar.Calendar(calendarEl,{
 			locale : 'pt-br',
-			fixedWeekCount: false,
-
 			headerToolbar: {
 				left: 'prev,next today',
 				center: 'title',
 				right: 'dayGridMonth,timeGridWeek,timeGridDay',
 			},
-			initialDate: '2020-09-12',
-			navLinks: true, // can click day/week names to navigate views
-			businessHours: true, // display business hours
-			editable: true,
-			selectable: true,
+			businessHours: true, 
+			dayMaxEvents: true,
 			events: [
 				{% for data in lista %}
 					{
@@ -170,12 +206,13 @@ tr.onclick = function (e) {
 						title: '{{data.destino}}',
 						start: '{{data.data_inicial|date:"Y-m-d"}}T{{ data.hora_inicial|time:"H:i"}}',
 						end:   '{{data.data_final|date:"Y-m-d"}}T{{ data.hora_final|time:"H:i"}}',
+						color: '#257e4a',
 					},
 				{% endfor %}
 			]
 		});
 		calendar.render();
-		calendar.setOption('locale','pt-br');
+		$('#calendar').fullCalendar('option', 'locale', 'pt-br');
 	});
 </script>
 	

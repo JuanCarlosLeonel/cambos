@@ -55,9 +55,9 @@ class ViagemCreate(CreateView):
         initial = super(ViagemCreate, self).get_initial(**kwargs)
         veiculo = Veiculo.objects.get(pk = self.kwargs['pk'])
         try:
-            km = Viagem.objects.filter(veiculo = veiculo).latest("km_final").km_final
+            km= Viagem.objects.filter(veiculo = veiculo).exclude(km_final = None).latest("km_final").km_final
         except:
-            km =0
+            km = None
         initial['veiculo'] = veiculo
         initial['data_inicial'] = datetime.date.today()
         initial['hora_inicial'] = datetime.datetime.now()
@@ -120,6 +120,16 @@ class ViagemUpdate(UpdateView):
         context = super().get_context_data(**kwargs)                
         context['veiculo'] = self.object.veiculo.id
         return context
+
+    def get_initial(self):
+        initial = super(ViagemUpdate, self).get_initial()
+        veiculo = self.object.veiculo.id
+        km= Viagem.objects.filter(veiculo = veiculo).exclude(km_final = None).latest("km_final").km_final
+
+        viagem_object = self.get_object()
+        if viagem_object.km_inicial == None:
+            initial['km_inicial'] = km 
+        return initial
 
     def get_form_kwargs(self):
         veiculo = self.object.veiculo
