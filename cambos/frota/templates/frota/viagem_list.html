@@ -16,7 +16,7 @@
     </div><!--/.row-->
     <div class="row">
         <div class="col-lg-12">
-            <h1 class="page-header">{{veiculo}}<span class="text-muted small"> Calendário de Uso</span></h1></h1>
+            <h1 class="page-header">{{veiculo}}<span class="text-muted small"></span></h1></h1>
         </div>
     </div><!--/.row-->
 {% endblock navigation %}
@@ -95,10 +95,24 @@
 					{%endfor%}
 				</tbody>					
 			</table>								 -->
-			<div id="calendar" class="card" style="padding: 20px;"></div>
 		</div>
 	</div>
 </div>	
+<div class="container-fluid">
+	<div class="row">
+		<div class="col-md-7">
+			<h4><b>Calendário de uso do veículo {{veiculo}}</b></h4>
+			<hr>
+			<div id="calendar" class="fc fc-media-screen fc-direction-ltr fc-theme-bootstrap"></div>
+		</div>
+		<div class="col-md-5">
+			<h4><b>Regras de Uso</b></h4>
+			<hr>
+			<ul><h3>Para evitar imprevistos,faça sua reserva com dias de antecedência</h3></ul>
+			<ul><h3>Os porteiros levam funcionários todos os dias em horários programados,por isso a importância de se fazer a reserva,para ambos de programarem.</h3></ul>
+		</div>
+	</div>
+</div>
 	
 {%endblock content%}
 
@@ -134,18 +148,25 @@ tr.onclick = function (e) {
 
 <script>
 	document.addEventListener('DOMContentLoaded', function() {
-		var calendarUI = document.getElementById('calendar');
-		
-		var calendar = new FullCalendar.Calendar(calendarUI,{
+		var calendarEl = document.getElementById('calendar');
+		var calendar = new FullCalendar.Calendar(calendarEl,{
+			locale : 'pt-br',
+			fixedWeekCount: false,
+
 			headerToolbar: {
-			left: 'prev,next today',
-			center: 'title',
-			right: 'dayGridMonth,timeGridWeek,timeGridDay,listWeek'
+				left: 'prev,next today',
+				center: 'title',
+				right: 'dayGridMonth,timeGridWeek,timeGridDay',
 			},
+			initialDate: '2020-09-12',
+			navLinks: true, // can click day/week names to navigate views
+			businessHours: true, // display business hours
+			editable: true,
+			selectable: true,
 			events: [
 				{% for data in lista %}
 					{
-						url : '{% url "viagem_update" data.pk %}',
+						url :  '{% url "viagem_update" data.pk %}',
 						title: '{{data.destino}}',
 						start: '{{data.data_inicial|date:"Y-m-d"}}T{{ data.hora_inicial|time:"H:i"}}',
 						end:   '{{data.data_final|date:"Y-m-d"}}T{{ data.hora_final|time:"H:i"}}',
@@ -155,8 +176,6 @@ tr.onclick = function (e) {
 		});
 		calendar.render();
 		calendar.setOption('locale','pt-br');
-
-		
 	});
 </script>
 	
