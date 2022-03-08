@@ -9,9 +9,25 @@ from telegram.ext import (
     MessageHandler,
     Filters,
 )
+from frota.models import Viagem
 from roupa.views import get_url, convert_setor
 from dateutil import parser
 import datetime
+
+def viagemcaminhao(update):
+    from roupa.models import RoupaBot
+    users = RoupaBot.objects.filter(frota = True)
+    v = Viagem.objects.filter(veiculo__caminhao = True)
+    text =""
+    for user in users:
+        if user.frota:
+            text = f"\U00002757Viagens <b>EM TRÂNSITO</b>:{os.linesep}"
+            for item in v:
+                if item.data_final is None:
+                    text += f"{item.veiculo}, saída:{str(item.data_inicial)[8:] + '/' + str(item.data_inicial)[5:7] + '/' + str(item.data_inicial)[0:4] }{os.linesep}"
+    update.edit_message_text(text, parse_mode=ParseMode.HTML)
+    return return_menu(update, text)
+
 
 def get_user(update):
     from roupa.models import RoupaBot
@@ -432,7 +448,7 @@ def button(update: Update, _: CallbackContext) -> None:
         keyboard = [
         [
             InlineKeyboardButton("\U0001F68C Veículos", callback_data='menu'),
-            InlineKeyboardButton("\U00002708 Viagens", callback_data='menu'),
+            InlineKeyboardButton("\U0000203C Em trânsito", callback_data='viagemcaminhao'),
         ],
         [   InlineKeyboardButton("\U000026FD Abastecimento", callback_data='menu'),
         ],
@@ -459,6 +475,9 @@ def button(update: Update, _: CallbackContext) -> None:
 
     elif query.data == 'produtos_finalizacao':
         return produtos_finalizacao(query,6)
+
+    elif query.data == 'viagemcaminhao':
+        return viagemcaminhao(query)
 
     elif query.data == 'atrasados_finalizacao':
         return atrasados_finalizacao(query,6)
@@ -596,10 +615,6 @@ def pesquisa_corte(update, context):
     text= f"\U0001F4AC Escolha uma opção:"    
     context.bot.send_chat_action(chat_id, "typing")
     context.bot.send_message(chat_id=chat_id, text=text, reply_markup=reply_markup)
-
-# def frota(update):
-#     from frota.models import Veiculo, Viagem ,Abastecimento
-#     user = get_user(update)
 
 
 def main() -> None:

@@ -24,72 +24,65 @@
 	<div class="col-12">
         <div id="identificado" class="col-xs-6 no-padding">
             <div class="panel panel-orange panel-widget border-right border-bottom">
-				<h2>Relatório de Abastecimento <i class="fas fa-gas-pump"></i></h2>  
+				<h3>Relatório de Abastecimento <i class="fas fa-gas-pump"></i></h3>  
             </div>
         </div>
         <a href="{% url 'relatorio_viagemcarro' %}">											
 			<div id="identificado2" class="col-xs-6 no-padding">					
 				<div class="panel panel-teal panel-widget border-right border-bottom">
-					<h2>Ir para Relatório de Viagens <em class="fa fa-plane"></em></h2>						
+					<h3>Ir para Relatório de Viagens <em class="fa fa-plane"></em></h3>						
 				</div>
 			</div>	
         </a>							
 	</div>
 </div>
-	<div class="col-12">
-		<div class="panel panel-default">
-			<div class="panel-body">
-				<button type="button" class="btn_filtrar" data-toggle="modal"
-	 			data-target="#exampleModal">
-    			FILTRAR
- 				</button>
-				<table id="table"				
-				data-toolbar="#toolbar"
-				data-show-toggle="false"
-				data-show-columns="true"
-				data-select-item-name="toolbar"
-				data-pagination="true"				 
-				>
-					<thead>
-						<tr>						
-							<th data-field="data" data-formatter="dateFormat" data-sortable="true" class='text-center'>Data</th>
-							<th data-field="Veiculo"  data-sortable="true" class='text-center'>Veiculo</th>							
-							<th data-field="Combustivel" data-sortable="true" class='text-center'>Combustível</th>														
-							<th data-field="Valor"  data-sortable="true" class='text-center'>Valor Abas.</th>
-							<th data-field="Quantidade" data-sortable="true" class='text-center'>Quantidade(L)</th>
-						</tr>
-					</thead>
-					<tbody>
-						{%for item in filter.qs|dictsortreversed:"data"%}
-							{%if not item.veiculo.caminhao%}
-								<tr data-href="#"	
-								class="trLink" >
-								<td class='text-center' >									
-									{{item.data|safe}}									
-								</td>				
-								<td class='text-center'>{{item.veiculo}}</td>
-								<td class='text-center' >																					
-									{{item.combustivel}}</td>
-								<td class='text-center'>
-									R${{item.valor_unitario|floatformat:2}}												
-								</td>
-								<td class='text-center'>{{item.quantidade|floatformat:1}}</td>
-							{%endif%}
-						{% endfor %}
-					</tbody>
-				</table>			
-			</div>
+<div class="col-12">
+	<div class="panel panel-default">
+		<div class="panel-body">
+			<button type="button" class="btn_filtrar" data-toggle="modal"
+			data-target="#exampleModal">
+			FILTRAR
+			</button>
+			<table id="table"				
+			data-toolbar="#toolbar"
+			data-show-toggle="false"
+			data-show-columns="true"
+			data-select-item-name="toolbar"
+			data-pagination="true"				 
+			>
+				<thead>
+					<tr>						
+						<th data-field="data" data-formatter="dateFormat" data-sortable="true" class='text-center'>Data</th>
+						<th data-field="Veiculo"  data-sortable="true" class='text-center'>Veiculo</th>							
+						<th data-field="Combustivel" data-sortable="true" class='text-center'>Combustível</th>														
+						<th data-field="Valor"  data-sortable="true" class='text-center'>Valor Abas.</th>
+						<th data-field="Quantidade" data-sortable="true" class='text-center'>Quantidade(L)</th>
+					</tr>
+				</thead>
+				<tbody>
+					{%for item in filter.qs|dictsortreversed:"data"%}
+						{%if not item.veiculo.caminhao%}
+							<tr data-href="#"	
+							class="trLink" >
+							<td class='text-center' >									
+								{{item.data|safe}}									
+							</td>				
+							<td class='text-center'>{{item.veiculo}}</td>
+							<td class='text-center' >																					
+								{{item.combustivel}}</td>
+							<td class='text-center'>
+								R${{item.valor_unitario|floatformat:2}}												
+							</td>
+							<td class='text-center'>{{item.quantidade|floatformat:1}}</td>
+						{%endif%}
+					{% endfor %}
+				</tbody>
+			</table>
+			<h4><i class="fas fa-gas-pump"></i>Quantidade total de Combustível: <b>{{tot|floatformat:2}}</b> litros.</h4>
+			<h4><i  class="fa fa-usd"> </i>  Valor Gasto : <b>R$ {{valor|floatformat:2}}</b></h4>			
 		</div>
 	</div>
-
-
-<div class="panel panel-default">
-	<div class="panel-body">
-		<h3><i class="fas fa-gas-pump"></i>Quantidade total de Combustível: <b>{{tot|floatformat:2}}</b> litros.</h3>
-		<h3><i  class="fa fa-usd"> </i>  Valor Gasto : <b>R$ {{valor|floatformat:2}}</b></h3>
-	</div>
 </div>
-
 
 <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
 	<div class="modal-dialog" role="document">

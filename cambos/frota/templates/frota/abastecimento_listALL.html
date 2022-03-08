@@ -51,7 +51,7 @@
 								</td>
 								<td class='text-center'>{{item.veiculo}}</td>								
 								<td class='text-center' >{{item.combustivel}}</td>
-								<td class='text-center'>{{item.valor_unitario}}</td>
+								<td class='text-center'>{{item.valor_unitario|floatformat:2}}</td>
 								<td class='text-center'>{{item.quantidade}}</td>
 						{% endfor %}
 					</tbody>

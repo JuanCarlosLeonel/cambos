@@ -13,7 +13,7 @@ class ViagemFilter(django_filters.FilterSet):
     motorista2 = ModelChoiceFilter(queryset=Pessoa.objects.filter(id__in = m),widget=forms.Select(attrs={'class':'form-control'}))
     ajudante = ModelChoiceFilter(queryset=Pessoa.objects.filter(status = 0),widget=forms.Select(attrs={'class':'form-control'}))
     inicio = DateFilter(lookup_expr='gte',widget=forms.DateInput(attrs={'id': 'datepicker','type':'date','class':'form-control'}),field_name="data_inicial",label='Início')
-    fim = DateFilter(lookup_expr='gte',widget=forms.DateInput(attrs={'id': 'datepicker','type':'date','class':'form-control'}),field_name="data_inicial",label='Fim')
+    fim = DateFilter(lookup_expr='lte',widget=forms.DateInput(attrs={'id': 'datepicker','type':'date','class':'form-control'}),field_name="data_inicial",label='Fim')
     destino = CharFilter(widget=forms.TextInput(attrs={'class':'form-control'}),field_name="destino",label='Destino',lookup_expr='icontains')
     q = CharFilter(method='my_custom_filter',label="MOTORISTA 1-2",widget=forms.TextInput(attrs={'class':'form-control'}))
 
@@ -33,7 +33,7 @@ class ViagemFilterCarro(django_filters.FilterSet):
     veiculo = ModelChoiceFilter(queryset=Veiculo.objects.filter(caminhao=False),label='Veículo',widget=forms.Select(attrs={'class':'form-control'}))
     motorista = ModelChoiceFilter(queryset=Pessoa.objects.filter(status = 0),widget=forms.Select(attrs={'class':'form-control'}))
     inicio = DateFilter(lookup_expr='gte',widget=forms.DateInput(attrs={'id': 'datepicker','type':'date','class':'form-control'}),field_name="data_inicial",label='Início')
-    fim = DateFilter(lookup_expr='gte',widget=forms.DateInput(attrs={'id': 'datepicker','type':'date','class':'form-control'}),field_name="data_inicial",label='Fim')
+    fim = DateFilter(lookup_expr='lte',widget=forms.DateInput(attrs={'id': 'datepicker','type':'date','class':'form-control'}),field_name="data_inicial",label='Fim')
     destino = CharFilter(widget=forms.TextInput(attrs={'class':'form-control'}),field_name="destino",label='Destino',lookup_expr='icontains')
 
     class Meta:
@@ -47,7 +47,7 @@ class AbastecimentoFilter(django_filters.FilterSet):
     veiculo = ModelChoiceFilter(queryset=Veiculo.objects.filter(caminhao=False),label='Veículo',widget=forms.Select(attrs={'class':'form-control'}))
     combustivel = django_filters.ChoiceFilter(choices=Abastecimento.COMBUSTIVEL,label='Combustível',widget=forms.Select(attrs={'class':'form-control'}))
     inicio = DateFilter(lookup_expr='gte',widget=forms.DateInput(attrs={'id': 'datepicker','type':'date','class':'form-control'}),field_name="data",label='Início')
-    fim = DateFilter(lookup_expr='gte',widget=forms.DateInput(attrs={'id': 'datepicker','type':'date','class':'form-control'}),field_name="data",label='Fim')
+    fim = DateFilter(lookup_expr='lte',widget=forms.DateInput(attrs={'id': 'datepicker','type':'date','class':'form-control'}),field_name="data",label='Fim')
 
     class Meta:
         model = Abastecimento
@@ -59,7 +59,7 @@ class AbastecimentoFilter(django_filters.FilterSet):
 class AbastecimentoFilterCaminhao(django_filters.FilterSet):
     veiculo = ModelChoiceFilter(queryset=Veiculo.objects.filter(caminhao=True),label='Veículo',widget=forms.Select(attrs={'class':'form-control'}))
     inicio = DateFilter(lookup_expr='gte',widget=forms.DateInput(attrs={'id': 'datepicker','type':'date','class':'form-control'}),field_name="data",label='Início')
-    fim = DateFilter(lookup_expr='gte',widget=forms.DateInput(attrs={'id': 'datepicker','type':'date','class':'form-control'}),field_name="data",label='Fim')
+    fim = DateFilter(lookup_expr='lte',widget=forms.DateInput(attrs={'id': 'datepicker','type':'date','class':'form-control'}),field_name="data",label='Fim')
 
     class Meta:
         model = Abastecimento

@@ -24,131 +24,123 @@
 	<div class="col-12">												
 			<div id="identificado" class="col-xs-6 no-padding">					
 				<div class="panel panel-teal panel-widget border-right border-bottom">
-					<h2>Relatório de Viagens <em class="fa fa-truck"></em></h2>						
+					<h3>Relatório de Viagens <em class="fa fa-truck"></em></h3>						
 				</div>
 			</div>						
 		<a href="{% url 'relatorio_abastecimentocaminhao' %}">				
 			<div id="identificado2" class="col-xs-6 no-padding">
 				<div class="panel panel-orange panel-widget border-right border-bottom">
-						<h2>Ir para Relatório de Abastecimento<i class="fas fa-gas-pump"></i></h2>
+					<h3>Ir para Relatório de Abastecimento<i class="fas fa-gas-pump"></i></h3>
 				</div>
 			</div>
 		</a>
 	</div>
 </div>
-	<div class="col-12">
-		<div class="panel panel-default">
-			<div class="panel-body">
-				<button type="button" class="btn_filtrar" data-toggle="modal"
-	 			data-target="#exampleModal">
-    			FILTRAR
- 				</button>
-				<div id="toolbar">	
-					<strong class="text-danger"><i class="fa fa-road"></i> Em trânsito</strong>
-			  	</div>
-				<table id="table"				
-				data-toolbar="#toolbar"
-				data-show-toggle="false"
-				data-show-columns="true"
-				data-select-item-name="toolbar"
-				data-pagination="true"				 
-				>
-					<thead>
-						<tr>						
-							<th data-field="Data Saída" data-formatter="dateFormat" data-sortable="true" class='text-center'>Data Saída</th>
-							<th data-field="Veiculo"  data-sortable="true" class='text-center'>Veiculo</th>																					
-							<th data-field="Destino"  data-sortable="true" class='text-center'>Destino</th>
-							<th data-field="Motorista" data-sortable="true" class='text-center'>Motorista</th>
-							<th data-field="Motorista2" data-sortable="true" class='text-center'>Motorista2</th>
-							<th data-field="Ajudante" data-sortable="true" class='text-center'>Ajudante</th>
-							<th data-field="Data Chegada"  data-formatter="dateFormat" data-sortable="true" class='text-center'>Data Chegada</th>
-							<th data-field="km" data-sortable="true" class='text-center'>Km Rodado</th>
-							<th data-field="tempo gasto" data-sortable="true" class='text-center'>Tempo gasto</th>
-						</tr>
-					</thead>
-					<tbody>
-						{%for item in filter.qs|dictsortreversed:"data_inicial"%}
-							{%if item.veiculo.caminhao%}
-								<tr data-href="#"	
-								class="trLink" >
-									<td class='text-center' >									
-										{{item.data_inicial|safe}}									
-									</td>
-									<td class='text-center'>
-										{%if item.data_final%}
-											{{item.veiculo}}</td>	
-										{% else %}
-											<lu class="trLink text-danger negrito">{{item.veiculo}}</lu>
-										{%endif%}							
-									<td class='text-center'>{{item.destino}}</td>
-									<td class='text-center'>
-										{% if item.motorista %}
-											{{item.motorista.nome}}
-										{% else %}
-											-
-										{%endif%}
-									</td>
-									<td class='text-center'>
-										{% if item.motorista2 %}
-											{{item.motorista2.nome}}
-										{% else %}
-											-
-										{%endif%}
-									</td>
-									<td class='text-center' >
-										{% if item.ajudante%}
-											{{item.ajudante}}
-										{%else%}
-									 		-
-										{%endif%}																		
-									</td>
-									<td class='text-center' >	
-										{% if item.data_final%}																				
-											{{item.data_final|safe}}
-										{%else%}
-											-
-										{%endif%}																		
-									</td>
-									<td class='text-center' >
-										{%if item.kmfinalmenosinicial != none %}																					
-											{{item.kmfinalmenosinicial}} km
-										{%else%}
-											-
-										{%endif%}																		
-									</td>
-									<td class='text-center'>
-										{%if item.diagasto%}
-											{{ item.diagasto}} dias,
-										{%endif%}
-										<div class="with-js">
-										{%if item.hora_final > item.hora_inicial%}
-											{%if item.horagasto != none%}																			
-												{{item.horagasto}}		
-											{%endif%}	
-										</div>		
-										{%endif%}	
-										{%if item.horagasto != none%}																			
-											{{item.horagasto}}		
-										{%endif%}												
-									</td>
-							{%endif%}
-						{% endfor %}
-					</tbody>
-				</table>			
-			</div>
-		</div>
-	</div>
-
-
+<div class="col-12">
 	<div class="panel panel-default">
 		<div class="panel-body">
-			<h3><i class="fa fa-plane"></i> Total de Viagens Realizadas: <b>{{counter}}</b></h3>
-			<h3><i class="fa fa-tachometer"></i> Total de KM Rodados: <b>{{somakm}}</b></h3>
+			<button type="button" class="btn_filtrar" data-toggle="modal"
+			data-target="#exampleModal">
+			FILTRAR
+			</button>
+			<div id="toolbar">	
+				<strong class="text-danger"><i class="fa fa-road"></i> Em trânsito</strong>
+			</div>
+			<table id="table"				
+			data-toolbar="#toolbar"
+			data-show-toggle="false"
+			data-show-columns="true"
+			data-select-item-name="toolbar"
+			data-pagination="true"				 
+			>
+				<thead>
+					<tr>						
+						<th data-field="Data Saída" data-formatter="dateFormat" data-sortable="true" class='text-center'>Data Saída</th>
+						<th data-field="Veiculo"  data-sortable="true" class='text-center'>Veiculo</th>																					
+						<th data-field="Destino"  data-sortable="true" class='text-center'>Destino</th>
+						<th data-field="Motorista" data-sortable="true" class='text-center'>Motorista</th>
+						<th data-field="Motorista2" data-sortable="true" class='text-center'>Motorista2</th>
+						<th data-field="Ajudante" data-sortable="true" class='text-center'>Ajudante</th>
+						<th data-field="Data Chegada"  data-formatter="dateFormat" data-sortable="true" class='text-center'>Data Chegada</th>
+						<th data-field="km" data-sortable="true" class='text-center'>Km Rodado</th>
+						<th data-field="tempo gasto" data-sortable="true" class='text-center'>Tempo gasto</th>
+					</tr>
+				</thead>
+				<tbody>
+					{%for item in filter.qs|dictsortreversed:"data_inicial"%}
+						{%if item.veiculo.caminhao%}
+							<tr data-href="#"	
+							class="trLink" >
+								<td class='text-center' >									
+									{{item.data_inicial|safe}}									
+								</td>
+								<td class='text-center'>
+									{%if item.data_final%}
+										{{item.veiculo}}</td>	
+									{% else %}
+										<lu class="trLink text-danger negrito">{{item.veiculo}}</lu>
+									{%endif%}							
+								<td class='text-center'>{{item.destino}}</td>
+								<td class='text-center'>
+									{% if item.motorista %}
+										{{item.motorista.nome}}
+									{% else %}
+										-
+									{%endif%}
+								</td>
+								<td class='text-center'>
+									{% if item.motorista2 %}
+										{{item.motorista2.nome}}
+									{% else %}
+										-
+									{%endif%}
+								</td>
+								<td class='text-center' >
+									{% if item.ajudante%}
+										{{item.ajudante}}
+									{%else%}
+										-
+									{%endif%}																		
+								</td>
+								<td class='text-center' >	
+									{% if item.data_final%}																				
+										{{item.data_final|safe}}
+									{%else%}
+										-
+									{%endif%}																		
+								</td>
+								<td class='text-center' >
+									{%if item.kmfinalmenosinicial != none %}																					
+										{{item.kmfinalmenosinicial}} km
+									{%else%}
+										-
+									{%endif%}																		
+								</td>
+								<td class='text-center'>
+									{%if item.diagasto%}
+										{{ item.diagasto}} dias,
+									{%endif%}
+									<div class="with-js">
+									{%if item.hora_final > item.hora_inicial%}
+										{%if item.horagasto != none%}																			
+											{{item.horagasto}}		
+										{%endif%}	
+									</div>		
+									{%endif%}	
+									{%if item.horagasto != none%}																			
+										{{item.horagasto}}		
+									{%endif%}												
+								</td>
+						{%endif%}
+					{% endfor %}
+				</tbody>
+			</table>
+			<h4><i class="fa fa-plane"></i> Total de Viagens Realizadas: <b>{{counter}}</b></h4>
+			<h4><i class="fa fa-tachometer"></i> Total de KM Rodados: <b>{{somakm}}</b></h4>
+			<h4><i class="fa fa-clock-o"></i> Total de Tempo Gasto: <b>{{somahora}}</b></h4>			
 		</div>
 	</div>
-
-
-
+</div>
 
 <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
 	<div class="modal-dialog" role="document">

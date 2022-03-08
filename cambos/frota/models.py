@@ -54,7 +54,8 @@ class Viagem(models.Model):
         constraints = [
             models.CheckConstraint(check=Q(data_final__gte=F('data_inicial')), name="datafinal_menor_datainicial"),
             models.CheckConstraint(check=Q(km_final__gt=F('km_inicial')), name="kmfinal_menor_kminicial"),
-            models.UniqueConstraint(fields=['veiculo'], condition=Q(data_final = None ), name="Veiculo Em Uso")
+            models.UniqueConstraint(fields=['veiculo','data_inicial','hora_inicial'], name="Ja Reservado para esta data,verificar os horarios")
+            # models.UniqueConstraint(fields=['veiculo'], condition=Q(data_final = True) & Q(hora_final = True) & Q(km_final = None), name="Ja Reservado para esta data,verificar os horarios")
         ]
         db_table = 'frota"."viagem'
         ordering = ["-data_criacao"]

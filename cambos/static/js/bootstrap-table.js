@@ -131,7 +131,7 @@
         sidePagination: 'client', // client or server
         totalRows: 0, // server side need to set
         pageNumber: 1,
-        pageSize: 25,
+        pageSize: 10,
         pageList: [10, 25, 50, 100],
         search: false,
         selectItemName: 'btSelectItem',

@@ -125,9 +125,8 @@ class ViagemUpdate(UpdateView):
         initial = super(ViagemUpdate, self).get_initial()
         veiculo = self.object.veiculo.id
         km= Viagem.objects.filter(veiculo = veiculo).exclude(km_final = None).latest("km_final").km_final
-
         viagem_object = self.get_object()
-        if viagem_object.km_inicial == None:
+        if viagem_object.km_inicial == None or viagem_object.data_final == None or viagem_object.km_final == None:
             initial['km_inicial'] = km 
         return initial
 
@@ -225,6 +224,8 @@ class ViagemList(ListView):
         except:
             pass
         veiculo = Veiculo.objects.get(id = pk)
+        context['dataatual'] = datetime.date.today()
+        context['horaatual'] = datetime.datetime.now().time().strftime('%H:%M')
         context['veiculo']=veiculo
         context['lista']=lista_viagem
         return context  
@@ -250,12 +251,29 @@ class RelatorioViagem(ListView):
         lista = ViagemFilter(self.request.GET, queryset=self.get_queryset())
         count = 0
         somakm = 0
+        somahora = datetime.timedelta()
+        subdata = datetime.timedelta()
         for item in lista.qs:
             if item.veiculo.caminhao:
                 count += 1
+                if item.hora_final:
+                    inicial = datetime.timedelta(hours=item.hora_inicial.hour, minutes=item.hora_inicial.minute, seconds=item.hora_inicial.second)
+                    final = datetime.timedelta(hours=item.hora_final.hour, minutes=item.hora_final.minute, seconds=item.hora_final.second)
+                    diferencahoras = final -inicial
+                    somahora += diferencahoras
+                    if item.data_final > item.data_inicial and item.hora_inicial < item.hora_final:
+                        subdata = item.data_final - item.data_inicial
+                    else:
+                        pass
+                else:
+                    pass
                 if item.kmfinalmenosinicial:																					
                     somakm += item.kmfinalmenosinicial
-
+        s = somahora + subdata
+        if (len(f"{str(s)[0:2]}dias,{str(s)[7:]}")) >= 10:
+            context['somahora'] = (f"{str(s)[0:2]}dias{str(s)[7:]}")
+        else :
+            context['somahora'] = s
         context['somakm'] = somakm
         context['counter'] = count
         context['filter'] = lista
@@ -272,12 +290,29 @@ class RelatorioViagemCarro(ListView):
         lista = ViagemFilterCarro(self.request.GET, queryset=self.get_queryset())
         count = 0
         somakm = 0
+        somahora = datetime.timedelta()
+        subdata = datetime.timedelta()
         for item in lista.qs:
             if not item.veiculo.caminhao :
                 count += 1
+                if item.hora_final:
+                    inicial = datetime.timedelta(hours=item.hora_inicial.hour, minutes=item.hora_inicial.minute, seconds=item.hora_inicial.second)
+                    final = datetime.timedelta(hours=item.hora_final.hour, minutes=item.hora_final.minute, seconds=item.hora_final.second)
+                    diferencahoras = final -inicial
+                    somahora += diferencahoras
+                    if item.data_final > item.data_inicial and item.hora_inicial < item.hora_final:
+                        subdata = item.data_final - item.data_inicial
+                    else:
+                        pass
+                else:
+                    pass
                 if item.kmfinalmenosinicial:																					
                     somakm += item.kmfinalmenosinicial
-
+        s = somahora + subdata
+        if (len(f"{str(s)[0:2]}dias,{str(s)[7:]}")) >= 10:
+            context['somahora'] = (f"{str(s)[0:2]}dias {str(s)[7:]}")
+        else :
+            context['somahora'] = s
         context['somakm'] = somakm
         context['counter'] = count
         context['filter'] = lista

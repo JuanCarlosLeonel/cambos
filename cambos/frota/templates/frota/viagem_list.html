@@ -13,24 +13,20 @@
             <li class="active"><a href="{% url 'veiculo_list' %}">Veículos</a></li>
 			<li class="active"><a href="{% url 'veiculo_index' veiculo.pk %}">Menu</a></li>
         </ol>
-    </div><!--/.row-->
-    <div class="row">
-        <div class="col-lg-12">
-            <h1 class="page-header">{{veiculo}}<span class="text-muted small"></span></h1></h1>
-        </div>
-    </div><!--/.row-->
+    </div>
+	<div class="col-lg-12">
+		<h1 class="page-header">{{veiculo}}<span class="text-muted small"></span></h1></h1>
+	</div>
 {% endblock navigation %}
 
 {% block content %}		
 
 <div class="col-12">
 	<div class="panel panel-default">
-		<div class="panel-body">
-			<div id="toolbar">		
-					<a href="{% url 'viagem_create' veiculo.id %}" class="btn btn-success">
-						<i class="fa fa-plus"></i>Nova Viagem/Reservar {{veiculo}}
-					</a>
-			</div>
+		<div id="toolbar">		
+			<a href="{% url 'viagem_create' veiculo.id %}" class="btn btn-success">
+				<i class="fa fa-plus"></i>Nova Viagem/Reservar {{veiculo}}
+			</a>
 		</div>
 	</div>
 </div>	
@@ -52,47 +48,57 @@
 					<thead>
 						<tr>
 							<th data-field="Situação" data-sortable="true" class='text-center'>Situação</th>								
-							<th data-field="Data Saída" data-formatter="dateFormat" data-sortable="true" class='text-center'>Data Saída</th>																												
+							<th data-field="Data Saída" data-sortable="true" class='text-center'>Data Saída</th>																												
 							<th data-field="Destino" class='text-center'>Destino</th>																					
 							<th data-field="Motorista" data-sortable="true" class='text-center'>Motorista</th>														
-							<th data-field="Data Chegada"  data-formatter="dateFormat" data-sortable="true" class='text-center'>Data Chegada</th>														
+							<th data-field="Data Chegada" data-sortable="true" class='text-center'>Data Cheg.</th>														
 						</tr>
 					</thead>
 					<tbody>
 						{% for data in lista %}
 							<tr data-href="{% url 'viagem_update' data.pk %}"
 								class="trLink" >							
-								<td class='text-center' >									
-									{%if data.data_final%}
+								<td class='text-center' >	
+									{%if data.hora_inicial|time:"h:i" != horaatual and data.data_inicial == dataatual and not data.data_final%}
+										<lu class="text-info">Em Trânsito</lu>
+									{%elif data.hora_inicial|time:"h:i" == horaatual and data.data_inicial == dataatual and not data.data_final%}
+										<lu class="text-info">Em Trânsito</lu>
+									{%elif data.data_inicial > dataatual and not data.km_final%}
+										<lu class="text-primary">Reservado</lu>
+									{%elif data.data_inicial == dataatual and data.hora_final and not data.km_final%}
+										<lu class="text-primary">Reservado</lu>
+									{%endif%}
+									{%if data.data_final and data.km_final%}
 										Concluído
-									{% else %}
-										<lu class="text-danger">Em Trânsito</lu>
 									{%endif%}
 								</td>
 								<td class='text-center' >	
 									{% if data.data_inicial %}								
-									{{data.data_inicial|safe}}								
+										<strong>{{data.data_inicial|date:"d/m/y"}}
+										{{data.hora_inicial}}</strong>							
 									{% endif %}	
 								</td>								
 								<td class='text-center' >									
-									{{data.destino}}									
+									{{data.destino|slice:"0:40"}}									
 								</td>								
 								<td class='text-center'>
-									{% if data.motorista2 != none %}
-										{{data.motorista}} | {{data.motorista2}}
-									{% elif data.motorista2 == none %}
-										{{data.motorista}}
+									{% if data.motorista %}
+										{{data.motorista.nome}}
 									{%endif%}
 								</td>				
-								<td class='text-center' >																					
-									{{data.data_final|safe}}																		
+								<td class='text-center' >	
+									{% if data.data_final %}								
+										<strong>{{data.data_final|date:"d/m/y"}}
+										{{data.hora_final}}</strong>							
+									{% endif %}	
 								</td>																																				
 						{%endfor%}
 					</tbody>					
 				</table>
 			</div>
 			<div class="col-md-6">
-				<h4><b>Calendário de uso do veículo {{veiculo}}</b></h4>
+				<h4><b>Obs: Favor agendar com no mínimo um dia de antecedência.</b></h4>
+				<h4><b>Para agendamentos coloque a data de chegada e hora prevista de término.</b></h4>
 				<hr>
 				<div id="calendar" class="fc fc-media-screen fc-direction-ltr fc-theme-bootstrap"></div>
 			</div>
@@ -199,6 +205,7 @@ tr.onclick = function (e) {
 			},
 			businessHours: true, 
 			dayMaxEvents: true,
+			displayEventEnd: true,
 			events: [
 				{% for data in lista %}
 					{

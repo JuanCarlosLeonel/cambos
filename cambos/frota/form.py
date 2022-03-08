@@ -86,6 +86,7 @@ class AbastecimentoForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         inter = kwargs.pop('inter', None)                
         super().__init__(*args, **kwargs)
+        self.fields['valor_unitario'].label = "Valor Total"
         if not inter:
             self.fields['interno'].widget = forms.HiddenInput()
 
