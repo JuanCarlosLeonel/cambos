@@ -21,31 +21,60 @@
 
 {% block content %}			
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<div class="row">
-	<div class="col-lg-12">
-		<div class="panel panel-default">
-			<h2>Gasto mensal com Abastecimento</h2>
-            <canvas class="chart" id="despesa_mensal" height="150" width="900"></canvas>
-		</div>
-        <div class="panel panel-default">
-			<h2>Abastecimento por Veículo</h2>
-            <div
-                style="width: 100%; height: 40px; position: absolute; top: 50%; left: 0; margin-top: -20px; line-height:19px; text-align: center; z-index: 999999999999999">
-                {{totabastecimento.valor_unitario__sum}}<Br/>
-                Total
+
+{% comment %} <div class="panel panel-default">
+    <h2>Manutenção por Veículo</h2>
+    <div
+        style="width: 100%; height: 40px; position: absolute; top: 85%; left: 0; margin-top: -20px; line-height:19px; text-align: center; z-index: 999999999999999">
+        {{totmanutencao.valor__sum}}<Br/>
+        Total
+    </div>
+    <canvas class="chart" id="despesa_manutencao_porveiculo" height="150" width="700"></canvas>
+</div> {% endcomment %}
+
+<div class="container-fluid">
+    <h3><strong>Carros</strong> <em class="fa fa-car"></em></h3>
+    <div class="row">
+        <div class="col-md-6">
+            <div class="panel panel-default">
+                <h4>Gasto mensal com Abastecimento dos Carros</h4>
+                <canvas class="chart" id="despesa_mensal" height="250" width="900"></canvas>
             </div>
-            <canvas class="chart" id="despesa_abastecimento_porveiculo" height="150" width="700"></canvas>
-		</div>
-        <div class="panel panel-default">
-			<h2>Manutenção por Veículo</h2>
-            <div
-                style="width: 100%; height: 40px; position: absolute; top: 85%; left: 0; margin-top: -20px; line-height:19px; text-align: center; z-index: 999999999999999">
-                {{totmanutencao.valor__sum}}<Br/>
-                Total
+        </div>
+        <div class="col-md-6">
+            <div class="panel panel-default">
+                <h4>Abastecimento Total por Carro</h4>
+                <div
+                    style="width: 100%; height: 40px; position: absolute; top: 50%; left: 0; margin-top: 10px; line-height:19px; text-align: center; z-index: 999999999999999">
+                    {{totabastecimentocarro.valor_unitario__sum}}<Br/>
+                    Total
+                </div>
+                <canvas class="chart" id="despesa_abastecimento_porveiculo" height="195" width="700"></canvas>
             </div>
-            <canvas class="chart" id="despesa_manutencao_porveiculo" height="150" width="700"></canvas>
-		</div>
-	</div>	
+        </div>
+    </div>
+</div>
+<div class="container-fluid">
+    <h3><strong>Caminhões</strong> <em class="fa fa-truck"></em></h3>
+    <div class="row">
+        <div class="col-md-6">
+            <div class="panel panel-default">
+                <h4>Gasto mensal com Abastecimento dos Caminhões</h4>
+                <canvas class="chart" id="despesa_mensalcaminhao" height="250" width="900"></canvas>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="panel panel-default">
+                <h4>Abastecimento Total por Caminhão</h4>
+                <div
+                    style="width: 100%; height: 40px; position: absolute; top: 50%; left: 0; margin-top: 20px; line-height:19px; text-align: center; z-index: 999999999999999">
+                    {{totabastecimentocaminhao.valor_unitario__sum}}<Br/>
+                    Total
+                </div>
+                <canvas class="chart" id="despesa_abastecimento_porcaminhao" height="195" width="700"></canvas>
+            </div>
+        </div>
+    </div>
 </div>
 
 
@@ -59,6 +88,8 @@
     window.onload = function(event){
         
         renderiza_despesa_mensal('{% url "retorna_despesas" %}')
+        renderiza_despesa_mensalcaminhao('{% url "retorna_despesascaminhao" %}')
+        renderiza_abastecimento_porcaminhao('{% url "retorna_abastecimento_porcaminhao" %}')
         renderiza_abastecimento_porveiculo('{% url "retorna_abastecimento_porveiculo" %}')
         renderiza_manutencao_porveiculo('{% url "retorna_manutencao_porveiculo" %}')
     }

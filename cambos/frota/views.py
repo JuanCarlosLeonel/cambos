@@ -23,12 +23,23 @@ def enviar(sender, instance, created, **kwargs):
         for user in users:        
             chat_id = user.user_id
         html_content = render_to_string('frota/telegram_message.html', {'nome': Viagem.objects.filter(veiculo__caminhao = True).latest('id')})
-        text_content = strip_tags(html_content)
         bot = telegram.Bot(token='1914299130:AAH1gHnlMI9b7oUJO12YldsiBXH8Wu4F8z0')
         bot.send_message(chat_id=chat_id,text=html_content, parse_mode=telegram.ParseMode.HTML)
     else:
         pass
 post_save.connect(enviar, sender=Viagem)
+
+def enviarabastecimento(sender, instance, created, **kwargs):
+    from roupa.models import RoupaBot
+    users = RoupaBot.objects.filter(ativo = True)
+    a = Abastecimento.objects.filter().latest('id')
+    for user in users:        
+        chat_id = user.user_id
+    html_content = render_to_string('frota/telegram_messageabast.html', {'nome': Abastecimento.objects.filter().latest('id')})
+    bot = telegram.Bot(token='1914299130:AAH1gHnlMI9b7oUJO12YldsiBXH8Wu4F8z0')
+    bot.send_message(chat_id=chat_id,text=html_content, parse_mode=telegram.ParseMode.HTML)
+
+post_save.connect(enviarabastecimento, sender=Abastecimento)
 
 
 @method_decorator(login_required, name='dispatch')
@@ -290,10 +301,10 @@ class RelatorioViagem(ListView):
                 if item.kmfinalmenosinicial:																					
                     somakm += item.kmfinalmenosinicial
         s = somahora + subdata
-        if (len(f"{str(s)[0:2]}dias,{str(s)[7:]}")) >= 10:
-            context['somahora'] = (f"{str(s)[0:2]}dias{str(s)[7:]}")
-        else :
-            context['somahora'] = s
+        horas =  s.total_seconds() // 3600
+        minutos = s.total_seconds() % 3600/60
+        context['horas'] = horas
+        context['minutos'] = minutos
         context['somakm'] = somakm
         context['counter'] = count
         context['filter'] = lista
@@ -329,10 +340,11 @@ class RelatorioViagemCarro(ListView):
                 if item.kmfinalmenosinicial:																					
                     somakm += item.kmfinalmenosinicial
         s = somahora + subdata
-        if (len(f"{str(s)[0:2]}dias,{str(s)[7:]}")) >= 10:
-            context['somahora'] = (f"{str(s)[0:2]}dias {str(s)[7:]}")
-        else :
-            context['somahora'] = s
+        s = somahora + subdata
+        horas =  s.total_seconds() // 3600
+        minutos = s.total_seconds() % 3600/60
+        context['horas'] = horas
+        context['minutos'] = minutos
         context['somakm'] = somakm
         context['counter'] = count
         context['filter'] = lista
@@ -387,7 +399,7 @@ class AbastecimentoListALL(ListView):
 
 def relatorio_despesa(request):
     from datetime import datetime
-    x = Abastecimento.objects.all()
+    x = Abastecimento.objects.filter(veiculo__caminhao = False)
     meses = ['jan', 'fev', 'mar', 'abr', 'mai', 'jun', 'jul', 'ago', 'set', 'out', 'nov', 'dez']
     data = []
     labels = []
@@ -404,8 +416,44 @@ def relatorio_despesa(request):
     data_json = {'data': data[::-1], 'labels': labels[::-1]}
     return JsonResponse(data_json)
 
+def relatorio_despesacaminhao(request):
+    from datetime import datetime
+    x = Abastecimento.objects.filter(veiculo__caminhao = True)
+    meses = ['jan', 'fev', 'mar', 'abr', 'mai', 'jun', 'jul', 'ago', 'set', 'out', 'nov', 'dez']
+    data = []
+    labels = []
+    mes = datetime.now().month + 1
+    ano = datetime.now().year
+    for i in range(12): 
+        mes -= 1
+        if mes == 0:
+            mes = 12
+            ano -= 1
+        y = sum([i.valor_unitario for i in x if i.data.month == mes and i.data.year == ano])
+        labels.append(meses[mes-1])
+        data.append(y)
+    data_json = {'data': data[::-1], 'labels': labels[::-1]}
+    return JsonResponse(data_json)
+
+def relatorio_abastecimento_porcaminhao(request):
+    produtos = Veiculo.objects.filter(caminhao = True)
+    label = []
+    data = []
+    for produto in produtos:
+        vendas = Abastecimento.objects.filter(veiculo=produto).aggregate(Sum('valor_unitario'))
+        if not vendas['valor_unitario__sum']:
+            vendas['valor_unitario__sum'] = 0
+        label.append(produto.descricao.descricao)
+        data.append(vendas['valor_unitario__sum'])
+
+    x = list(zip(label, data))
+    x.sort(key=lambda x: x[1], reverse=True)
+    x = list(zip(*x))
+    
+    return JsonResponse({'labels': x[0][:7], 'data': x[1][:7]})
+
 def relatorio_abastecimento_porveiculo(request):
-    produtos = Veiculo.objects.all()
+    produtos = Veiculo.objects.filter(caminhao = False)
     label = []
     data = []
     for produto in produtos:
@@ -446,9 +494,11 @@ class IndexDespesas(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)   
-        totabastecimento = Abastecimento.objects.aggregate(Sum('valor_unitario'))
+        totabastecimentocarro = Abastecimento.objects.filter(veiculo__caminhao = False).aggregate(Sum('valor_unitario'))
+        totabastecimentocaminhao = Abastecimento.objects.filter(veiculo__caminhao = True).aggregate(Sum('valor_unitario'))
         totmanutencao = Manutencao.objects.aggregate(Sum('valor'))
-        context['totabastecimento']=totabastecimento
+        context['totabastecimentocarro']=totabastecimentocarro
+        context['totabastecimentocaminhao']=totabastecimentocaminhao
         context['totmanutencao']=totmanutencao       
         return context
 

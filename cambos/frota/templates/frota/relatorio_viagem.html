@@ -136,9 +136,9 @@
 					{% endfor %}
 				</tbody>
 			</table>
-			<h4><i class="fa fa-plane"></i> Total de Viagens Realizadas: <b>{{counter}}</b></h4>
+			<h4><i class="fa fa-truck"></i> Total de Viagens Realizadas: <b>{{counter}}</b></h4>
 			<h4><i class="fa fa-tachometer"></i> Total de KM Rodados: <b>{{somakm}}</b></h4>
-			<h4><i class="fa fa-clock-o"></i> Total de Tempo Gasto: <b>{{somahora}}</b></h4>			
+			<h4><i class="fa fa-clock-o"></i> Total de Tempo Gasto: <b>{{horas|floatformat:0}}h : {{minutos|floatformat:0}}m</b></h4>			
 		</div>
 	</div>
 </div>

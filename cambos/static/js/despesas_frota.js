@@ -27,7 +27,7 @@ function renderiza_despesa_mensal(url){
             data: {
                 labels: data.labels,
                 datasets: [{
-                    label: "Despesas Mensais",
+                    label: "Abastecimento Mensal",
                     data: data.data,
                     backgroundColor: cores_despesa_mensal[0],
                     borderColor: cores_despesa_mensal[1],
@@ -38,6 +38,55 @@ function renderiza_despesa_mensal(url){
     })
 }
 
+// grafico de despesa mensal CAMINHAO
+function renderiza_despesa_mensalcaminhao(url){
+    fetch(url, {
+        method: 'get',
+    }).then(function(result){
+        return result.json()
+    }).then(function(data){
+        const ctx = document.getElementById('despesa_mensalcaminhao').getContext('2d');
+        var cores_despesa_mensal = gera_cor(qtd=12)
+        const myChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: data.labels,
+                datasets: [{
+                    label: "Abastecimento Mensal",
+                    data: data.data,
+                    backgroundColor: cores_despesa_mensal[0],
+                    borderColor: cores_despesa_mensal[1],
+                    borderWidth: 1
+                }]
+            },  
+        });
+    })
+}
+
+// Despesa por veiculo(ABASTECIMENTO CAMINHAO)
+function renderiza_abastecimento_porcaminhao(url){
+    fetch(url, {
+        method: 'get',
+    }).then(function(result){
+        return result.json()
+    }).then(function(data){
+        const ctx = document.getElementById('despesa_abastecimento_porcaminhao').getContext('2d');
+        var cores_abastecimento = gera_cor(qtd=7)
+        const myChart = new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                labels: data.labels,
+                datasets: [{
+                    label: 'Despesas',
+                    data: data.data,
+                    backgroundColor: cores_abastecimento[0],
+                    borderColor: cores_abastecimento[1],
+                    borderWidth: 1
+                }]
+            }, 
+        });
+    }) 
+}
 
 // Despesa por veiculo(ABASTECIMENTO)
 function renderiza_abastecimento_porveiculo(url){

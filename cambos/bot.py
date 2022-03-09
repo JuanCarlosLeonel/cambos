@@ -9,7 +9,7 @@ from telegram.ext import (
     MessageHandler,
     Filters,
 )
-from frota.models import Viagem
+from frota.models import Abastecimento, Viagem
 from roupa.views import get_url, convert_setor
 from dateutil import parser
 import datetime
@@ -28,6 +28,14 @@ def viagemcaminhao(update):
     update.edit_message_text(text, parse_mode=ParseMode.HTML)
     return return_menu(update, text)
 
+# def abastecimento(update):
+#     from roupa.models import RoupaBot
+#     users = RoupaBot.objects.filter(frota = True)
+#     a = Abastecimento.objects.filter(veiculo__caminhao = True).order_by("-id")
+#     text =""
+#     for user in users:
+#         if user.frota:
+#             text = f"Abastecimentos Realizados:"
 
 def get_user(update):
     from roupa.models import RoupaBot
@@ -478,6 +486,9 @@ def button(update: Update, _: CallbackContext) -> None:
 
     elif query.data == 'viagemcaminhao':
         return viagemcaminhao(query)
+
+    # elif query.data == 'abastecimento':
+    #     return abastecimento(query)
 
     elif query.data == 'atrasados_finalizacao':
         return atrasados_finalizacao(query,6)
