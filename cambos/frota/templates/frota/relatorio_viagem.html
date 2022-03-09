@@ -76,21 +76,22 @@
 								</td>
 								<td class='text-center'>
 									{%if item.data_final%}
-										{{item.veiculo}}</td>	
+										{{item.veiculo}}
 									{% else %}
 										<lu class="trLink text-danger negrito">{{item.veiculo}}</lu>
-									{%endif%}							
+									{%endif%}	
+								</td>						
 								<td class='text-center'>{{item.destino}}</td>
 								<td class='text-center'>
 									{% if item.motorista %}
-										{{item.motorista.nome}}
+										{{item.motorista.nome|slice:"0:25"}}
 									{% else %}
 										-
 									{%endif%}
 								</td>
 								<td class='text-center'>
 									{% if item.motorista2 %}
-										{{item.motorista2.nome}}
+										{{item.motorista2.nome|slice:"0:25"}}
 									{% else %}
 										-
 									{%endif%}
@@ -168,7 +169,6 @@
 		p.innerText = p.innerText.substring(8, 20)
 	}
 </script>
-
 
 <script>	
 	var tr = document.getElementsByClassName('tr-id');

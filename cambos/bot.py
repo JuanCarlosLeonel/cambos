@@ -24,7 +24,7 @@ def viagemcaminhao(update):
             text = f"\U00002757Viagens <b>EM TRÂNSITO</b>:{os.linesep}"
             for item in v:
                 if item.data_final is None:
-                    text += f"{item.veiculo}, saída:{str(item.data_inicial)[8:] + '/' + str(item.data_inicial)[5:7] + '/' + str(item.data_inicial)[0:4] }{os.linesep}"
+                    text += f"<b>{item.veiculo}</b>, saída:{str(item.data_inicial)[8:] + '/' + str(item.data_inicial)[5:7] + '/' + str(item.data_inicial)[0:4] }, destino:{item.destino}{os.linesep}"
     update.edit_message_text(text, parse_mode=ParseMode.HTML)
     return return_menu(update, text)
 

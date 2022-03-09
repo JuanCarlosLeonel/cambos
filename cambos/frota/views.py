@@ -6,10 +6,30 @@ from django.contrib.auth.decorators import login_required
 from django.views.generic.list import ListView
 from .models import Abastecimento, Manutencao, Motorista, Viagem, Veiculo, FrotaPermissao
 from .form import ManutencaoForm, ViagemForm, AbastecimentoForm
-from django.http import JsonResponse
+from django.http import HttpResponse, JsonResponse
 from django.db.models import Sum
 import datetime
 from .filters import ViagemFilter, ViagemFilterCarro, AbastecimentoFilter, AbastecimentoFilterCaminhao
+from django.template.loader import render_to_string
+from django.utils.html import strip_tags
+import telegram
+from django.db.models.signals import post_save
+
+def enviar(sender, instance, created, **kwargs):
+    from roupa.models import RoupaBot
+    users = RoupaBot.objects.filter(ativo = True)
+    v = Viagem.objects.filter().latest('id')
+    if v.veiculo.caminhao:
+        for user in users:        
+            chat_id = user.user_id
+        html_content = render_to_string('frota/telegram_message.html', {'nome': Viagem.objects.filter(veiculo__caminhao = True).latest('id')})
+        text_content = strip_tags(html_content)
+        bot = telegram.Bot(token='1914299130:AAH1gHnlMI9b7oUJO12YldsiBXH8Wu4F8z0')
+        bot.send_message(chat_id=chat_id,text=html_content, parse_mode=telegram.ParseMode.HTML)
+    else:
+        pass
+post_save.connect(enviar, sender=Viagem)
+
 
 @method_decorator(login_required, name='dispatch')
 class Index(TemplateView):
