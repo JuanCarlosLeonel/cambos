@@ -29,7 +29,7 @@
         <form method="post" autocomplete="off">
               <div class="modal-header">
                 <a href="javascript:void(0)" onClick="history.go(-1); return false;" type="button" class="close" aria-hidden="true">×</a>
-                <h3 class="modal-title">Cadastro/Atualização de Viagem</h3>
+                <h5 class="modal-title titulo_filtrar" id="exampleModalLabel">Cadastro/Atualização de Viagem</h5>
               </div>
               <div class="modal-body">                
                     {% csrf_token %}
@@ -49,6 +49,22 @@
                     {% endfor %}
                     {{form}}
               </div>
+              {% comment %} <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title titulo_filtrar" id="exampleModalLabel">Selecione os Filtros</h5>
+                    </div>
+                    <div class="modal-body">
+                        <form method="GET">
+                            {{form}}
+                        <input class="btn_filtrar_modal" type="submit" value="FILTRAR">
+                        </form>
+                    </div>
+                    
+                    </div>
+                </div>
+            </div> {% endcomment %}
               <div class="modal-footer">
                 <a href="javascript:void(0)" onClick="history.go(-1); return false;" type="button" class="btn btn-primary">Retornar</a>
                 <input type="submit" class="btn btn-success" value="Salvar"  />

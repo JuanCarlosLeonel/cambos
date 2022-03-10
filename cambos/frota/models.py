@@ -33,6 +33,11 @@ class Motorista(models.Model):
         db_table = 'frota"."motorista' 
 
 class Viagem(models.Model):
+    TIPOVIAGEM = (
+            ('Manutençao', 'Manutenção'),
+            ('Viagem', 'Viagem'),                                     
+        )
+    tipo = models.CharField(max_length=40, choices=TIPOVIAGEM,default='Viagem')
     veiculo      = models.ForeignKey(Veiculo, on_delete=models.DO_NOTHING, blank=True)
     motorista    = models.ForeignKey(Pessoa, on_delete=models.DO_NOTHING, db_constraint=False)
     motorista2   = models.ForeignKey(Pessoa, on_delete=models.DO_NOTHING, db_constraint=False, related_name='motorista2', blank=True, null=True)

@@ -13,6 +13,7 @@ class ViagemForm(forms.ModelForm):
         model = Viagem
         fields = (            
             'veiculo',
+            'tipo',
             'motorista',
             'motorista2',
             'ajudante',
@@ -28,6 +29,7 @@ class ViagemForm(forms.ModelForm):
          
         widgets = {                                     
             'veiculo': forms.HiddenInput(),
+            'tipo': forms.Select(attrs={'class':'form-control'}),
             'motorista': Select2Widget(                
                 attrs={'class':'form-control'},                
             ),
@@ -50,6 +52,7 @@ class ViagemForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         list_motorista = kwargs.pop('list_motorista', None)
         super(ViagemForm, self).__init__(*args, **kwargs)
+        self.fields['tipo'].label = "Saída para"
         self.fields['data_inicial'].label = "Data Saída"
         self.fields['hora_inicial'].label = "Hora Saída"
         self.fields['data_final'].label = "Data Retorno"
