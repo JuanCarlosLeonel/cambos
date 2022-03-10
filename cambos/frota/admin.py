@@ -10,6 +10,7 @@ from .models import (
     FrotaPermissao,
     Manutencao,
     Motorista,
+    ItemViagem,
 )
 
 admin.site.register(Veiculo)
@@ -22,3 +23,4 @@ admin.site.register(DespesaViagem)
 admin.site.register(FrotaPermissao)
 admin.site.register(Manutencao)
 admin.site.register(Motorista)
+admin.site.register(ItemViagem)
