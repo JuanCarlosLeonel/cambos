@@ -1,11 +1,13 @@
 Novo abastecimento <strong>{{nome.veiculo}}</strong>
 Combustível: <b>{{nome.combustivel}}</b>
-Valor Pago: <b>{{nome.valor_unitario|floatformat:2}}.</b>
+Valor Total: <b>{{nome.valor_unitario|floatformat:2}}.</b>
 Qtd: <b>{{nome.quantidade}} l.</b>
-{%if nome.interno%}
-    <b>Tipo de Abastecimento: INTERNO</b>
-{%else%}
-    <b>Tipo de Abastecimento: EXTERNO</b>
+{%if nome.veiculo.caminhao%}
+    {%if nome.interno%}
+        <b>Tipo de Abastecimento: INTERNO</b>
+    {%else%}
+        <b>Tipo de Abastecimento: EXTERNO</b>
+    {%endif%}
 {%endif%}
 
 

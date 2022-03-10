@@ -17,28 +17,33 @@ from django.db.models.signals import post_save
 
 def enviar(sender, instance, created, **kwargs):
     from roupa.models import RoupaBot
+    from core.models import Bot
+    bot = Bot.objects.latest('token')
+    token = bot.token 
     users = RoupaBot.objects.filter(ativo = True)
     v = Viagem.objects.filter().latest('id')
     if v.veiculo.caminhao:
-        for user in users:        
-            chat_id = user.user_id
-        html_content = render_to_string('frota/telegram_message.html', {'nome': Viagem.objects.filter(veiculo__caminhao = True).latest('id')})
-        bot = telegram.Bot(token='1914299130:AAH1gHnlMI9b7oUJO12YldsiBXH8Wu4F8z0')
-        bot.send_message(chat_id=chat_id,text=html_content, parse_mode=telegram.ParseMode.HTML)
-    else:
-        pass
+        for user in users:      
+            if user.frota:  
+                chat_id = user.user_id
+                html_content = render_to_string('frota/telegram_message.html', {'nome': Viagem.objects.filter(veiculo__caminhao = True).latest('id')})
+                bot = telegram.Bot(token=token)
+                bot.send_message(chat_id=chat_id,text=html_content, parse_mode=telegram.ParseMode.HTML)
 post_save.connect(enviar, sender=Viagem)
 
 def enviarabastecimento(sender, instance, created, **kwargs):
     from roupa.models import RoupaBot
+    from core.models import Bot
+    bot = Bot.objects.latest('token')
+    token = bot.token 
     users = RoupaBot.objects.filter(ativo = True)
-    a = Abastecimento.objects.filter().latest('id')
-    for user in users:        
-        chat_id = user.user_id
+    # a = Abastecimento.objects.filter().latest('id')
+    for user in users:      
+        if user.frota:  
+            chat_id = user.user_id
     html_content = render_to_string('frota/telegram_messageabast.html', {'nome': Abastecimento.objects.filter().latest('id')})
-    bot = telegram.Bot(token='1914299130:AAH1gHnlMI9b7oUJO12YldsiBXH8Wu4F8z0')
+    bot = telegram.Bot(token=token)
     bot.send_message(chat_id=chat_id,text=html_content, parse_mode=telegram.ParseMode.HTML)
-
 post_save.connect(enviarabastecimento, sender=Abastecimento)
 
 
