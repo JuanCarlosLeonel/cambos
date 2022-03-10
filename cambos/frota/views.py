@@ -241,6 +241,7 @@ class VeiculoList(ListView):
             user_permission = FrotaPermissao.objects.get(usuario = self.request.user)
         except:
             user_permission = {}
+        context['dataatual'] = datetime.date.today()
         context['permissoes'] = user_permission
         context['lista_viagem'] = lista_viagem
         return context
