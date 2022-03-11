@@ -2,6 +2,13 @@
 
 {% block css %}
 
+<style>
+	.solicitacao-row:hover {
+		cursor: pointer;
+		background-color: #ecf0f1;
+	}
+</style>
+
 {% endblock css %}
 
 {% block navigation %}
@@ -51,7 +58,8 @@
 							<th data-field="Data Saída" data-sortable="true" class='text-center'>Data Saída</th>																												
 							<th data-field="Destino" class='text-center'>Destino</th>																					
 							<th data-field="Motorista" data-sortable="true" class='text-center'>Motorista</th>														
-							<th data-field="Data Chegada" data-sortable="true" class='text-center'>Data Cheg.</th>														
+							<th data-field="Data Chegada" data-sortable="true" class='text-center'>Data Cheg.</th>				
+							<th class="text-center">Solicitações</th>									
 						</tr>
 					</thead>
 					<tbody>
@@ -91,7 +99,14 @@
 										<strong>{{data.data_final|date:"d/m/y"}}
 										{{data.hora_final}}</strong>							
 									{% endif %}	
-								</td>																																				
+								</td>
+								<td class="text-center">
+									{% if data.pk and data.data_final == none %}
+										<button type="button" data-viagem-id="{{ data.pk }}" class="btn btn-primary btn-atribuir">
+											Atribuir
+										</button>
+									{% endif %}
+								</td>
 						{%endfor%}
 					</tbody>					
 				</table>
@@ -123,7 +138,8 @@
 				<th data-field="Data Saída" data-formatter="dateFormat" data-sortable="true" class='text-center'>Data Saída</th>																												
 				<th data-field="Destino" class='text-center'>Destino</th>																					
 				<th data-field="Motorista" data-sortable="true" class='text-center'>Motorista</th>														
-				<th data-field="Data Chegada"  data-formatter="dateFormat" data-sortable="true" class='text-center'>Data Chegada</th>														
+				<th data-field="Data Chegada"  data-formatter="dateFormat" data-sortable="true" class='text-center'>Data Chegada</th>
+				<th class="text-center">Solicitações</th>														
 			</tr>
 		</thead>
 		<tbody>
@@ -154,11 +170,86 @@
 					</td>				
 					<td class='text-center' >																					
 						{{data.data_final|safe}}																		
+					</td>
+					<td class="text-center">
+						{% if data.pk and data.data_final == none %}
+							<button type="button" data-viagem-id="{{ data.pk }}" class="btn btn-primary btn-atribuir">
+								Atribuir
+							</button>
+						{% endif %}
 					</td>																																				
 			{%endfor%}
 		</tbody>					
 	</table>
 {%endif%}
+
+<div class="modal fade" id="modalSolicitacoes" tabindex="-1" role="dialog">
+	<div class="modal-dialog modal-lg" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h4 class="modal-title">Solicitações</h4>
+			</div>
+			<div class="modal-body">
+				<h4>Viagem Selecionada</h4>
+
+				<p>
+					Destino: 
+					<strong id="viagem_destino"></strong>
+				</p>
+
+				<p>
+					Motorista: 
+					<strong id="viagem_motorista"></strong>
+				</p>
+
+				<p>
+					Solicitações Selecionadas: 
+					<strong id="viagem_quantidade"></strong>
+				</p>
+
+				<table class="table table-bordered table-stripped">
+					<thead>
+						<tr>
+							<th class="text-center">Solicitante</th>
+							<th class="text-center">Prioridade</th>
+							<th class="text-center">Peso</th>
+							<th class="text-center">Endereço</th>
+							<th class="text-center">Bairro</th>
+							<th class="text-center">Número</th>
+							<th class="text-center">Cidade</th>
+							<th class="text-center">UF</th>
+							<th class="text-center">CEP</th>
+							<th class="text-center">Data Prevista</th>
+							<th class="text-center">Data Solicitação</th>
+						</tr>
+					</thead>
+					<tbody>
+						{% for data in lista_solicitacoes %}
+							<tr class="solicitacao-row" data-solicitacao-id="{{ data.pk }}">
+								<td>{{ data.pk }}</td>
+								<td>{{ data.prioridade }}</td>
+								<td>{{ data.peso }}</td>
+								<td>{{ data.endereco }}</td>
+								<td>{{ data.bairro }}</td>
+								<td>{{ data.numero }}</td>
+								<td>{{ data.cidade }}</td>
+								<td>{{ data.uf }}</td>
+								<td>{{ data.cep }}</td>
+								<td>{{ data.data_prevista }}</td>
+								<td>{{ data.data_solicitacao }}</td>
+							</tr>
+						{% endfor %}
+					</tbody>
+				</table>
+			</div>
+			<div class="modal-footer">
+				<button class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+				<button class="btn btn-success btn-save">Salvar</button>
+			</div>
+		</div>
+	</div>
+</div>
+
 	
 {%endblock content%}
 
@@ -185,10 +276,10 @@ tr.onclick = function (e) {
 		}
   </script>
   <script>
-	
+{% comment %} 	
 	$('#table').bootstrapTable({
 		onClickRow: function (item, $element) {return  window.location = $element.data('href');},
-	});
+	}); {% endcomment %}
 
 </script>
 
@@ -220,6 +311,84 @@ tr.onclick = function (e) {
 		});
 		calendar.render();
 		$('#calendar').fullCalendar('option', 'locale', 'pt-br');
+	});
+</script>
+
+<script>
+	$(document).ready(function() {
+		let solicitacoes= 0;
+		let selected = [];
+		let viagem_id = null;
+
+		$(document).on('click', '.btn-atribuir', function(e) {
+			viagem_id = $(this).data('viagem-id');
+
+			let destino = $(this).closest('tr').find('td:eq(2)').text();
+			let motorista = $(this).closest('tr').find('td:eq(3)').text();
+
+			$('#viagem_destino').text(destino);
+			$('#viagem_motorista').text(motorista);
+			$('#viagem_quantidade').text(solicitacoes);
+
+			$('#modalSolicitacoes').modal("show");
+		});
+
+		$('#modalSolicitacoes table').on('click', '.solicitacao-row', function() {
+			let solicitacao_id = $(this).data('solicitacao-id');
+		
+			let index = selected.indexOf(solicitacao_id);
+			if(index === -1) {
+				selected.push(solicitacao_id);
+				solicitacoes += 1;
+
+				$(this).css('background-color', '#2ecc71');
+			} else {
+				selected.splice(index, 1);
+				solicitacoes -= 1;
+
+				$(this).removeAttr('style');
+			}
+
+			$('#viagem_quantidade').text(solicitacoes);
+		});
+
+		$('#modalSolicitacoes .btn-save').on('click', function() {
+			let string = '';
+			if(selected.length > 0) {
+				selected.forEach((element, index) => {
+					if(index == 0) {
+						string += element;
+					} else {
+						string += '-' + element;
+					}
+				});
+
+				$.ajax({
+					method: "GET",
+					url: "/save",
+					success: () => {
+
+					},
+					error: () => {
+
+					}
+				});
+			} else {
+			}
+		});
+
+		$('#modalSolicitacoes').on('hidden.bs.modal', function() {
+			solicitacoes = 0;
+			selected = [];
+
+			$('#viagem_destino').text('');
+			$('#viagem_motorista').text('');
+			$('#viagem_quantidade').text(solicitacoes);
+
+			$('#modalSolicitacoes table tbody tr').each(function(element) {
+				$(this).css('background-color', '#FFFFFF');
+			});
+		});
 	});
 </script>
 	
