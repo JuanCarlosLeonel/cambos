@@ -1,11 +1,15 @@
+from unicodedata import name
+from urllib import request
 from django.shortcuts import render
 from django.views.generic.base import TemplateView
 from django.views.generic.edit import UpdateView, CreateView, DeleteView
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
 from django.views.generic.list import ListView
-from .models import Abastecimento, Manutencao, Motorista, Viagem, Veiculo, FrotaPermissao
-from .form import ManutencaoForm, ViagemForm, AbastecimentoForm
+
+from core.models import Enderecos, SolicitacaoViagem, UserCompras
+from .models import Abastecimento, ItemViagem, Manutencao, Motorista, Viagem, Veiculo, FrotaPermissao
+from .form import  ManutencaoForm, ViagemForm, AbastecimentoForm
 from django.http import HttpResponse, JsonResponse
 from django.db.models import Sum
 import datetime
@@ -16,34 +20,35 @@ import telegram
 from django.db.models.signals import post_save
 
 def enviar(sender, instance, created, **kwargs):
-    from roupa.models import RoupaBot
-    from core.models import Bot
-    bot = Bot.objects.latest('token')
-    token = bot.token 
-    users = RoupaBot.objects.filter(ativo = True)
-    v = Viagem.objects.filter().latest('id')
-    if v.veiculo.caminhao:
-        for user in users:      
-            if user.frota:  
-                chat_id = user.user_id
-                html_content = render_to_string('frota/telegram_message.html', {'nome': Viagem.objects.filter(veiculo__caminhao = True).latest('id')})
-                bot = telegram.Bot(token=token)
-                bot.send_message(chat_id=chat_id,text=html_content, parse_mode=telegram.ParseMode.HTML)
+    if created:
+        from roupa.models import RoupaBot
+        from core.models import Bot
+        bot = Bot.objects.latest('token')
+        token = bot.token 
+        users = RoupaBot.objects.filter(ativo = True)
+        v = Viagem.objects.filter().latest('id')
+        if v.veiculo.caminhao:
+            for user in users:      
+                if user.frota:  
+                    chat_id = user.user_id
+                    html_content = render_to_string('frota/telegram_message.html', {'nome': Viagem.objects.filter(veiculo__caminhao = True).latest('id')})
+                    bot = telegram.Bot(token=token)
+                    bot.send_message(chat_id=chat_id,text=html_content, parse_mode=telegram.ParseMode.HTML)
 post_save.connect(enviar, sender=Viagem)
 
 def enviarabastecimento(sender, instance, created, **kwargs):
-    from roupa.models import RoupaBot
-    from core.models import Bot
-    bot = Bot.objects.latest('token')
-    token = bot.token 
-    users = RoupaBot.objects.filter(ativo = True)
-    # a = Abastecimento.objects.filter().latest('id')
-    for user in users:      
-        if user.frota:  
-            chat_id = user.user_id
-    html_content = render_to_string('frota/telegram_messageabast.html', {'nome': Abastecimento.objects.filter().latest('id')})
-    bot = telegram.Bot(token=token)
-    bot.send_message(chat_id=chat_id,text=html_content, parse_mode=telegram.ParseMode.HTML)
+    if created:
+        from roupa.models import RoupaBot
+        from core.models import Bot
+        bot = Bot.objects.latest('token')
+        token = bot.token 
+        users = RoupaBot.objects.filter(ativo = True)
+        for user in users:      
+            if user.frota:  
+                chat_id = user.user_id
+        html_content = render_to_string('frota/telegram_messageabast.html', {'nome': Abastecimento.objects.latest('id')})
+        bot = telegram.Bot(token=token)
+        bot.send_message(chat_id=chat_id,text=html_content, parse_mode=telegram.ParseMode.HTML)
 post_save.connect(enviarabastecimento, sender=Abastecimento)
 
 
@@ -247,25 +252,57 @@ class VeiculoList(ListView):
         return context
 
 @method_decorator(login_required, name='dispatch')
+class SolicitacoesList(ListView):
+    model = SolicitacaoViagem
+    template_name = 'frota/viagem_solicitacao_list.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)     
+        pk = self.kwargs['pk']
+        viagem = Viagem.objects.get(id = pk)
+        lista_solicitacoes = SolicitacaoViagem.objects.filter(situacao = '1').order_by("-id")
+        endereco = Enderecos.objects.all()
+        usercompras = UserCompras.objects.all()            
+        context['viagem']=viagem
+        context['user'] = usercompras
+        context['endereco'] = endereco
+        context['lista_solicitacoes']=lista_solicitacoes
+        context['dataatual'] = datetime.date.today()
+        return context
+
+@method_decorator(login_required, name='dispatch')
 class ViagemList(ListView):
     model = Viagem
     template_name = 'frota/viagem_list.html'
 
     def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)   
+        context = super().get_context_data(**kwargs) 
         pk = self.kwargs['pk']     
-        lista_viagem = Viagem.objects.filter(veiculo = pk).order_by("-id")
-        try:
-            ultima = Viagem.objects.filter(veiculo=pk).latest('id')
-            context['ultima']=ultima
-        except:
-            pass
         veiculo = Veiculo.objects.get(id = pk)
+        lista_viagem = Viagem.objects.filter(veiculo = pk).order_by("-id")
+        # lista_solicitacoes = SolicitacaoViagem.objects.filter(situacao = '1').order_by("-id")
+        # endereco = Enderecos.objects.all()
+        # usercompras = UserCompras.objects.all()
+        # itemviagem = ItemViagem.objects.filter(viagem=pk)
+        # print(len(itemviagem))
+        # itemv = len(itemviagem)
+        # edit = self.request.GET.get('editar')
+        # teste = self.request.GET.get('teste')
+        # if edit == 'true':
+        #     model = ItemViagem(viagem = pk, viagem_solicitacao =teste)
+        #     model.save()
+        # elif edit == 'false':
+        #     model = ItemViagem.objects.get(viagem = pk, viagem_solicitacao =teste)
+        #     model.delete()
+        # context['itemviagem'] = itemv
+        # context['user'] = usercompras
+        # context['endereco'] = endereco
         context['dataatual'] = datetime.date.today()
         context['horaatual'] = datetime.datetime.now().time().strftime('%H:%M')
         context['veiculo']=veiculo
         context['lista']=lista_viagem
-        return context  
+        # context['lista_solicitacoes']=lista_solicitacoes
+        return context
 
 
 @method_decorator(login_required, name='dispatch')
@@ -551,7 +588,6 @@ class ManutencaoCreate(CreateView):
         initial['veiculo'] = veiculo
         initial['data'] = datetime.date.today()
         return initial
-
     
 
 

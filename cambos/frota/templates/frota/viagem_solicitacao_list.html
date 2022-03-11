@@ -1,0 +1,133 @@
+<div class="modal fade" id="modalSolicitacoes" tabindex="-1" role="dialog">
+	<div class="modal-dialog modal-lg" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h4 class="modal-title">Solicitações</h4>
+			</div>
+			<div class="modal-body">
+				<h4>Viagem Selecionada</h4>
+
+				<p>
+					Destino: 
+					<strong id="viagem_destino"></strong>
+				</p>
+
+				<p>
+					Motorista: 
+					<strong id="viagem_motorista"></strong>
+				</p>
+
+				<p>
+					Solicitações Selecionadas: 
+					<strong id="viagem_quantidade"></strong>
+				</p>
+
+				<table class="table table-bordered table-stripped">
+					<thead>
+						<tr>
+							<th class="text-center">Solicitante</th>
+							<th class="text-center">Prioridade</th>
+							<th class="text-center">Peso</th>
+							<th class="text-center">Endereço</th>
+							<th class="text-center">Bairro</th>
+							<th class="text-center">Número</th>
+							<th class="text-center">Cidade</th>
+							<th class="text-center">UF</th>
+							<th class="text-center">CEP</th>
+							<th data-field="Data Prevista"  data-formatter="dateFormat" data-sortable="true" class='text-center'>Data Prevista</th>
+							<th data-field="Data Solicitação"  data-formatter="dateFormat" data-sortable="true" class='text-center'>Data Solicitação</th>
+						</tr>
+					</thead>
+					<tbody>
+						{% for data in object_list %}
+							<tr class="solicitacao-row" data-solicitacao-id="{{ data.pk }}">
+								<td class='text-center'>
+									{% for u in user %}
+										{%if u.id == data.user_id%}
+											{{u.name}}
+										{%endif%}
+									{% endfor %}
+								</td>
+								<td class='text-center' >																					
+									{%if data.prioridade == 'U' %} 							
+										Urgente
+									{%elif data.prioridade == 'N' %} 						
+										Normal
+									{%endif%}																		
+								</td>
+								<td class='text-center'>{{ data.peso }}</td>
+								<td class='text-center'>
+									{% for e in endereco %}
+										{%if e.id == data.endereco_id%}
+											{{e.endereco}}
+										{%endif%}
+									{% endfor %}
+								</td>
+								<td class='text-center'>
+								{% for e in endereco %}
+									{%if e.id == data.endereco_id%}
+										{{e.bairro}}
+									{%endif%}
+								{% endfor %}
+								</td>
+								<td class='text-center'>
+								{% for e in endereco %}
+									{%if e.id == data.endereco_id%}
+										{{e.numero}}
+									{%endif%}
+								{% endfor %}
+								</td>
+								<td class='text-center'>
+								{% for e in endereco %}
+									{%if e.id == data.endereco_id%}
+										{{e.cidade}}
+									{%endif%}
+								{% endfor %}
+								</td>
+								<td class='text-center'>
+								{% for e in endereco %}
+									{%if e.id == data.endereco_id%}
+										{{e.uf}}
+									{%endif%}
+								{% endfor %}
+								</td>
+								<td class='text-center'>
+								{% for e in endereco %}
+									{%if e.id == data.endereco_id%}
+										{{e.cep}}
+									{%endif%}
+								{% endfor %}
+								</td>
+								<td class='text-center'>{{ data.data_prevista|date:"d/m/y" }}</td>
+								<td class='text-center'>{{ data.data_solicitacao|date:"d/m/y H:i" }}</td>
+								<td>
+									<form class="" id="" method="submit">
+										{% if itemviagem == 0 %}
+										<button class="fas fa-dolly-flatbed btn btn-success" type="submit" role="button" value="null" onclick="acpedido()">
+											Atribuir Solic.
+										</button>
+										<input type="hidden" class="form-control" id="editar" name="editar"
+											value="true" placeholder="editar"
+											aria-label="editar" aria-describedby="basic-addon1">
+										{% else %}
+										<button class="fas fa-window-close btn btn-danger" type="submit" role="button" value="null" onclick="cpedido()">
+											Cancelar Solic.
+										</button>
+										<input type="hidden" class="form-control" id="editar" name="editar"
+											value="false" placeholder="editar"
+											aria-label="editar" aria-describedby="basic-addon1">
+										{% endif %}
+									</form>
+								</td>
+							</tr>
+						{% endfor %}
+					</tbody>
+				</table>
+			</div>
+			<div class="modal-footer">
+				<button class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+				<button class="btn btn-success btn-save">Salvar</button>
+			</div>
+		</div>
+	</div>
+</div>

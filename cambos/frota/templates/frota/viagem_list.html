@@ -2,6 +2,13 @@
 
 {% block css %}
 
+<style>
+	.solicitacao-row:hover {
+		cursor: pointer;
+		background-color: #ecf0f1;
+	}
+</style>
+
 {% endblock css %}
 
 {% block navigation %}
@@ -51,7 +58,10 @@
 							<th data-field="Data Saída" data-sortable="true" class='text-center'>Data Saída</th>																												
 							<th data-field="Destino" class='text-center'>Destino</th>																					
 							<th data-field="Motorista" data-sortable="true" class='text-center'>Motorista</th>														
-							<th data-field="Data Chegada" data-sortable="true" class='text-center'>Data Cheg.</th>														
+							<th data-field="Data Chegada" data-sortable="true" class='text-center'>Data Cheg.</th>
+							{%if veiculo.caminhao%}
+								<th class="text-center">Solicitações</th>	
+							{%endif%}												
 						</tr>
 					</thead>
 					<tbody>
@@ -91,7 +101,16 @@
 										<strong>{{data.data_final|date:"d/m/y"}}
 										{{data.hora_final}}</strong>							
 									{% endif %}	
-								</td>																																				
+								</td>
+								{%if veiculo.caminhao%}
+									<td class="text-center">
+										{% if data.pk and data.data_final == none %}
+											<button type="button" data-viagem-id="{{ data.pk }}" class="btn btn-primary btn-atribuir">
+												Atribuir
+											</button>
+										{% endif %}
+									</td>
+								{%endif%}
 						{%endfor%}
 					</tbody>					
 				</table>
@@ -123,7 +142,8 @@
 				<th data-field="Data Saída" data-formatter="dateFormat" data-sortable="true" class='text-center'>Data Saída</th>																												
 				<th data-field="Destino" class='text-center'>Destino</th>																					
 				<th data-field="Motorista" data-sortable="true" class='text-center'>Motorista</th>														
-				<th data-field="Data Chegada"  data-formatter="dateFormat" data-sortable="true" class='text-center'>Data Chegada</th>														
+				<th data-field="Data Chegada"  data-formatter="dateFormat" data-sortable="true" class='text-center'>Data Chegada</th>
+				<th class="text-center">Solicitações</th>														
 			</tr>
 		</thead>
 		<tbody>
@@ -139,7 +159,7 @@
 					</td>
 					<td class='text-center' >	
 						{% if data.data_inicial %}								
-						{{data.data_inicial|safe}}								
+							{{data.data_inicial|safe}}								
 						{% endif %}	
 					</td>								
 					<td class='text-center' >									
@@ -154,6 +174,13 @@
 					</td>				
 					<td class='text-center' >																					
 						{{data.data_final|safe}}																		
+					</td>
+					<td class="text-center">
+						{% if data.data_final == none %}
+							<a href="{% url 'viagem_solicitacao_list' viagem.pk %}" class="btn btn-primary" data-toggle="modal">
+								<i class="fa fa-plus"></i>Atribuir
+							</a>
+						{% endif %}
 					</td>																																				
 			{%endfor%}
 		</tbody>					
@@ -183,12 +210,13 @@ tr.onclick = function (e) {
 		var bb = b.replace('$', '')
 		return aa - bb
 		}
-  </script>
-  <script>
-	
+</script>
+
+<script>
+{% comment %} 	
 	$('#table').bootstrapTable({
 		onClickRow: function (item, $element) {return  window.location = $element.data('href');},
-	});
+	}); {% endcomment %}
 
 </script>
 

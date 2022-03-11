@@ -68,3 +68,58 @@ class Ativo(models.Model):
         managed = False
         db_table = 'souzacambos"."compras_produtos' 
 
+
+class SolicitacaoViagem(models.Model):
+    id = models.AutoField(db_column='id',primary_key=True)
+    endereco_id = models.IntegerField(db_column='endereco_id')
+    user_id = models.IntegerField(db_column='user_id')
+    compras_pedido_id = models.IntegerField(db_column='compras_pedido_id',null=True)
+    data_prevista = models.DateField(db_column='data_prevista')
+    tipo = models.CharField(db_column='tipo',max_length=1)
+    origem = models.CharField(db_column='origem',max_length=1)
+    situacao = models.CharField(db_column='situacao',max_length=1)
+    prioridade = models.CharField(db_column='prioridade',max_length=1)
+    peso = models.FloatField(db_column='peso')
+    data_solicitacao = models.DateTimeField(db_column='data_solicitacao')
+    data_atendimento = models.DateTimeField(db_column='data_atendimento',null=True)
+    data_finalizacao = models.DateTimeField(db_column='data_finalizacao',null=True)
+
+    def __str__(self):
+        return f'{self.id}'
+
+    class Meta:
+        managed = False
+        db_table = 'souzacambos"."viagem_solicitacoes'
+
+
+class UserCompras(models.Model):
+    id = models.AutoField(db_column='id',primary_key=True)
+    name = models.CharField(db_column='name',max_length=45)
+
+    def __str__(self):
+        return f'{self.id}'
+
+    class Meta:
+        managed = False
+        db_table = 'souzacambos"."users'
+
+
+class Enderecos(models.Model):
+    id = models.AutoField(db_column='id',primary_key=True)
+    compras_fornecedor_id = models.IntegerField(db_column='compras_fornecedor_id',null=True)
+    endereco = models.CharField(db_column='endereco',max_length=80)
+    bairro = models.CharField(db_column='bairro',max_length=45)
+    numero = models.CharField(db_column='numero',max_length=40)
+    cidade = models.CharField(db_column='cidade',max_length=45)
+    uf = models.CharField(db_column='uf',max_length=2)
+    cep = models.CharField(db_column='cep',max_length=8)
+    created_at = models.DateTimeField(db_column='created_at',null=True)
+    updated_at = models.DateTimeField(db_column='updated_at',null=True)
+
+    def __str__(self):
+        return f'{self.endereco}'
+
+    class Meta:
+        managed = False
+        db_table = 'souzacambos"."enderecos'
+

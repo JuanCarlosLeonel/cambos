@@ -1,11 +1,12 @@
 import math
+from pyexpat import model
 from statistics import mode
 from time import time
 from django import db
 from django.db import IntegrityError, models
 from django.db.models.constraints import CheckConstraint, UniqueConstraint
 from django.db.models import Q, F
-from core.models import Pessoa, Ativo, User
+from core.models import Pessoa, Ativo, User , SolicitacaoViagem
 from django_currentuser.db.models import CurrentUserField
 import datetime
 from django.core.exceptions import ValidationError
@@ -214,3 +215,18 @@ class Manutencao(models.Model):
     
     class Meta:        
         db_table = 'frota"."manutencao'
+
+
+class ItemViagem(models.Model):    
+    id = models.AutoField(primary_key=True)
+    viagem = models.ForeignKey(Viagem,on_delete=models.DO_NOTHING, db_constraint=False)     
+    viagem_solicitacao = models.ForeignKey(SolicitacaoViagem,on_delete=models.DO_NOTHING, db_constraint=False)
+
+    def __str__(self):
+        return f'{self.id}'
+
+    class Meta:
+        managed = False
+        db_table = 'souzacambos"."viagem_itens' 
+
+
