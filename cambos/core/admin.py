@@ -5,7 +5,8 @@ from .models import (
     Periodo,
     Bot,    
     SolicitacaoViagem,
-    Enderecos
+    Enderecos,
+    Users
 )
 
 
@@ -21,6 +22,7 @@ admin.site.register(Periodo)
 admin.site.register(Bot)
 admin.site.register(SolicitacaoViagem)
 admin.site.register(Enderecos)
+admin.site.register(Users)
 
 
 

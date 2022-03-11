@@ -1,0 +1,150 @@
+{% extends "cambos/base_frota.html" %}
+
+{% block css %}
+
+{% endblock css %}
+
+{% block navigation %}
+    <div class="row">
+        <ol class="breadcrumb">
+			<li><a href="{% url 'frota_index' %}">
+                <em class="fa fa-home"></em>
+            </a></li>
+            <li class="active"><a href="{% url 'veiculo_list' %}">Veículos</a></li>
+        </ol>
+    </div>
+	<div class="col-lg-12">
+		<h1 class="page-header">{{viagem}}<span class="text-muted small"></span></h1></h1>
+	</div>
+{% endblock navigation %}
+
+{% block content %}		
+
+
+{%if viagem.veiculo.caminhao%}
+	<table id="table"				
+		data-toolbar="#toolbar"
+		data-toggle="table"
+		data-show-refresh="false"
+		data-show-toggle="false"
+		data-show-columns="true"
+		data-search="true"
+		data-select-item-name="toolbar"
+		data-pagination="true"				 
+		data-sort-order="desc"
+		>
+		<thead>
+			<tr>
+				<th data-field="Situação" data-sortable="true" class='text-center'>Situação</th>								
+				<th data-field="Data Solicitação" data-formatter="dateFormat" data-sortable="true" class='text-center'>Data Solicitação</th>																												
+				<th data-field="Peso" class='text-center'>Peso</th>																					
+				<th data-field="Endereço" data-sortable="true" class='text-center'>Endereço</th>														
+				<th data-field="Prioridade" data-sortable="true" class='text-center'>Prioridade</th>	
+				<th data-field="Usuário" data-sortable="true" class='text-center'>Usuário</th>	
+				<th data-field="Pedido" data-sortable="true" class='text-center'>Pedido</th>												
+			</tr>
+		</thead>
+		<tbody>
+			{% for data in lista %}
+				<tr data-href="#"
+					class="trLink" >							
+					<td class='text-center' >	
+						{%if data.situacao == '1' %} 							
+							Aberta
+						{%elif data.situacao == '2' %} 						
+							Em andamento
+						{%elif data.situacao == '3' %} 						
+							Fechada
+						{%endif%}
+					</td>
+					<td class='text-center' >									
+						{{data.data_solicitacao|safe}}								
+					</td>								
+					<td class='text-center' >									
+						{{data.peso}}									
+					</td>								
+					<td class='text-center'>
+						{{data.endereco_id}}
+					</td>				
+					<td class='text-center' >																					
+						{%if data.prioridade == 'U' %} 							
+							Urgente
+						{%elif data.prioridade == 'N' %} 						
+							Normal
+						{%endif%}																		
+					</td>	
+					<td class='text-center' >																					
+						{{data.user_id}}																		
+					</td>		
+					<td class='text-center' >																					
+						{{data.compras_pedido_id}}																		
+					</td>																																	
+			{%endfor%}
+		</tbody>					
+	</table>
+{%endif%}
+	
+{%endblock content%}
+
+{% block script %}
+
+<script>	
+	var tr = document.getElementsByClassName('tr-id');
+tr.onclick = function (e) {
+  location.href = 'http://www.google.com';
+};
+</script>
+<script src="https://momentjs.com/downloads/moment.min.js"></script>
+<script>
+	function dateFormat(value, row, index) {
+		return moment(value).format('DD/MM/YYYY');
+	}	
+</script>
+
+<script>
+	function dateSorter(a, b) {
+		var aa = a.replace('$', '')
+		var bb = b.replace('$', '')
+		return aa - bb
+		}
+  </script>
+  <script>
+	
+	$('#table').bootstrapTable({
+		onClickRow: function (item, $element) {return  window.location = $element.data('href');},
+	});
+
+</script>
+
+{% comment %} <script>
+	document.addEventListener('DOMContentLoaded', function() {
+		$('div').unbind('click');
+		var calendarEl = document.getElementById('calendar');
+		var calendar = new FullCalendar.Calendar(calendarEl,{
+			locale : 'pt-br',
+			headerToolbar: {
+				left: 'prev,next today',
+				center: 'title',
+				right: 'dayGridMonth,timeGridWeek,timeGridDay',
+			},
+			businessHours: true, 
+			dayMaxEvents: true,
+			displayEventEnd: true,
+			events: [
+				{% for data in lista %}
+					{
+						url :  '{% url "viagem_update" data.pk %}',
+						title: '{{data.destino}}',
+						start: '{{data.data_inicial|date:"Y-m-d"}}T{{ data.hora_inicial|time:"H:i"}}',
+						end:   '{{data.data_final|date:"Y-m-d"}}T{{ data.hora_final|time:"H:i"}}',
+						color: '#257e4a',
+					},
+				{% endfor %}
+			]
+		});
+		calendar.render();
+		$('#calendar').fullCalendar('option', 'locale', 'pt-br');
+	});
+</script> {% endcomment %}
+	
+{% endblock script %}

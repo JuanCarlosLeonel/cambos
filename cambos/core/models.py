@@ -92,6 +92,11 @@ class SolicitacaoViagem(models.Model):
         db_table = 'souzacambos"."viagem_solicitacoes'
 
 
+class Users(models.Model):
+    id = models.AutoField(db_column='id',primary_key=True)
+    name = models.CharField(db_column='name',max_length=45)
+
+
 class Enderecos(models.Model):
     id = models.AutoField(db_column='id',primary_key=True)
     compras_fornecedor_id = models.IntegerField(db_column='compras_fornecedor_id',null=True)

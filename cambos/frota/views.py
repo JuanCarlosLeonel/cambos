@@ -4,6 +4,8 @@ from django.views.generic.edit import UpdateView, CreateView, DeleteView
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
 from django.views.generic.list import ListView
+
+from core.models import SolicitacaoViagem
 from .models import Abastecimento, Manutencao, Motorista, Viagem, Veiculo, FrotaPermissao
 from .form import ManutencaoForm, ViagemForm, AbastecimentoForm
 from django.http import HttpResponse, JsonResponse
@@ -256,6 +258,7 @@ class ViagemList(ListView):
         context = super().get_context_data(**kwargs)   
         pk = self.kwargs['pk']     
         lista_viagem = Viagem.objects.filter(veiculo = pk).order_by("-id")
+        lista_solicitacoes = SolicitacaoViagem.objects.all().order_by("-id")
         try:
             ultima = Viagem.objects.filter(veiculo=pk).latest('id')
             context['ultima']=ultima
@@ -266,7 +269,30 @@ class ViagemList(ListView):
         context['horaatual'] = datetime.datetime.now().time().strftime('%H:%M')
         context['veiculo']=veiculo
         context['lista']=lista_viagem
+        context['lista_solicitacoes']=lista_solicitacoes
         return context  
+
+
+# @method_decorator(login_required, name='dispatch')
+# class SolicitacoesList(ListView):
+#     model = SolicitacaoViagem
+#     template_name = 'frota/viagem_list.html'
+
+#     def get_context_data(self, **kwargs):
+#         context = super().get_context_data(**kwargs)   
+#         pk = self.kwargs['pk']     
+#         lista_solicitacoes = SolicitacaoViagem.objects.all().order_by("-id")
+#         # try:
+#         #     ultima = Viagem.objects.filter(veiculo=pk).latest('id')
+#         #     context['ultima']=ultima
+#         # except:                                                                            <a href="{% url 'viagem_list' viagem.pk %}">
+#         #     pass
+#         # viagem = Viagem.objects.get(id = pk)
+#         # context['dataatual'] = datetime.date.today()
+#         # context['horaatual'] = datetime.datetime.now().time().strftime('%H:%M')
+#         # context['viagem']=viagem
+#         context['lista_solicitacoes']=lista_solicitacoes
+#         return context  
 
 
 @method_decorator(login_required, name='dispatch')
