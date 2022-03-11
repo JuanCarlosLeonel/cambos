@@ -92,9 +92,16 @@ class SolicitacaoViagem(models.Model):
         db_table = 'souzacambos"."viagem_solicitacoes'
 
 
-class Users(models.Model):
+class UserCompras(models.Model):
     id = models.AutoField(db_column='id',primary_key=True)
     name = models.CharField(db_column='name',max_length=45)
+
+    def __str__(self):
+        return f'{self.id}'
+
+    class Meta:
+        managed = False
+        db_table = 'souzacambos"."users'
 
 
 class Enderecos(models.Model):
@@ -102,6 +109,7 @@ class Enderecos(models.Model):
     compras_fornecedor_id = models.IntegerField(db_column='compras_fornecedor_id',null=True)
     endereco = models.CharField(db_column='endereco',max_length=80)
     bairro = models.CharField(db_column='bairro',max_length=45)
+    numero = models.CharField(db_column='numero',max_length=40)
     cidade = models.CharField(db_column='cidade',max_length=45)
     uf = models.CharField(db_column='uf',max_length=2)
     cep = models.CharField(db_column='cep',max_length=8)

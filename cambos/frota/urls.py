@@ -32,7 +32,7 @@ from .views import(
     ManutencaoDelete,
     AbastecimentoListALL,
     ManutencaoListALL,
-    # SolicitacoesList,
+    SolicitacoesList,
 )
 
 urlpatterns = [
@@ -44,7 +44,7 @@ urlpatterns = [
     path('relatorio_abastecimentocaminhao', RelatorioAbastecimentoCaminhao.as_view(), name='relatorio_abastecimentocaminhao'),
     path('relatorio_index',  RelatorioList.as_view(), name='relatorio_index'),
     path('viagem_list/<str:pk>/',  ViagemList.as_view(), name='viagem_list'),
-    # path('viagem_solicitacoes_list/<str:pk>/',  SolicitacoesList.as_view(), name='viagem_solicitacoes_list'),
+    path('viagem_solicitacao_list/<str:pk>/',  SolicitacoesList.as_view(), name='viagem_solicitacao_list'),
     path('viagem_create/<str:pk>/', ViagemCreate.as_view(), name = 'viagem_create'),
     path('viagem_update/<str:pk>/', ViagemUpdate.as_view(), name='viagem_update'),    
     path('viagem_delete/<int:pk>/',ViagemDelete.as_view(), name='viagem_delete_cbv'),

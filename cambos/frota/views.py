@@ -1,3 +1,5 @@
+from unicodedata import name
+from urllib import request
 from django.shortcuts import render
 from django.views.generic.base import TemplateView
 from django.views.generic.edit import UpdateView, CreateView, DeleteView
@@ -5,9 +7,9 @@ from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
 from django.views.generic.list import ListView
 
-from core.models import SolicitacaoViagem
-from .models import Abastecimento, Manutencao, Motorista, Viagem, Veiculo, FrotaPermissao
-from .form import ManutencaoForm, ViagemForm, AbastecimentoForm
+from core.models import Enderecos, SolicitacaoViagem, UserCompras
+from .models import Abastecimento, ItemViagem, Manutencao, Motorista, Viagem, Veiculo, FrotaPermissao
+from .form import  ManutencaoForm, ViagemForm, AbastecimentoForm
 from django.http import HttpResponse, JsonResponse
 from django.db.models import Sum
 import datetime
@@ -250,49 +252,57 @@ class VeiculoList(ListView):
         return context
 
 @method_decorator(login_required, name='dispatch')
+class SolicitacoesList(ListView):
+    model = SolicitacaoViagem
+    template_name = 'frota/viagem_solicitacao_list.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)     
+        pk = self.kwargs['pk']
+        viagem = Viagem.objects.get(id = pk)
+        lista_solicitacoes = SolicitacaoViagem.objects.filter(situacao = '1').order_by("-id")
+        endereco = Enderecos.objects.all()
+        usercompras = UserCompras.objects.all()            
+        context['viagem']=viagem
+        context['user'] = usercompras
+        context['endereco'] = endereco
+        context['lista_solicitacoes']=lista_solicitacoes
+        context['dataatual'] = datetime.date.today()
+        return context
+
+@method_decorator(login_required, name='dispatch')
 class ViagemList(ListView):
     model = Viagem
     template_name = 'frota/viagem_list.html'
 
     def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)   
+        context = super().get_context_data(**kwargs) 
         pk = self.kwargs['pk']     
-        lista_viagem = Viagem.objects.filter(veiculo = pk).order_by("-id")
-        lista_solicitacoes = SolicitacaoViagem.objects.all().order_by("-id")
-        try:
-            ultima = Viagem.objects.filter(veiculo=pk).latest('id')
-            context['ultima']=ultima
-        except:
-            pass
         veiculo = Veiculo.objects.get(id = pk)
+        lista_viagem = Viagem.objects.filter(veiculo = pk).order_by("-id")
+        # lista_solicitacoes = SolicitacaoViagem.objects.filter(situacao = '1').order_by("-id")
+        # endereco = Enderecos.objects.all()
+        # usercompras = UserCompras.objects.all()
+        # itemviagem = ItemViagem.objects.filter(viagem=pk)
+        # print(len(itemviagem))
+        # itemv = len(itemviagem)
+        # edit = self.request.GET.get('editar')
+        # teste = self.request.GET.get('teste')
+        # if edit == 'true':
+        #     model = ItemViagem(viagem = pk, viagem_solicitacao =teste)
+        #     model.save()
+        # elif edit == 'false':
+        #     model = ItemViagem.objects.get(viagem = pk, viagem_solicitacao =teste)
+        #     model.delete()
+        # context['itemviagem'] = itemv
+        # context['user'] = usercompras
+        # context['endereco'] = endereco
         context['dataatual'] = datetime.date.today()
         context['horaatual'] = datetime.datetime.now().time().strftime('%H:%M')
         context['veiculo']=veiculo
         context['lista']=lista_viagem
-        context['lista_solicitacoes']=lista_solicitacoes
-        return context  
-
-
-# @method_decorator(login_required, name='dispatch')
-# class SolicitacoesList(ListView):
-#     model = SolicitacaoViagem
-#     template_name = 'frota/viagem_list.html'
-
-#     def get_context_data(self, **kwargs):
-#         context = super().get_context_data(**kwargs)   
-#         pk = self.kwargs['pk']     
-#         lista_solicitacoes = SolicitacaoViagem.objects.all().order_by("-id")
-#         # try:
-#         #     ultima = Viagem.objects.filter(veiculo=pk).latest('id')
-#         #     context['ultima']=ultima
-#         # except:                                                                            <a href="{% url 'viagem_list' viagem.pk %}">
-#         #     pass
-#         # viagem = Viagem.objects.get(id = pk)
-#         # context['dataatual'] = datetime.date.today()
-#         # context['horaatual'] = datetime.datetime.now().time().strftime('%H:%M')
-#         # context['viagem']=viagem
-#         context['lista_solicitacoes']=lista_solicitacoes
-#         return context  
+        # context['lista_solicitacoes']=lista_solicitacoes
+        return context
 
 
 @method_decorator(login_required, name='dispatch')
@@ -578,7 +588,6 @@ class ManutencaoCreate(CreateView):
         initial['veiculo'] = veiculo
         initial['data'] = datetime.date.today()
         return initial
-
     
 
 
