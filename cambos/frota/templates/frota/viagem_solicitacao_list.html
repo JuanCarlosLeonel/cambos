@@ -124,19 +124,19 @@
 						<td>
 							<form class="" id="" method="submit">
 								{% if itemviagem == 0 %}
-								<button class="fas fa-dolly-flatbed btn btn-success" type="submit" role="button" value="null" onclick="acpedido()">
-									Atribuir Solic.
-								</button>
-								<input type="hidden" class="form-control" id="editar" name="editar"
-									value="true" placeholder="editar"
-									aria-label="editar" aria-describedby="basic-addon1">
+									<button class="fas fa-dolly-flatbed btn btn-success" type="submit" role="button" value="null">
+										Acompanhar Pedido
+									</button>
+									<input type="hidden" class="form-control" id="editar" name="editar"
+										value="true" placeholder="editar"
+										aria-label="editar" aria-describedby="basic-addon1">
 								{% else %}
-								<button class="fas fa-window-close btn btn-danger" type="submit" role="button" value="null" onclick="cpedido()">
-									Cancelar Solic.
-								</button>
-								<input type="hidden" class="form-control" id="editar" name="editar"
-									value="false" placeholder="editar"
-									aria-label="editar" aria-describedby="basic-addon1">
+									<button class="fas fa-window-close btn btn-danger" type="submit" role="button" value="null">
+										Cancelar Acompanhamento
+									</button>
+									<input type="hidden" class="form-control" id="editar" name="editar"
+										value="false" placeholder="editar"
+										aria-label="editar" aria-describedby="basic-addon1">
 								{% endif %}
 							</form>
 						</td>

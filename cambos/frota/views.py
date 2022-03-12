@@ -258,23 +258,24 @@ class SolicitacoesList(ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs) 
-        pk = self.kwargs['pk']     
+        pk = self.kwargs['pk']  
+        vs = self.kwargs['pk']
         lista_solicitacoes = SolicitacaoViagem.objects.filter(situacao = '1').order_by("-id")
         endereco = Enderecos.objects.all()
         usercompras = UserCompras.objects.all()
-        viag = Viagem.objects.get(id = pk)
-        itemviagem = ItemViagem.objects.filter(viagem=pk)
-        # print(len(itemviagem))
-        # itemv = len(itemviagem)
-        # edit = self.request.GET.get('editar')
-        # teste = self.request.GET.get('teste')
-        # if edit == 'true':
-        #     model = ItemViagem(viagem = pk, viagem_solicitacao =teste)
-        #     model.save()
-        # elif edit == 'false':
-        #     model = ItemViagem.objects.get(viagem = pk, viagem_solicitacao =teste)
-        #     model.delete()
-        # context['itemviagem'] = itemv
+        viag = Viagem.objects.get(id = pk).pk
+        print(viag)
+        itemviagem = ItemViagem.objects.filter(viagem = viag, viagem_solicitacao = vs)
+        print(len(itemviagem))
+        itemv = len(itemviagem)
+        edit = self.request.GET.get('editar')
+        if edit == 'true':
+            model = ItemViagem(viagem = viag, viagem_solicitacao = vs)
+            model.save()
+        elif edit == 'false':
+            model = ItemViagem.objects.get(viagem = viag, viagem_solicitacao = vs)
+            model.delete()
+        context['itemviagem'] = itemv
         context['viag'] = viag
         context['user'] = usercompras
         context['endereco'] = endereco
@@ -291,28 +292,10 @@ class ViagemList(ListView):
         pk = self.kwargs['pk']     
         veiculo = Veiculo.objects.get(id = pk)
         lista_viagem = Viagem.objects.filter(veiculo = pk).order_by("-id")
-        # lista_solicitacoes = SolicitacaoViagem.objects.filter(situacao = '1').order_by("-id")
-        # endereco = Enderecos.objects.all()
-        # usercompras = UserCompras.objects.all()
-        # itemviagem = ItemViagem.objects.filter(viagem=pk)
-        # print(len(itemviagem))
-        # itemv = len(itemviagem)
-        # edit = self.request.GET.get('editar')
-        # teste = self.request.GET.get('teste')
-        # if edit == 'true':
-        #     model = ItemViagem(viagem = pk, viagem_solicitacao =teste)
-        #     model.save()
-        # elif edit == 'false':
-        #     model = ItemViagem.objects.get(viagem = pk, viagem_solicitacao =teste)
-        #     model.delete()
-        # context['itemviagem'] = itemv
-        # context['user'] = usercompras
-        # context['endereco'] = endereco
         context['dataatual'] = datetime.date.today()
         context['horaatual'] = datetime.datetime.now().time().strftime('%H:%M')
         context['veiculo']=veiculo
         context['lista']=lista_viagem
-        # context['lista_solicitacoes']=lista_solicitacoes
         return context
 
 
