@@ -257,17 +257,28 @@ class SolicitacoesList(ListView):
     template_name = 'frota/viagem_solicitacao_list.html'
 
     def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)     
-        pk = self.kwargs['pk']
-        viagem = Viagem.objects.get(id = pk)
+        context = super().get_context_data(**kwargs) 
+        pk = self.kwargs['pk']     
         lista_solicitacoes = SolicitacaoViagem.objects.filter(situacao = '1').order_by("-id")
         endereco = Enderecos.objects.all()
-        usercompras = UserCompras.objects.all()            
-        context['viagem']=viagem
+        usercompras = UserCompras.objects.all()
+        viag = Viagem.objects.get(id = pk)
+        itemviagem = ItemViagem.objects.filter(viagem=pk)
+        # print(len(itemviagem))
+        # itemv = len(itemviagem)
+        # edit = self.request.GET.get('editar')
+        # teste = self.request.GET.get('teste')
+        # if edit == 'true':
+        #     model = ItemViagem(viagem = pk, viagem_solicitacao =teste)
+        #     model.save()
+        # elif edit == 'false':
+        #     model = ItemViagem.objects.get(viagem = pk, viagem_solicitacao =teste)
+        #     model.delete()
+        # context['itemviagem'] = itemv
+        context['viag'] = viag
         context['user'] = usercompras
         context['endereco'] = endereco
         context['lista_solicitacoes']=lista_solicitacoes
-        context['dataatual'] = datetime.date.today()
         return context
 
 @method_decorator(login_required, name='dispatch')

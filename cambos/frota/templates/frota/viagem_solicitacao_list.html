@@ -1,133 +1,183 @@
-<div class="modal fade" id="modalSolicitacoes" tabindex="-1" role="dialog">
-	<div class="modal-dialog modal-lg" role="document">
-		<div class="modal-content">
-			<div class="modal-header">
-				<h4 class="modal-title">Solicitações</h4>
-			</div>
-			<div class="modal-body">
-				<h4>Viagem Selecionada</h4>
+{% extends "cambos/base_frota.html" %}
 
-				<p>
-					Destino: 
-					<strong id="viagem_destino"></strong>
-				</p>
+{% block css %}{% endblock css %}
 
-				<p>
-					Motorista: 
-					<strong id="viagem_motorista"></strong>
-				</p>
+{% block navigation %}
+    <div class="row">		
+        <ol class="breadcrumb ">
+            <li><a href="{% url 'frota_index' %}">
+                <em class="fa fa-home"></em>
+            </a></li>
+            <li class="active">menu</li>
+        </ol>	
+    </div><!--/.row-->
+	
+	<div class="row">
+        <div class="col-lg-12">
+			<h3 class="page-header"><span class="text-muted small"> <strong>{{viag.veiculo}}</strong> </span></h3>
+			<p>
+				Destino: 
+				<strong>{{viag.destino}}</strong>
+			</p>
+			<p>
+				Motorista: 
+				<strong>{{viag.motorista.nome}}</strong>
+			</p>
+        </div>
+    </div><!--/.row-->
+{% endblock navigation %}
 
-				<p>
-					Solicitações Selecionadas: 
-					<strong id="viagem_quantidade"></strong>
-				</p>
-
-				<table class="table table-bordered table-stripped">
-					<thead>
-						<tr>
-							<th class="text-center">Solicitante</th>
-							<th class="text-center">Prioridade</th>
-							<th class="text-center">Peso</th>
-							<th class="text-center">Endereço</th>
-							<th class="text-center">Bairro</th>
-							<th class="text-center">Número</th>
-							<th class="text-center">Cidade</th>
-							<th class="text-center">UF</th>
-							<th class="text-center">CEP</th>
-							<th data-field="Data Prevista"  data-formatter="dateFormat" data-sortable="true" class='text-center'>Data Prevista</th>
-							<th data-field="Data Solicitação"  data-formatter="dateFormat" data-sortable="true" class='text-center'>Data Solicitação</th>
-						</tr>
-					</thead>
-					<tbody>
-						{% for data in object_list %}
-							<tr class="solicitacao-row" data-solicitacao-id="{{ data.pk }}">
-								<td class='text-center'>
-									{% for u in user %}
-										{%if u.id == data.user_id%}
-											{{u.name}}
-										{%endif%}
-									{% endfor %}
-								</td>
-								<td class='text-center' >																					
-									{%if data.prioridade == 'U' %} 							
-										Urgente
-									{%elif data.prioridade == 'N' %} 						
-										Normal
-									{%endif%}																		
-								</td>
-								<td class='text-center'>{{ data.peso }}</td>
-								<td class='text-center'>
-									{% for e in endereco %}
-										{%if e.id == data.endereco_id%}
-											{{e.endereco}}
-										{%endif%}
-									{% endfor %}
-								</td>
-								<td class='text-center'>
-								{% for e in endereco %}
-									{%if e.id == data.endereco_id%}
-										{{e.bairro}}
-									{%endif%}
-								{% endfor %}
-								</td>
-								<td class='text-center'>
-								{% for e in endereco %}
-									{%if e.id == data.endereco_id%}
-										{{e.numero}}
-									{%endif%}
-								{% endfor %}
-								</td>
-								<td class='text-center'>
-								{% for e in endereco %}
-									{%if e.id == data.endereco_id%}
-										{{e.cidade}}
-									{%endif%}
-								{% endfor %}
-								</td>
-								<td class='text-center'>
-								{% for e in endereco %}
-									{%if e.id == data.endereco_id%}
-										{{e.uf}}
-									{%endif%}
-								{% endfor %}
-								</td>
-								<td class='text-center'>
-								{% for e in endereco %}
-									{%if e.id == data.endereco_id%}
-										{{e.cep}}
-									{%endif%}
-								{% endfor %}
-								</td>
-								<td class='text-center'>{{ data.data_prevista|date:"d/m/y" }}</td>
-								<td class='text-center'>{{ data.data_solicitacao|date:"d/m/y H:i" }}</td>
-								<td>
-									<form class="" id="" method="submit">
-										{% if itemviagem == 0 %}
-										<button class="fas fa-dolly-flatbed btn btn-success" type="submit" role="button" value="null" onclick="acpedido()">
-											Atribuir Solic.
-										</button>
-										<input type="hidden" class="form-control" id="editar" name="editar"
-											value="true" placeholder="editar"
-											aria-label="editar" aria-describedby="basic-addon1">
-										{% else %}
-										<button class="fas fa-window-close btn btn-danger" type="submit" role="button" value="null" onclick="cpedido()">
-											Cancelar Solic.
-										</button>
-										<input type="hidden" class="form-control" id="editar" name="editar"
-											value="false" placeholder="editar"
-											aria-label="editar" aria-describedby="basic-addon1">
-										{% endif %}
-									</form>
-								</td>
-							</tr>
+{% block content %}		
+<div class="col-12">	
+	<div class="panel panel-default">
+		<div class="panel-heading"> <strong class="">Lista de Solicitações Pendentes<strong class="text-success"></strong></strong></div>
+		<div class="panel-body">
+			<table id="table"				
+				data-toolbar="#toolbar"
+				data-toggle="table"
+				data-show-refresh="false"
+				data-show-toggle="false"
+				data-show-columns="true"
+				data-search="true"
+				data-select-item-name="toolbar"
+				data-pagination="true"				 
+				data-sort-order="desc"
+			 >
+				<thead>
+					<tr>
+						<th class="text-center">Solicitante</th>
+						<th class="text-center">Prioridade</th>
+						<th class="text-center">Peso</th>
+						<th class="text-center">Endereço</th>
+						<th class="text-center">Bairro</th>
+						<th class="text-center">Número</th>
+						<th class="text-center">Cidade</th>
+						<th class="text-center">UF</th>
+						<th class="text-center">CEP</th>
+						<th data-field="Data Prevista" class='text-center'>Data Prevista</th>
+						<th data-field="Data Solicitação"class='text-center'>Data Solicitação</th>
+					</tr>
+				</thead>
+				<tbody>
+					{% for data in lista_solicitacoes %}
+					<tr data-href="#"
+						class="trLink" >
+						<td class='text-center'>
+							{% for u in user %}
+								{%if u.id == data.user_id%}
+									{{u.name}}
+								{%endif%}
+							{% endfor %}
+						</td>
+						<td class='text-center' >																					
+							{%if data.prioridade == 'U' %} 							
+								Urgente
+							{%elif data.prioridade == 'N' %} 						
+								Normal
+							{%endif%}																		
+						</td>
+						<td class='text-center'>{{ data.peso }}</td>
+						<td class='text-center'>
+							{% for e in endereco %}
+								{%if e.id == data.endereco_id%}
+									{{e.endereco}}
+								{%endif%}
+							{% endfor %}
+						</td>
+						<td class='text-center'>
+						{% for e in endereco %}
+							{%if e.id == data.endereco_id%}
+								{{e.bairro}}
+							{%endif%}
 						{% endfor %}
-					</tbody>
-				</table>
-			</div>
-			<div class="modal-footer">
-				<button class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
-				<button class="btn btn-success btn-save">Salvar</button>
-			</div>
+						</td>
+						<td class='text-center'>
+						{% for e in endereco %}
+							{%if e.id == data.endereco_id%}
+								{{e.numero}}
+							{%endif%}
+						{% endfor %}
+						</td>
+						<td class='text-center'>
+						{% for e in endereco %}
+							{%if e.id == data.endereco_id%}
+								{{e.cidade}}
+							{%endif%}
+						{% endfor %}
+						</td>
+						<td class='text-center'>
+						{% for e in endereco %}
+							{%if e.id == data.endereco_id%}
+								{{e.uf}}
+							{%endif%}
+						{% endfor %}
+						</td>
+						<td class='text-center'>
+						{% for e in endereco %}
+							{%if e.id == data.endereco_id%}
+								{{e.cep}}
+							{%endif%}
+						{% endfor %}
+						</td>
+						<td class='text-center'>{{ data.data_prevista|date:"d/m/y" }}</td>
+						<td class='text-center'>{{ data.data_solicitacao|date:"d/m/y H:i" }}</td>
+						<td>
+							<form class="" id="" method="submit">
+								{% if itemviagem == 0 %}
+								<button class="fas fa-dolly-flatbed btn btn-success" type="submit" role="button" value="null" onclick="acpedido()">
+									Atribuir Solic.
+								</button>
+								<input type="hidden" class="form-control" id="editar" name="editar"
+									value="true" placeholder="editar"
+									aria-label="editar" aria-describedby="basic-addon1">
+								{% else %}
+								<button class="fas fa-window-close btn btn-danger" type="submit" role="button" value="null" onclick="cpedido()">
+									Cancelar Solic.
+								</button>
+								<input type="hidden" class="form-control" id="editar" name="editar"
+									value="false" placeholder="editar"
+									aria-label="editar" aria-describedby="basic-addon1">
+								{% endif %}
+							</form>
+						</td>
+					{% endfor %}
+				</tbody>
+			</table>
 		</div>
 	</div>
 </div>
+{%endblock content%}
+
+
+{% block script %}
+
+<script>	
+	var tr = document.getElementsByClassName('tr-id');
+tr.onclick = function (e) {
+  location.href = 'http://www.google.com';
+};
+</script>
+<script src="https://momentjs.com/downloads/moment.min.js"></script>
+<script>
+	function dateFormat(value, row, index) {
+		return moment(value).format('DD/MM/YYYY');
+	}	
+</script>
+
+<script>
+	function dateSorter(a, b) {
+		var aa = a.replace('$', '')
+		var bb = b.replace('$', '')
+		return aa - bb
+		}
+  </script>
+  <script>
+	
+	$('#table').bootstrapTable({
+		onClickRow: function (item, $element) {return  window.location = $element.data('href');},
+	});
+
+</script>
+	
+{% endblock script %}
+

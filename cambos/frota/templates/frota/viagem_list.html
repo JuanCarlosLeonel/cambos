@@ -2,13 +2,6 @@
 
 {% block css %}
 
-<style>
-	.solicitacao-row:hover {
-		cursor: pointer;
-		background-color: #ecf0f1;
-	}
-</style>
-
 {% endblock css %}
 
 {% block navigation %}
@@ -102,15 +95,6 @@
 										{{data.hora_final}}</strong>							
 									{% endif %}	
 								</td>
-								{%if veiculo.caminhao%}
-									<td class="text-center">
-										{% if data.pk and data.data_final == none %}
-											<button type="button" data-viagem-id="{{ data.pk }}" class="btn btn-primary btn-atribuir">
-												Atribuir
-											</button>
-										{% endif %}
-									</td>
-								{%endif%}
 						{%endfor%}
 					</tbody>					
 				</table>
@@ -177,7 +161,7 @@
 					</td>
 					<td class="text-center">
 						{% if data.data_final == none %}
-							<a href="{% url 'viagem_solicitacao_list' viagem.pk %}" class="btn btn-primary" data-toggle="modal">
+							<a href="{% url 'viagem_solicitacao_list' data.pk %}" class="btn btn-primary">
 								<i class="fa fa-plus"></i>Atribuir
 							</a>
 						{% endif %}
@@ -213,10 +197,10 @@ tr.onclick = function (e) {
 </script>
 
 <script>
-{% comment %} 	
-	$('#table').bootstrapTable({
-		onClickRow: function (item, $element) {return  window.location = $element.data('href');},
-	}); {% endcomment %}
+	
+$('#table').bootstrapTable({
+	onClickRow: function (item, $element) {return  window.location = $element.data('href');},
+});
 
 </script>
 
