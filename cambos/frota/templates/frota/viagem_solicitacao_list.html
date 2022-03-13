@@ -31,7 +31,7 @@
 {% block content %}		
 <div class="col-12">	
 	<div class="panel panel-default">
-		<div class="panel-heading"> <strong class="">Lista de Solicitações Pendentes<strong class="text-success"></strong></strong></div>
+		<div class="panel-heading"> <strong class="">Lista de Solicitações para Viagem<strong class="text-success"></strong></strong></div>
 		<div class="panel-body">
 			<table id="table"				
 				data-toolbar="#toolbar"
@@ -123,23 +123,23 @@
 						<td class='text-center'>{{ data.data_prevista|date:"d/m/y" }}</td>
 						<td class='text-center'>{{ data.data_solicitacao|date:"d/m/y H:i" }}</td>
 						<td>
-							<form class="" id="" method="submit">
-								{% if itemviagem == 0 %}
-									<button class="fas fa-dolly-flatbed btn btn-success" type="submit" role="button" value="null">
-										Acompanhar Pedido
-									</button>
-									<input type="hidden" class="form-control" id="editar" name="editar"
-										value="true" placeholder="editar"
-										aria-label="editar" aria-describedby="basic-addon1">
-								{% else %}
-									<button class="fas fa-window-close btn btn-danger" type="submit" role="button" value="null">
-										Cancelar Acompanhamento
-									</button>
-									<input type="hidden" class="form-control" id="editar" name="editar"
-										value="false" placeholder="editar"
-										aria-label="editar" aria-describedby="basic-addon1">
-								{% endif %}
-							</form>
+						<form class="" id="" method="submit">
+							{% if itemviagem == 0 %}
+								<button class="fas fa-dolly-flatbed btn btn-success" type="submit" role="button" value="null">
+									Atribuir Solicitação
+								</button>
+								<input type="hidden" class="form-control" id="editar" name="editar"
+									value="true" placeholder="editar"
+									aria-label="editar" aria-describedby="basic-addon1">
+							{% else %}
+								<button class="fas fa-window-close btn btn-danger" type="submit" role="button" value="null">
+									Cancelar Solicitação
+								</button>
+								<input type="hidden" class="form-control" id="editar" name="editar"
+									value="false" placeholder="editar"
+									aria-label="editar" aria-describedby="basic-addon1">
+							{% endif %}
+						</form>
 						</td>
 					{% endfor %}
 				</tbody>

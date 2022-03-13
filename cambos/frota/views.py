@@ -259,21 +259,21 @@ class SolicitacoesList(ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs) 
         pk = self.kwargs['pk']  
-        vs = self.kwargs['pk']
+        solicitacao = 0
         lista_solicitacoes = SolicitacaoViagem.objects.filter(situacao = '1').order_by("-id")
         endereco = Enderecos.objects.all()
         usercompras = UserCompras.objects.all()
         viag = Viagem.objects.get(id = pk)
-        print(viag.pk)
-        itemviagem = ItemViagem.objects.filter(viagem = viag.pk, viagem_solicitacao = vs)
+        print(pk)
+        itemviagem = ItemViagem.objects.filter(viagem = viag, viagem_solicitacao = lista_solicitacoes[0])
         print(len(itemviagem))
         itemv = len(itemviagem)
         edit = self.request.GET.get('editar')
         if edit == 'true':
-            model = ItemViagem(viagem = viag.pk, viagem_solicitacao = vs)
+            model = ItemViagem(viagem = viag, viagem_solicitacao = lista_solicitacoes[0])
             model.save()
         elif edit == 'false':
-            model = ItemViagem.objects.get(viagem = viag.pk, viagem_solicitacao = vs)
+            model = ItemViagem.objects.get(viagem = viag, viagem_solicitacao__in=lista_solicitacoes[0])
             model.delete()
         context['itemviagem'] = itemv
         context['viag'] = viag
