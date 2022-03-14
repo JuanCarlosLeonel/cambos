@@ -227,6 +227,6 @@ class ItemViagem(models.Model):
 
     class Meta:
         managed = False
-        db_table = 'souzacambos"."viagem_itens' 
+        db_table = 'frota"."viagem_itens' 
 
 

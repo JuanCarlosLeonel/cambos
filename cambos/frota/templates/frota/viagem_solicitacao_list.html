@@ -8,21 +8,28 @@
             <li><a href="{% url 'frota_index' %}">
                 <em class="fa fa-home"></em>
             </a></li>
-            <li class="active">menu</li>
+            <li class="active"><a href="javascript:void(0)" onClick="history.go(-1); return false;">Página anterior</a></li>
         </ol>	
     </div><!--/.row-->
 	
 	<div class="row">
         <div class="col-lg-12">
-			<h4>Viagem Selecionada</h4>
-			<h3 class="page-header"><span class="text-muted small"> <strong>{{viag.veiculo}}</strong> </span></h3>
+			<h4><b>Viagem Selecionada:</b></h4>
+			<p>
+				Veículo: 
+				<strong>{{viag.veiculo}}</strong>
+			</p>
 			<p>
 				Destino: 
 				<strong>{{viag.destino}}</strong>
 			</p>
 			<p>
 				Motorista: 
-				<strong>{{viag.motorista.nome}}</strong>
+				<strong>{{viag.motorista.nome}} / {{viag.motorista2.nome}}</strong>
+			</p>
+			<p>
+				Data Saída: 
+				<strong>{{viag.data_inicial|date:"d/m/Y"}} </strong>
 			</p>
         </div>
     </div><!--/.row-->
@@ -31,7 +38,7 @@
 {% block content %}		
 <div class="col-12">	
 	<div class="panel panel-default">
-		<div class="panel-heading"> <strong class="">Lista de Solicitações para Viagem<strong class="text-success"></strong></strong></div>
+		<div class="panel-heading"> <strong class="">Clique em Atribuir Solicitação para inclui-la na viagem selecionada.<strong class="text-success"></strong></strong></div>
 		<div class="panel-body">
 			<table id="table"				
 				data-toolbar="#toolbar"
@@ -49,19 +56,20 @@
 						<th class="text-center">Solicitante</th>
 						<th class="text-center">Prioridade</th>
 						<th class="text-center">Peso</th>
-						<th class="text-center">Endereço</th>
-						<th class="text-center">Bairro</th>
+						<th class="text-center">Rua</th>
 						<th class="text-center">Número</th>
+						<th class="text-center">Bairro</th>
 						<th class="text-center">Cidade</th>
 						<th class="text-center">UF</th>
 						<th class="text-center">CEP</th>
 						<th data-field="Data Prevista" class='text-center'>Data Prevista</th>
 						<th data-field="Data Solicitação"class='text-center'>Data Solicitação</th>
+						<th class='text-center'>-</th>
 					</tr>
 				</thead>
 				<tbody>
 					{% for data in lista_solicitacoes %}
-					<tr data-href="#"
+					<tr data-href="{{data.pk}}"
 						class="trLink" >
 						<td class='text-center'>
 							{% for u in user %}
@@ -88,14 +96,14 @@
 						<td class='text-center'>
 						{% for e in endereco %}
 							{%if e.id == data.endereco_id%}
-								{{e.bairro}}
+								{{e.numero}}
 							{%endif%}
 						{% endfor %}
 						</td>
 						<td class='text-center'>
 						{% for e in endereco %}
 							{%if e.id == data.endereco_id%}
-								{{e.numero}}
+								{{e.bairro}}
 							{%endif%}
 						{% endfor %}
 						</td>
@@ -122,24 +130,27 @@
 						</td>
 						<td class='text-center'>{{ data.data_prevista|date:"d/m/y" }}</td>
 						<td class='text-center'>{{ data.data_solicitacao|date:"d/m/y H:i" }}</td>
-						<td>
-						<form class="" id="" method="submit">
-							{% if itemviagem == 0 %}
-								<button class="fas fa-dolly-flatbed btn btn-success" type="submit" role="button" value="null">
-									Atribuir Solicitação
-								</button>
-								<input type="hidden" class="form-control" id="editar" name="editar"
-									value="true" placeholder="editar"
-									aria-label="editar" aria-describedby="basic-addon1">
-							{% else %}
-								<button class="fas fa-window-close btn btn-danger" type="submit" role="button" value="null">
-									Cancelar Solicitação
-								</button>
-								<input type="hidden" class="form-control" id="editar" name="editar"
-									value="false" placeholder="editar"
-									aria-label="editar" aria-describedby="basic-addon1">
-							{% endif %}
-						</form>
+						<td class='text-center'>
+							<form class="" id="" method="submit">
+								{% if itemviagem == 0 %}
+									<button class="fas fa-dolly-flatbed btn btn-primary" type="submit" role="button" value="null">
+										Atribuir Solicitação
+									</button>
+									<input type="hidden" class="form-control" id="editar" name="editar"
+										value="true" placeholder="editar"
+										aria-label="editar" aria-describedby="basic-addon1">
+
+									<input type="hidden" id="solicitacao_id" name="solicitacao_id" value="{{ data.pk }}" />
+								{% else %}
+									<button class="fas fa-window-close btn btn-danger" type="submit" role="button" value="null">
+										Cancelar Solicitação
+									</button>
+									<input type="hidden" class="form-control" id="editar" name="editar"
+										value="false" placeholder="editar"
+										aria-label="editar" aria-describedby="basic-addon1">
+									<input type="hidden" id="solicitacao_id" name="solicitacao_id" value="{{ data.pk }}" />
+								{% endif %}
+							</form>
 						</td>
 					{% endfor %}
 				</tbody>

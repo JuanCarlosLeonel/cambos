@@ -89,7 +89,7 @@ class SolicitacaoViagem(models.Model):
 
     class Meta:
         managed = False
-        db_table = 'souzacambos"."viagem_solicitacoes'
+        db_table = 'frota"."viagem_solicitacoes'
 
 
 class UserCompras(models.Model):
@@ -121,5 +121,5 @@ class Enderecos(models.Model):
 
     class Meta:
         managed = False
-        db_table = 'souzacambos"."enderecos'
+        db_table = 'frota"."enderecos'
 

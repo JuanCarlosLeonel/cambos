@@ -1,6 +1,7 @@
+from turtle import position
 from unicodedata import name
 from urllib import request
-from django.shortcuts import render
+from django.shortcuts import redirect, render
 from django.views.generic.base import TemplateView
 from django.views.generic.edit import UpdateView, CreateView, DeleteView
 from django.utils.decorators import method_decorator
@@ -252,35 +253,41 @@ class VeiculoList(ListView):
         return context
 
 @method_decorator(login_required, name='dispatch')
-class SolicitacoesList(ListView):
-    model = SolicitacaoViagem
+class SolicitacoesList(TemplateView):
     template_name = 'frota/viagem_solicitacao_list.html'
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs) 
+    def get(self, request, *args, **kwargs):
+        context = super().get_context_data(**kwargs)
         pk = self.kwargs['pk']  
-        solicitacao = 0
         lista_solicitacoes = SolicitacaoViagem.objects.filter(situacao = '1').order_by("-id")
         endereco = Enderecos.objects.all()
         usercompras = UserCompras.objects.all()
         viag = Viagem.objects.get(id = pk)
-        print(pk)
-        itemviagem = ItemViagem.objects.filter(viagem = viag, viagem_solicitacao = lista_solicitacoes[0])
-        print(len(itemviagem))
+        itemviagem = ItemViagem.objects.filter(viagem = viag, viagem_solicitacao__in = lista_solicitacoes)
         itemv = len(itemviagem)
-        edit = self.request.GET.get('editar')
+        edit = self.request.GET.get('editar') 
+        value = self.request.GET.get('solicitacao_id')
+        print(value)
+        # for index, item in enumerate(lista_solicitacoes):
+        #     if item.pk == value:
+        #         # print('deu certo')
+        #         position = index
+        
         if edit == 'true':
-            model = ItemViagem(viagem = viag, viagem_solicitacao = lista_solicitacoes[0])
+            model = ItemViagem(viagem = viag, viagem_solicitacao = lista_solicitacoes[int(value)])
             model.save()
         elif edit == 'false':
-            model = ItemViagem.objects.get(viagem = viag, viagem_solicitacao__in=lista_solicitacoes[0])
+            model = ItemViagem.objects.get(viagem = viag, viagem_solicitacao = lista_solicitacoes[int(value)])
             model.delete()
         context['itemviagem'] = itemv
         context['viag'] = viag
         context['user'] = usercompras
         context['endereco'] = endereco
         context['lista_solicitacoes']=lista_solicitacoes
-        return context
+        if not edit is None :  
+            return redirect(f'/frota/viagem_solicitacao_list/{viag.id}')
+        else:
+            return render(request, 'frota/viagem_solicitacao_list.html', context)
 
 @method_decorator(login_required, name='dispatch')
 class ViagemList(ListView):
