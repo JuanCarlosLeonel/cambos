@@ -1077,7 +1077,7 @@ li.disabled > a:focus {
 
   color:#30CD9E;
   font-weight: bold;
-  font-size: 30px;
+  font-size: 20px;
 
 }
 
@@ -1092,3 +1092,5 @@ div#identificado2 {
 div#identificado2:hover {
   background-color: #fcfdfd;
 }
+
+

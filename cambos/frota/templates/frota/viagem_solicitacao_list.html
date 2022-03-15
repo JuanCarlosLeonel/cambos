@@ -8,13 +8,14 @@
             <li><a href="{% url 'frota_index' %}">
                 <em class="fa fa-home"></em>
             </a></li>
-            <li class="active"><a href="javascript:void(0)" onClick="history.go(-1); return false;">Página anterior</a></li>
+            <li class="active"><a href="{% url 'veiculo_list' %}">Veículos</a></li>
+			<li class="active"><a href="{% url 'viagem_list' viag.veiculo.pk %}">Lista de Viagens</a></li>
         </ol>	
     </div><!--/.row-->
 	
 	<div class="row">
         <div class="col-lg-12">
-			<h4><b>Viagem Selecionada:</b></h4>
+			<h4><b>Viagem :</b></h4>
 			<p>
 				Veículo: 
 				<strong>{{viag.veiculo}}</strong>
@@ -38,7 +39,7 @@
 {% block content %}		
 <div class="col-12">	
 	<div class="panel panel-default">
-		<div class="panel-heading"> <strong class="">Clique em Atribuir Solicitação para inclui-la na viagem selecionada.<strong class="text-success"></strong></strong></div>
+		<div class="modal-title titulo_media" id="exampleModalLabel"><strong>Clique em Atribuir Solicitação para inclui-la na viagem selecionada.</strong></div>
 		<div class="panel-body">
 			<table id="table"				
 				data-toolbar="#toolbar"
