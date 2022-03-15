@@ -1,7 +1,5 @@
-from turtle import position
-from unicodedata import name
 from urllib import request
-from django.shortcuts import redirect, render
+from django.shortcuts import render, redirect
 from django.views.generic.base import TemplateView
 from django.views.generic.edit import UpdateView, CreateView, DeleteView
 from django.utils.decorators import method_decorator
@@ -263,23 +261,18 @@ class SolicitacoesList(TemplateView):
         endereco = Enderecos.objects.all()
         usercompras = UserCompras.objects.all()
         viag = Viagem.objects.get(id = pk)
-        itemviagem = ItemViagem.objects.filter(viagem = viag, viagem_solicitacao__in = lista_solicitacoes)
-        itemv = len(itemviagem)
-        edit = self.request.GET.get('editar') 
+        edit = self.request.GET.get('editar')
         value = self.request.GET.get('solicitacao_id')
-        print(value)
-        # for index, item in enumerate(lista_solicitacoes):
-        #     if item.pk == value:
-        #         # print('deu certo')
-        #         position = index
-        
+        itemviagem = ItemViagem.objects.filter(viagem = viag)
+        itemv = len(itemviagem)
         if edit == 'true':
-            model = ItemViagem(viagem = viag, viagem_solicitacao = lista_solicitacoes[int(value)])
+            model = ItemViagem(viagem = viag, viagem_solicitacao = SolicitacaoViagem.objects.get(pk=value))
             model.save()
         elif edit == 'false':
-            model = ItemViagem.objects.get(viagem = viag, viagem_solicitacao = lista_solicitacoes[int(value)])
+            model = ItemViagem.objects.get(viagem = viag, viagem_solicitacao = SolicitacaoViagem.objects.get(pk=value))
             model.delete()
-        context['itemviagem'] = itemv
+        context['itemviagem'] = itemviagem
+        context['itemv'] = itemv
         context['viag'] = viag
         context['user'] = usercompras
         context['endereco'] = endereco
