@@ -69,90 +69,182 @@
 				</thead>
 				<tbody>
 					{% for data in lista_solicitacoes %}
-					<tr data-href="{{data.pk}}"
-						class="trLink" >
-						<td class='text-center'>
-							{% for u in user %}
-								{%if u.id == data.user_id%}
-									{{u.name}}
-								{%endif%}
-							{% endfor %}
-						</td>
-						<td class='text-center' >																					
-							{%if data.prioridade == 'U' %} 							
-								Urgente
-							{%elif data.prioridade == 'N' %} 						
-								Normal
-							{%endif%}																		
-						</td>
-						<td class='text-center'>{{ data.peso }}</td>
-						<td class='text-center'>
-							{% for e in endereco %}
-								{%if e.id == data.endereco_id%}
-									{{e.endereco}}
-								{%endif%}
-							{% endfor %}
-						</td>
-						<td class='text-center'>
-						{% for e in endereco %}
-							{%if e.id == data.endereco_id%}
-								{{e.numero}}
-							{%endif%}
-						{% endfor %}
-						</td>
-						<td class='text-center'>
-						{% for e in endereco %}
-							{%if e.id == data.endereco_id%}
-								{{e.bairro}}
-							{%endif%}
-						{% endfor %}
-						</td>
-						<td class='text-center'>
-						{% for e in endereco %}
-							{%if e.id == data.endereco_id%}
-								{{e.cidade}}
-							{%endif%}
-						{% endfor %}
-						</td>
-						<td class='text-center'>
-						{% for e in endereco %}
-							{%if e.id == data.endereco_id%}
-								{{e.uf}}
-							{%endif%}
-						{% endfor %}
-						</td>
-						<td class='text-center'>
-						{% for e in endereco %}
-							{%if e.id == data.endereco_id%}
-								{{e.cep}}
-							{%endif%}
-						{% endfor %}
-						</td>
-						<td class='text-center'>{{ data.data_prevista|date:"d/m/y" }}</td>
-						<td class='text-center'>{{ data.data_solicitacao|date:"d/m/y H:i" }}</td>
-						<td class='text-center'>
-							<form class="" id="" method="submit">
-								{% if data.has_item == True %}
-								<button class="fas fa-dolly-flatbed btn btn-danger" type="submit" role="button" value="null">
-									Cancelar Solicitação
-								</button>
-								<input type="hidden" class="form-control" id="editar" name="editar"
-									value="false" placeholder="editar"
-									aria-label="editar" aria-describedby="basic-addon1">
+						{% for item in itemviagem %}
+							{% if item.viagem_solicitacao == data or data.situacao == '1' %}
+								<tr data-href="{{data.pk}}"
+									class="trLink" >
+									<td class='text-center'>
+										{% for u in user %}
+											{%if u.id == data.user_id%}
+												{{u.name}}
+											{%endif%}
+										{% endfor %}
+									</td>
+									<td class='text-center' >																					
+										{%if data.prioridade == 'U' %} 							
+											Urgente
+										{%elif data.prioridade == 'N' %} 						
+											Normal
+										{%endif%}																		
+									</td>
+									<td class='text-center'>{{ data.peso }}</td>
+									<td class='text-center'>
+										{% for e in endereco %}
+											{%if e.id == data.endereco_id%}
+												{{e.endereco}}
+											{%endif%}
+										{% endfor %}
+									</td>
+									<td class='text-center'>
+									{% for e in endereco %}
+										{%if e.id == data.endereco_id%}
+											{{e.numero}}
+										{%endif%}
+									{% endfor %}
+									</td>
+									<td class='text-center'>
+									{% for e in endereco %}
+										{%if e.id == data.endereco_id%}
+											{{e.bairro}}
+										{%endif%}
+									{% endfor %}
+									</td>
+									<td class='text-center'>
+									{% for e in endereco %}
+										{%if e.id == data.endereco_id%}
+											{{e.cidade}}
+										{%endif%}
+									{% endfor %}
+									</td>
+									<td class='text-center'>
+									{% for e in endereco %}
+										{%if e.id == data.endereco_id%}
+											{{e.uf}}
+										{%endif%}
+									{% endfor %}
+									</td>
+									<td class='text-center'>
+									{% for e in endereco %}
+										{%if e.id == data.endereco_id%}
+											{{e.cep}}
+										{%endif%}
+									{% endfor %}
+									</td>
+									<td class='text-center'>{{ data.data_prevista|date:"d/m/y" }}</td>
+									<td class='text-center'>{{ data.data_solicitacao|date:"d/m/y H:i" }}</td>
+									<td class='text-center'>
+										<form class="" id="" method="submit">
+											{% if data.has_item == True %}
+											<button class="fas fa-dolly-flatbed btn btn-danger" type="submit" role="button" value="null">
+												Cancelar Solicitação
+											</button>
+											<input type="hidden" class="form-control" id="editar" name="editar"
+												value="false" placeholder="editar"
+												aria-label="editar" aria-describedby="basic-addon1">
 
-								<input type="hidden" id="solicitacao_id" name="solicitacao_id" value="{{ data.pk }}" placeholder="solicitacao_id" aria-label="solicitacao_id"/>
-								{% else %}
-								<button class="fas fa-dolly-flatbed btn btn-primary" type="submit" role="button" value="null">
-									Atribuir Solicitação
-								</button>
-								<input type="hidden" class="form-control" id="editar" name="editar"
-									value="true" placeholder="editar"
-									aria-label="editar" aria-describedby="basic-addon1">
+											<input type="hidden" id="solicitacao_id" name="solicitacao_id" value="{{ data.pk }}" placeholder="solicitacao_id" aria-label="solicitacao_id"/>
+											{% else %}
+											<button class="fas fa-dolly-flatbed btn btn-primary" type="submit" role="button" value="null">
+												Atribuir Solicitação
+											</button>
+											<input type="hidden" class="form-control" id="editar" name="editar"
+												value="true" placeholder="editar"
+												aria-label="editar" aria-describedby="basic-addon1">
 
-								<input type="hidden" id="solicitacao_id" name="solicitacao_id" value="{{ data.pk }}" placeholder="solicitacao_id" aria-label="solicitacao_id"/>
-								{% endif %}
-							</form>
-						</td>
+											<input type="hidden" id="solicitacao_id" name="solicitacao_id" value="{{ data.pk }}" placeholder="solicitacao_id" aria-label="solicitacao_id"/>
+											{% endif %}
+										</form>
+									</td>
+							{% endif %}
+						{%endfor%}
+						{% if itemv == 0 %}
+							{% if data.situacao == '1' %}
+								<tr data-href="{{data.pk}}"
+								class="trLink" >
+								<td class='text-center'>
+									{% for u in user %}
+										{%if u.id == data.user_id%}
+											{{u.name}}
+										{%endif%}
+									{% endfor %}
+								</td>
+								<td class='text-center' >																					
+									{%if data.prioridade == 'U' %} 							
+										Urgente
+									{%elif data.prioridade == 'N' %} 						
+										Normal
+									{%endif%}																		
+								</td>
+								<td class='text-center'>{{ data.peso }}</td>
+								<td class='text-center'>
+									{% for e in endereco %}
+										{%if e.id == data.endereco_id%}
+											{{e.endereco}}
+										{%endif%}
+									{% endfor %}
+								</td>
+								<td class='text-center'>
+								{% for e in endereco %}
+									{%if e.id == data.endereco_id%}
+										{{e.numero}}
+									{%endif%}
+								{% endfor %}
+								</td>
+								<td class='text-center'>
+								{% for e in endereco %}
+									{%if e.id == data.endereco_id%}
+										{{e.bairro}}
+									{%endif%}
+								{% endfor %}
+								</td>
+								<td class='text-center'>
+								{% for e in endereco %}
+									{%if e.id == data.endereco_id%}
+										{{e.cidade}}
+									{%endif%}
+								{% endfor %}
+								</td>
+								<td class='text-center'>
+								{% for e in endereco %}
+									{%if e.id == data.endereco_id%}
+										{{e.uf}}
+									{%endif%}
+								{% endfor %}
+								</td>
+								<td class='text-center'>
+								{% for e in endereco %}
+									{%if e.id == data.endereco_id%}
+										{{e.cep}}
+									{%endif%}
+								{% endfor %}
+								</td>
+								<td class='text-center'>{{ data.data_prevista|date:"d/m/y" }}</td>
+								<td class='text-center'>{{ data.data_solicitacao|date:"d/m/y H:i" }}</td>
+								<td class='text-center'>
+									<form class="" id="" method="submit">
+										{% if data.has_item == True %}
+										<button class="fas fa-dolly-flatbed btn btn-danger" type="submit" role="button" value="null">
+											Cancelar Solicitação
+										</button>
+										<input type="hidden" class="form-control" id="editar" name="editar"
+											value="false" placeholder="editar"
+											aria-label="editar" aria-describedby="basic-addon1">
+
+										<input type="hidden" id="solicitacao_id" name="solicitacao_id" value="{{ data.pk }}" placeholder="solicitacao_id" aria-label="solicitacao_id"/>
+										{% else %}
+										<button class="fas fa-dolly-flatbed btn btn-primary" type="submit" role="button" value="null">
+											Atribuir Solicitação
+										</button>
+										<input type="hidden" class="form-control" id="editar" name="editar"
+											value="true" placeholder="editar"
+											aria-label="editar" aria-describedby="basic-addon1">
+
+										<input type="hidden" id="solicitacao_id" name="solicitacao_id" value="{{ data.pk }}" placeholder="solicitacao_id" aria-label="solicitacao_id"/>
+										{% endif %}
+									</form>
+								</td>
+							{% endif %}
+						{% endif %}
 					{% endfor %}
 				</tbody>
 			</table>

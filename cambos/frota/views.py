@@ -276,9 +276,6 @@ class SolicitacoesList(TemplateView):
             for item in itemviagem:
                 if item.viagem_solicitacao == solicitacao:
                     solicitacao.set_has_item(True)
-                    
-        for solicitacao in lista_solicitacoes:
-            print(solicitacao.has_item)
 
         if edit == 'true':
             solicitacao = SolicitacaoViagem.objects.get(pk=value)
