@@ -58,42 +58,94 @@
 			data-pagination="true"				 
 			>
 				<thead>
-					<tr>						
-						<th data-field="data" data-formatter="dateFormat" data-sortable="true" class='text-center'>Data</th>
-						<th data-field="Veiculo"  data-sortable="true" class='text-center'>Veiculo</th>							
-						<th data-field="Combustivel" data-sortable="true" class='text-center'>Combustível</th>		
-						<th data-field="Tipoabastecimento" data-sortable="true" class='text-center'>Tipo</th>												
-						<th data-field="Valor"  data-sortable="true" class='text-center'>Valor Abas.</th>
-						<th data-field="Quantidade" data-sortable="true" class='text-center'>Quantidade(L)</th>
+					<tr>
+						<th class="text-center">Solicitante</th>
+						<th class="text-center">Prioridade</th>
+						<th class="text-center">Peso</th>
+						<th class="text-center">Rua</th>
+						<th class="text-center">Número</th>
+						<th class="text-center">Bairro</th>
+						<th class="text-center">Cidade</th>
+						<th class="text-center">UF</th>
+						<th class="text-center">CEP</th>
+						<th data-field="Data Prevista" class='text-center'>Data Prevista</th>
+						<th data-field="Data Solicitação"class='text-center'>Data Solicitação</th>
+                        <th data-field="Data Atendimento"class='text-center'>Data Atendimento</th>
+                        <th data-field="Data Finalizacao"class='text-center'>Data Finalização</th>
+                        <th data-field="Veiculo"class='text-center'>Veículo</th>
 					</tr>
 				</thead>
 				<tbody>
-					{%for item in filter.qs|dictsortreversed:"data"%}
-						{%if item.veiculo.caminhao%}
-							<tr data-href="#"	
-							class="trLink" >
-							<td class='text-center' >									
-								{{item.data|safe}}									
-							</td>				
-							<td class='text-center'>{{item.veiculo}}</td>
-							<td class='text-center' >																					
-								{{item.combustivel}}</td>
-							<td class='text-center'>
-								{%if item.interno%}
-									Interno
-								{%else%}
-									Externo
-								{%endif%}
-							<td class='text-center'>
-								R${{item.valor_unitario|floatformat:2}}												
-							</td>
-							<td class='text-center'>{{item.quantidade|floatformat:1}}</td>
-						{%endif%}
-					{% endfor %}
+                    {% for data in object_list %}
+                        {% comment %} <tr data-href="{{data.pk}}" {% endcomment %}
+                        <tr data-href="#"
+                            class="trLink" >
+                            <td class='text-center'>
+                                {% for u in user %}
+                                    {%if u.id == data.user_id%}
+                                        {{u.name}}
+                                    {%endif%}
+                                {% endfor %}
+                            </td>
+                            <td class='text-center' >																					
+                                {%if data.prioridade == 'U' %} 							
+                                    Urgente
+                                {%elif data.prioridade == 'N' %} 						
+                                    Normal
+                                {%endif%}																		
+                            </td>
+                            <td class='text-center'>{{ data.peso }}</td>
+                            <td class='text-center'>
+                                {% for e in endereco %}
+                                    {%if e.id == data.endereco_id%}
+                                        {{e.endereco}}
+                                    {%endif%}
+                                {% endfor %}
+                            </td>
+                            <td class='text-center'>
+                            {% for e in endereco %}
+                                {%if e.id == data.endereco_id%}
+                                    {{e.numero}}
+                                {%endif%}
+                            {% endfor %}
+                            </td>
+                            <td class='text-center'>
+                            {% for e in endereco %}
+                                {%if e.id == data.endereco_id%}
+                                    {{e.bairro}}
+                                {%endif%}
+                            {% endfor %}
+                            </td>
+                            <td class='text-center'>
+                            {% for e in endereco %}
+                                {%if e.id == data.endereco_id%}
+                                    {{e.cidade}}
+                                {%endif%}
+                            {% endfor %}
+                            </td>
+                            <td class='text-center'>
+                            {% for e in endereco %}
+                                {%if e.id == data.endereco_id%}
+                                    {{e.uf}}
+                                {%endif%}
+                            {% endfor %}
+                            </td>
+                            <td class='text-center'>
+                            {% for e in endereco %}
+                                {%if e.id == data.endereco_id%}
+                                    {{e.cep}}
+                                {%endif%}
+                            {% endfor %}
+                            </td>
+                            <td class='text-center'>{{ data.data_prevista|date:"d/m/y" }}</td>
+                            <td class='text-center'>{{ data.data_solicitacao|date:"d/m/y H:i" }}</td>
+                            <td class='text-center'>{{ data.data_atendimento|date:"d/m/y H:i" }}</td>
+                            <td class='text-center'>{{ data.data_finalizacao|date:"d/m/y H:i" }}</td>
+                    {% endfor %}
 				</tbody>
 			</table>
-			<h4><i class="fas fa-gas-pump"></i>Quantidade total de Combustível: <b>{{tot|floatformat:2}}</b> litros.</h4>
-			<h4><i  class="fa fa-usd"> </i>  Valor Gasto : <b>R$ {{valor|floatformat:2}}</b></h4>			
+			{% comment %} <h4><i class="fas fa-gas-pump"></i>Quantidade total de Combustível: <b>{{tot|floatformat:2}}</b> litros.</h4>
+			<h4><i  class="fa fa-usd"> </i>  Valor Gasto : <b>R$ {{valor|floatformat:2}}</b></h4>			 {% endcomment %}
 		</div>
 	</div>
 </div>

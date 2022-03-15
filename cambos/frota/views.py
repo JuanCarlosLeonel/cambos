@@ -327,6 +327,49 @@ class RelatorioList(ListView):
 
 
 @method_decorator(login_required, name='dispatch')
+class RelatorioViagemSolicitacao(ListView):
+    model = SolicitacaoViagem
+    template_name = 'frota/relatorio_viagemsolicitacao.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        endereco = Enderecos.objects.all()
+        usercompras = UserCompras.objects.all()
+        lista = ViagemFilter(self.request.GET, queryset=self.get_queryset())
+        count = 0
+        somakm = 0
+        somahora = datetime.timedelta()
+        subdata = datetime.timedelta()
+        # for item in lista.qs:
+        #     if item.veiculo.caminhao:
+        #         count += 1
+        #         if item.hora_final:
+        #             inicial = datetime.timedelta(hours=item.hora_inicial.hour, minutes=item.hora_inicial.minute, seconds=item.hora_inicial.second)
+        #             final = datetime.timedelta(hours=item.hora_final.hour, minutes=item.hora_final.minute, seconds=item.hora_final.second)
+        #             diferencahoras = final -inicial
+        #             somahora += diferencahoras
+        #             if item.data_final > item.data_inicial and item.hora_inicial < item.hora_final:
+        #                 subdata = item.data_final - item.data_inicial
+        #             else:
+        #                 pass
+        #         else:
+        #             pass
+        #         if item.kmfinalmenosinicial:																					
+        #             somakm += item.kmfinalmenosinicial
+        # s = somahora + subdata
+        # horas =  s.total_seconds() // 3600
+        # minutos = s.total_seconds() % 3600/60
+        # context['horas'] = horas
+        # context['minutos'] = minutos
+        context['user'] = usercompras
+        context['endereco'] = endereco
+        context['somakm'] = somakm
+        context['counter'] = count
+        context['filter'] = lista
+        return context  
+
+
+@method_decorator(login_required, name='dispatch')
 class RelatorioViagem(ListView):
     model = Viagem
     template_name = 'frota/relatorio_viagem.html'
