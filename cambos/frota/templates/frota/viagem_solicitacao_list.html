@@ -1,4 +1,5 @@
 {% extends "cambos/base_frota.html" %}
+{% load tags %}
 
 {% block css %}{% endblock css %}
 
@@ -132,40 +133,24 @@
 						<td class='text-center'>{{ data.data_solicitacao|date:"d/m/y H:i" }}</td>
 						<td class='text-center'>
 							<form class="" id="" method="submit">
-								{% if itemv == 0 %}
-									<button class="fas fa-dolly-flatbed btn btn-primary" type="submit" role="button" value="null">
-										Atribuir Solicitação
-									</button>
-									<input type="hidden" class="form-control" id="editar" name="editar"
-										value="true" placeholder="editar"
-										aria-label="editar" aria-describedby="basic-addon1">
+								{% if data.has_item == True %}
+								<button class="fas fa-dolly-flatbed btn btn-danger" type="submit" role="button" value="null">
+									Cancelar Solicitação
+								</button>
+								<input type="hidden" class="form-control" id="editar" name="editar"
+									value="false" placeholder="editar"
+									aria-label="editar" aria-describedby="basic-addon1">
 
-									<input type="hidden" id="solicitacao_id" name="solicitacao_id" value="{{ data.pk }}" placeholder="solicitacao_id" aria-label="solicitacao_id"/>
+								<input type="hidden" id="solicitacao_id" name="solicitacao_id" value="{{ data.pk }}" placeholder="solicitacao_id" aria-label="solicitacao_id"/>
 								{% else %}
-									{% for item in itemviagem %}
-										{% with flag="false" %}
-											{% if item.viagem_solicitacao == data %}
-												{% set flag="true" %}
-											{% endif %}
-										{% endwith %}
-									{% endfor %}
-									{% if flag == "true" %}
-										<button class="fas fa-window-close btn btn-danger" type="submit" role="button" value="null">
-										Cancelar Solicitação
-										</button>
-										<input type="hidden" class="form-control" id="editar" name="editar"
-											value="false" placeholder="editar"
-											aria-label="editar" aria-describedby="basic-addon1">
-										<input type="hidden" id="solicitacao_id" name="solicitacao_id" value="{{ data.pk }}" placeholder="solicitacao_id" aria-label="solicitacao_id"/>
-									{% else %}
-										<button class="fas fa-dolly-flatbed btn btn-primary" type="submit" role="button" value="null">
-											Atribuir Solicitação
-										</button>
-										<input type="hidden" class="form-control" id="editar" name="editar"
-											value="true" placeholder="editar"
-											aria-label="editar" aria-describedby="basic-addon1">
-										<input type="hidden" id="solicitacao_id" name="solicitacao_id" value="{{ data.pk }}" placeholder="solicitacao_id" aria-label="solicitacao_id"/>
-									{% endif %}
+								<button class="fas fa-dolly-flatbed btn btn-primary" type="submit" role="button" value="null">
+									Atribuir Solicitação
+								</button>
+								<input type="hidden" class="form-control" id="editar" name="editar"
+									value="true" placeholder="editar"
+									aria-label="editar" aria-describedby="basic-addon1">
+
+								<input type="hidden" id="solicitacao_id" name="solicitacao_id" value="{{ data.pk }}" placeholder="solicitacao_id" aria-label="solicitacao_id"/>
 								{% endif %}
 							</form>
 						</td>

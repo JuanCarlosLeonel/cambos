@@ -83,6 +83,10 @@ class SolicitacaoViagem(models.Model):
     data_solicitacao = models.DateTimeField(db_column='data_solicitacao')
     data_atendimento = models.DateTimeField(db_column='data_atendimento',null=True)
     data_finalizacao = models.DateTimeField(db_column='data_finalizacao',null=True)
+    has_item = False
+
+    def set_has_item(self, value = False):
+        self.has_item = value
 
     def __str__(self):
         return f'{self.id}'

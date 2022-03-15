@@ -1,4 +1,3 @@
-from urllib import request
 from django.shortcuts import render, redirect
 from django.views.generic.base import TemplateView
 from django.views.generic.edit import UpdateView, CreateView, DeleteView
@@ -17,6 +16,7 @@ from django.template.loader import render_to_string
 from django.utils.html import strip_tags
 import telegram
 from django.db.models.signals import post_save
+from django import template
 
 def enviar(sender, instance, created, **kwargs):
     if created:
@@ -256,8 +256,8 @@ class SolicitacoesList(TemplateView):
 
     def get(self, request, *args, **kwargs):
         context = super().get_context_data(**kwargs)
-        pk = self.kwargs['pk']  
-        lista_solicitacoes = SolicitacaoViagem.objects.filter(situacao = '1').order_by("-id")
+        pk = self.kwargs['pk'] 
+
         endereco = Enderecos.objects.all()
         usercompras = UserCompras.objects.all()
         viag = Viagem.objects.get(id = pk)
@@ -265,11 +265,29 @@ class SolicitacoesList(TemplateView):
         value = self.request.GET.get('solicitacao_id')
         itemviagem = ItemViagem.objects.filter(viagem = viag)
         itemv = len(itemviagem)
+
+        lista_solicitacoes = SolicitacaoViagem.objects.exclude(situacao = '3').order_by("-id")
+
+        for solicitacao in lista_solicitacoes:
+            for item in itemviagem:
+                if item.viagem_solicitacao == solicitacao:
+                    solicitacao.set_has_item(True)
+
         if edit == 'true':
-            model = ItemViagem(viagem = viag, viagem_solicitacao = SolicitacaoViagem.objects.get(pk=value))
+            solicitacao = SolicitacaoViagem.objects.get(pk=value)
+            solicitacao.situacao = '2'
+            solicitacao.data_atendimento = datetime.datetime.now()
+            solicitacao.save()
+
+            model = ItemViagem(viagem = viag, viagem_solicitacao = solicitacao)
             model.save()
         elif edit == 'false':
-            model = ItemViagem.objects.get(viagem = viag, viagem_solicitacao = SolicitacaoViagem.objects.get(pk=value))
+            solicitacao = SolicitacaoViagem.objects.get(pk=value)
+            solicitacao.situacao = '1'
+            solicitacao.data_atendimento = None
+            solicitacao.save()
+
+            model = ItemViagem.objects.get(viagem = viag, viagem_solicitacao = solicitacao)
             model.delete()
         context['itemviagem'] = itemviagem
         context['itemv'] = itemv
@@ -277,6 +295,7 @@ class SolicitacoesList(TemplateView):
         context['user'] = usercompras
         context['endereco'] = endereco
         context['lista_solicitacoes']=lista_solicitacoes
+
         if not edit is None :  
             return redirect(f'/frota/viagem_solicitacao_list/{viag.id}')
         else:
