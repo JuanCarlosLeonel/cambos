@@ -335,6 +335,7 @@ class RelatorioViagemSolicitacao(ListView):
         context = super().get_context_data(**kwargs)
         endereco = Enderecos.objects.all()
         usercompras = UserCompras.objects.all()
+        itemviagem = ItemViagem.objects.all()
         lista = ViagemFilter(self.request.GET, queryset=self.get_queryset())
         count = 0
         somakm = 0
@@ -361,6 +362,7 @@ class RelatorioViagemSolicitacao(ListView):
         # minutos = s.total_seconds() % 3600/60
         # context['horas'] = horas
         # context['minutos'] = minutos
+        context['itemviagem'] = itemviagem
         context['user'] = usercompras
         context['endereco'] = endereco
         context['somakm'] = somakm

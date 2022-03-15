@@ -141,6 +141,13 @@
                             <td class='text-center'>{{ data.data_solicitacao|date:"d/m/y H:i" }}</td>
                             <td class='text-center'>{{ data.data_atendimento|date:"d/m/y H:i" }}</td>
                             <td class='text-center'>{{ data.data_finalizacao|date:"d/m/y H:i" }}</td>
+                            <td class='text-center'>
+                                {% for i in itemviagem %}
+                                    {% if i.viagem_solicitacao.pk == data.pk %}
+                                        {{i.viagem.veiculo}}
+                                    {% endif %}
+                                {% endfor %}
+                            </td>
                     {% endfor %}
 				</tbody>
 			</table>
