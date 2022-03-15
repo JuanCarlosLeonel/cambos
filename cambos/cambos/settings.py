@@ -52,11 +52,10 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'core',
     'produto',
-    'comercial',
     'roupa',
     'frota',
-    'django_select2',  
-    'django_apscheduler',
+    'qualidade',
+    'django_select2',      
     'django_filters',
 ]
 
