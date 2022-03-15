@@ -251,7 +251,7 @@ class VeiculoList(ListView):
         return context
 
 @method_decorator(login_required, name='dispatch')
-class SolicitacoesList(TemplateView):
+class SolicitacoesList(TemplateView):   
     template_name = 'frota/viagem_solicitacao_list.html'
 
     def get(self, request, *args, **kwargs):
@@ -265,18 +265,25 @@ class SolicitacoesList(TemplateView):
         value = self.request.GET.get('solicitacao_id')
         itemviagem = ItemViagem.objects.filter(viagem = viag)
         itemv = len(itemviagem)
-
+        
+        from datetime import timezone, timedelta
+        diferenca = timedelta(hours=-3)
+        fuso_horario = timezone(diferenca)
+        print(fuso_horario) 
         lista_solicitacoes = SolicitacaoViagem.objects.exclude(situacao = '3').order_by("-id")
 
         for solicitacao in lista_solicitacoes:
             for item in itemviagem:
                 if item.viagem_solicitacao == solicitacao:
                     solicitacao.set_has_item(True)
+                    
+        for solicitacao in lista_solicitacoes:
+            print(solicitacao.has_item)
 
         if edit == 'true':
             solicitacao = SolicitacaoViagem.objects.get(pk=value)
             solicitacao.situacao = '2'
-            solicitacao.data_atendimento = datetime.datetime.now()
+            solicitacao.data_atendimento = datetime.datetime.now() - timedelta(hours = +3)
             solicitacao.save()
 
             model = ItemViagem(viagem = viag, viagem_solicitacao = solicitacao)
