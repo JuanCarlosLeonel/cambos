@@ -59,6 +59,7 @@
 			>
 				<thead>
 					<tr>
+                        <th class="text-center">Status</th>
 						<th class="text-center">Solicitante</th>
 						<th class="text-center">Prioridade</th>
 						<th class="text-center">Peso</th>
@@ -80,6 +81,15 @@
                         {% comment %} <tr data-href="{{data.pk}}" {% endcomment %}
                         <tr data-href="#"
                             class="trLink" >
+                            <td class='text-center'>
+                                {% if data.situacao == '1' %}
+                                    <strong class="text-danger">Aguardando</strong>
+                                {% elif data.situacao == '2' %}
+                                    <strong class="text-info">Em Atendimento</strong>
+                                {% else %}
+                                <strong class="text-success">Finalizado</strong>
+                                {% endif %}
+                            </td>
                             <td class='text-center'>
                                 {% for u in user %}
                                     {%if u.id == data.user_id%}
