@@ -11,7 +11,7 @@ from .form import  ManutencaoForm, ViagemForm, AbastecimentoForm
 from django.http import HttpResponse, JsonResponse
 from django.db.models import Sum
 import datetime
-from .filters import ViagemFilter, ViagemFilterCarro, AbastecimentoFilter, AbastecimentoFilterCaminhao
+from .filters import SolicitacaoFilter, ViagemFilter, ViagemFilterCarro, AbastecimentoFilter, AbastecimentoFilterCaminhao
 from django.template.loader import render_to_string
 from django.utils.html import strip_tags
 import telegram
@@ -351,7 +351,7 @@ class RelatorioViagemSolicitacao(ListView):
         endereco = Enderecos.objects.all()
         usercompras = UserCompras.objects.all()
         itemviagem = ItemViagem.objects.all()
-        lista = ViagemFilter(self.request.GET, queryset=self.get_queryset())
+        lista = SolicitacaoFilter(self.request.GET, queryset=self.get_queryset())
         count = 0
         somakm = 0
         somahora = datetime.timedelta()

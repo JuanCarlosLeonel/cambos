@@ -101,7 +101,7 @@ class UserCompras(models.Model):
     name = models.CharField(db_column='name',max_length=45)
 
     def __str__(self):
-        return f'{self.id}'
+        return f'{self.name}'
 
     class Meta:
         managed = False

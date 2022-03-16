@@ -76,7 +76,7 @@
 					</tr>
 				</thead>
 				<tbody>
-                    {% for data in object_list %}
+                    {% for data in filter.qs %}
                         {% comment %} <tr data-href="{{data.pk}}" {% endcomment %}
                         <tr data-href="#"
                             class="trLink" >

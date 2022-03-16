@@ -1,5 +1,6 @@
+from core.models import SolicitacaoViagem, User, UserCompras
 import django_filters
-from django_filters import DateFilter, CharFilter, ModelChoiceFilter, ChoiceFilter
+from django_filters import DateFilter, CharFilter, ModelChoiceFilter, ChoiceFilter, ModelMultipleChoiceFilter
 from django import forms
 from .models import Viagem, Pessoa, Motorista, Veiculo, Abastecimento
 from django.db.models import Q
@@ -76,4 +77,14 @@ class AbastecimentoFilterCaminhao(django_filters.FilterSet):
             },
         }
 
+
+class SolicitacaoFilter(django_filters.FilterSet):
+    # m = UserCompras.objects.filter().values('name')
+    # veiculo = ModelChoiceFilter(queryset=Veiculo.objects.filter(caminhao=False),label='Veículo',widget=forms.Select(attrs={'class':'form-control'}))
+    # motorista = ModelChoiceFilter(queryset=Pessoa.objects.filter(status = 0),widget=forms.Select(attrs={'class':'form-control'}))
+    # inicio = DateFilter(lookup_expr='gte',widget=forms.DateInput(attrs={'id': 'datepicker','type':'date','class':'form-control'}),field_name="data_inicial",label='Início')
+    # fim = DateFilter(lookup_expr='lte',widget=forms.DateInput(attrs={'id': 'datepicker','type':'date','class':'form-control'}),field_name="data_inicial",label='Fim')
+    # destino = CharFilter(widget=forms.TextInput(attrs={'class':'form-control'}),field_name="destino",label='Destino',lookup_expr='icontains')
+    # user_id = ModelChoiceFilter(queryset=UserCompras.objects.all(),label='Solicitante',widget=forms.Select(attrs={'class':'form-control'}))
+    user_id = ModelMultipleChoiceFilter(field_name="user_id", to_field_name='id',queryset=UserCompras.objects.all(),label='Solicitante')
 
