@@ -153,7 +153,22 @@ class ViagemUpdate(UpdateView):
     model = Viagem
     form_class = ViagemForm
     
-    def get_success_url(self):        
+    def get_success_url(self): 
+        from datetime import timedelta
+        v = self.object.id
+        km = self.object.km_final
+        i = ItemViagem.objects.filter(viagem = v)
+        s = SolicitacaoViagem.objects.all()
+        if km:
+            for item in i:
+                if item.viagem.id == v:
+                    for sol in s:
+                        if sol.id == item.viagem_solicitacao.id:
+                            sol.situacao = '3'
+                            sol.data_finalizacao = datetime.datetime.now() - timedelta(hours = +3)
+                            sol.save()          
+        else:
+            pass     
         return f'/frota/viagem_list/{self.object.veiculo.id}'
     
     def get_context_data(self, **kwargs):
