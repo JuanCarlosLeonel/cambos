@@ -3,6 +3,15 @@ from django.db.models.deletion import CASCADE, PROTECT
 from jsonfield import JSONField
 from core.models import User
 
+# tabela para apagar após migração do BD.
+class FichaCorte(models.Model):    
+    lacre       = models.IntegerField()        
+    ficha_corte = models.CharField(max_length=7, null=True, blank=True)        
+    dados       = models.JSONField()
+    def __str__(self):
+        return f'{self.ficha_corte}'
+
+
 class API(models.Model):
     api = JSONField()    
 

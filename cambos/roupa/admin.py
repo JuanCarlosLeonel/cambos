@@ -11,7 +11,8 @@ from .models import (
     PCP,
     Track,
     PedidoTrack,    
-    RoupaBot  
+    RoupaBot,
+    FichaCorte  
 )
 
 
@@ -30,5 +31,6 @@ admin.site.register(PCP)
 admin.site.register(Track)
 admin.site.register(PedidoTrack, PedidoTrackAdmin)
 admin.site.register(RoupaBot)
+admin.site.register(FichaCorte)
 
 
