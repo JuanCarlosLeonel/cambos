@@ -230,3 +230,12 @@ class ItemViagem(models.Model):
         db_table = 'frota"."viagem_itens' 
 
 
+class FrotaBot(models.Model):    
+    user_id    = models.BigIntegerField(unique=True)
+    frota      = models.BooleanField(default=True)
+    ativo      = models.BooleanField(default=True)
+    usuario    = models.ForeignKey(User, on_delete=models.SET_NULL, blank=True, null=True)
+    def __str__(self):
+        return f'{self.user_nome}'
+
+

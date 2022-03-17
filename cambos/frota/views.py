@@ -22,9 +22,9 @@ def enviar(sender, instance, created, **kwargs):
     if created:
         from roupa.models import RoupaBot
         from core.models import Bot
-        bot = Bot.objects.latest('token')
+        bot = Bot.objects.filter(id = 2).latest('token')
         token = bot.token 
-        users = RoupaBot.objects.filter(ativo = True)
+        users = RoupaBot.objects.filter(frota = True)
         v = Viagem.objects.filter().latest('id')
         if v.veiculo.caminhao:
             for user in users:      
@@ -39,9 +39,9 @@ def enviarabastecimento(sender, instance, created, **kwargs):
     if created:
         from roupa.models import RoupaBot
         from core.models import Bot
-        bot = Bot.objects.latest('token')
+        bot = Bot.objects.filter(id = 2).latest('token')
         token = bot.token 
-        users = RoupaBot.objects.filter(ativo = True)
+        users = RoupaBot.objects.filter(frota = True)
         for user in users:      
             if user.frota:  
                 chat_id = user.user_id

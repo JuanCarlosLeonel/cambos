@@ -9,33 +9,8 @@ from telegram.ext import (
     MessageHandler,
     Filters,
 )
-from frota.models import Abastecimento, Viagem
 from roupa.views import get_url, convert_setor
-from dateutil import parser
 import datetime
-
-def viagemcaminhao(update):
-    from roupa.models import RoupaBot
-    users = RoupaBot.objects.filter(frota = True)
-    v = Viagem.objects.filter(veiculo__caminhao = True)
-    text =""
-    for user in users:
-        if user.frota:
-            text = f"\U00002757Viagens <b>EM TRÂNSITO</b>:{os.linesep}"
-            for item in v:
-                if item.data_final is None:
-                    text += f"<b>{item.veiculo}</b>, saída:{str(item.data_inicial)[8:] + '/' + str(item.data_inicial)[5:7] + '/' + str(item.data_inicial)[0:4] }, destino:{item.destino}{os.linesep}"
-    update.edit_message_text(text, parse_mode=ParseMode.HTML)
-    return return_menu(update, text)
-
-# def abastecimento(update):
-#     from roupa.models import RoupaBot
-#     users = RoupaBot.objects.filter(frota = True)
-#     a = Abastecimento.objects.filter(veiculo__caminhao = True).order_by("-id")
-#     text =""
-#     for user in users:
-#         if user.frota:
-#             text = f"Abastecimentos Realizados:"
 
 def get_user(update):
     from roupa.models import RoupaBot
@@ -381,9 +356,6 @@ def menu(update, context):
         if userbot.expedicao:
              dict['Expedição']='expedicao'
 
-        if userbot.frota:
-            dict['Frota']='frota'
-
         keyboard = []
         for key, value in dict.items():
             keyboard.append(
@@ -452,16 +424,6 @@ def button(update: Update, _: CallbackContext) -> None:
         ],
         [InlineKeyboardButton("Menu", callback_data='menu')],
         ]
-    elif query.data == 'frota':
-        keyboard = [
-        [
-            InlineKeyboardButton("\U0001F68C Veículos", callback_data='menu'),
-            InlineKeyboardButton("\U0000203C Em trânsito", callback_data='viagemcaminhao'),
-        ],
-        [   InlineKeyboardButton("\U000026FD Abastecimento", callback_data='menu'),
-        ],
-        [InlineKeyboardButton("Menu", callback_data='menu')],
-        ]
 
     elif query.data == 'menu':
         keyboard = menu(query, 'nav')
@@ -483,12 +445,6 @@ def button(update: Update, _: CallbackContext) -> None:
 
     elif query.data == 'produtos_finalizacao':
         return produtos_finalizacao(query,6)
-
-    elif query.data == 'viagemcaminhao':
-        return viagemcaminhao(query)
-
-    # elif query.data == 'abastecimento':
-    #     return abastecimento(query)
 
     elif query.data == 'atrasados_finalizacao':
         return atrasados_finalizacao(query,6)
@@ -630,7 +586,7 @@ def pesquisa_corte(update, context):
 
 def main() -> None:
     from core.models import Bot
-    bot = Bot.objects.latest('token')
+    bot = Bot.objects.filter(id=1).latest('token')
     token = bot.token      
     updater = Updater(token)  
     # updater.dispatcher.add_handler(MessageHandler(Filters.text, menu))  
@@ -649,8 +605,8 @@ def main() -> None:
 
 def iniciar():
     from core.models import Bot
-    ativo= Bot.objects.latest('token').ativo            
-    if ativo:
+    ativo = Bot.objects.filter(id=1).latest('token')     
+    if ativo.ativo:
         return main()   
 
       
