@@ -622,6 +622,24 @@ class ProgramacaoList(TemplateView):
 
 
 @method_decorator(login_required, name='dispatch')
+class ParadoList(TemplateView):    
+    template_name = 'roupa/parado_list.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        dados = get_url()
+        filtro = []
+        for produto in dados:
+            if produto["Parado"] == "1":                
+                produto["Status"] = convert_setor(produto["Status"])
+                produto["DataEntrega"] = parse(produto["DataEntrega"]).date()            
+                filtro.append(produto)                
+                
+        context['producaojs'] = filtro       
+        return context
+
+
+@method_decorator(login_required, name='dispatch')
 class PedidoDetail(TemplateView):    
     template_name = 'roupa/pedido_detail.html'
 

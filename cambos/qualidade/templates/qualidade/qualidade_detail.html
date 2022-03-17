@@ -1,0 +1,89 @@
+{% extends "cambos/base_roupa.html" %}
+{% load static %}
+{% block css %}
+
+{% endblock css %}
+
+{% block navigation %}
+<div class="row">
+	<ol class="breadcrumb">
+		<li><a href="{% url 'roupa_index' %}">
+			<em class="fa fa-home"></em>
+		</a></li>
+		<li class="active">Qualidade</li>
+	</ol>
+</div><!--/.row-->
+<div class="row">
+	<div class="col-lg-12">
+		<h1 class="page-header">Produção<span class="text-muted small"> informações sobre as ocorrências (em breve)</span></h1></h1>
+	</div>
+</div><!--/.row-->
+{% endblock navigation %}
+
+	
+{% block content %}		
+	<div class="col-12">
+		
+		<div class="panel panel-default">
+			<div class="panel-heading"> <strong class="">Plano de Ação<strong class="text-success"></strong></strong></div>
+			<div class="panel-body">
+				<div id="toolbar">
+					
+												
+						
+					
+				  </div>
+				<table id="table"				
+					data-toolbar="#toolbar"
+					data-toggle="table"
+					data-show-refresh="false"
+					data-show-toggle="false"
+					data-show-columns="true"
+					data-search="true"
+					data-select-item-name="toolbar"
+					data-pagination="true"
+					data-sort-name="DataEntrega"  					
+					data-sort-order="asc"					
+				 >
+					<thead>
+						<tr>							
+							<th data-field="Data"  data-sortable="true" class='text-center'>FC</th>							
+							<th data-field="Descrição" data-sortable="true" class='text-center'>COD</th>														
+							<th data-field="Responsável"  data-sortable="true" class='text-center'>Cliente</th>
+							<th data-field="Prazo" data-sortable="true" class='text-center'>Setor</th>
+							<th data-field="Status" data-sortable="true" class='text-center'>Situação</th>
+							<th data-field="Eficácia" data-formatter="dateFormat" data-sortable="true" class='text-center'>Entrega</th>							
+							
+						</tr>
+					</thead>
+					<tbody>
+						{% for data in producaojs %}							
+							<tr data-href="{% url 'qualidade_detail' data.Lacre %}"
+							 class="trLink text-danger negrito" >								 								
+								<td class='text-center' >
+									{% if data.FichaCorte%}
+									{{data.FichaCorte}}
+									{%else%}
+									 -
+									{%endif%} 
+								</td>								
+								<td class='text-center'>
+									{{data.Modelo|safe}}
+								</td>																								
+								<td class='text-center' >{{data.Nome}}</td>
+								<td class='text-center'>{{data.Status}}</td>
+								<td class='text-center'>{{data.Atrasado}}</td>
+								<td class='text-center' >{{data.DataEntrega|safe}}</td>					
+							</tr>
+						{%endfor%}
+					</tbody>					
+				</table>								
+			</div>
+		</div>
+	</div>	
+	{%endblock content%}
+
+{% block script %}
+
+  
+{% endblock script %}
