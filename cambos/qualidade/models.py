@@ -4,18 +4,6 @@ from django_currentuser.db.models import CurrentUserField
 from core.models import Pessoa, Setor
 from roupa.models import Etapa, Processo
 
-# tabela para apagar após migração do BD.
-class FichaCorte(models.Model):    
-    lacre       = models.IntegerField()        
-    ficha_corte = models.CharField(max_length=7, null=True, blank=True)        
-    dados       = models.JSONField()
-    def __str__(self):
-        return f'{self.ficha_corte}'
-    
-    class Meta:        
-        db_table = 'qualidade"."FichaCorte'
-
-
 class Auditor(models.Model):    
     auditor_interno = models.ForeignKey(Pessoa, null=True, blank=True, on_delete=models.DO_NOTHING, db_constraint=False)
     auditor_externo = models.CharField(max_length=20, null=True, blank=True)        

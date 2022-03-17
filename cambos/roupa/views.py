@@ -27,7 +27,8 @@ from .models import (
     TAG,
     PedidoTrack,
     Track,
-    RoupaBot
+    RoupaBot,
+    FichaCorte
     )
 from django.http import JsonResponse
 from dateutil.parser import parse
@@ -91,6 +92,7 @@ def check_update_api():
     dados_spi = response.json()
     dados_api = API.objects.latest("id").api
     dados_pcp = PCP.objects.latest("id")
+    ficha_corte_list = FichaCorte.objects.filter()
     change_status = []
     new_api = []
     new_pcp = []
@@ -98,6 +100,13 @@ def check_update_api():
     for item_spi in dados_spi['value']:        
         match_spi = 0        
         match_pcp = 0        
+        match_fc = 0
+        for fc in ficha_corte_list:
+            if fc.lacre == item_spi['Lacre']:
+                match_fc = 1
+        if match_fc == 0:
+            model = FichaCorte(lacre = item_spi['Lacre'], ficha_corte = item_spi['FichaCorte'], dados = item_spi)                        
+            model.save()   
         for item_api in dados_api['value']:                        
             if item_spi['Lacre'] == item_api['Lacre']:                
                 match_spi = 1
@@ -131,35 +140,6 @@ def check_update_api():
             if not novo == 0:                   
                 dados_pcp.pcp.append(novo)            
                 dados_pcp.save()    
-
-
-def check_update_api2():
-    url = 'http://187.45.32.235:20080/spi/intproducaoservice/statusentrega'
-    response = requests.get(url)
-    dados_spi = response.json()
-    dados_api = API.objects.latest("id").api
-    dados_pcp = PCP.objects.latest("id")
-    change = 0    
-    for item_spi in dados_spi['value']:
-        match = 0
-        for item_api in dados_api['value']:
-            if item_spi['Lacre'] == item_api['Lacre']:                
-                if not item_spi['Status'] == item_api['Status']:
-                    update_api()
-                    update_track(item_spi['Lacre'])
-                    change = 1
-        for item_pcp in dados_pcp.pcp:        
-            if item_spi['Lacre'] == item_pcp['lacre']:
-                match = 1                             
-        if match == 0:                        
-            change = 1
-            novo = get_pcp_pedido(item_spi['Lacre'])  
-            if not novo == 0:                   
-                dados_pcp.pcp.append(novo)            
-                dados_pcp.save()            
-
-    if change == 1:
-        update_api()        
     
 
 def update_pcp(lacre):    
