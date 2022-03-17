@@ -1,3 +1,4 @@
+from multiprocessing import context
 from django.shortcuts import render, redirect
 from django.views.generic.base import TemplateView
 from django.views.generic.edit import UpdateView, CreateView, DeleteView
@@ -45,9 +46,9 @@ def enviarabastecimento(sender, instance, created, **kwargs):
         for user in users:      
             if user.frota:  
                 chat_id = user.user_id
-        html_content = render_to_string('frota/telegram_messageabast.html', {'nome': Abastecimento.objects.latest('id')})
-        bot = telegram.Bot(token=token)
-        bot.send_message(chat_id=chat_id,text=html_content, parse_mode=telegram.ParseMode.HTML)
+                html_content = render_to_string('frota/telegram_messageabast.html', {'nome': Abastecimento.objects.latest('id')})
+                bot = telegram.Bot(token=token)
+                bot.send_message(chat_id=chat_id,text=html_content, parse_mode=telegram.ParseMode.HTML)
 post_save.connect(enviarabastecimento, sender=Abastecimento)
 
 
@@ -73,6 +74,11 @@ class VeiculoIndex(TemplateView):
         context = super().get_context_data(**kwargs)     
         pk = self.kwargs['pk']
         veiculo = Veiculo.objects.get(id = pk)
+        try:
+            user_permission = FrotaPermissao.objects.get(usuario = self.request.user)
+        except:
+            user_permission = {} 
+        context['permissoes'] = user_permission
         context['veiculo'] = veiculo
         return context
 
@@ -172,7 +178,12 @@ class ViagemUpdate(UpdateView):
         return f'/frota/viagem_list/{self.object.veiculo.id}'
     
     def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)                
+        context = super().get_context_data(**kwargs)  
+        try:
+            user_permission = FrotaPermissao.objects.get(usuario = self.request.user)
+        except:
+            user_permission = {} 
+        context['permissoes'] = user_permission
         context['veiculo'] = self.object.veiculo.id
         return context
 
@@ -218,6 +229,11 @@ class AbastecimentoList(ListView):
         pk = self.kwargs['pk']     
         lista_abastecimento = Abastecimento.objects.filter(veiculo = pk).order_by("-id")
         veiculo = Veiculo.objects.get(id = pk)
+        try:
+            user_permission = FrotaPermissao.objects.get(usuario = self.request.user)
+        except:
+            user_permission = {} 
+        context['permissoes'] = user_permission
         context['veiculo']=veiculo
         context['lista']=lista_abastecimento
         return context  
@@ -273,7 +289,6 @@ class SolicitacoesList(TemplateView):
         from datetime import timedelta
         context = super().get_context_data(**kwargs)
         pk = self.kwargs['pk'] 
-
         endereco = Enderecos.objects.all()
         usercompras = UserCompras.objects.all()
         viag = Viagem.objects.get(id = pk)
@@ -302,6 +317,11 @@ class SolicitacoesList(TemplateView):
             solicitacao.save()
             model = ItemViagem.objects.get(viagem = viag, viagem_solicitacao = solicitacao)
             model.delete()
+        try:
+            user_permission = FrotaPermissao.objects.get(usuario = self.request.user)
+        except:
+            user_permission = {} 
+        context['permissoes'] = user_permission
         context['itemviagem'] = itemviagem
         context['itemv'] = itemv
         context['viag'] = viag
@@ -324,6 +344,11 @@ class ViagemList(ListView):
         pk = self.kwargs['pk']     
         veiculo = Veiculo.objects.get(id = pk)
         lista_viagem = Viagem.objects.filter(veiculo = pk).order_by("-id")
+        try:
+            user_permission = FrotaPermissao.objects.get(usuario = self.request.user)
+        except:
+            user_permission = {} 
+        context['permissoes'] = user_permission
         context['dataatual'] = datetime.date.today()
         context['horaatual'] = datetime.datetime.now().time().strftime('%H:%M')
         context['veiculo']=veiculo
@@ -337,7 +362,12 @@ class RelatorioList(ListView):
     template_name = 'frota/relatorio_index.html'
 
     def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)   
+        context = super().get_context_data(**kwargs)  
+        try:
+            user_permission = FrotaPermissao.objects.get(usuario = self.request.user)
+        except:
+            user_permission = {} 
+        context['permissoes'] = user_permission
         return context
 
 
@@ -377,6 +407,11 @@ class RelatorioViagemSolicitacao(ListView):
         # minutos = s.total_seconds() % 3600/60
         # context['horas'] = horas
         # context['minutos'] = minutos
+        try:
+            user_permission = FrotaPermissao.objects.get(usuario = self.request.user)
+        except:
+            user_permission = {} 
+        context['permissoes'] = user_permission
         context['itemviagem'] = itemviagem
         context['user'] = usercompras
         context['endereco'] = endereco
@@ -417,6 +452,11 @@ class RelatorioViagem(ListView):
         s = somahora + subdata
         horas =  s.total_seconds() // 3600
         minutos = s.total_seconds() % 3600/60
+        try:
+            user_permission = FrotaPermissao.objects.get(usuario = self.request.user)
+        except:
+            user_permission = {} 
+        context['permissoes'] = user_permission
         context['horas'] = horas
         context['minutos'] = minutos
         context['somakm'] = somakm
@@ -457,6 +497,11 @@ class RelatorioViagemCarro(ListView):
         s = somahora + subdata
         horas =  s.total_seconds() // 3600
         minutos = s.total_seconds() % 3600/60
+        try:
+            user_permission = FrotaPermissao.objects.get(usuario = self.request.user)
+        except:
+            user_permission = {} 
+        context['permissoes'] = user_permission
         context['horas'] = horas
         context['minutos'] = minutos
         context['somakm'] = somakm
@@ -479,7 +524,11 @@ class RelatorioAbastecimento(ListView):
             if not item.veiculo.caminhao:
                 tot += item.quantidade
                 valor += item.valor_unitario
-
+        try:
+            user_permission = FrotaPermissao.objects.get(usuario = self.request.user)
+        except:
+            user_permission = {} 
+        context['permissoes'] = user_permission
         context['valor'] = valor
         context['tot'] = tot
         context['filter'] = abastecimento
@@ -499,7 +548,11 @@ class RelatorioAbastecimentoCaminhao(ListView):
             if item.veiculo.caminhao:
                 tot += item.quantidade
                 valor += item.valor_unitario
-
+        try:
+            user_permission = FrotaPermissao.objects.get(usuario = self.request.user)
+        except:
+            user_permission = {} 
+        context['permissoes'] = user_permission
         context['valor'] = valor
         context['tot'] = tot
         context['filter'] = abastecimento
@@ -509,6 +562,15 @@ class RelatorioAbastecimentoCaminhao(ListView):
 class AbastecimentoListALL(ListView):
     model = Abastecimento
     template_name = 'frota/abastecimento_listALL.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        try:
+            user_permission = FrotaPermissao.objects.get(usuario = self.request.user)
+        except:
+            user_permission = {} 
+        context['permissoes'] = user_permission
+        return context
 
 
 def relatorio_despesa(request):
@@ -611,6 +673,11 @@ class IndexDespesas(TemplateView):
         totabastecimentocarro = Abastecimento.objects.filter(veiculo__caminhao = False).aggregate(Sum('valor_unitario'))
         totabastecimentocaminhao = Abastecimento.objects.filter(veiculo__caminhao = True).aggregate(Sum('valor_unitario'))
         totmanutencao = Manutencao.objects.aggregate(Sum('valor'))
+        try:
+            user_permission = FrotaPermissao.objects.get(usuario = self.request.user)
+        except:
+            user_permission = {} 
+        context['permissoes'] = user_permission
         context['totabastecimentocarro']=totabastecimentocarro
         context['totabastecimentocaminhao']=totabastecimentocaminhao
         context['totmanutencao']=totmanutencao       
