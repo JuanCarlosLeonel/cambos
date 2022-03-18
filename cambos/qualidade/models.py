@@ -1,13 +1,16 @@
 from django.db import models
 from jsonfield import JSONField
 from django_currentuser.db.models import CurrentUserField
-from core.models import Pessoa, Setor
+from core.models import Pessoa, Setor, User
 from roupa.models import Etapa, Processo
+import datetime
 
 class Auditor(models.Model):    
     auditor_interno = models.ForeignKey(Pessoa, null=True, blank=True, on_delete=models.DO_NOTHING, db_constraint=False)
     auditor_externo = models.CharField(max_length=20, null=True, blank=True)        
     oficina         = models.ForeignKey(Etapa, null=True, blank=True, on_delete=models.SET_NULL)
+    data_criacao  = models.DateField(verbose_name="Data", default=datetime.date.today)
+    created_by    = CurrentUserField()
 
     def __str__(self):
         return f'{self.auditor_interno}{self.auditor_externo} / {self.oficina}'
@@ -25,11 +28,14 @@ class TabelaAmostragem(models.Model):
     class Meta:        
         db_table = 'qualidade"."tabelaamostragem'
 
+
 class ItemTabelaAmostragem(models.Model):    
     tabela_amostragem  = models.ForeignKey(TabelaAmostragem, on_delete=models.CASCADE)
     quantidade_minima = models.IntegerField()
     quantidade_maxima = models.IntegerField()
     amostragem        = models.IntegerField()
+    data_criacao  = models.DateField(verbose_name="Data", default=datetime.date.today)
+    created_by    = CurrentUserField()
 
     def __str__(self):
         return f'{self.tabela_amostragem}:  {self.quantidade_minima} ~ {self.quantidade_maxima}: {self.amostragem} '
@@ -50,6 +56,8 @@ class Inspecao(models.Model):
     tabela                = models.ForeignKey(TabelaAmostragem, on_delete=models.SET_NULL, null=True, blank=True)
     percentual_amostragem = models.IntegerField()
     criterio_aprovacao    = models.IntegerField()
+    data_criacao  = models.DateField(verbose_name="Data", default=datetime.date.today)
+    created_by    = CurrentUserField()
 
 
     def __str__(self):
@@ -57,3 +65,55 @@ class Inspecao(models.Model):
     
     class Meta:        
         db_table = 'qualidade"."inspecao'
+
+
+class PlanoDeAcao(models.Model):
+    TIPOACAO = (
+            ('Disposição', 'Disposição'),
+            ('Corretiva', 'Corretiva'),                                     
+            ('Preventiva', 'Preventiva'),                                     
+        )
+    ORIGEMACAO = (
+            ('Não Conformidade', 'Não Conformidade'),
+            ('Melhoria', 'Melhoria'),                                     
+            ('Pesquisa', 'Pesquisa'),                                     
+        )
+    TIPOREF = (
+            ('Ficha de Produção', 'Ficha de Produção'),            
+        )    
+    
+    tipo_acao       = models.CharField(max_length=10, choices=TIPOACAO, default='Disposição')
+    origem_acao     = models.CharField(max_length=16, choices=ORIGEMACAO, default='Não Conformidade')
+    tipo_referencia = models.CharField(max_length=17, choices=TIPOREF, default='Ficha de Produção')
+    referencia      = models.CharField(max_length=20)    
+    data_fim        = models.DateField(verbose_name="fim", blank=True)
+    eficaz          = models.BooleanField(blank=True)
+    evidencia       = models.CharField(max_length=20)
+    created_by      = CurrentUserField()
+    data_criacao    = models.DateField(verbose_name="Data", default=datetime.date.today)
+    
+    def __str__(self):
+        return f'{self.referencia} - {self.tipo_acao}'
+    
+    class Meta:        
+        db_table = 'qualidade"."PlanoDeAcao'
+
+
+class Acao(models.Model):
+    
+    plano_acao    = models.ForeignKey(PlanoDeAcao, on_delete=models.CASCADE)    
+    descricao     = models.CharField(max_length=100)    
+    responsavel   = models.ForeignKey(User, related_name="AcaoResponsavel", on_delete=models.SET_NULL, null=True)    
+    data_prazo    = models.DateField(verbose_name="Prazo")
+    data_inicio   = models.DateField(verbose_name="inicio", blank=True)
+    data_fim      = models.DateField(verbose_name="fim", blank=True)
+    resposta      = models.CharField(max_length=100, blank=True)    
+    data_criacao  = models.DateField(verbose_name="Data", default=datetime.date.today)
+    created_by    = CurrentUserField()
+    
+    def __str__(self):
+        return f'{self.referencia} - {self.tipo_acao}'
+    
+    class Meta:        
+        db_table = 'qualidade"."Acao'
+
