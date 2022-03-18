@@ -7,8 +7,8 @@ from django.contrib.auth.decorators import login_required
 from django.views.generic.list import ListView
 
 from core.models import Enderecos, SolicitacaoViagem, UserCompras
-from .models import Abastecimento, ItemViagem, Manutencao, Motorista, Viagem, Veiculo, FrotaPermissao
-from .form import  ManutencaoForm, ViagemForm, AbastecimentoForm
+from .models import Abastecimento, EstoqueDiesel, ItemViagem, Manutencao, Motorista, Movimentacoes, Viagem, Veiculo, FrotaPermissao
+from .form import ManutencaoForm, ViagemForm, AbastecimentoForm
 from django.http import HttpResponse, JsonResponse
 from django.db.models import Sum
 import datetime
@@ -42,11 +42,13 @@ def enviarabastecimento(sender, instance, created, **kwargs):
         from core.models import Bot
         bot = Bot.objects.filter(id = 2).latest('token')
         token = bot.token 
+        interno = EstoqueDiesel.objects.get(produto_id = 146)
+        atual = interno.quantidade
         users = RoupaBot.objects.filter(frota = True)
         for user in users:      
             if user.frota:  
                 chat_id = user.user_id
-                html_content = render_to_string('frota/telegram_messageabast.html', {'nome': Abastecimento.objects.latest('id')})
+                html_content = render_to_string('frota/telegram_messageabast.html', {'nome': Abastecimento.objects.latest('id'),'atual': atual})
                 bot = telegram.Bot(token=token)
                 bot.send_message(chat_id=chat_id,text=html_content, parse_mode=telegram.ParseMode.HTML)
 post_save.connect(enviarabastecimento, sender=Abastecimento)
@@ -126,11 +128,26 @@ class AbastecimentoCreate(CreateView):
     model = Abastecimento
     form_class = AbastecimentoForm
 
-    def get_success_url(self):        
+    def get_success_url(self):   
+        from datetime import timedelta   
+        if self.object.interno:
+            interno = EstoqueDiesel.objects.get(produto_id = 146)
+            self.object.valor_unitario = float(interno.valor_unico) * self.object.quantidade
+            self.object.save()
+            atual = interno.quantidade
+            total = interno.quantidade - self.object.quantidade
+            interno.quantidade = total
+            interno.updated_at = datetime.datetime.now() - timedelta(hours = +3)
+            interno.save()
+            model = Movimentacoes(estoque_id = 3, user_id = 38, tipo = 'C', quantidade = self.object.quantidade, saldo_anterior = atual, saldo_atual = interno.quantidade, created_at = interno.updated_at)
+            model.save()
+                      
         return f'/frota/abastecimento_list/{self.kwargs["pk"]}'
     
     def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)  
+        context = super().get_context_data(**kwargs) 
+        interno = EstoqueDiesel.objects.get(produto_id = 146)
+        context['atual'] = interno.quantidade 
         context['nomeveiculo'] = Veiculo.objects.get(pk = self.kwargs['pk'])              
         context['veiculo'] = self.kwargs['pk']
         return context        
@@ -151,8 +168,6 @@ class AbastecimentoCreate(CreateView):
         kwargs = super().get_form_kwargs()                
         kwargs['inter'] = veiculo.caminhao
         return kwargs
-
-
 
 @method_decorator(login_required, name='dispatch')
 class ViagemUpdate(UpdateView):

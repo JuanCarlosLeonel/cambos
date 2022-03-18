@@ -54,7 +54,8 @@
 							<th data-field="Veiculo"  data-sortable="true" class='text-center'>Veículo</th>		
 							<th data-field="Combustivel"  data-sortable="true" class='text-center'>Combustível</th>	
 							<th data-field="Valor"  data-sortable="true" class='text-center'>Valor Abas.</th>				
-							<th data-field="Destino" data-sortable="true" class='text-center'>Quantidade(l)</th>																					
+							<th data-field="Destino" data-sortable="true" class='text-center'>Quantidade(l)</th>
+							<th data-field="Tipo" data-sortable="true" class='text-center'>Tipo</th>																					
 						</tr>
 					</thead>
 					<tbody>
@@ -76,7 +77,14 @@
 								</td>					
 								<td class='text-center'>
 									{{data.quantidade}}
-								</td>																																
+								</td>	
+								<td class='text-center'>
+									{% if data.interno %}
+										INTERNO
+									{% elif not data.interno %}
+										EXTERNO
+									{% endif %}
+								</td>																															
 						{%endfor%}
 					</tbody>					
 				</table>								

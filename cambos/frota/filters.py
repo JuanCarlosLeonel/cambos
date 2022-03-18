@@ -1,6 +1,6 @@
 from core.models import SolicitacaoViagem, User, UserCompras
 import django_filters
-from django_filters import DateFilter, CharFilter, ModelChoiceFilter, ChoiceFilter, ModelMultipleChoiceFilter
+from django_filters import DateFilter, CharFilter, ModelChoiceFilter, ChoiceFilter, ModelMultipleChoiceFilter, BooleanFilter
 from django import forms
 from .models import Viagem, Pessoa, Motorista, Veiculo, Abastecimento
 from django.db.models import Q
@@ -16,6 +16,7 @@ class ViagemFilter(django_filters.FilterSet):
     inicio = DateFilter(lookup_expr='gte',widget=forms.DateInput(attrs={'id': 'datepicker','type':'date','class':'form-control'}),field_name="data_inicial",label='Início')
     fim = DateFilter(lookup_expr='lte',widget=forms.DateInput(attrs={'id': 'datepicker','type':'date','class':'form-control'}),field_name="data_inicial",label='Fim')
     destino = CharFilter(widget=forms.TextInput(attrs={'class':'form-control'}),field_name="destino",label='Destino',lookup_expr='icontains')
+    tipo = django_filters.ChoiceFilter(choices=Viagem.TIPOVIAGEM,label='Tipo',widget=forms.Select(attrs={'class':'form-control'}))
     q = CharFilter(method='my_custom_filter',label="MOTORISTA 1-2",widget=forms.TextInput(attrs={'class':'form-control'}))
 
     class Meta:
@@ -64,19 +65,7 @@ class AbastecimentoFilterCaminhao(django_filters.FilterSet):
 
     class Meta:
         model = Abastecimento
-        fields = {
-            'veiculo',
-            'interno',
-        }
-        filter_overrides = {
-            models.BooleanField: {
-                'filter_class': django_filters.BooleanFilter,
-                'extra': lambda f: {
-                    'widget': forms.CheckboxInput,
-                },
-            },
-        }
-
+        fields = ['interno']
 
 class SolicitacaoFilter(django_filters.FilterSet):
     # m = UserCompras.objects.filter().values('name')

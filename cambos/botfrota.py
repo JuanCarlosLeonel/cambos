@@ -9,7 +9,7 @@ from telegram.ext import (
     MessageHandler,
     Filters,
 )
-from frota.models import Abastecimento, Veiculo, Viagem
+from frota.models import Abastecimento, EstoqueDiesel, Veiculo, Viagem
 
 def viagemcaminhao(update):
     user = get_user(update)
@@ -23,6 +23,16 @@ def viagemcaminhao(update):
     update.edit_message_text(text, parse_mode=ParseMode.HTML)
     return return_menu(update, text)
 
+def dieselinterno(update):
+    user = get_user(update)
+    interno = EstoqueDiesel.objects.get(produto_id = 146)
+    text =""
+    if user.frota:
+        text = f"Total Disponível:{os.linesep}"
+        text += f"<b>{interno.quantidade} l</b>.{os.linesep}"
+    update.edit_message_text(text, parse_mode=ParseMode.HTML)
+    return return_menu(update, text)
+
 def abastecimento(update):
     user = get_user(update)
     a = Abastecimento.objects.filter(veiculo__caminhao = True).order_by("-id")
@@ -30,7 +40,7 @@ def abastecimento(update):
     if user.frota:
         text = f"Abastecimentos Realizados:{os.linesep}"
         for item in a:
-            text += f"<b>{item.veiculo}</b>,data {str(item.data)[8:] + '/' + str(item.data)[5:7] + '/' + str(item.data)[0:4]}{os.linesep} Combustível:<i>{item.combustivel}</i>, Valor pago:{item.valor_unitario}.{os.linesep}"
+            text += f"<b>{item.veiculo}</b>, {str(item.data)[8:] + '/' + str(item.data)[5:7] + '/' + str(item.data)[0:4]}{os.linesep} Combustível:<i>{item.combustivel}</i>, Valor pago:{item.valor_unitario}.{os.linesep}"
     update.edit_message_text(text, parse_mode=ParseMode.HTML)
     return return_menu(update, text)
 
@@ -287,6 +297,7 @@ def button(update: Update, _: CallbackContext) -> None:
             InlineKeyboardButton("\U0000203C Em trânsito", callback_data='viagemcaminhao'),
         ],
         [   InlineKeyboardButton("\U000026FD Abastecimento", callback_data='abastecimento'),
+        InlineKeyboardButton("\U000026FD Diesel Interno", callback_data='dieselinterno'),
         ],
         [InlineKeyboardButton("Menu", callback_data='menu')],
         ]
@@ -316,6 +327,9 @@ def button(update: Update, _: CallbackContext) -> None:
 
     elif query.data == 'abastecimento':
         return abastecimento(query)
+
+    elif query.data == 'dieselinterno':
+        return dieselinterno(query)
 
     elif query.data == 'palio':
         return palio(query)

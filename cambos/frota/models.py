@@ -116,7 +116,7 @@ class Abastecimento(models.Model):
     veiculo        = models.ForeignKey(Veiculo, on_delete=models.DO_NOTHING, blank=True)
     combustivel = models.CharField(max_length=40, choices=COMBUSTIVEL)
     data           = models.DateField()        
-    valor_unitario = models.FloatField()
+    valor_unitario = models.FloatField(null=True,blank=True)
     quantidade     = models.FloatField()
 
     def __str__(self):
@@ -124,6 +124,36 @@ class Abastecimento(models.Model):
     
     class Meta:        
         db_table = 'frota"."abastecimento'
+
+#buscar informações do abastecimento interno na tabela estoque/souzacambos
+class EstoqueDiesel(models.Model):
+    id = models.AutoField(db_column='id',primary_key=True)
+    almoxarifado_id = models.IntegerField(db_column='almoxarifado_id')
+    produto_id = models.IntegerField(db_column='produto_id')
+    user_id = models.IntegerField(db_column='user_id')
+    quantidade = models.FloatField(db_column='quantidade')
+    valor_unico = models.FloatField(db_column='valor_unico')
+    created_at = models.DateTimeField(db_column='created_at')
+    updated_at = models.DateTimeField(db_column='updated_at')
+
+    class Meta:
+        managed = False
+        db_table = 'souzacambos"."estoque'
+
+#para quando houver um abastecimento interno informar os dados de onde veio a movimentação
+class Movimentacoes(models.Model):
+    id = models.AutoField(db_column='id',primary_key=True)
+    estoque_id = models.IntegerField(db_column='estoque_id')
+    user_id = models.IntegerField(db_column='user_id')
+    tipo = models.CharField(db_column='tipo', max_length=1)
+    descricao = models.CharField(db_column='descricao', max_length=191)
+    quantidade = models.FloatField(db_column='quantidade')
+    saldo_anterior = models.FloatField(db_column='saldo_anterior') 
+    saldo_atual = models.FloatField(db_column='saldo_atual')
+    created_at = models.DateTimeField(db_column='created_at')
+    class Meta:
+        managed = False
+        db_table = 'souzacambos"."movimentacoes'
 
 
 class Infracao(models.Model):    
@@ -230,12 +260,5 @@ class ItemViagem(models.Model):
         db_table = 'frota"."viagem_itens' 
 
 
-class FrotaBot(models.Model):    
-    user_id    = models.BigIntegerField(unique=True)
-    frota      = models.BooleanField(default=True)
-    ativo      = models.BooleanField(default=True)
-    usuario    = models.ForeignKey(User, on_delete=models.SET_NULL, blank=True, null=True)
-    def __str__(self):
-        return f'{self.user_nome}'
 
 
