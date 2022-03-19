@@ -15,24 +15,69 @@
 </div><!--/.row-->
 <div class="row">
 	<div class="col-lg-12">
-		<h1 class="page-header">{{pedido.dados.Nome}}<span class="text-muted small"> {{pedido.dados.Tipo}}</span></h1></h1>
+		<h2 class="page-header">FC {{pedido.ficha_corte}}<span class="text-muted small"> Cod {{pedido.dados.Modelo}}</span></h2>
+		<h1 class="page-header text-success">{{pedido.dados.Nome}}<span class="text-muted small "> Prazo {{pedido.dados.DataEntrega}}</span></h1>		
 	</div>
 </div><!--/.row-->
 {% endblock navigation %}
 
-	
 {% block content %}	
-<div class="col-12">
-		
+
+<div class="col-12">		
 	<div class="panel panel-default">
-		<div class="panel-heading"> <strong class="">FC {{pedido.ficha_corte}} <strong class="text-success">Cod {{pedido.dados.Modelo}}</strong></strong></div>
-		<div class="panel-body">
-			<div class="large" >Entrega: {{pedido.dados.DataEntrega}}</div>
+		<div class="panel-heading">
+			<strong class="">Auditorias<strong class="text-success"></strong></strong> (em breve)
+			<span class="pull-right clickable panel-toggle panel-button-tab-left collapse in panel-collapsed"><em class="fa fa-toggle-down"></em></span>
+		</div>
+		
+		<div class="panel-body" style= "display: none;">
+			<div id="toolbar">
+				
+		  </div>
+			<table id="table"				
+				data-toolbar="#toolbar"
+				data-toggle="table"
+				data-show-refresh="false"
+				data-show-toggle="false"
+				data-show-columns="false"
+				data-search="false"
+				data-select-item-name="toolbar"
+				data-pagination="false"
+				data-sort-name="DataEntrega"  					
+				data-sort-order="asc"					
+			 >
+				<thead>
+					<tr>							
+						<th data-field="Data"  data-sortable="true" class='text-center'>Data</th>							
+						<th data-field="Descrição" data-sortable="true" class='text-center'>Descrição</th>														
+						<th data-field="Responsável"  data-sortable="true" class='text-center'>Situação</th>												
+					</tr>
+				</thead>
+				<tbody>
+					{% for data in producaojs %}							
+						<tr data-href="{% url 'qualidade_detail' data.Lacre %}"
+						 class="trLink text-danger negrito" >								 								
+							<td class='text-center' >
+								{% if data.FichaCorte%}
+								{{data.FichaCorte}}
+								{%else%}
+								 -
+								{%endif%} 
+							</td>								
+							<td class='text-center'>
+								{{data.Modelo|safe}}
+							</td>																								
+							<td class='text-center' >{{data.Nome}}</td>
+							<td class='text-center'>{{data.Status}}</td>
+							<td class='text-center'>{{data.Atrasado}}</td>
+							<td class='text-center' >{{data.DataEntrega|safe}}</td>					
+						</tr>
+					{%endfor%}
+				</tbody>					
+			</table>								
 		</div>
 	</div>
-</div>
-
-
+</div>	
 <div class="col-12">
 		
 	<div class="panel panel-default">
