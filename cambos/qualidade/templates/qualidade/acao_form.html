@@ -5,21 +5,7 @@
 {% endblock css %}
 
 {% block navigation %}
-    <div class="row">
-        <ol class="breadcrumb">
-            <li><a href="{% url 'roupa_index' %}">
-                <em class="fa fa-home"></em>
-            </a></li>
-            <li class="active"><a href="{% url 'programacao_list' %}">
-                Programação
-            </a></li>
-        </ol>
-    </div><!--/.row-->
-    <div class="row">
-        <div class="col-lg-12">
-            <h1 class="page-header">{{dados.Modelo|safe}}<span class="text-muted small"> {{dados.Nome}} </span></h1></h1>
-        </div>
-    </div><!--/.row-->
+    
 {% endblock navigation %}
 
 {% block content %}			
@@ -28,7 +14,7 @@
         <form method="POST" autocomplete="off">
               <div class="modal-header">
                 <a href="javascript:void(0)" onClick="history.go(-1); return false;" type="button" class="close" aria-hidden="true">×</a>
-                <h3 class="color-teal">ACOMPANHAMENTO DE PEDIDO </h3>
+                <h3 class="color-teal">PLANO DE AÇÃO </h3>
               </div>
               <div class="modal-body">               
                     {% csrf_token %} {{pedido.Nome}}
@@ -47,6 +33,26 @@
 
 {% block script %}
  {{ form.media.js }}
+
+ <script>
+  $(document).ready(function(){
+       $('.datepicker').datepicker({
+           format: 'dd/mm/yyyy',
+           minViewMode: "days",
+           todayBtn: true,
+           todayHighlight: true,
+           
+       });            
+       $('.datepicker2').datepicker({
+           format: 'hh:mm',
+           minViewMode: "hours",
+           todayBtn: true,
+           todayHighlight: true,
+           
+       });            
+   });
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.10/jquery.mask.js"></script>
 	<script>
         let option = document.getElementById('setor{{setor.id}}');        
         option.setAttribute('class', 'active');					           

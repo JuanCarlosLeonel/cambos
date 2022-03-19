@@ -10,13 +10,16 @@
 		<li><a href="{% url 'roupa_index' %}">
 			<em class="fa fa-home"></em>
 		</a></li>
-		<li class="active">Qualidade</li>
+		<li><a href="{% url 'qualidade_index' %}">
+			Qualidade
+		</a></li>				
+		<li class="active">Pedido</li>
 	</ol>
 </div><!--/.row-->
 <div class="row">
 	<div class="col-lg-12">
-		<h2 class="page-header">FC {{pedido.ficha_corte}}<span class="text-muted small"> Cod {{pedido.dados.Modelo}}</span></h2>
-		<h1 class="page-header text-success">{{pedido.dados.Nome}}<span class="text-muted small "> Prazo {{pedido.dados.DataEntrega}}</span></h1>		
+		<h2 class="page-header">FC {{pedido.ficha_corte}}<span class="text-muted small"> Cod {{pedido.dados.Modelo|safe}}</span></h2>
+		<h1 class="page-header text-success">{{pedido.dados.Nome}}<span class="text-muted small "> Prazo {{pedido.dados.DataEntrega|safe}}</span></h1>		
 	</div>
 </div><!--/.row-->
 {% endblock navigation %}
@@ -139,13 +142,13 @@
 		
 	<div class="panel panel-default">
 		<div class="panel-heading"> <strong class="">Plano de Ação<strong class="text-success"></strong></strong>
-			<span class="pull-right clickable panel-toggle panel-button-tab-left"><em class="fa fa-toggle-up"></em></span>
+			<a href="{% url 'plano_acao_create' pedido.lacre %}" class="btn btn-success pull-right">
+				<i class="fa fa-plus"></i> Novo
+			  </a>			
 		</div>
 		<div class="panel-body">
 			<div id="toolbar">
-				<a href="{% url 'consumo_material_create' %}" class="btn btn-success">
-					<i class="fa fa-plus"></i> Novo
-				  </a>
+				
 			</div>
 			<table id="table"				
 				data-toolbar="#toolbar"
@@ -160,31 +163,27 @@
 				data-sort-order="asc"					
 			 >
 				<thead>
-					<tr>							
-						<th data-field="Data"  data-sortable="true" class='text-center'>Data</th>							
-						<th data-field="Descrição" data-sortable="true" class='text-center'>Descrição</th>														
-						<th data-field="Responsável"  data-sortable="true" class='text-center'>Responsável</th>
-						<th data-field="Prazo" data-sortable="true" class='text-center'>Prazo</th>
-						<th data-field="Status" data-sortable="true" class='text-center'>Situação</th>
-						<th data-field="Eficácia" data-formatter="dateFormat" data-sortable="true" class='text-center'>Eficácia</th>													
+					<tr>
+						<th data-field="cont"  data-sortable="true" class='text-center'>ID</th>														
+						<th data-field="Data"  data-sortable="true" class='text-center'>Abertura</th>							
+						<th data-field="Descrição" data-sortable="true" class='text-center'>Origem</th>														
+						<th data-field="Responsável"  data-sortable="true" class='text-center'>Tipo</th>
+						<th data-field="Prazo" data-sortable="true" class='text-center'>Ações</th>
+						<th data-field="Status" data-sortable="true" class='text-center'>Situação</th>						
 					</tr>
 				</thead>
 				<tbody>
-					{% for data in producaojs %}							
-						<tr data-href="{% url 'qualidade_detail' data.Lacre %}"
-						 class="trLink text-danger negrito" >								 								
-							<td class='text-center' >
-								{% if data.FichaCorte%}
-								{{data.FichaCorte}}
-								{%else%}
-								 -
-								{%endif%} 
-							</td>								
-							<td class='text-center'>
-								{{data.Modelo|safe}}
+					{% for data in planos_acao %}							
+						<tr data-href="{% url 'plano_acao_detail' data.pk %}"
+						 class="trLink text-danger negrito" >								 															
+						 	<td class='text-center'>
+								{{data.id}}
 							</td>																								
-							<td class='text-center' >{{data.Nome}}</td>
-							<td class='text-center'>{{data.Status}}</td>
+							<td class='text-center'>
+								{{data.data_criacao|date:"d/m/Y"}}
+							</td>																								
+							<td class='text-center' >{{data.origem_acao}}</td>
+							<td class='text-center'>{{data.tipo_acao}}</td>
 							<td class='text-center'>{{data.Atrasado}}</td>
 							<td class='text-center' >{{data.DataEntrega|safe}}</td>					
 						</tr>
@@ -199,5 +198,13 @@
 
 {% block script %}
 
-  
+  <script>
+	$(document).ready(function(){
+		$('table tr').click(function(){
+		  window.location = $(this).data('href');
+		  return false;
+		});
+	  });
+</script>
+	
 {% endblock script %}

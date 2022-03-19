@@ -34,7 +34,7 @@ post_save.connect(enviar, sender=Viagem)
 def enviarabastecimento(sender, instance, created, **kwargs):
     from roupa.models import RoupaBot
     from core.models import Bot
-    bot = Bot.objects.latest('token')
+    bot = Bot.objects.get(nome = 'PCP')
     token = bot.token 
     users = RoupaBot.objects.filter(ativo = True)
     # a = Abastecimento.objects.filter().latest('id')

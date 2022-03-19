@@ -22,7 +22,7 @@
 {% block content %}
 <div class="panel panel-container">
 	<div class="row">
-		<a href="">												
+		<a href="{% url 'acao_list' %}">												
 			<div class="col-xs-6 no-padding">					
 				<div class="panel panel-teal panel-widget border-right border-bottom">
 					<div class="row no-padding"><span class="color-blue"> <em class="fa fa-list fa-2x"></em></span>
@@ -50,7 +50,16 @@
 					</div>
 				</div>
 			</div>
-		</a>			
+		</a>
+		<a href="{% url 'parado_list' %}">												
+			<div class="col-xs-6 no-padding">					
+				<div class="panel panel-teal panel-widget border-right border-bottom">
+					<div class="row no-padding"><span class="color-blue"> <em class="fa fa-list fa-2x"></em></span>
+						<h2>Produtos Parados</h2>						
+					</div>
+				</div>
+			</div>
+		</a>				
 	</div><!--/.row-->
 </div>
 

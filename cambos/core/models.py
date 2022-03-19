@@ -30,6 +30,12 @@ class Setor(models.Model):
 
     
 class Bot(models.Model):    
+    TIPO_BOT = (
+            ('PCP', 'PCP'),
+            ('Qualidade', 'Qualidade'),                                     
+            ('Frota', 'Frota'),                                     
+        )
+    nome    = models.CharField(max_length=20, choices=TIPO_BOT, default='PCP')
     token   = models.CharField(max_length=46)
     horas   = models.IntegerField(default=0)
     minutos = models.IntegerField(default=0)

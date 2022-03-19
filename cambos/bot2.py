@@ -12,7 +12,7 @@ from telegram import InlineKeyboardButton, InlineKeyboardMarkup
 
 class TelegramBot():
     def __init__(self):
-        self.bot = Bot.objects.latest('token')
+        self.bot = Bot.objects.get(nome = 'PCP')
         token = self.bot.token
         self.bot = telegram.Bot(token=token)
         self.url_base = f'https://api.telegram.org/bot{token}/'
@@ -22,7 +22,7 @@ class TelegramBot():
     def Iniciar(self):
         update_id = None
         while True:
-            ativo= Bot.objects.latest('token').ativo            
+            ativo= Bot.objects.get(nome = 'PCP').ativo            
             if ativo:
                 atualizacao = self.obter_mensagens(update_id)
                 if atualizacao['result']:

@@ -1,0 +1,95 @@
+{% extends "cambos/base_roupa.html" %}
+{% load static %}
+{% block css %}
+
+{% endblock css %}
+
+{% block navigation %}
+<div class="row">
+	<ol class="breadcrumb">
+		<li><a href="{% url 'roupa_index' %}">
+			<em class="fa fa-home"></em>
+		</a></li>
+		<li><a href="{% url 'qualidade_detail' plano.referencia %}">
+			Pedido
+		</a></li>
+		<li class="active">Plano de Ação {{plano.id}}</li>
+	</ol>
+</div><!--/.row-->
+<div class="row">
+	<div class="col-lg-12">		
+		<h2 class="page-header text-success">{{plano.origem_acao}}<span class="text-muted small "></span></h2>		
+	</div>
+</div><!--/.row-->
+{% endblock navigation %}
+
+{% block content %}	
+
+
+<div class="col-12">
+		
+	<div class="panel panel-default">
+		<div class="panel-heading"> <strong class="">Ações<strong class="text-danger"> {{plano.tipo_acao}}</strong>		
+			<a href="{% url 'acao_create' plano.id%}" class="btn btn-success pull-right">
+				<i class="fa fa-plus"></i> Nova
+			  </a>
+		</div>
+		<div class="panel-body">
+			<div id="toolbar">
+				
+			</div>
+			<table id="table"				
+				data-toolbar="#toolbar"
+				data-toggle="table"
+				data-show-refresh="false"
+				data-show-toggle="false"
+				data-show-columns="false"
+				data-search="false"
+				data-select-item-name="toolbar"
+				data-pagination="false"
+				data-sort-name="DataEntrega"  					
+				data-sort-order="asc"					
+			 >
+				<thead>
+					<tr>							
+						<th data-field="Data"  data-sortable="true" class='text-center'>Responsável</th>							
+						<th data-field="Descrição" data-sortable="true" class='text-center'>Descrição</th>														
+						<th data-field="Responsável"  data-sortable="true" class='text-center'>Prazo</th>
+						<th data-field="Prazo" data-sortable="true" class='text-center'>Início</th>
+						<th data-field="Status" data-sortable="true" class='text-center'>Fim</th>
+						<th data-field="Eficácia" data-formatter="dateFormat" data-sortable="true" class='text-center'>Eficácia</th>													
+					</tr>
+				</thead>
+				<tbody>
+					{% for data in acoes %}							
+						<tr data-href="{% url 'acao_update' data.id %}"
+						 class=" " >								 																						
+							<td class='text-center'>
+								{{data.responsavel}}
+							</td>																								
+							<td class='text-center' >{{data.descricao}}</td>
+							<td class='text-center'>{{data.data_prazo|date:"d/m/Y"}}</td>
+							<td class='text-center'>{{data.data_inicio|date:"d/m/Y"}}</td>
+							<td class='text-center' >{{data.data_fim|date:"d/m/Y"}}</td>					
+						</tr>
+					{%endfor%}
+				</tbody>					
+			</table>								
+		</div>
+	</div>
+</div>	
+
+{%endblock content%}
+
+{% block script %}
+
+  <script>
+	$(document).ready(function(){
+		$('table tr').click(function(){
+		  window.location = $(this).data('href');
+		  return false;
+		});
+	  });
+</script>
+	
+{% endblock script %}
