@@ -3,7 +3,7 @@ from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
 from django.views.generic.base import TemplateView
 from django.views.generic.edit import UpdateView, CreateView
-from .models import PlanoDeAcao, Acao
+from .models import PlanoDeAcao, Acao, QualidadeTrack, QualidadeBot
 from .form import PlanoAcaoForm, AcaoForm
 from roupa.models import FichaCorte
 
@@ -76,7 +76,18 @@ class AcaoCreate(CreateView):
         context['plano'] = PlanoDeAcao.objects.get(id = pk)
         return context
 
-    def get_success_url(self):
+    def get_success_url(self):            
+        model = QualidadeTrack.objects.latest('pcp')    
+        user = self.object.responsavel.id
+        userbot = QualidadeBot.objects.get(usuario__id = user)
+        ref = self.object.plano_acao.referencia
+        model.pcp.append(
+            {"lacre":ref,
+            "tipo":"acao",
+            "responsável":userbot.user_id
+            }
+        )
+        model.save()
         pk = self.object.plano_acao
         return f'/qualidade/plano_acao_detail/{pk.id}'
 

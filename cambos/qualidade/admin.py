@@ -5,7 +5,9 @@ from .models import (
     ItemTabelaAmostragem,
     Inspecao,
     Acao,
-    PlanoDeAcao
+    PlanoDeAcao,
+    QualidadeBot,
+    QualidadeTrack
 )
 
 admin.site.register(Auditor)
@@ -14,4 +16,6 @@ admin.site.register(ItemTabelaAmostragem)
 admin.site.register(Inspecao)
 admin.site.register(Acao)
 admin.site.register(PlanoDeAcao)
+admin.site.register(QualidadeBot)
+admin.site.register(QualidadeTrack)
 

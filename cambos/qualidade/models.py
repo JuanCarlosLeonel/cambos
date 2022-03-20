@@ -117,3 +117,17 @@ class Acao(models.Model):
     class Meta:        
         db_table = 'qualidade"."Acao'
 
+
+class QualidadeBot(models.Model):    
+    user_id       = models.BigIntegerField(unique=True)
+    user_nome     = models.CharField(max_length=30)    
+    pedido_parado = models.BooleanField(default=False)
+    ativo         = models.BooleanField(default=True)
+    usuario       = models.ForeignKey(User, on_delete=models.SET_NULL, blank=True, null=True)
+
+    def __str__(self):
+        return f'{self.user_nome}'
+
+
+class QualidadeTrack(models.Model):    
+    pcp = JSONField()
