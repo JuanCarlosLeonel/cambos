@@ -76,15 +76,22 @@ class AcaoCreate(CreateView):
         context['plano'] = PlanoDeAcao.objects.get(id = pk)
         return context
 
+    def get_form_kwargs(self):
+        usuario_list = QualidadeBot.objects.filter().values('usuario__id')
+        kwargs = super().get_form_kwargs()
+        kwargs['usuario_list'] = usuario_list
+        return kwargs
+
     def get_success_url(self):            
         model = QualidadeTrack.objects.latest('pcp')    
-        user = self.object.responsavel.id
-        userbot = QualidadeBot.objects.get(usuario__id = user)
+        user = self.object.responsavel
+        userbot = QualidadeBot.objects.get(usuario = user)
         ref = self.object.plano_acao.referencia
         model.pcp.append(
             {"lacre":ref,
             "tipo":"acao",
-            "responsável":userbot.user_id
+            "responsavel":userbot.user_id,
+            "descricao":self.object.descricao
             }
         )
         model.save()

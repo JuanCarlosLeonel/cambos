@@ -2,6 +2,7 @@ from django.forms import ModelForm, fields, widgets
 from django import forms
 from .models import Acao, PlanoDeAcao
 from django_select2.forms import Select2Widget
+from core.models import User
 
 
 class PlanoAcaoForm(forms.ModelForm):
@@ -32,6 +33,8 @@ class AcaoForm(forms.ModelForm):
                 'resposta': forms.TextInput(attrs={'class':'form-control'}),            
                 }
 
-    
-    
+    def __init__(self, *args, **kwargs):
+        usuario_list = kwargs.pop('usuario_list', None)
+        super(AcaoForm, self).__init__(*args, **kwargs)                
+        self.fields['responsavel'].queryset = User.objects.filter(id__in = usuario_list)
     
