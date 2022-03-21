@@ -30,29 +30,39 @@ def qualidade_track(context: CallbackContext):
     from qualidade.models import QualidadeTrack    
     track_list = QualidadeTrack.objects.latest("pcp")
     user_list = QualidadeBot.objects.filter(ativo = True, pedido_parado = True)    
-    for user in user_list:        
-        chat_id = user.user_id        
-        for pedido in track_list.pcp:
+    for pedido in track_list.pcp:            
+        for user in user_list:                        
+            chat_id = user.user_id        
             if pedido["tipo"] == "parado":
-                text = f'Novo pedido parado: {pedido["lacre"]}'            
-                
-                keyboard = [
-                    [                    
-                        InlineKeyboardButton("Relatório", url='https://indicador.souzacambos.com.br/'),
+                if user.pedido_parado:
+                    text = f'Novo pedido parado: {pedido["lacre"]}'            
+                    
+                    keyboard = [
+                        [                    
+                            InlineKeyboardButton("Relatório", url='https://indicador.souzacambos.com.br/'),
+                        ]
                     ]
-                ]
-                reply_markup = InlineKeyboardMarkup(keyboard)            
-                context.bot.send_message(chat_id=chat_id, text=text, reply_markup=reply_markup)
-            elif pedido["tipo"] == "acao":
-                text = f'Nova Ação sob sua responsabilidade: {pedido["lacre"]}: '            
-                
-                keyboard = [
-                    [                    
-                        InlineKeyboardButton("Relatório", url='https://indicador.souzacambos.com.br/'),
+                    reply_markup = InlineKeyboardMarkup(keyboard)            
+                    context.bot.send_message(chat_id=chat_id, text=text, reply_markup=reply_markup)            
+            if pedido["tipo"] == "acao":
+                if chat_id == pedido['responsavel']:                    
+                    text = f'Nova Ação sob cadastrada a sua responsabilidade: {pedido["lacre"]}: {pedido["descricao"]}'  
+                    keyboard = [
+                        [                    
+                            InlineKeyboardButton("Relatório", url='https://indicador.souzacambos.com.br/'),
+                        ]
                     ]
-                ]
-                reply_markup = InlineKeyboardMarkup(keyboard)            
-                context.bot.send_message(chat_id=chat_id, text=text, reply_markup=reply_markup)
+                    reply_markup = InlineKeyboardMarkup(keyboard)            
+                    context.bot.send_message(chat_id=chat_id, text=text, reply_markup=reply_markup)
+                elif user.ver_acoes:                    
+                    text = f'Nova Ação cadastrada: {pedido["lacre"]}: {pedido["descricao"]}'                               
+                    keyboard = [
+                        [                    
+                            InlineKeyboardButton("Relatório", url='https://indicador.souzacambos.com.br/'),
+                        ]
+                    ]
+                    reply_markup = InlineKeyboardMarkup(keyboard)            
+                    context.bot.send_message(chat_id=chat_id, text=text, reply_markup=reply_markup)
     track_list.pcp = []    
     track_list.save()
         

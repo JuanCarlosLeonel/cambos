@@ -122,6 +122,7 @@ class QualidadeBot(models.Model):
     user_id       = models.BigIntegerField(unique=True)
     user_nome     = models.CharField(max_length=30)    
     pedido_parado = models.BooleanField(default=False)
+    ver_acoes     = models.BooleanField(default=False)
     ativo         = models.BooleanField(default=True)
     usuario       = models.ForeignKey(User, on_delete=models.SET_NULL, blank=True, null=True)
 
