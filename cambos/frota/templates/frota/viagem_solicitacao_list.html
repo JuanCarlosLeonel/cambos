@@ -74,64 +74,36 @@
 					{% for data in lista_solicitacoes %}
 						{% for item in itemviagem %}
 							{% if item.viagem_solicitacao == data or data.situacao == '1' %}
-								<tr data-href="{{data.pk}}"
+								<tr data-href="#"
 									class="trLink" >
 									<td class='text-center'>
-										{% for u in user %}
-											{%if u.id == data.user_id%}
-												{{u.name}}
-											{%endif%}
-										{% endfor %}
+										{{data.user}}
 									</td>
-									<td class='text-center' >																					
-										{%if data.prioridade == 'U' %} 							
+									<td class='text-center' >																																									
+										{%if data.prioridade == '2' %} 							
 											Urgente
-										{%elif data.prioridade == 'N' %} 						
+										{%elif data.prioridade == '1' %} 						
 											Normal
-										{%endif%}																		
+										{%endif%}																																			
 									</td>
 									<td class='text-center'>{{ data.peso }}</td>
 									<td class='text-center'>
-										{% for e in endereco %}
-											{%if e.id == data.endereco_id%}
-												{{e.endereco}}
-											{%endif%}
-										{% endfor %}
+										{{data.endereco.endereco}}
 									</td>
 									<td class='text-center'>
-									{% for e in endereco %}
-										{%if e.id == data.endereco_id%}
-											{{e.numero}}
-										{%endif%}
-									{% endfor %}
+										{{data.endereco.numero}}
 									</td>
 									<td class='text-center'>
-									{% for e in endereco %}
-										{%if e.id == data.endereco_id%}
-											{{e.bairro}}
-										{%endif%}
-									{% endfor %}
+										{{data.endereco.bairro}}
 									</td>
 									<td class='text-center'>
-									{% for e in endereco %}
-										{%if e.id == data.endereco_id%}
-											{{e.cidade}}
-										{%endif%}
-									{% endfor %}
+										{{data.endereco.cidade}}
 									</td>
 									<td class='text-center'>
-									{% for e in endereco %}
-										{%if e.id == data.endereco_id%}
-											{{e.uf}}
-										{%endif%}
-									{% endfor %}
+										{{data.endereco.uf}}
 									</td>
 									<td class='text-center'>
-									{% for e in endereco %}
-										{%if e.id == data.endereco_id%}
-											{{e.cep}}
-										{%endif%}
-									{% endfor %}
+										{{data.endereco.cep}}
 									</td>
 									<td class='text-center'>{{ data.data_prevista|date:"d/m/y" }}</td>
 									<td class='text-center'>{{ data.data_solicitacao|date:"d/m/y H:i" }}</td>
@@ -144,7 +116,7 @@
 											<input type="hidden" class="form-control" id="editar" name="editar"
 												value="false" placeholder="editar"
 												aria-label="editar" aria-describedby="basic-addon1">
-
+	
 											<input type="hidden" id="solicitacao_id" name="solicitacao_id" value="{{ data.pk }}" placeholder="solicitacao_id" aria-label="solicitacao_id"/>
 											{% else %}
 											<button class="fas fa-dolly-flatbed btn btn-primary" type="submit" role="button" value="null">
@@ -153,7 +125,7 @@
 											<input type="hidden" class="form-control" id="editar" name="editar"
 												value="true" placeholder="editar"
 												aria-label="editar" aria-describedby="basic-addon1">
-
+	
 											<input type="hidden" id="solicitacao_id" name="solicitacao_id" value="{{ data.pk }}" placeholder="solicitacao_id" aria-label="solicitacao_id"/>
 											{% endif %}
 										</form>
@@ -162,64 +134,36 @@
 						{%endfor%}
 						{% if itemv == 0 %}
 							{% if data.situacao == '1' %}
-								<tr data-href="{{data.pk}}"
+								<tr data-href="#"
 								class="trLink" >
 								<td class='text-center'>
-									{% for u in user %}
-										{%if u.id == data.user_id%}
-											{{u.name}}
-										{%endif%}
-									{% endfor %}
+									{{data.user}}
 								</td>
 								<td class='text-center' >																					
-									{%if data.prioridade == 'U' %} 							
-										Urgente
-									{%elif data.prioridade == 'N' %} 						
+									{%if data.prioridade == '1' %} 							
 										Normal
+									{%elif data.prioridade == '2' %} 						
+										Urgente
 									{%endif%}																		
 								</td>
 								<td class='text-center'>{{ data.peso }}</td>
 								<td class='text-center'>
-									{% for e in endereco %}
-										{%if e.id == data.endereco_id%}
-											{{e.endereco}}
-										{%endif%}
-									{% endfor %}
+									{{data.endereco.endereco}}
 								</td>
 								<td class='text-center'>
-								{% for e in endereco %}
-									{%if e.id == data.endereco_id%}
-										{{e.numero}}
-									{%endif%}
-								{% endfor %}
+									{{data.endereco.numero}}
 								</td>
 								<td class='text-center'>
-								{% for e in endereco %}
-									{%if e.id == data.endereco_id%}
-										{{e.bairro}}
-									{%endif%}
-								{% endfor %}
+									{{data.endereco.bairro}}
 								</td>
 								<td class='text-center'>
-								{% for e in endereco %}
-									{%if e.id == data.endereco_id%}
-										{{e.cidade}}
-									{%endif%}
-								{% endfor %}
+									{{data.endereco.cidade}}
 								</td>
 								<td class='text-center'>
-								{% for e in endereco %}
-									{%if e.id == data.endereco_id%}
-										{{e.uf}}
-									{%endif%}
-								{% endfor %}
+									{{data.endereco.uf}}
 								</td>
 								<td class='text-center'>
-								{% for e in endereco %}
-									{%if e.id == data.endereco_id%}
-										{{e.cep}}
-									{%endif%}
-								{% endfor %}
+									{{data.endereco.cep}}
 								</td>
 								<td class='text-center'>{{ data.data_prevista|date:"d/m/y" }}</td>
 								<td class='text-center'>{{ data.data_solicitacao|date:"d/m/y H:i" }}</td>

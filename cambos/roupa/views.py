@@ -33,6 +33,7 @@ from .models import (
 from django.http import JsonResponse
 from dateutil.parser import parse
 from django.core import serializers
+from qualidade.models import QualidadeTrack
 
 
 def parse_date(item):
@@ -46,6 +47,19 @@ def get_etapa(pk):
     except:
         nome = Etapa.objects.latest('id')
     return nome
+
+
+def update_parado(lacre):
+    model = QualidadeTrack.objects.latest('pcp')    
+    try:                
+        model.pcp.append(
+            {"lacre":lacre,
+            "tipo":'parado'
+            }
+        )
+        model.save()
+    except:
+        pass
 
 
 def update_track(lacre):
@@ -71,9 +85,9 @@ def update_api():
         dados = response.json()
         model = API.objects.latest("id")
         model.api = dados
-        model.save()
+        model.save()        
     except:
-        pass
+        print("Erro update_api")
 
 
 def get_url():  
@@ -94,6 +108,7 @@ def check_update_api():
     dados_pcp = PCP.objects.latest("id")
     ficha_corte_list = FichaCorte.objects.filter()
     change_status = []
+    parado_list = []
     new_api = []
     new_pcp = []
     old_api = []
@@ -112,6 +127,8 @@ def check_update_api():
                 match_spi = 1
                 if not item_spi['Status'] == item_api['Status']:                                        
                     change_status.append(item_spi['Lacre'])        
+                if not item_spi['Parado'] == item_api['Parado']:                                        
+                    parado_list.append(item_spi['Lacre'])        
         if match_spi == 0:            
             new_api.append(item_spi['Lacre'])                    
         for item_pcp in dados_pcp.pcp:            
@@ -127,19 +144,23 @@ def check_update_api():
         if match_api == 0:
             old_api.append(item_api['Lacre'])
 
-    if len(new_api) > 0 or len(change_status) > 0:
+    if len(new_api) > 0 or len(change_status) > 0 or len(parado_list) > 0:
         update_api()        
 
     if len(change_status) > 0:        
         for item in change_status:
             update_track(item)
     
+    if len(parado_list) > 0:        
+        for item in parado_list:
+            update_parado(item)
+    
     if len(new_pcp) > 0:
         for item in new_pcp:
             novo = get_pcp_pedido(item)  
             if not novo == 0:                   
                 dados_pcp.pcp.append(novo)            
-                dados_pcp.save()    
+                dados_pcp.save()        
     
 
 def update_pcp(lacre):    
@@ -1006,5 +1027,3 @@ class LogSuccessResponse(HttpResponse):
 def UpdateAPI(request, pk):
     response = LogSuccessResponse(pk)
     return response
-
-

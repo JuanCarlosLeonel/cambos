@@ -10,58 +10,61 @@
             <li><a href="{% url 'frota_index' %}">
                 <em class="fa fa-home"></em>
             </a></li>
-            <li class="active"><a href="{% url 'relatorio_index' %}">
-                Menu Anterior
-            </a></li>
+            <li class="active"><a href="{% url 'veiculo_list' %}">Veículos</a></li>
         </ol>	
     </div><!--/.row-->
 	
 	<div class="row">
-       
+        <div class="col-lg-12">
+			<h4><b>Solicitações :</b></h4>
+			{% comment %} <p>
+				Veículo: 
+				<strong>{{viag.veiculo}}</strong>
+			</p>
+			<p>
+				Destino: 
+				<strong>{{viag.destino}}</strong>
+			</p>
+			<p>
+				Motorista: 
+				<strong>{{viag.motorista.nome}} / {{viag.motorista2.nome}}</strong>
+			</p>
+			<p>
+				Data Saída: 
+				<strong>{{viag.data_inicial|date:"d/m/Y"}} </strong>
+			</p> {% endcomment %}
+        </div>
     </div><!--/.row-->
 {% endblock navigation %}
 
-{% block content %}
-<div class="panel panel-container">
-<div class="col-12">	
-	<div id="identificado" class="col-xs-4 no-padding">
-		<div class="panel panel-orange panel-widget border-right border-bottom">
-			<h3>Relatório de Solicitações <i class="fas fa-list	"></i></h3>  
-		</div>
-	</div>
-	<a href="{% url 'relatorio_viagem' %}">											
-		<div id="identificado2" class="col-xs-4 no-padding">					
-			<div class="panel panel-teal panel-widget border-right border-bottom">
-				<h3>Ir para Relatório de Viagens <em class="fa fa-truck"></em></h3>			
-			</div>
-		</div>	
-	</a>	
-	<a href="{% url 'relatorio_abastecimentocaminhao' %}">				
-		<div id="identificado2" class="col-xs-4 no-padding">
-			<div class="panel panel-orange panel-widget border-right border-bottom">
-				<h3>Ir para Relatório de Abastecimento <i class="fas fa-gas-pump"></i></h3>
-			</div>
-		</div>
-	</a>						
-</div>
-</div>
+{% block content %}	
 <div class="col-12">
 	<div class="panel panel-default">
+		<div id="toolbar">		
+			<a href="{% url 'solicitacao_create' %}" class="btn_filtrar" data-toggle="modal">
+				<i class="fa fa-plus"></i>Nova Solicitação
+			</a>
+		</div>
+	</div>
+</div>	
+<div class="col-12">	
+	<div class="panel panel-default">
 		<div class="panel-body">
-			<button type="button" class="btn_filtrar" data-toggle="modal"
-			data-target="#exampleModal">
-			FILTRAR
-			</button>
 			<table id="table"				
-			data-toolbar="#toolbar"
-			data-show-toggle="false"
-			data-show-columns="true"
-			data-select-item-name="toolbar"
-			data-pagination="true"				 
-			>
+				data-toolbar="#toolbar"
+				data-toggle="table"
+				data-show-refresh="false"
+				data-show-toggle="false"
+				data-show-columns="true"
+				data-search="true"
+				data-select-item-name="toolbar"
+				data-pagination="true"				 
+				data-sort-order="desc"
+			 >
 				<thead>
 					<tr>
-                        <th class="text-center">Status</th>
+                        <th class="text-center">Situação</th>
+                        <th class="text-center">Tipo</th>
 						<th class="text-center">Solicitante</th>
 						<th class="text-center">Prioridade</th>
 						<th class="text-center">Peso</th>
@@ -73,15 +76,11 @@
 						<th class="text-center">CEP</th>
 						<th data-field="Data Prevista" class='text-center'>Data Prevista</th>
 						<th data-field="Data Solicitação"class='text-center'>Data Solicitação</th>
-                        <th data-field="Data Atendimento"class='text-center'>Data Atendimento</th>
-                        <th data-field="Data Finalizacao"class='text-center'>Data Finalização</th>
-                        <th data-field="Veiculo"class='text-center'>Veículo</th>
 					</tr>
 				</thead>
 				<tbody>
-                    {% for data in filter.qs %}
-                        {% comment %} <tr data-href="{{data.pk}}" {% endcomment %}
-                        <tr data-href="#"
+					{% for data in object_list %}
+                    <tr data-href="{% url 'solicitacao_update' data.pk %}"
                             class="trLink" >
                             <td class='text-center'>
                                 {% if data.situacao == '1' %}
@@ -93,13 +92,24 @@
                                 {% endif %}
                             </td>
                             <td class='text-center'>
+                                {% if data.tipo == '1' %}
+                                    Coleta
+                                {% elif data.tipo == '2' %}
+                                    Entrega
+                                {% elif data.tipo == '3' %}
+                                    Coleta Direta
+                                {% elif data.tipo == '4' %}
+                                    Entrada Direta
+                                {% endif %}
+                            </td>
+                            <td class='text-center'>
                                 {{data.user}}
                             </td>
                             <td class='text-center' >																					
-                                {%if data.prioridade == '1' %} 							
-                                    Normal
-                                {%elif data.prioridade == '2' %} 						
+                                {%if data.prioridade == '2' %} 							
                                     Urgente
+                                {%elif data.prioridade == '1' %} 						
+                                    Normal
                                 {%endif%}																		
                             </td>
                             <td class='text-center'>{{ data.peso }}</td>
@@ -123,53 +133,16 @@
                             </td>
                             <td class='text-center'>{{ data.data_prevista|date:"d/m/y" }}</td>
                             <td class='text-center'>{{ data.data_solicitacao|date:"d/m/y H:i" }}</td>
-                            <td class='text-center'>{{ data.data_atendimento|date:"d/m/y H:i" }}</td>
-                            <td class='text-center'>{{ data.data_finalizacao|date:"d/m/y H:i" }}</td>
-                            <td class='text-center'>
-                                {% for i in itemviagem %}
-                                    {% if i.viagem_solicitacao.pk == data.pk %}
-                                        {{i.viagem.veiculo}}
-                                    {% endif %}
-                                {% endfor %}
-                            </td>
-                    {% endfor %}
+					{% endfor %}
 				</tbody>
 			</table>
-			{% comment %} <h4><i class="fas fa-gas-pump"></i>Quantidade total de Combustível: <b>{{tot|floatformat:2}}</b> litros.</h4>
-			<h4><i  class="fa fa-usd"> </i>  Valor Gasto : <b>R$ {{valor|floatformat:2}}</b></h4>			 {% endcomment %}
 		</div>
 	</div>
 </div>
+{%endblock content%}
 
-
-<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-	<div class="modal-dialog" role="document">
-		<div class="modal-content">
-		<div class="modal-header">
-			<h5 class="modal-title titulo_filtrar" id="exampleModalLabel">Selecione os Filtros</h5>
-		</div>
-		<div class="modal-body">
-			<form method="GET">
-				{{filter.form.as_p}}
-			<input class="btn_filtrar_modal" type="submit" value="FILTRAR">
-			</form>
-		</div>
-		
-		</div>
-	</div>
-</div>
-
-
-{% endblock content%}
 
 {% block script %}
-<script>
-	const elements = document.querySelectorAll('.with-js')
-	for (let p of elements) {
-		p.innerText = p.innerText.substring(8, 20)
-	}
-</script>
-
 
 <script>	
 	var tr = document.getElementsByClassName('tr-id');
@@ -198,6 +171,6 @@ tr.onclick = function (e) {
 	});
 
 </script>
-  
+	
 {% endblock script %}
 

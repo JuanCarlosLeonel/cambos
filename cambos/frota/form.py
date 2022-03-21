@@ -1,8 +1,8 @@
 from random import choices
 from django import forms
 
-
-from .models import Manutencao, Viagem, Abastecimento
+from core.models import Enderecos
+from .models import Manutencao, Viagem, Abastecimento, SolicitacaoViagem
 from django_select2.forms import Select2Widget
 
 from frota import models
@@ -93,6 +93,59 @@ class AbastecimentoForm(forms.ModelForm):
         self.fields['interno'].label = "INTERNO"
         if not inter:
             self.fields['interno'].widget = forms.HiddenInput()
+
+
+class SolicitacaoForm(forms.ModelForm):
+    class Meta:
+        model = SolicitacaoViagem
+        fields = (         
+            'endereco',
+            'user',
+            'data_prevista',
+            'tipo',             
+            'prioridade',
+            'peso',
+            'data_solicitacao',        
+        )
+         
+        widgets = {             
+            'endereco': forms.Select(attrs={'class':'form-control'}),                       
+            'user': forms.Select(attrs={'class':'form-control'}),      
+            'tipo': forms.Select(attrs={'class':'form-control'}),
+            'prioridade': forms.Select(attrs={'class':'form-control'}),
+            'peso': forms.NumberInput(attrs={'class':'form-control'}),
+            'data_prevista': forms.DateInput(attrs={'data-mask':'00/00/0000','class':'form-control datepicker'}),
+            'data_solicitacao': forms.HiddenInput()          
+        }
+
+    def __init__(self, *args, **kwargs):  
+        super().__init__(*args, **kwargs)       
+        self.fields['user'].label = "Solicitante"
+
+class EnderecoForm(forms.ModelForm):
+    class Meta:
+        model = Enderecos
+        fields = (
+            'endereco',
+            'bairro',
+            'numero',
+            'cidade',
+            'uf',
+            'cep',
+        )
+
+        widgets = {             
+            'endereco': forms.TextInput(attrs={'class':'form-control'}),                       
+            'bairro': forms.TextInput(attrs={'class':'form-control'}),    
+            'numero': forms.NumberInput(attrs={'class':'form-control'}), 
+            'cidade': forms.TextInput(attrs={'class':'form-control'}),
+            'uf': forms.TextInput(attrs={'class':'form-control'}),
+            'cep': forms.NumberInput(attrs={'class':'form-control'}),     
+        }
+    def __init__(self, *args, **kwargs):  
+        super().__init__(*args, **kwargs)       
+        self.fields['endereco'].label = "Rua"
+
 
 class ManutencaoForm(forms.ModelForm):
     class Meta:

@@ -9,13 +9,13 @@ from telegram.ext import (
     MessageHandler,
     Filters,
 )
-from frota.models import Abastecimento, EstoqueDiesel, Veiculo, Viagem
+from frota.models import Abastecimento, EstoqueDiesel, FrotaBot, Veiculo, Viagem
 
 def viagemcaminhao(update):
     user = get_user(update)
     v = Viagem.objects.filter(veiculo__caminhao = True)
     text =""
-    if user.frota:
+    if user.ativo:
         text = f"\U00002757Viagens <b>EM TRÂNSITO</b>:{os.linesep}"
         for item in v:
             if item.data_final is None:
@@ -27,7 +27,7 @@ def dieselinterno(update):
     user = get_user(update)
     interno = EstoqueDiesel.objects.get(produto_id = 146)
     text =""
-    if user.frota:
+    if user.ativo:
         text = f"Total Disponível:{os.linesep}"
         text += f"<b>{interno.quantidade} l</b>.{os.linesep}"
     update.edit_message_text(text, parse_mode=ParseMode.HTML)
@@ -37,7 +37,7 @@ def abastecimento(update):
     user = get_user(update)
     a = Abastecimento.objects.filter(veiculo__caminhao = True).order_by("-id")
     text =""
-    if user.frota:
+    if user.ativo:
         text = f"Abastecimentos Realizados:{os.linesep}"
         for item in a:
             text += f"<b>{item.veiculo}</b>, {str(item.data)[8:] + '/' + str(item.data)[5:7] + '/' + str(item.data)[0:4]}{os.linesep} Combustível:<i>{item.combustivel}</i>, Valor pago:{item.valor_unitario}.{os.linesep}"
@@ -58,7 +58,7 @@ def palio(update):
     totalcool = 0
     totgastogasolina = 0
     totgastoalcool = 0
-    if user.frota:
+    if user.ativo:
         text = f"<b>Fiat Palio</b>:{os.linesep}"
         for item in viagem:
             if item.data_inicial > date.today() - timedelta(days = 30):
@@ -93,7 +93,7 @@ def mobi(update):
     totalcool = 0
     totgastogasolina = 0
     totgastoalcool = 0
-    if user.frota:
+    if user.ativo:
         text = f"<b>Fiat Mobi</b>:{os.linesep}"
         for item in viagem:
             if item.data_inicial > date.today() - timedelta(days = 30):
@@ -128,7 +128,7 @@ def strada(update):
     totalcool = 0
     totgastogasolina = 0
     totgastoalcool = 0
-    if user.frota:
+    if user.ativo:
         text = f"<b>Fiat Strada</b>:{os.linesep}"
         for item in viagem:
             if item.data_inicial > date.today() - timedelta(days = 30):
@@ -158,7 +158,7 @@ def MB1719Vermelho(update):
     text =""
     cont = 0
     d = 0
-    if user.frota:
+    if user.ativo:
         text = f"<b>Caminhão MB 1719 Vermelho</b>:{os.linesep}"
         for item in viagem:
             if item.data_inicial > date.today() - timedelta(days = 30):
@@ -180,7 +180,7 @@ def MB1719Azul(update):
     text =""
     cont = 0
     d = 0
-    if user.frota:
+    if user.ativo:
         text = f"<b>Caminhão MB 1719 Azul</b>:{os.linesep}"
         for item in viagem:
             if item.data_inicial > date.today() - timedelta(days = 30):
@@ -202,7 +202,7 @@ def MB2426Vermelho(update):
     text =""
     cont = 0
     d = 0
-    if user.frota:
+    if user.ativo:
         text = f"<b>Caminhão MB 2426 Vermelho</b>:{os.linesep}"
         for item in viagem:
             if item.data_inicial > date.today() - timedelta(days = 30):
@@ -224,7 +224,7 @@ def VW24280Cinza(update):
     text =""
     cont = 0
     d = 0
-    if user.frota:
+    if user.ativo:
         text = f"<b>Caminhão VW 24280 Cinza</b>:{os.linesep}"
         for item in viagem:
             if item.data_inicial > date.today() - timedelta(days = 30):
@@ -237,10 +237,11 @@ def VW24280Cinza(update):
     update.edit_message_text(text, parse_mode=ParseMode.HTML)
     return return_menu(update, text)
 
+
 def get_user(update):
-    from roupa.models import RoupaBot
+    from frota.models import FrotaBot
     user_id = update.message.chat_id
-    userbot = RoupaBot.objects.get(user_id = user_id)
+    userbot = FrotaBot.objects.get(user_id = user_id)
     return userbot
                 
            
@@ -256,15 +257,13 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 def menu(update, context):
-    from roupa.models import RoupaBot, User
     chat_id = update.message.chat_id    
     first_name = update.message.chat.first_name
-    mensagem = update.message.text  
     try:
         userbot = get_user(update)
         text = f"\U0001F4AC Escolha uma opção:"
         dict = {}  
-        if userbot.frota:
+        if userbot:
             dict['\U0001F4CB Logística']='frota'
             dict['\U0001F68C Veículo']='veiculo'
 
@@ -281,7 +280,7 @@ def menu(update, context):
             update.message.reply_text(text, reply_markup=reply_markup, parse_mode=ParseMode.HTML)
 
     except:
-        p = RoupaBot(user_id = chat_id, user_nome = first_name)
+        p = FrotaBot(user_id = chat_id, user_nome = first_name)
         p.save() 
         text = f'Olá {first_name}!{os.linesep}Obrigado por acessar nosso sistema.{os.linesep}Já já seu acesso será liberado.'   
         update.message.reply_text(text)    
@@ -373,7 +372,7 @@ def start(update, context):
 
 def main() -> None:
     from core.models import Bot
-    bot = Bot.objects.filter(id=2).latest('token')
+    bot = Bot.objects.get(nome = 'Frota')
     token = bot.token
     updater = Updater(token)   
     updater.dispatcher.add_handler(MessageHandler(Filters.text, start))
@@ -383,9 +382,9 @@ def main() -> None:
 
 def iniciar():
     from core.models import Bot
-    ativo = Bot.objects.filter(id=2).latest('token')     
-    if ativo.ativo:
-        return main()   
+    ativo= Bot.objects.get(nome = 'Frota').ativo            
+    if ativo:
+        return main()  
       
 if __name__ == '__main__':
     main()

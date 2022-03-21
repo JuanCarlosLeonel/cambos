@@ -13,12 +13,12 @@
 			<li><a href="{% url 'qualidade_index' %}">
                 Qualidade
             </a></li>
-            <li class="active">Produtos Parados</li>
+            <li class="active">Ações</li>
         </ol>
     </div><!--/.row-->
     <div class="row">
         <div class="col-lg-12">
-            <h1 class="page-header">Pedidos Pendentes<span class="text-muted small"> </span></h1></h1>
+            <h1 class="page-header">Ações<span class="text-muted small"> </span></h1></h1>
         </div>
     </div><!--/.row-->
 {% endblock navigation %}
@@ -41,40 +41,36 @@
 					data-search="true"
 					data-select-item-name="toolbar"
 					data-pagination="true"
-					data-sort-name="DataEntrega"  					
+					data-sort-name="Prazo"  					
 					data-sort-order="asc"					
 				 >
 					<thead>
 						<tr>							
-							<th data-field="FichaCorte"  data-sortable="true" class='text-center'>FC</th>							
-							<th data-field="Modelo" data-sortable="true" class='text-center'>COD</th>														
-							<th data-field="Nome"  data-sortable="true" class='text-center'>Cliente</th>
-							<th data-field="Status" data-sortable="true" class='text-center'>Setor</th>
-							<th data-field="Atrasado" data-sortable="true" class='text-center'>Situação</th>
-							<th data-field="DataEntrega" data-formatter="dateFormat" data-sortable="true" class='text-center'>Entrega</th>
-							<th data-field="QuantPecas" data-sortable="true" data-sorter="dateSorter" class='text-center'>Quant</th>
+						<th data-field="REF"  data-sortable="true" class='text-center'>REF</th>							
+						<th data-field="Responsavel"  data-sortable="true" class='text-center'>Responsável</th>							
+						<th data-field="Descrição" data-sortable="true" class='text-center'>Descrição</th>														
+						<th data-field="Prazo"  data-sortable="true" class='text-center'>Prazo</th>
+						<th data-field="Inicio" data-sortable="true" class='text-center'>Início</th>						
+						<th data-field="Status" data-sortable="true" class='text-center'>Status</th>
 							
 						</tr>
 					</thead>
 					<tbody>
-						{% for data in producaojs %}							
-							<tr data-href="{% url 'qualidade_detail' data.Lacre %}"
-							 class="trLink text-danger negrito" >								 								
-								<td class='text-center' >
-									{% if data.FichaCorte%}
-									{{data.FichaCorte}}
-									{%else%}
-									 -
-									{%endif%} 
-								</td>								
+						{% for data in acoes %}							
+							<tr data-href="{% url 'plano_acao_detail' data.plano_acao.id %}"
+							 class="trLink " >								 																
 								<td class='text-center'>
-									{{data.Modelo|safe}}
+									{{data.plano_acao.referencia}}
 								</td>																								
-								<td class='text-center' >{{data.Nome}}</td>
-								<td class='text-center'>{{data.Status}}</td>
-								<td class='text-center'>{{data.Atrasado}}</td>
-								<td class='text-center' >{{data.DataEntrega|safe}}</td>
-								<td class='text-center'>{{data.QuantPecas|safe}}</td>
+								<td class='text-center' >{{data.responsavel}}</td>
+								<td class='text-center'>{{data.descricao}}</td>
+								<td class='text-center'>{{data.data_prazo|date:"d/m/Y"}}</td>
+								<td class='text-center'>{{data.data_inicio|date:"d/m/Y"}}</td>		
+								{% if data.data_inicio == None %}						
+								<td class='text-center text-danger negrito' > Aberta </td>	
+								{% else %}
+								<td class='text-center ' > Iniciada </td>	
+								{% endif %}
 							</tr>
 						{%endfor%}
 					</tbody>					

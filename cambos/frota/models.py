@@ -6,7 +6,7 @@ from django import db
 from django.db import IntegrityError, models
 from django.db.models.constraints import CheckConstraint, UniqueConstraint
 from django.db.models import Q, F
-from core.models import Pessoa, Ativo, User , SolicitacaoViagem
+from core.models import Pessoa, Ativo, User , UserCompras, Enderecos
 from django_currentuser.db.models import CurrentUserField
 import datetime
 from django.core.exceptions import ValidationError
@@ -155,6 +155,51 @@ class Movimentacoes(models.Model):
         managed = False
         db_table = 'souzacambos"."movimentacoes'
 
+class SolicitacaoViagem(models.Model):
+    TIPO = (
+            ('1', 'Coleta'),
+            ('2', 'Entrega'),  
+            ('3', 'Coleta Direta'),
+            ('4', 'Entrada Direta'),                                                                     
+        )
+    ORIGEM = (
+            ('1', 'Compras'),
+            ('2', 'Outros'),
+    )
+    SITUACAO = (
+            ('1', 'Aguardando Atendimento'),
+            ('2', 'Em Atendimento'),
+            ('3', 'Finalizado'),
+    )
+    PRIORIDADE = (
+            ('1', 'Normal'),
+            ('2', 'Urgente'),
+    )
+    id = models.AutoField(db_column='id',primary_key=True)
+    endereco = models.ForeignKey(Enderecos,db_column='endereco_id',on_delete=models.DO_NOTHING)
+    user = models.ForeignKey(UserCompras,db_column='user_id',on_delete=models.DO_NOTHING)
+    compras_pedido_id = models.IntegerField(db_column='compras_pedido_id',null=True)
+    data_prevista = models.DateField(db_column='data_prevista')
+    tipo = models.CharField(db_column='tipo',choices=TIPO,max_length=1)
+    origem = models.CharField(db_column='origem',choices=ORIGEM,max_length=1,default='2')
+    situacao = models.CharField(db_column='situacao',choices=SITUACAO,max_length=1,default='1')
+    prioridade = models.CharField(db_column='prioridade',choices=PRIORIDADE,max_length=1)
+    peso = models.FloatField(db_column='peso')
+    data_solicitacao = models.DateTimeField(db_column='data_solicitacao')
+    data_atendimento = models.DateTimeField(db_column='data_atendimento',null=True)
+    data_finalizacao = models.DateTimeField(db_column='data_finalizacao',null=True)
+    has_item = False
+
+    def set_has_item(self, value = False):
+        self.has_item = value
+
+    def __str__(self):
+        return f'{self.id}'
+
+    class Meta:
+        managed = False
+        db_table = 'frota"."viagem_solicitacoes'
+
 
 class Infracao(models.Model):    
     veiculo    = models.ForeignKey(Veiculo, on_delete=models.DO_NOTHING)
@@ -259,6 +304,15 @@ class ItemViagem(models.Model):
         managed = False
         db_table = 'frota"."viagem_itens' 
 
+
+class FrotaBot(models.Model):
+    user_id       = models.BigIntegerField(unique=True)
+    user_nome     = models.CharField(max_length=30)    
+    ativo         = models.BooleanField(default=True)
+    usuario       = models.ForeignKey(User, on_delete=models.SET_NULL, blank=True, null=True)
+
+    def __str__(self):
+        return f'{self.user_nome}'
 
 
 

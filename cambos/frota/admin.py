@@ -1,4 +1,5 @@
 from django.contrib import admin
+
 from .models import (
     Veiculo,
     Viagem,
@@ -11,6 +12,8 @@ from .models import (
     Manutencao,
     Motorista,
     ItemViagem,
+    FrotaBot,
+    SolicitacaoViagem,
 )
 
 admin.site.register(Veiculo)
@@ -24,3 +27,5 @@ admin.site.register(FrotaPermissao)
 admin.site.register(Manutencao)
 admin.site.register(Motorista)
 admin.site.register(ItemViagem)
+admin.site.register(FrotaBot)
+admin.site.register(SolicitacaoViagem)

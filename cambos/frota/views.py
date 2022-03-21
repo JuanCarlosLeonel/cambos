@@ -6,9 +6,9 @@ from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
 from django.views.generic.list import ListView
 
-from core.models import Enderecos, SolicitacaoViagem, UserCompras
-from .models import Abastecimento, EstoqueDiesel, ItemViagem, Manutencao, Motorista, Movimentacoes, Viagem, Veiculo, FrotaPermissao
-from .form import ManutencaoForm, ViagemForm, AbastecimentoForm
+from core.models import Enderecos, UserCompras
+from .models import Abastecimento, EstoqueDiesel, FrotaBot, ItemViagem, Manutencao, Motorista, Movimentacoes, Viagem, Veiculo, FrotaPermissao, SolicitacaoViagem
+from .form import ManutencaoForm, SolicitacaoForm, ViagemForm, AbastecimentoForm, EnderecoForm
 from django.http import HttpResponse, JsonResponse
 from django.db.models import Sum
 import datetime
@@ -23,7 +23,7 @@ def enviar(sender, instance, created, **kwargs):
     if created:
         from roupa.models import RoupaBot
         from core.models import Bot
-        bot = Bot.objects.filter(id = 2).latest('token')
+        bot = Bot.objects.get(nome = 'Frota')
         token = bot.token 
         users = RoupaBot.objects.filter(frota = True)
         v = Viagem.objects.filter().latest('id')
@@ -36,19 +36,17 @@ def enviar(sender, instance, created, **kwargs):
                     bot.send_message(chat_id=chat_id,text=html_content, parse_mode=telegram.ParseMode.HTML)
 post_save.connect(enviar, sender=Viagem)
 
+
 def enviarabastecimento(sender, instance, created, **kwargs):
     if created:
-        from roupa.models import RoupaBot
         from core.models import Bot
-        bot = Bot.objects.filter(id = 2).latest('token')
+        bot = Bot.objects.get(nome = 'Frota')
         token = bot.token 
-        interno = EstoqueDiesel.objects.get(produto_id = 146)
-        atual = interno.quantidade
-        users = RoupaBot.objects.filter(frota = True)
+        users = FrotaBot.objects.filter(ativo = True)
         for user in users:      
-            if user.frota:  
+            if user:  
                 chat_id = user.user_id
-                html_content = render_to_string('frota/telegram_messageabast.html', {'nome': Abastecimento.objects.latest('id'),'atual': atual})
+                html_content = render_to_string('frota/telegram_messageabast.html', {'nome': Abastecimento.objects.filter().latest('id')})
                 bot = telegram.Bot(token=token)
                 bot.send_message(chat_id=chat_id,text=html_content, parse_mode=telegram.ParseMode.HTML)
 post_save.connect(enviarabastecimento, sender=Abastecimento)
@@ -304,8 +302,6 @@ class SolicitacoesList(TemplateView):
         from datetime import timedelta
         context = super().get_context_data(**kwargs)
         pk = self.kwargs['pk'] 
-        endereco = Enderecos.objects.all()
-        usercompras = UserCompras.objects.all()
         viag = Viagem.objects.get(id = pk)
         edit = self.request.GET.get('editar')
         value = self.request.GET.get('solicitacao_id')
@@ -340,8 +336,6 @@ class SolicitacoesList(TemplateView):
         context['itemviagem'] = itemviagem
         context['itemv'] = itemv
         context['viag'] = viag
-        context['user'] = usercompras
-        context['endereco'] = endereco
         context['lista_solicitacoes']=lista_solicitacoes
 
         if not edit is None :  
@@ -393,8 +387,6 @@ class RelatorioViagemSolicitacao(ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        endereco = Enderecos.objects.all()
-        usercompras = UserCompras.objects.all()
         itemviagem = ItemViagem.objects.all()
         lista = SolicitacaoFilter(self.request.GET, queryset=self.get_queryset())
         count = 0
@@ -428,8 +420,6 @@ class RelatorioViagemSolicitacao(ListView):
             user_permission = {} 
         context['permissoes'] = user_permission
         context['itemviagem'] = itemviagem
-        context['user'] = usercompras
-        context['endereco'] = endereco
         context['somakm'] = somakm
         context['counter'] = count
         context['filter'] = lista
@@ -586,6 +576,69 @@ class AbastecimentoListALL(ListView):
             user_permission = {} 
         context['permissoes'] = user_permission
         return context
+
+@method_decorator(login_required, name='dispatch')
+class SolicitacaoList(ListView):
+    model = SolicitacaoViagem
+    template_name = 'frota/solicitacao_list.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        try:
+            user_permission = FrotaPermissao.objects.get(usuario = self.request.user)
+        except:
+            user_permission = {} 
+        context['permissoes'] = user_permission
+        return context
+
+@method_decorator(login_required, name='dispatch')
+class SolicitacaoCreate(CreateView):
+    model = SolicitacaoViagem
+    form_class = SolicitacaoForm
+    template_name = 'frota/solicitacaoviagem_form.html'
+
+    def get_initial(self, *args, **kwargs):
+        from datetime import timedelta 
+        initial = super(SolicitacaoCreate, self).get_initial(**kwargs)
+        initial['data_solicitacao'] = datetime.datetime.now() - timedelta(hours = +3)
+        return initial
+
+    def get_success_url(self):    
+        return '/frota/solicitacao_list'
+
+@method_decorator(login_required, name='dispatch')
+class EnderecoCreate(CreateView):
+    form_class = EnderecoForm
+    template_name = 'frota/endereco_form.html'
+    model = Enderecos
+
+    def get_success_url(self):
+        return '/frota/solicitacao_create'
+
+@method_decorator(login_required, name='dispatch')
+class SolicitacaoUpdate(UpdateView):
+    model = SolicitacaoViagem
+    form_class = SolicitacaoForm
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)                
+        context['veiculo'] = self.object.id
+        return context
+    
+    def get_success_url(self):
+        return '/frota/solicitacao_list/'
+    
+
+@method_decorator(login_required, name='dispatch')
+class SolicitacaoDelete(DeleteView):
+    model = SolicitacaoViagem
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)        
+        return context   
+
+    def get_success_url(self):
+        return '/frota/solicitacao_list/'
 
 
 def relatorio_despesa(request):

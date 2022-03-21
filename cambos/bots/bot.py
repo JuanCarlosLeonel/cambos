@@ -586,7 +586,7 @@ def pesquisa_corte(update, context):
 
 def main() -> None:
     from core.models import Bot
-    bot = Bot.objects.filter(id=1).latest('token')
+    bot = Bot.objects.get(nome = 'PCP')
     token = bot.token      
     updater = Updater(token)  
     # updater.dispatcher.add_handler(MessageHandler(Filters.text, menu))  
@@ -605,8 +605,8 @@ def main() -> None:
 
 def iniciar():
     from core.models import Bot
-    ativo = Bot.objects.filter(id=1).latest('token')     
-    if ativo.ativo:
+    ativo= Bot.objects.get(nome = 'PCP').ativo            
+    if ativo:
         return main()   
 
       

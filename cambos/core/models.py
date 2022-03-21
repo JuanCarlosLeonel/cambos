@@ -30,10 +30,19 @@ class Setor(models.Model):
 
     
 class Bot(models.Model):    
+    TIPO_BOT = (
+            ('PCP', 'PCP'),
+            ('Qualidade', 'Qualidade'),                                     
+            ('Frota', 'Frota'),                                     
+        )
+    nome    = models.CharField(max_length=20, choices=TIPO_BOT, default='PCP')
     token   = models.CharField(max_length=46)
     horas   = models.IntegerField(default=0)
     minutos = models.IntegerField(default=0)
     ativo   = models.BooleanField(default=False)
+
+    def __str__(self):
+        return f'{self.nome}'
 
 
 class User(AbstractUser):
@@ -69,32 +78,6 @@ class Ativo(models.Model):
         db_table = 'souzacambos"."compras_produtos' 
 
 
-class SolicitacaoViagem(models.Model):
-    id = models.AutoField(db_column='id',primary_key=True)
-    endereco_id = models.IntegerField(db_column='endereco_id')
-    user_id = models.IntegerField(db_column='user_id')
-    compras_pedido_id = models.IntegerField(db_column='compras_pedido_id',null=True)
-    data_prevista = models.DateField(db_column='data_prevista')
-    tipo = models.CharField(db_column='tipo',max_length=1)
-    origem = models.CharField(db_column='origem',max_length=1)
-    situacao = models.CharField(db_column='situacao',max_length=1)
-    prioridade = models.CharField(db_column='prioridade',max_length=1)
-    peso = models.FloatField(db_column='peso')
-    data_solicitacao = models.DateTimeField(db_column='data_solicitacao')
-    data_atendimento = models.DateTimeField(db_column='data_atendimento',null=True)
-    data_finalizacao = models.DateTimeField(db_column='data_finalizacao',null=True)
-    has_item = False
-
-    def set_has_item(self, value = False):
-        self.has_item = value
-
-    def __str__(self):
-        return f'{self.id}'
-
-    class Meta:
-        managed = False
-        db_table = 'frota"."viagem_solicitacoes'
-
 
 class UserCompras(models.Model):
     id = models.AutoField(db_column='id',primary_key=True)
@@ -110,6 +93,7 @@ class UserCompras(models.Model):
 
 class Enderecos(models.Model):
     id = models.AutoField(db_column='id',primary_key=True)
+    tipo = models.CharField(db_column='tipo',max_length=1,default=1)
     compras_fornecedor_id = models.IntegerField(db_column='compras_fornecedor_id',null=True)
     endereco = models.CharField(db_column='endereco',max_length=80)
     bairro = models.CharField(db_column='bairro',max_length=45)
@@ -121,7 +105,7 @@ class Enderecos(models.Model):
     updated_at = models.DateTimeField(db_column='updated_at',null=True)
 
     def __str__(self):
-        return f'{self.endereco}'
+        return f'{self.endereco,self.numero,self.bairro,self.cidade}'
 
     class Meta:
         managed = False
