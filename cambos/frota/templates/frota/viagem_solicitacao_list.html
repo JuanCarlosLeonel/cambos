@@ -72,8 +72,9 @@
 				</thead>
 				<tbody>
 					{% for data in lista_solicitacoes %}
+						{% if data.has_item == True %}
 						{% for item in itemviagem %}
-							{% if item.viagem_solicitacao == data or data.situacao == '1' %}
+							{% if item.viagem_solicitacao == data and item.viagem == viag %}
 								<tr data-href="#"
 									class="trLink" >
 									<td class='text-center'>
@@ -109,7 +110,7 @@
 									<td class='text-center'>{{ data.data_solicitacao|date:"d/m/y H:i" }}</td>
 									<td class='text-center'>
 										<form class="" id="" method="submit">
-											{% if data.has_item == True %}
+											<!-- {% if data.has_item == True %} -->
 											<button class="fas fa-dolly-flatbed btn btn-danger" type="submit" role="button" value="null">
 												Cancelar Solicitação
 											</button>
@@ -118,7 +119,66 @@
 												aria-label="editar" aria-describedby="basic-addon1">
 	
 											<input type="hidden" id="solicitacao_id" name="solicitacao_id" value="{{ data.pk }}" placeholder="solicitacao_id" aria-label="solicitacao_id"/>
-											{% else %}
+											<!-- {% else %}
+											<button class="fas fa-dolly-flatbed btn btn-primary" type="submit" role="button" value="null">
+												Atribuir Solicitação
+											</button>
+											<input type="hidden" class="form-control" id="editar" name="editar"
+												value="true" placeholder="editar"
+												aria-label="editar" aria-describedby="basic-addon1">
+	
+											<input type="hidden" id="solicitacao_id" name="solicitacao_id" value="{{ data.pk }}" placeholder="solicitacao_id" aria-label="solicitacao_id"/> -->
+											<!-- {% endif %} -->
+										</form>
+									</td>
+							{% endif %}
+						{%endfor%}
+						{% elif data.situacao == '1' %}
+							<tr data-href="#"
+									class="trLink" >
+									<td class='text-center'>
+										{{data.user}}
+									</td>
+									<td class='text-center' >																																									
+										{%if data.prioridade == '2' %} 							
+											Urgente
+										{%elif data.prioridade == '1' %} 						
+											Normal
+										{%endif%}																																			
+									</td>
+									<td class='text-center'>{{ data.peso }}</td>
+									<td class='text-center'>
+										{{data.endereco.endereco}}
+									</td>
+									<td class='text-center'>
+										{{data.endereco.numero}}
+									</td>
+									<td class='text-center'>
+										{{data.endereco.bairro}}
+									</td>
+									<td class='text-center'>
+										{{data.endereco.cidade}}
+									</td>
+									<td class='text-center'>
+										{{data.endereco.uf}}
+									</td>
+									<td class='text-center'>
+										{{data.endereco.cep}}
+									</td>
+									<td class='text-center'>{{ data.data_prevista|date:"d/m/y" }}</td>
+									<td class='text-center'>{{ data.data_solicitacao|date:"d/m/y H:i" }}</td>
+									<td class='text-center'>
+										<form class="" id="" method="submit">
+											<!-- {% if data.has_item == True %}
+											<button class="fas fa-dolly-flatbed btn btn-danger" type="submit" role="button" value="null">
+												Cancelar Solicitação
+											</button>
+											<input type="hidden" class="form-control" id="editar" name="editar"
+												value="false" placeholder="editar"
+												aria-label="editar" aria-describedby="basic-addon1">
+	
+											<input type="hidden" id="solicitacao_id" name="solicitacao_id" value="{{ data.pk }}" placeholder="solicitacao_id" aria-label="solicitacao_id"/>
+											{% else %} -->
 											<button class="fas fa-dolly-flatbed btn btn-primary" type="submit" role="button" value="null">
 												Atribuir Solicitação
 											</button>
@@ -127,71 +187,10 @@
 												aria-label="editar" aria-describedby="basic-addon1">
 	
 											<input type="hidden" id="solicitacao_id" name="solicitacao_id" value="{{ data.pk }}" placeholder="solicitacao_id" aria-label="solicitacao_id"/>
-											{% endif %}
+											<!-- {% endif %} -->
 										</form>
 									</td>
-							{% endif %}
-						{%endfor%}
-						{% if itemv == 0 %}
-							{% if data.situacao == '1' %}
-								<tr data-href="#"
-								class="trLink" >
-								<td class='text-center'>
-									{{data.user}}
-								</td>
-								<td class='text-center' >																					
-									{%if data.prioridade == '1' %} 							
-										Normal
-									{%elif data.prioridade == '2' %} 						
-										Urgente
-									{%endif%}																		
-								</td>
-								<td class='text-center'>{{ data.peso }}</td>
-								<td class='text-center'>
-									{{data.endereco.endereco}}
-								</td>
-								<td class='text-center'>
-									{{data.endereco.numero}}
-								</td>
-								<td class='text-center'>
-									{{data.endereco.bairro}}
-								</td>
-								<td class='text-center'>
-									{{data.endereco.cidade}}
-								</td>
-								<td class='text-center'>
-									{{data.endereco.uf}}
-								</td>
-								<td class='text-center'>
-									{{data.endereco.cep}}
-								</td>
-								<td class='text-center'>{{ data.data_prevista|date:"d/m/y" }}</td>
-								<td class='text-center'>{{ data.data_solicitacao|date:"d/m/y H:i" }}</td>
-								<td class='text-center'>
-									<form class="" id="" method="submit">
-										{% if data.has_item == True %}
-										<button class="fas fa-dolly-flatbed btn btn-danger" type="submit" role="button" value="null">
-											Cancelar Solicitação
-										</button>
-										<input type="hidden" class="form-control" id="editar" name="editar"
-											value="false" placeholder="editar"
-											aria-label="editar" aria-describedby="basic-addon1">
-
-										<input type="hidden" id="solicitacao_id" name="solicitacao_id" value="{{ data.pk }}" placeholder="solicitacao_id" aria-label="solicitacao_id"/>
-										{% else %}
-										<button class="fas fa-dolly-flatbed btn btn-primary" type="submit" role="button" value="null">
-											Atribuir Solicitação
-										</button>
-										<input type="hidden" class="form-control" id="editar" name="editar"
-											value="true" placeholder="editar"
-											aria-label="editar" aria-describedby="basic-addon1">
-
-										<input type="hidden" id="solicitacao_id" name="solicitacao_id" value="{{ data.pk }}" placeholder="solicitacao_id" aria-label="solicitacao_id"/>
-										{% endif %}
-									</form>
-								</td>
-							{% endif %}
-						{% endif %}
+						{%endif%}
 					{% endfor %}
 				</tbody>
 			</table>
