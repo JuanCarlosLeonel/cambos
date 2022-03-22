@@ -49,12 +49,14 @@ def get_etapa(pk):
     return nome
 
 
-def update_parado(lacre):
+def update_parado(pedido):
     model = QualidadeTrack.objects.latest('pcp')    
     try:                
         model.pcp.append(
-            {"lacre":lacre,
-            "tipo":'parado'
+            {
+                "lacre":pedido['lacre'],
+                "tipo":'parado',
+                "situacao":pedido['situacao'],
             }
         )
         model.save()
@@ -128,7 +130,20 @@ def check_update_api():
                 if not item_spi['Status'] == item_api['Status']:                                        
                     change_status.append(item_spi['Lacre'])        
                 if not item_spi['Parado'] == item_api['Parado']:                                        
-                    parado_list.append(item_spi['Lacre'])        
+                    if item_spi['Parado'] == 1:
+                        parado_list.append(
+                                {
+                                    'lacre': item_spi['Lacre'],
+                                    'situacao': 'parado'
+                                }
+                            )        
+                    else:
+                        parado_list.append(
+                                {
+                                    'lacre': item_spi['Lacre'],
+                                    'situacao': 'liberado'
+                                }
+                            )        
         if match_spi == 0:            
             new_api.append(item_spi['Lacre'])                    
         for item_pcp in dados_pcp.pcp:            

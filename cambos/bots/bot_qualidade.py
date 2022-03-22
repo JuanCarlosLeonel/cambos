@@ -35,8 +35,10 @@ def qualidade_track(context: CallbackContext):
             chat_id = user.user_id        
             if pedido["tipo"] == "parado":
                 if user.pedido_parado:
-                    text = f'Novo pedido parado: {pedido["lacre"]}'            
-                    
+                    if pedido["situacao"] == "parado":
+                        text = f'Novo pedido parado: {pedido["lacre"]}'                                
+                    else:
+                        text = f'Pedido liberado: {pedido["lacre"]}'                                
                     keyboard = [
                         [                    
                             InlineKeyboardButton("Relatório", url='https://indicador.souzacambos.com.br/'),
