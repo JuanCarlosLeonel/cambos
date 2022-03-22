@@ -130,7 +130,7 @@ def check_update_api():
                 if not item_spi['Status'] == item_api['Status']:                                        
                     change_status.append(item_spi['Lacre'])        
                 if not item_spi['Parado'] == item_api['Parado']:                                        
-                    if item_spi['Parado'] == 1:
+                    if item_spi['Parado'] == "1":
                         parado_list.append(
                                 {
                                     'lacre': item_spi['Lacre'],
