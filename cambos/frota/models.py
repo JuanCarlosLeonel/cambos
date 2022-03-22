@@ -184,6 +184,7 @@ class SolicitacaoViagem(models.Model):
     origem = models.CharField(db_column='origem',choices=ORIGEM,max_length=1,default='2')
     situacao = models.CharField(db_column='situacao',choices=SITUACAO,max_length=1,default='1')
     prioridade = models.CharField(db_column='prioridade',choices=PRIORIDADE,max_length=1)
+    quantidade = models.IntegerField(db_column='quantidade',null=True,blank=True)
     peso = models.FloatField(db_column='peso')
     data_solicitacao = models.DateTimeField(db_column='data_solicitacao')
     data_atendimento = models.DateTimeField(db_column='data_atendimento',null=True)

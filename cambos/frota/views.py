@@ -21,15 +21,14 @@ from django import template
 
 def enviar(sender, instance, created, **kwargs):
     if created:
-        from roupa.models import RoupaBot
         from core.models import Bot
         bot = Bot.objects.get(nome = 'Frota')
         token = bot.token 
-        users = RoupaBot.objects.filter(frota = True)
+        users = FrotaBot.objects.filter(ativo = True)
         v = Viagem.objects.filter().latest('id')
         if v.veiculo.caminhao:
             for user in users:      
-                if user.frota:  
+                if user:  
                     chat_id = user.user_id
                     html_content = render_to_string('frota/telegram_message.html', {'nome': Viagem.objects.filter(veiculo__caminhao = True).latest('id')})
                     bot = telegram.Bot(token=token)
@@ -43,10 +42,11 @@ def enviarabastecimento(sender, instance, created, **kwargs):
         bot = Bot.objects.get(nome = 'Frota')
         token = bot.token 
         users = FrotaBot.objects.filter(ativo = True)
+        atual = EstoqueDiesel.objects.get(produto_id = 146)
         for user in users:      
             if user:  
                 chat_id = user.user_id
-                html_content = render_to_string('frota/telegram_messageabast.html', {'nome': Abastecimento.objects.filter().latest('id')})
+                html_content = render_to_string('frota/telegram_messageabast.html', {'nome': Abastecimento.objects.filter().latest('id'),'atual':atual.quantidade})
                 bot = telegram.Bot(token=token)
                 bot.send_message(chat_id=chat_id,text=html_content, parse_mode=telegram.ParseMode.HTML)
 post_save.connect(enviarabastecimento, sender=Abastecimento)
@@ -137,15 +137,18 @@ class AbastecimentoCreate(CreateView):
             interno.quantidade = total
             interno.updated_at = datetime.datetime.now() - timedelta(hours = +3)
             interno.save()
-            model = Movimentacoes(estoque_id = 3, user_id = 38, tipo = 'C', quantidade = self.object.quantidade, saldo_anterior = atual, saldo_atual = interno.quantidade, created_at = interno.updated_at)
+            model = Movimentacoes(estoque_id = interno.id, user_id = 38, tipo = 'C', quantidade = self.object.quantidade, saldo_anterior = atual, saldo_atual = interno.quantidade, created_at = interno.updated_at)
             model.save()
                       
         return f'/frota/abastecimento_list/{self.kwargs["pk"]}'
     
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs) 
-        interno = EstoqueDiesel.objects.get(produto_id = 146)
-        context['atual'] = interno.quantidade 
+        try:
+            interno = EstoqueDiesel.objects.get(produto_id = 146)
+            context['atual'] = interno.quantidade 
+        except:
+            pass
         context['nomeveiculo'] = Veiculo.objects.get(pk = self.kwargs['pk'])              
         context['veiculo'] = self.kwargs['pk']
         return context        

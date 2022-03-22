@@ -105,6 +105,7 @@ class SolicitacaoForm(forms.ModelForm):
             'tipo',             
             'prioridade',
             'peso',
+            'quantidade',
             'data_solicitacao',        
         )
          
@@ -118,6 +119,7 @@ class SolicitacaoForm(forms.ModelForm):
             'tipo': forms.Select(attrs={'class':'form-control'}),
             'prioridade': forms.Select(attrs={'class':'form-control'}),
             'peso': forms.NumberInput(attrs={'class':'form-control'}),
+            'quantidade': forms.NumberInput(attrs={'class':'form-control'}),
             'data_prevista': forms.DateInput(attrs={'data-mask':'00/00/0000','class':'form-control datepicker'}),
             'data_solicitacao': forms.HiddenInput()          
         }

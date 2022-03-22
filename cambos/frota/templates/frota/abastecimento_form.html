@@ -11,7 +11,7 @@
                 <em class="fa fa-home"></em>
             </a></li>
             <li class=""><a href="{% url 'abastecimento_list' veiculo%}">Abastecimento</a></li>
-            <li class="active">Cadastro-Atualização de Abastecimento</li>
+            <li class="active">Cadastro de Abastecimento</li>
         </ol>
     </div><!--/.row-->
     <div class="row">
@@ -28,8 +28,12 @@
         <form method="post" autocomplete="off">
               <div class="modal-header">
                 <a href="javascript:void(0)" onClick="history.go(-1); return false;" type="button" class="close" aria-hidden="true">×</a>
-                <h5 class="modal-title titulo_filtrar" id="exampleModalLabel">Cadastro/Atualização</h5>
-                {%if nomeveiculo.caminhao%}<h5>Diesel Interno Disponível: <b>{{atual|floatformat:2}}</b> litros</h5>{%endif%}
+                <h5 class="modal-title titulo_filtrar" id="exampleModalLabel">Novo Abastecimento</h5>
+                {% if atual > 0 %}
+                    {%if nomeveiculo.caminhao%}<h5>Diesel Interno Disponível: <b>{{atual|floatformat:2}}</b> litros</h5>{%endif%}
+                {% else %}
+                    -
+                {% endif %}
               </div>
               <div class="modal-body">                
                     {% csrf_token %}
