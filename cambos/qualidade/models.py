@@ -112,7 +112,7 @@ class Acao(models.Model):
     created_by    = CurrentUserField()
     
     def __str__(self):
-        return f'{self.referencia} - {self.tipo_acao}'
+        return f'{self.tipo_acao}'
     
     class Meta:        
         db_table = 'qualidade"."Acao'

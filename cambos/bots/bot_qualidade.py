@@ -41,7 +41,7 @@ def qualidade_track(context: CallbackContext):
                         text = f'Pedido liberado: {pedido["lacre"]}'                                
                     keyboard = [
                         [                    
-                            InlineKeyboardButton("Relatório", url='https://indicador.souzacambos.com.br/'),
+                            InlineKeyboardButton("Relatório", url=f'https://indicador.souzacambos.com.br/qualidade/qualidade_detail/{pedido["lacre"]}'),
                         ]
                     ]
                     reply_markup = InlineKeyboardMarkup(keyboard)            
@@ -51,7 +51,7 @@ def qualidade_track(context: CallbackContext):
                     text = f'Nova Ação sob cadastrada a sua responsabilidade: {pedido["lacre"]}: {pedido["descricao"]}'  
                     keyboard = [
                         [                    
-                            InlineKeyboardButton("Relatório", url='https://indicador.souzacambos.com.br/'),
+                            InlineKeyboardButton("Relatório", url=f'https://indicador.souzacambos.com.br/qualidade/plano_acao_detail/{pedido["ref"]}'),
                         ]
                     ]
                     reply_markup = InlineKeyboardMarkup(keyboard)            
@@ -60,7 +60,7 @@ def qualidade_track(context: CallbackContext):
                     text = f'Nova Ação cadastrada: {pedido["lacre"]}: {pedido["descricao"]}'                               
                     keyboard = [
                         [                    
-                            InlineKeyboardButton("Relatório", url='https://indicador.souzacambos.com.br/'),
+                            InlineKeyboardButton("Relatório", url=f'https://indicador.souzacambos.com.br/qualidade/plano_acao_detail/{pedido["ref"]}'),
                         ]
                     ]
                     reply_markup = InlineKeyboardMarkup(keyboard)            

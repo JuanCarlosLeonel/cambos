@@ -59,7 +59,13 @@ class PlanoAcaoDetail(TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         pk=self.kwargs['pk']
-        context['plano'] = PlanoDeAcao.objects.get(id = pk)
+        plano = PlanoDeAcao.objects.get(id = pk)     
+        try:
+            ficha = FichaCorte.objects.get(lacre = plano.referencia).dados
+        except:
+            ficha = 'Não encontrada'
+        context['plano'] = plano
+        context['pedido'] = ficha
         context['acoes'] = Acao.objects.filter(plano_acao__id = pk)
         return context
 
@@ -91,7 +97,8 @@ class AcaoCreate(CreateView):
             {"lacre":ref,
             "tipo":"acao",
             "responsavel":userbot.user_id,
-            "descricao":self.object.descricao
+            "descricao":self.object.descricao,
+            "ref":self.object.plano_acao.id
             }
         )
         model.save()
@@ -116,6 +123,12 @@ class AcaoUpdate(UpdateView):
         pk=self.kwargs['pk']        
         context['plano'] = PlanoDeAcao.objects.get(id = self.object.plano_acao.id)
         return context
+
+    def get_form_kwargs(self):
+        usuario_list = QualidadeBot.objects.filter().values('usuario__id')
+        kwargs = super().get_form_kwargs()
+        kwargs['usuario_list'] = usuario_list
+        return kwargs
 
     def get_success_url(self):
         pk = self.object.plano_acao

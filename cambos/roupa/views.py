@@ -134,7 +134,7 @@ def check_update_api():
                         parado_list.append(
                                 {
                                     'lacre': item_spi['Lacre'],
-                                    'situacao': 'parado'
+                                    'situacao': 'parado'                                    
                                 }
                             )        
                     else:
