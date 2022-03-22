@@ -311,11 +311,14 @@ class SolicitacoesList(TemplateView):
         itemviagem = ItemViagem.objects.filter(viagem = viag)
         itemv = len(itemviagem)
         lista_solicitacoes = SolicitacaoViagem.objects.exclude(situacao = '3').order_by("-id")
+        peso = 0
 
         for solicitacao in lista_solicitacoes:
             for item in itemviagem:
                 if item.viagem_solicitacao == solicitacao:
                     solicitacao.set_has_item(True)
+                    peso += item.viagem_solicitacao.peso
+        print(peso)
 
         if edit == 'true':
             solicitacao = SolicitacaoViagem.objects.get(pk=value)
@@ -335,6 +338,7 @@ class SolicitacoesList(TemplateView):
             user_permission = FrotaPermissao.objects.get(usuario = self.request.user)
         except:
             user_permission = {} 
+        context['peso'] = peso
         context['permissoes'] = user_permission
         context['itemviagem'] = itemviagem
         context['itemv'] = itemv

@@ -106,6 +106,7 @@ class SolicitacaoForm(forms.ModelForm):
             'prioridade',
             'peso',
             'quantidade',
+            'produtos',
             'data_solicitacao',        
         )
          
@@ -120,6 +121,7 @@ class SolicitacaoForm(forms.ModelForm):
             'prioridade': forms.Select(attrs={'class':'form-control'}),
             'peso': forms.NumberInput(attrs={'class':'form-control'}),
             'quantidade': forms.NumberInput(attrs={'class':'form-control'}),
+            'produtos': forms.TextInput(attrs={'class':'form-control'}),
             'data_prevista': forms.DateInput(attrs={'data-mask':'00/00/0000','class':'form-control datepicker'}),
             'data_solicitacao': forms.HiddenInput()          
         }
@@ -127,6 +129,7 @@ class SolicitacaoForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):  
         super().__init__(*args, **kwargs)       
         self.fields['user'].label = "Solicitante"
+        self.fields['produtos'].label = "Produto"
 
 class EnderecoForm(forms.ModelForm):
     class Meta:

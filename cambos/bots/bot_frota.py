@@ -23,16 +23,19 @@ def viagemcaminhao(update):
     update.edit_message_text(text, parse_mode=ParseMode.HTML)
     return return_menu(update, text)
 
-# def solicitacoes(update):
-#     user = get_user(update)
-#     s = SolicitacaoViagem.objects.filter(situacao = 1)
-#     text =""
-#     if user.ativo:
-#         text = f"Solicitações Abertas:{os.linesep}"
-#         for item in s:
-#             text += f"Solicitante:{item.user},prioridade{item.prioridade},data{item.data_solicitacao}"
-#     update.edit_message_text(text, parse_mode=ParseMode.HTML)
-#     return return_menu(update, text)
+def solicitacoes(update):
+    user = get_user(update)
+    s = SolicitacaoViagem.objects.filter(situacao = 1)
+    text =""
+    if user.ativo:
+        text = f"<b>Solicitações Abertas:</b>{os.linesep}"
+        for item in s:
+            if item.prioridade == '1':
+                text += f"<b>Solicitante:{item.user}</b>{os.linesep}    Prioridade:NORMAL,data{str(item.data_solicitacao)[8:10] + '/' + str(item.data_solicitacao)[5:7] + '/' + str(item.data_solicitacao)[0:4] + '-' + str(item.data_solicitacao)[11:16]}{os.linesep}"
+            elif item.prioridade == '2':
+                text += f"<b>Solicitante:{item.user}</b>{os.linesep}    Prioridade:NORMAL,data{str(item.data_solicitacao)[8:10] + '/' + str(item.data_solicitacao)[5:7] + '/' + str(item.data_solicitacao)[0:4] + '-' + str(item.data_solicitacao)[11:16]}{os.linesep}"
+    update.edit_message_text(text, parse_mode=ParseMode.HTML)
+    return return_menu(update, text)
 
 def dieselinterno(update):
     user = get_user(update)
@@ -45,13 +48,37 @@ def dieselinterno(update):
     return return_menu(update, text)
 
 def abastecimento(update):
+    from datetime import timedelta
+    from datetime import date
     user = get_user(update)
-    a = Abastecimento.objects.filter(veiculo__caminhao = True).order_by("-id")
+    a = Abastecimento.objects.all()
     text =""
+    totgasolina = 0
+    totalcool = 0
+    totgastogasolina = 0
+    totgastoalcool = 0
+    totinterno = 0
+    totexterno = 0
+    totgastointerno = 0
+    totgastoexterno = 0
     if user.ativo:
-        text = f"Abastecimentos Realizados:{os.linesep}"
+        text = f"<b>Relatório Abastecimento últimos 30 dias</b>:{os.linesep}"
         for item in a:
-            text += f"<b>{item.veiculo}</b>, {str(item.data)[8:] + '/' + str(item.data)[5:7] + '/' + str(item.data)[0:4]}{os.linesep} Combustível:<i>{item.combustivel}</i>, Valor pago:{item.valor_unitario}.{os.linesep}"
+            if item.data > date.today() - timedelta(days = 30):
+                if item.combustivel == 'Gasolina':
+                    totgasolina += item.quantidade
+                    totgastogasolina += item.valor_unitario
+                elif item.combustivel == 'Álcool':
+                    totalcool += item.quantidade
+                    totgastoalcool += item.valor_unitario
+                elif item.combustivel == 'Diesel':
+                    if item.interno:
+                        totinterno += item.quantidade
+                        totgastointerno += item.valor_unitario
+                    elif not item.interno:
+                        totexterno += item.quantidade
+                        totgastoexterno += item.valor_unitario
+        text += f"<b>Gasolina: {str(totgasolina)[:5]}</b> l consumidos{os.linesep}   Valor total <b> R$ {totgastogasolina}</b>{os.linesep}<b>Álcool: {str(totalcool)[:5]}</b> l consumidos{os.linesep}   Valor total <b> R$ {totgastoalcool}</b>{os.linesep}<b>Diesel INTERNO: {str(totinterno)[:5]}</b> l consumidos{os.linesep}   Valor total <b> R$ {totgastointerno}</b>{os.linesep}<b>Diesel EXTERNO: {str(totexterno)[:5]}</b> l consumidos{os.linesep}   Valor total <b> R$ {totgastoexterno}</b>{os.linesep}"
     update.edit_message_text(text, parse_mode=ParseMode.HTML)
     return return_menu(update, text)
 
@@ -328,7 +355,7 @@ def menu(update, context):
         dict = {}  
         if userbot:
             dict['\U0001F4CB Logística']='frota'
-            dict['\U0001F68C Veículo']='veiculo'
+            dict['\U0001F68C Veículos']='veiculo'
 
         keyboard = []
         for key, value in dict.items():
@@ -355,7 +382,7 @@ def button(update: Update, _: CallbackContext) -> None:
     if query.data == 'frota':
         keyboard = [
         [
-            InlineKeyboardButton("\U0001F4CB Solicitações", callback_data='menu'),
+            InlineKeyboardButton("\U0001F4CB Solicitações", callback_data='solicitacoes'),
             InlineKeyboardButton("\U0000203C Em trânsito", callback_data='viagemcaminhao'),
         ],
         [   InlineKeyboardButton("\U000026FD Abastecimento", callback_data='abastecimento'),
@@ -383,6 +410,9 @@ def button(update: Update, _: CallbackContext) -> None:
 
     elif query.data == 'menu':
         keyboard = menu(query, 'nav')
+
+    elif query.data == 'solicitacoes':
+        return solicitacoes(query)
 
     elif query.data == 'viagemcaminhao':
         return viagemcaminhao(query)

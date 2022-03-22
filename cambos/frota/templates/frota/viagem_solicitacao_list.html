@@ -34,6 +34,17 @@
 				Data Saída: 
 				<strong>{{viag.data_inicial|date:"d/m/Y"}} </strong>
 			</p>
+			{% if peso > 1 and peso <= 13500%}
+			<p>
+				Peso Total: 
+				<strong>{{peso}} </strong>
+			</p>
+			{% elif peso > 13500 %}
+			<p>
+				Peso Total: 
+				<strong class="text-danger"> {{peso}}! PESO EXCEDEU O LIMITE MÁXIMO PERMITIDO !</strong></strong>
+			</p>
+			{% endif %}
         </div>
     </div><!--/.row-->
 {% endblock navigation %}
@@ -41,7 +52,6 @@
 {% block content %}		
 <div class="col-12">	
 	<div class="panel panel-default">
-		<div class="modal-title titulo_media" id="exampleModalLabel"><strong>Clique em Atribuir Solicitação para inclui-la na viagem selecionada.</strong></div>
 		<div class="panel-body">
 			<table id="table"				
 				data-toolbar="#toolbar"
@@ -57,8 +67,11 @@
 				<thead>
 					<tr>
 						<th class="text-center">Solicitante</th>
+						<th class="text-center">Tipo</th>
 						<th class="text-center">Prioridade</th>
+						<th class="text-center">Produto</th>
 						<th class="text-center">Peso</th>
+						<th class="text-center">Quantidade</th>
 						<th class="text-center">Rua</th>
 						<th class="text-center">Número</th>
 						<th class="text-center">Bairro</th>
@@ -80,6 +93,17 @@
 									<td class='text-center'>
 										{{data.user}}
 									</td>
+									<td class='text-center'>
+										{% if data.tipo == '1' %}
+											Coleta
+										{% elif data.tipo == '2' %}
+											Entrega
+										{% elif data.tipo == '3' %}
+											Coleta Direta
+										{% elif data.tipo == '4' %}
+											Entrada Direta
+										{% endif %}
+									</td>
 									<td class='text-center' >																																									
 										{%if data.prioridade == '2' %} 							
 											Urgente
@@ -87,7 +111,9 @@
 											Normal
 										{%endif%}																																			
 									</td>
+									<td class='text-center'>{{ data.produtos }}</td>
 									<td class='text-center'>{{ data.peso }}</td>
+									<td class='text-center'>{{ data.quantidade }}</td>
 									<td class='text-center'>
 										{{data.endereco.endereco}}
 									</td>
@@ -139,6 +165,17 @@
 									<td class='text-center'>
 										{{data.user}}
 									</td>
+									<td class='text-center'>
+										{% if data.tipo == '1' %}
+											Coleta
+										{% elif data.tipo == '2' %}
+											Entrega
+										{% elif data.tipo == '3' %}
+											Coleta Direta
+										{% elif data.tipo == '4' %}
+											Entrada Direta
+										{% endif %}
+									</td>
 									<td class='text-center' >																																									
 										{%if data.prioridade == '2' %} 							
 											Urgente
@@ -146,7 +183,9 @@
 											Normal
 										{%endif%}																																			
 									</td>
+									<td class='text-center'>{{ data.produtos }}</td>
 									<td class='text-center'>{{ data.peso }}</td>
+									<td class='text-center'>{{ data.quantidade }}</td>
 									<td class='text-center'>
 										{{data.endereco.endereco}}
 									</td>
