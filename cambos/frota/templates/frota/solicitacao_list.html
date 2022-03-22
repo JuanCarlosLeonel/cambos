@@ -79,7 +79,7 @@
 					</tr>
 				</thead>
 				<tbody>
-					{% for data in object_list %}
+					{% for data in object_list|dictsort:"situacao" %}
                     <tr data-href="{% url 'solicitacao_update' data.pk %}"
                             class="trLink" >
                             <td class='text-center'>

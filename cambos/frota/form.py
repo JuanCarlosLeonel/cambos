@@ -109,8 +109,12 @@ class SolicitacaoForm(forms.ModelForm):
         )
          
         widgets = {             
-            'endereco': forms.Select(attrs={'class':'form-control'}),                       
-            'user': forms.Select(attrs={'class':'form-control'}),      
+            'endereco': Select2Widget(                
+                attrs={'class':'form-control'},                
+            ),                       
+            'user': Select2Widget(                
+                attrs={'class':'form-control'},                
+            ),      
             'tipo': forms.Select(attrs={'class':'form-control'}),
             'prioridade': forms.Select(attrs={'class':'form-control'}),
             'peso': forms.NumberInput(attrs={'class':'form-control'}),
