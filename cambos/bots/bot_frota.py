@@ -42,22 +42,76 @@ def solicitacao1719azul(update):
     user = get_user(update)
     viagem = Viagem.objects.filter(veiculo__id = 6, km_final=None)
     item = ItemViagem.objects.filter(viagem__in = viagem, viagem_solicitacao__data_finalizacao = None )
-    for solicitacao in item:
-        print(solicitacao.viagem_solicitacao.endereco.endereco)
+    text =f"<b>Solicitações em Atendimento:</b>{os.linesep}"
+    if user.ativo:
+        for solicitacao in item:
+            if solicitacao.viagem_solicitacao.tipo == '1':
+                text += f"Endereço da COLETA:{os.linesep}"
+            elif solicitacao.viagem_solicitacao.tipo == '2':
+                text += f"Endereço da ENTREGA:{os.linesep}"
+            elif solicitacao.viagem_solicitacao.tipo == '3':
+                text += f"Endereço da COLETA DIRETA:{os.linesep}"
+            elif solicitacao.viagem_solicitacao.tipo == '4':
+                text += f"Endereço da ENTRADA DIRETA:{os.linesep}"
+            text += f"<b>Rua</b> {solicitacao.viagem_solicitacao.endereco.endereco}{os.linesep}"
+            text += f"<b>N</b> {solicitacao.viagem_solicitacao.endereco.numero}{os.linesep}"
+            text += f"<b>Bairro</b> {solicitacao.viagem_solicitacao.endereco.bairro}{os.linesep}"
+            text += f"<b>Cidade</b> {solicitacao.viagem_solicitacao.endereco.cidade}{os.linesep}"
+            text += f"<b>Cep</b> {solicitacao.viagem_solicitacao.endereco.cep}{os.linesep}"
+            text += f"<b>Para finalizar a solicitacao</b> : http://192.168.0.90:8000/frota/solicitacaomotorista_update/{solicitacao.viagem_solicitacao.pk}{os.linesep}"
+            text += f"============================{os.linesep}"
+    update.edit_message_text(text, parse_mode=ParseMode.HTML)
+    return return_menu(update, text)
 
 def solicitacao2426vermelho(update):
     user = get_user(update)
     viagem = Viagem.objects.filter(veiculo__id = 2, km_final=None)
     item = ItemViagem.objects.filter(viagem__in = viagem, viagem_solicitacao__data_finalizacao = None )
-    for solicitacao in item:
-        print(solicitacao.viagem_solicitacao.endereco.endereco)
+    text =f"<b>Solicitações em Atendimento:</b>{os.linesep}"
+    if user.ativo:
+        for solicitacao in item:
+            if solicitacao.viagem_solicitacao.tipo == '1':
+                text += f"Endereço da COLETA:{os.linesep}"
+            elif solicitacao.viagem_solicitacao.tipo == '2':
+                text += f"Endereço da ENTREGA:{os.linesep}"
+            elif solicitacao.viagem_solicitacao.tipo == '3':
+                text += f"Endereço da COLETA DIRETA:{os.linesep}"
+            elif solicitacao.viagem_solicitacao.tipo == '4':
+                text += f"Endereço da ENTRADA DIRETA:{os.linesep}"
+            text += f"<b>Rua</b> {solicitacao.viagem_solicitacao.endereco.endereco}{os.linesep}"
+            text += f"<b>N</b> {solicitacao.viagem_solicitacao.endereco.numero}{os.linesep}"
+            text += f"<b>Bairro</b> {solicitacao.viagem_solicitacao.endereco.bairro}{os.linesep}"
+            text += f"<b>Cidade</b> {solicitacao.viagem_solicitacao.endereco.cidade}{os.linesep}"
+            text += f"<b>Cep</b> {solicitacao.viagem_solicitacao.endereco.cep}{os.linesep}"
+            text += f"<b>Para finalizar a solicitacao</b> : http://192.168.0.90:8000/frota/solicitacaomotorista_update/{solicitacao.viagem_solicitacao.pk}{os.linesep}"
+            text += f"============================{os.linesep}"
+    update.edit_message_text(text, parse_mode=ParseMode.HTML)
+    return return_menu(update, text)
 
 def solicitacao24280cinza(update):
     user = get_user(update)
     viagem = Viagem.objects.filter(veiculo__id = 1, km_final=None)
     item = ItemViagem.objects.filter(viagem__in = viagem, viagem_solicitacao__data_finalizacao = None )
-    for solicitacao in item:
-        print(solicitacao.viagem_solicitacao.endereco.endereco)
+    text =f"<b>Solicitações em Atendimento:</b>{os.linesep}"
+    if user.ativo:
+        for solicitacao in item:
+            if solicitacao.viagem_solicitacao.tipo == '1':
+                text += f"Endereço da COLETA:{os.linesep}"
+            elif solicitacao.viagem_solicitacao.tipo == '2':
+                text += f"Endereço da ENTREGA:{os.linesep}"
+            elif solicitacao.viagem_solicitacao.tipo == '3':
+                text += f"Endereço da COLETA DIRETA:{os.linesep}"
+            elif solicitacao.viagem_solicitacao.tipo == '4':
+                text += f"Endereço da ENTRADA DIRETA:{os.linesep}"
+            text += f"<b>Rua</b> {solicitacao.viagem_solicitacao.endereco.endereco}{os.linesep}"
+            text += f"<b>N</b> {solicitacao.viagem_solicitacao.endereco.numero}{os.linesep}"
+            text += f"<b>Bairro</b> {solicitacao.viagem_solicitacao.endereco.bairro}{os.linesep}"
+            text += f"<b>Cidade</b> {solicitacao.viagem_solicitacao.endereco.cidade}{os.linesep}"
+            text += f"<b>Cep</b> {solicitacao.viagem_solicitacao.endereco.cep}{os.linesep}"
+            text += f"<b>Para finalizar a solicitacao</b> : http://192.168.0.90:8000/frota/solicitacaomotorista_update/{solicitacao.viagem_solicitacao.pk}{os.linesep}"
+            text += f"============================{os.linesep}"
+    update.edit_message_text(text, parse_mode=ParseMode.HTML)
+    return return_menu(update, text)
 
 def solicitacoes(update):
     user = get_user(update)
@@ -465,6 +519,15 @@ def button(update: Update, _: CallbackContext) -> None:
 
     elif query.data == 'solicitacao1719vermelho':
         return solicitacao1719vermelho(query)
+
+    elif query.data == 'solicitacao1719azul':
+        return solicitacao1719azul(query)
+
+    elif query.data == 'solicitacao2426vermelho':
+        return solicitacao2426vermelho(query)
+    
+    elif query.data == 'solicitacao24280cinza':
+        return solicitacao24280cinza(query)
 
     elif query.data == 'abastecimento':
         return abastecimento(query)

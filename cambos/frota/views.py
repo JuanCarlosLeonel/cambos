@@ -40,11 +40,17 @@ def enviarabastecimento(sender, instance, created, **kwargs):
         bot = Bot.objects.get(nome = 'Frota')
         token = bot.token 
         users = FrotaBot.objects.filter(ativo = True)
-        atual = EstoqueDiesel.objects.get(produto_id = 146)
+        try:
+            atual = EstoqueDiesel.objects.get(produto_id = 146)
+        except:
+            pass
         for user in users:      
             if user:  
                 chat_id = user.user_id
-                html_content = render_to_string('frota/telegram_messageabast.html', {'nome': Abastecimento.objects.filter().latest('id'),'atual':atual.quantidade})
+                try:
+                    html_content = render_to_string('frota/telegram_messageabast.html', {'nome': Abastecimento.objects.filter().latest('id'),'atual':atual.quantidade})
+                except:
+                    html_content = render_to_string('frota/telegram_messageabast.html', {'nome': Abastecimento.objects.filter().latest('id')})
                 bot = telegram.Bot(token=token)
                 bot.send_message(chat_id=chat_id,text=html_content, parse_mode=telegram.ParseMode.HTML)
 post_save.connect(enviarabastecimento, sender=Abastecimento)
@@ -137,7 +143,8 @@ class AbastecimentoCreate(CreateView):
             interno.save()
             model = Movimentacoes(estoque_id = interno.id, user_id = 38, tipo = 'C', quantidade = self.object.quantidade, saldo_anterior = atual, saldo_atual = interno.quantidade, created_at = interno.updated_at)
             model.save()
-                      
+        else:
+            pass      
         return f'/frota/abastecimento_list/{self.kwargs["pk"]}'
     
     def get_context_data(self, **kwargs):
