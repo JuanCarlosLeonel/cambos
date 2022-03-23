@@ -3,6 +3,7 @@ from django.views.generic.base import View
 
 from .views import(
     Index,
+    SolicitacaoMotoristaUpdate,
     VeiculoIndex,
     ViagemList,
     ViagemCreate,
@@ -54,7 +55,8 @@ urlpatterns = [
     path('solicitacao_list/',  SolicitacaoList.as_view(), name='solicitacao_list'),
     path('solicitacao_create/', SolicitacaoCreate.as_view(), name = 'solicitacao_create'),
     path('endereco_create/', EnderecoCreate.as_view(), name = 'endereco_create'),
-    path('solicitacao_update/<str:pk>/', SolicitacaoUpdate.as_view(), name='solicitacao_update'), 
+    path('solicitacaomotorista_update/<str:pk>/', SolicitacaoMotoristaUpdate.as_view(), name='solicitacaomotorista_update'), 
+    path('solicitacao_update/<str:pk>/', SolicitacaoUpdate.as_view(), name='solicitacao_update'),
     path('solicitacao_delete/<int:pk>/',SolicitacaoDelete.as_view(), name='solicitacao_delete_cbv'),
     path('viagem_solicitacao_list/<int:pk>/',  SolicitacoesList.as_view(), name='viagem_solicitacao_list'),
     path('viagem_create/<str:pk>/', ViagemCreate.as_view(), name = 'viagem_create'),

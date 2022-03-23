@@ -84,7 +84,7 @@
 					</tr>
 				</thead>
 				<tbody>
-					{% for data in lista_solicitacoes %}
+					{% for data in lista_solicitacoes|dictsort:"data_solicitacao" %}
 						{% if data.has_item == True %}
 						{% for item in itemviagem %}
 							{% if item.viagem_solicitacao == data and item.viagem == viag %}

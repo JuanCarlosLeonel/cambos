@@ -1,7 +1,20 @@
-<strong>Nova Viagem Cadastrada!</strong>
-<strong>{{nome.veiculo}}</strong> 
-<b>Para: {{nome.destino}}</b>
-<b>Motorista: {{nome.motorista.nome}}</b>
-<b>Km: {{nome.km_inicial}}</b>
+<strong>Nova Solicitacao Atribuida</strong>
+<strong>{{nome.viagem.veiculo}}</strong>
+Data saída:<strong>{{nome.viagem.data_inicial|date:"d/m/y"}}</strong>
+Mot:<strong>{{nome.viagem.motorista.nome}}/{{nome.viagem.motorista2.nome}}</strong>
+{%if nome.viagem_solicitacao.tipo == '1'%}
+<strong>Endereço da COLETA:</strong>
+{%elif nome.viagem_solicitacao.tipo == '2'%}
+<strong>Endereço da ENTREGA:</strong>
+{%elif nome.viagem_solicitacao.tipo == '3'%}
+<strong>Endereço da COLETA DIRETA:</strong>
+{%elif nome.viagem_solicitacao.tipo == '3'%}
+<strong>Endereço da ENTRADA DIRETA:</strong>
+{%endif%}<strong>    Rua {{nome.viagem_solicitacao.endereco.endereco}}
+    N {{nome.viagem_solicitacao.endereco.numero}}
+    Bairro {{nome.viagem_solicitacao.endereco.bairro}}
+    Cidade {{nome.viagem_solicitacao.endereco.cidade}}
+    Cep {{nome.viagem_solicitacao.endereco.cep}}</strong> 
+
 
 

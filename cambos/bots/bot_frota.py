@@ -9,19 +9,55 @@ from telegram.ext import (
     MessageHandler,
     Filters,
 )
-from frota.models import Abastecimento, EstoqueDiesel, FrotaBot, SolicitacaoViagem, Veiculo, Viagem
+from frota.models import Abastecimento, EstoqueDiesel, FrotaBot, ItemViagem, SolicitacaoViagem, Veiculo, Viagem
 
-def viagemcaminhao(update):
+
+def solicitacao1719vermelho(update):
     user = get_user(update)
-    v = Viagem.objects.filter(veiculo__caminhao = True)
-    text =""
+    viagem = Viagem.objects.filter(veiculo__id = 7, km_final=None)
+    item = ItemViagem.objects.filter(viagem__in = viagem, viagem_solicitacao__data_finalizacao = None )
+    text =f"<b>Solicitações em Atendimento:</b>{os.linesep}"
     if user.ativo:
-        text = f"\U00002757Viagens <b>EM TRÂNSITO</b>:{os.linesep}"
-        for item in v:
-            if item.data_final is None:
-                text += f"<b>{item.veiculo}</b>, saída:{str(item.data_inicial)[8:] + '/' + str(item.data_inicial)[5:7] + '/' + str(item.data_inicial)[0:4] }, destino:{item.destino}{os.linesep}"
+        for solicitacao in item:
+            if solicitacao.viagem_solicitacao.tipo == '1':
+                text += f"Endereço da COLETA:{os.linesep}"
+            elif solicitacao.viagem_solicitacao.tipo == '2':
+                text += f"Endereço da ENTREGA:{os.linesep}"
+            elif solicitacao.viagem_solicitacao.tipo == '3':
+                text += f"Endereço da COLETA DIRETA:{os.linesep}"
+            elif solicitacao.viagem_solicitacao.tipo == '4':
+                text += f"Endereço da ENTRADA DIRETA:{os.linesep}"
+            text += f"<b>Rua</b> {solicitacao.viagem_solicitacao.endereco.endereco}{os.linesep}"
+            text += f"<b>N</b> {solicitacao.viagem_solicitacao.endereco.numero}{os.linesep}"
+            text += f"<b>Bairro</b> {solicitacao.viagem_solicitacao.endereco.bairro}{os.linesep}"
+            text += f"<b>Cidade</b> {solicitacao.viagem_solicitacao.endereco.cidade}{os.linesep}"
+            text += f"<b>Cep</b> {solicitacao.viagem_solicitacao.endereco.cep}{os.linesep}"
+            text += f"<b>Para finalizar a solicitacao</b> : http://192.168.0.90:8000/frota/solicitacaomotorista_update/{solicitacao.viagem_solicitacao.pk}{os.linesep}"
+            text += f"============================{os.linesep}"
     update.edit_message_text(text, parse_mode=ParseMode.HTML)
     return return_menu(update, text)
+
+
+def solicitacao1719azul(update):
+    user = get_user(update)
+    viagem = Viagem.objects.filter(veiculo__id = 6, km_final=None)
+    item = ItemViagem.objects.filter(viagem__in = viagem, viagem_solicitacao__data_finalizacao = None )
+    for solicitacao in item:
+        print(solicitacao.viagem_solicitacao.endereco.endereco)
+
+def solicitacao2426vermelho(update):
+    user = get_user(update)
+    viagem = Viagem.objects.filter(veiculo__id = 2, km_final=None)
+    item = ItemViagem.objects.filter(viagem__in = viagem, viagem_solicitacao__data_finalizacao = None )
+    for solicitacao in item:
+        print(solicitacao.viagem_solicitacao.endereco.endereco)
+
+def solicitacao24280cinza(update):
+    user = get_user(update)
+    viagem = Viagem.objects.filter(veiculo__id = 1, km_final=None)
+    item = ItemViagem.objects.filter(viagem__in = viagem, viagem_solicitacao__data_finalizacao = None )
+    for solicitacao in item:
+        print(solicitacao.viagem_solicitacao.endereco.endereco)
 
 def solicitacoes(update):
     user = get_user(update)
@@ -356,6 +392,7 @@ def menu(update, context):
         if userbot:
             dict['\U0001F4CB Logística']='frota'
             dict['\U0001F68C Veículos']='veiculo'
+            dict['\U0001F69A Viagens']='viagemsolicitacao'
 
         keyboard = []
         for key, value in dict.items():
@@ -383,10 +420,22 @@ def button(update: Update, _: CallbackContext) -> None:
         keyboard = [
         [
             InlineKeyboardButton("\U0001F4CB Solicitações", callback_data='solicitacoes'),
-            InlineKeyboardButton("\U0000203C Em trânsito", callback_data='viagemcaminhao'),
+            InlineKeyboardButton("\U0000203C Em atendimento", callback_data='solicitacao1719vermelho'),
         ],
         [   InlineKeyboardButton("\U000026FD Abastecimento", callback_data='abastecimento'),
-        InlineKeyboardButton("\U000026FD Diesel Interno", callback_data='dieselinterno'),
+            InlineKeyboardButton("\U000026FD Diesel Interno", callback_data='dieselinterno'),
+        ],
+        [InlineKeyboardButton("Menu", callback_data='menu')],
+        ]
+
+    if query.data == 'viagemsolicitacao':
+        keyboard = [
+        [
+            InlineKeyboardButton("\U0001F69A 1719 Azul", callback_data='solicitacao1719azul'),
+            InlineKeyboardButton("\U0001F69A 1719 Vermelho", callback_data='solicitacao1719vermelho'),
+        ],
+        [   InlineKeyboardButton("\U0001F69A 2426 Vermelho", callback_data='solicitacao2426vermelho'),
+            InlineKeyboardButton("\U0001F69A 24280 Cinza", callback_data='solicitacao24280cinza'),
         ],
         [InlineKeyboardButton("Menu", callback_data='menu')],
         ]
@@ -414,8 +463,8 @@ def button(update: Update, _: CallbackContext) -> None:
     elif query.data == 'solicitacoes':
         return solicitacoes(query)
 
-    elif query.data == 'viagemcaminhao':
-        return viagemcaminhao(query)
+    elif query.data == 'solicitacao1719vermelho':
+        return solicitacao1719vermelho(query)
 
     elif query.data == 'abastecimento':
         return abastecimento(query)

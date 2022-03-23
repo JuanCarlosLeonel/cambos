@@ -107,7 +107,7 @@ class SolicitacaoForm(forms.ModelForm):
             'peso',
             'quantidade',
             'produtos',
-            'data_solicitacao',        
+            'data_solicitacao',     
         )
          
         widgets = {             
@@ -123,13 +123,44 @@ class SolicitacaoForm(forms.ModelForm):
             'quantidade': forms.NumberInput(attrs={'class':'form-control'}),
             'produtos': forms.TextInput(attrs={'class':'form-control'}),
             'data_prevista': forms.DateInput(attrs={'data-mask':'00/00/0000','class':'form-control datepicker'}),
-            'data_solicitacao': forms.HiddenInput()          
+            'data_solicitacao': forms.HiddenInput(),  
         }
 
     def __init__(self, *args, **kwargs):  
         super().__init__(*args, **kwargs)       
         self.fields['user'].label = "Solicitante"
         self.fields['produtos'].label = "Produto"
+
+
+class SolicitacaoMotoristaForm(forms.ModelForm):
+    class Meta:
+        model = SolicitacaoViagem
+        fields = (         
+            'endereco',
+            'user',
+            'data_prevista',
+            'tipo',             
+            'prioridade',
+            'peso',
+            'quantidade',
+            'produtos',
+            'data_solicitacao',  
+            'data_finalizacao',      
+        )
+         
+        widgets = {             
+            'endereco': forms.Select(attrs={'class':'form-control','readonly':'readonly'}),                     
+            'user': forms.HiddenInput(),      
+            'tipo': forms.HiddenInput(),
+            'prioridade': forms.HiddenInput(),
+            'peso': forms.HiddenInput(),
+            'quantidade': forms.HiddenInput(),
+            'produtos': forms.HiddenInput(),
+            'data_prevista': forms.HiddenInput(),
+            'data_solicitacao': forms.HiddenInput(),
+            'data_finalizacao': forms.DateTimeInput(attrs={'data-mask':'00/00/0000','class':'form-control datepicker'}),    
+        }
+
 
 class EnderecoForm(forms.ModelForm):
     class Meta:

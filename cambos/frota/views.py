@@ -8,7 +8,7 @@ from django.views.generic.list import ListView
 
 from core.models import Enderecos, UserCompras
 from .models import Abastecimento, EstoqueDiesel, FrotaBot, ItemViagem, Manutencao, Motorista, Movimentacoes, Viagem, Veiculo, FrotaPermissao, SolicitacaoViagem
-from .form import ManutencaoForm, SolicitacaoForm, ViagemForm, AbastecimentoForm, EnderecoForm
+from .form import ManutencaoForm, SolicitacaoForm, SolicitacaoMotoristaForm, ViagemForm, AbastecimentoForm, EnderecoForm
 from django.http import HttpResponse, JsonResponse
 from django.db.models import Sum
 import datetime
@@ -25,15 +25,13 @@ def enviar(sender, instance, created, **kwargs):
         bot = Bot.objects.get(nome = 'Frota')
         token = bot.token 
         users = FrotaBot.objects.filter(ativo = True)
-        v = Viagem.objects.filter().latest('id')
-        if v.veiculo.caminhao:
-            for user in users:      
-                if user:  
-                    chat_id = user.user_id
-                    html_content = render_to_string('frota/telegram_message.html', {'nome': Viagem.objects.filter(veiculo__caminhao = True).latest('id')})
-                    bot = telegram.Bot(token=token)
-                    bot.send_message(chat_id=chat_id,text=html_content, parse_mode=telegram.ParseMode.HTML)
-post_save.connect(enviar, sender=Viagem)
+        for user in users:      
+            if user:  
+                chat_id = user.user_id
+                html_content = render_to_string('frota/telegram_message.html', {'nome': ItemViagem.objects.latest('id')})
+                bot = telegram.Bot(token=token)
+                bot.send_message(chat_id=chat_id,text=html_content, parse_mode=telegram.ParseMode.HTML)
+post_save.connect(enviar, sender=ItemViagem)
 
 
 def enviarabastecimento(sender, instance, created, **kwargs):
@@ -176,21 +174,21 @@ class ViagemUpdate(UpdateView):
     form_class = ViagemForm
     
     def get_success_url(self): 
-        from datetime import timedelta
-        v = self.object.id
-        km = self.object.km_final
-        i = ItemViagem.objects.filter(viagem = v)
-        s = SolicitacaoViagem.objects.all()
-        if km:
-            for item in i:
-                if item.viagem.id == v:
-                    for sol in s:
-                        if sol.id == item.viagem_solicitacao.id:
-                            sol.situacao = '3'
-                            sol.data_finalizacao = datetime.datetime.now() - timedelta(hours = +3)
-                            sol.save()          
-        else:
-            pass     
+        # from datetime import timedelta
+        # v = self.object.id
+        # km = self.object.km_final
+        # i = ItemViagem.objects.filter(viagem = v)
+        # s = SolicitacaoViagem.objects.all()
+        # if km:
+        #     for item in i:
+        #         if item.viagem.id == v:
+        #             for sol in s:
+        #                 if sol.id == item.viagem_solicitacao.id:
+        #                     sol.situacao = '3'
+        #                     sol.data_finalizacao = datetime.datetime.now() - timedelta(hours = +3)
+        #                     sol.save()          
+        # else:
+        #     pass     
         return f'/frota/viagem_list/{self.object.veiculo.id}'
     
     def get_context_data(self, **kwargs):
@@ -318,7 +316,6 @@ class SolicitacoesList(TemplateView):
                 if item.viagem_solicitacao == solicitacao:
                     solicitacao.set_has_item(True)
                     peso += item.viagem_solicitacao.peso
-        print(peso)
 
         if edit == 'true':
             solicitacao = SolicitacaoViagem.objects.get(pk=value)
@@ -633,6 +630,42 @@ class SolicitacaoUpdate(UpdateView):
         return context
     
     def get_success_url(self):
+        # from datetime import timedelta
+        # datafinalizado = self.object.data_finalizacao
+        # if datafinalizado:
+        #     self.object.situacao = '3'
+        #     self.object.data_finalizacao = datetime.datetime.now() - timedelta(hours = +3)
+        #     self.object.save()          
+        # else:
+        #     pass   
+        return '/frota/solicitacao_list/'
+
+
+class SolicitacaoMotoristaUpdate(UpdateView):
+    model = SolicitacaoViagem
+    form_class = SolicitacaoMotoristaForm
+    template_name = 'frota/solicitacaomotoristaviagem_form.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)                
+        context['veiculo'] = self.object.id
+        return context
+
+    def get_initial(self, *args, **kwargs):
+        from datetime import timedelta 
+        initial = super(SolicitacaoMotoristaUpdate, self).get_initial(**kwargs)
+        initial['data_finalizacao'] = datetime.datetime.now() - timedelta(hours = +3)
+        return initial
+    
+    def get_success_url(self):
+        from datetime import timedelta
+        datafinalizado = self.object.data_finalizacao
+        if datafinalizado:
+            self.object.situacao = '3'
+            self.object.data_finalizacao = datetime.datetime.now() - timedelta(hours = +3)
+            self.object.save()          
+        else:
+            pass   
         return '/frota/solicitacao_list/'
     
 
