@@ -131,7 +131,7 @@ class AbastecimentoCreate(CreateView):
     form_class = AbastecimentoForm
 
     def get_success_url(self):   
-        from datetime import timedelta   
+        # from datetime import timedelta   
         if self.object.interno:
             interno = EstoqueDiesel.objects.get(produto_id = 146)
             self.object.valor_unitario = float(interno.valor_unico) * self.object.quantidade
@@ -139,7 +139,7 @@ class AbastecimentoCreate(CreateView):
             atual = interno.quantidade
             total = interno.quantidade - self.object.quantidade
             interno.quantidade = total
-            interno.updated_at = datetime.datetime.now() - timedelta(hours = +3)
+            interno.updated_at = datetime.datetime.now() 
             interno.save()
             model = Movimentacoes(estoque_id = interno.id, user_id = 38, tipo = 'C', quantidade = self.object.quantidade, saldo_anterior = atual, saldo_atual = interno.quantidade, created_at = interno.updated_at)
             model.save()
@@ -180,22 +180,7 @@ class ViagemUpdate(UpdateView):
     model = Viagem
     form_class = ViagemForm
     
-    def get_success_url(self): 
-        # from datetime import timedelta
-        # v = self.object.id
-        # km = self.object.km_final
-        # i = ItemViagem.objects.filter(viagem = v)
-        # s = SolicitacaoViagem.objects.all()
-        # if km:
-        #     for item in i:
-        #         if item.viagem.id == v:
-        #             for sol in s:
-        #                 if sol.id == item.viagem_solicitacao.id:
-        #                     sol.situacao = '3'
-        #                     sol.data_finalizacao = datetime.datetime.now() - timedelta(hours = +3)
-        #                     sol.save()          
-        # else:
-        #     pass     
+    def get_success_url(self):   
         return f'/frota/viagem_list/{self.object.veiculo.id}'
     
     def get_context_data(self, **kwargs):
@@ -307,7 +292,6 @@ class SolicitacoesList(TemplateView):
     template_name = 'frota/viagem_solicitacao_list.html'
 
     def get(self, request, *args, **kwargs):
-        from datetime import timedelta
         context = super().get_context_data(**kwargs)
         pk = self.kwargs['pk'] 
         viag = Viagem.objects.get(id = pk)
@@ -325,12 +309,15 @@ class SolicitacoesList(TemplateView):
                     peso += item.viagem_solicitacao.peso
 
         if edit == 'true':
+            # from datetime import timedelta 
             solicitacao = SolicitacaoViagem.objects.get(pk=value)
             solicitacao.situacao = '2'
-            solicitacao.data_atendimento = datetime.datetime.now() - timedelta(hours = +3)
+            solicitacao.data_atendimento = datetime.datetime.now()
+            print(solicitacao.data_atendimento)
             solicitacao.save()
             model = ItemViagem(viagem = viag, viagem_solicitacao = solicitacao)
             model.save()
+            print(solicitacao.data_atendimento)
         elif edit == 'false':
             solicitacao = SolicitacaoViagem.objects.get(pk=value)
             solicitacao.situacao = '1'
@@ -609,9 +596,9 @@ class SolicitacaoCreate(CreateView):
     template_name = 'frota/solicitacaoviagem_form.html'
 
     def get_initial(self, *args, **kwargs):
-        from datetime import timedelta 
+        # from datetime import timedelta 
         initial = super(SolicitacaoCreate, self).get_initial(**kwargs)
-        initial['data_solicitacao'] = datetime.datetime.now() - timedelta(hours = +3)
+        initial['data_solicitacao'] = datetime.datetime.now()
         return initial
 
     def get_success_url(self):    
@@ -636,15 +623,7 @@ class SolicitacaoUpdate(UpdateView):
         context['veiculo'] = self.object.id
         return context
     
-    def get_success_url(self):
-        # from datetime import timedelta
-        # datafinalizado = self.object.data_finalizacao
-        # if datafinalizado:
-        #     self.object.situacao = '3'
-        #     self.object.data_finalizacao = datetime.datetime.now() - timedelta(hours = +3)
-        #     self.object.save()          
-        # else:
-        #     pass   
+    def get_success_url(self):  
         return '/frota/solicitacao_list/'
 
 
@@ -657,23 +636,20 @@ class SolicitacaoMotoristaUpdate(UpdateView):
         context = super().get_context_data(**kwargs)                
         context['veiculo'] = self.object.id
         return context
-
-    def get_initial(self, *args, **kwargs):
-        from datetime import timedelta 
-        initial = super(SolicitacaoMotoristaUpdate, self).get_initial(**kwargs)
-        initial['data_finalizacao'] = datetime.datetime.now() - timedelta(hours = +3)
-        return initial
     
     def get_success_url(self):
-        from datetime import timedelta
+        # from datetime import timedelta
         datafinalizado = self.object.data_finalizacao
         if datafinalizado:
             self.object.situacao = '3'
-            self.object.data_finalizacao = datetime.datetime.now() - timedelta(hours = +3)
+            self.object.data_finalizacao = datetime.datetime.now() 
             self.object.save()          
         else:
             pass   
-        return '/frota/solicitacao_list/'
+        return '/frota/sucesso/'
+
+def sucesso(request, template_name='frota/sucesso.html'):
+    return render(request, template_name)
     
 
 @method_decorator(login_required, name='dispatch')

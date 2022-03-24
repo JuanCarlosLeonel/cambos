@@ -40,6 +40,7 @@ from .views import(
     SolicitacaoUpdate,
     SolicitacaoDelete,
     EnderecoCreate,
+    sucesso,
 )
 
 urlpatterns = [
@@ -70,6 +71,7 @@ urlpatterns = [
     path('abastecimento_delete/<int:pk>/',AbastecimentoDelete.as_view(), name='abastecimento_delete_cbv'),
     path('veiculo_list',  VeiculoList.as_view(), name='veiculo_list'),
     path('telegram_message', enviar ,name='telegram_message'),
+    path('sucesso/', sucesso ,name='sucesso'),
     path('telegram_messageabast', enviarabastecimento ,name='telegram_messageabast'),
     path('retorna_despesas', relatorio_despesa ,name='retorna_despesas'),
     path('retorna_despesascaminhao', relatorio_despesacaminhao ,name='retorna_despesascaminhao'),

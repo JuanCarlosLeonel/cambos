@@ -1,3 +1,4 @@
+from datetime import date
 import os
 import logging
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup, Update, ParseMode
@@ -19,6 +20,7 @@ def solicitacao1719vermelho(update):
     text =f"<b>Solicitações em Atendimento:</b>{os.linesep}"
     if user.ativo:
         for solicitacao in item:
+            text += f"<b>Data da Viagem: {str(solicitacao.viagem.data_inicial)[8:10] + '/' + str(solicitacao.viagem.data_inicial)[5:7] + '/' + str(solicitacao.viagem.data_inicial)[0:4]}</b>{os.linesep}"
             if solicitacao.viagem_solicitacao.tipo == '1':
                 text += f"Endereço da COLETA:{os.linesep}"
             elif solicitacao.viagem_solicitacao.tipo == '2':
@@ -45,6 +47,7 @@ def solicitacao1719azul(update):
     text =f"<b>Solicitações em Atendimento:</b>{os.linesep}"
     if user.ativo:
         for solicitacao in item:
+            text += f"<b>Data da Viagem: {str(solicitacao.viagem.data_inicial)[8:10] + '/' + str(solicitacao.viagem.data_inicial)[5:7] + '/' + str(solicitacao.viagem.data_inicial)[0:4]}</b>{os.linesep}"
             if solicitacao.viagem_solicitacao.tipo == '1':
                 text += f"Endereço da COLETA:{os.linesep}"
             elif solicitacao.viagem_solicitacao.tipo == '2':
@@ -70,6 +73,7 @@ def solicitacao2426vermelho(update):
     text =f"<b>Solicitações em Atendimento:</b>{os.linesep}"
     if user.ativo:
         for solicitacao in item:
+            text += f"<b>Data da Viagem: {str(solicitacao.viagem.data_inicial)[8:10] + '/' + str(solicitacao.viagem.data_inicial)[5:7] + '/' + str(solicitacao.viagem.data_inicial)[0:4]}</b>{os.linesep}"
             if solicitacao.viagem_solicitacao.tipo == '1':
                 text += f"Endereço da COLETA:{os.linesep}"
             elif solicitacao.viagem_solicitacao.tipo == '2':
@@ -95,6 +99,7 @@ def solicitacao24280cinza(update):
     text =f"<b>Solicitações em Atendimento:</b>{os.linesep}"
     if user.ativo:
         for solicitacao in item:
+            text += f"<b>Data da Viagem: {str(solicitacao.viagem.data_inicial)[8:10] + '/' + str(solicitacao.viagem.data_inicial)[5:7] + '/' + str(solicitacao.viagem.data_inicial)[0:4]}</b>{os.linesep}"
             if solicitacao.viagem_solicitacao.tipo == '1':
                 text += f"Endereço da COLETA:{os.linesep}"
             elif solicitacao.viagem_solicitacao.tipo == '2':

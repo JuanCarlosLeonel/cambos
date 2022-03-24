@@ -136,7 +136,6 @@
 									<td class='text-center'>{{ data.data_solicitacao|date:"d/m/y H:i" }}</td>
 									<td class='text-center'>
 										<form class="" id="" method="submit">
-											<!-- {% if data.has_item == True %} -->
 											<button class="fas fa-dolly-flatbed btn btn-danger" type="submit" role="button" value="null">
 												Cancelar Solicitação
 											</button>
@@ -145,16 +144,6 @@
 												aria-label="editar" aria-describedby="basic-addon1">
 	
 											<input type="hidden" id="solicitacao_id" name="solicitacao_id" value="{{ data.pk }}" placeholder="solicitacao_id" aria-label="solicitacao_id"/>
-											<!-- {% else %}
-											<button class="fas fa-dolly-flatbed btn btn-primary" type="submit" role="button" value="null">
-												Atribuir Solicitação
-											</button>
-											<input type="hidden" class="form-control" id="editar" name="editar"
-												value="true" placeholder="editar"
-												aria-label="editar" aria-describedby="basic-addon1">
-	
-											<input type="hidden" id="solicitacao_id" name="solicitacao_id" value="{{ data.pk }}" placeholder="solicitacao_id" aria-label="solicitacao_id"/> -->
-											<!-- {% endif %} -->
 										</form>
 									</td>
 							{% endif %}
@@ -208,16 +197,6 @@
 									<td class='text-center'>{{ data.data_solicitacao|date:"d/m/y H:i" }}</td>
 									<td class='text-center'>
 										<form class="" id="" method="submit">
-											<!-- {% if data.has_item == True %}
-											<button class="fas fa-dolly-flatbed btn btn-danger" type="submit" role="button" value="null">
-												Cancelar Solicitação
-											</button>
-											<input type="hidden" class="form-control" id="editar" name="editar"
-												value="false" placeholder="editar"
-												aria-label="editar" aria-describedby="basic-addon1">
-	
-											<input type="hidden" id="solicitacao_id" name="solicitacao_id" value="{{ data.pk }}" placeholder="solicitacao_id" aria-label="solicitacao_id"/>
-											{% else %} -->
 											<button class="fas fa-dolly-flatbed btn btn-primary" type="submit" role="button" value="null">
 												Atribuir Solicitação
 											</button>
@@ -226,7 +205,6 @@
 												aria-label="editar" aria-describedby="basic-addon1">
 	
 											<input type="hidden" id="solicitacao_id" name="solicitacao_id" value="{{ data.pk }}" placeholder="solicitacao_id" aria-label="solicitacao_id"/>
-											<!-- {% endif %} -->
 										</form>
 									</td>
 						{%endif%}
