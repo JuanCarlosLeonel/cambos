@@ -310,6 +310,8 @@ class ItemViagem(models.Model):
 class FrotaBot(models.Model):
     user_id       = models.BigIntegerField(unique=True)
     user_nome     = models.CharField(max_length=30)    
+    ver_logistica     = models.BooleanField(default=False)
+    ver_relatorioveiculos     = models.BooleanField(default=False)
     ativo         = models.BooleanField(default=True)
     usuario       = models.ForeignKey(User, on_delete=models.SET_NULL, blank=True, null=True)
 

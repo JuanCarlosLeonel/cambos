@@ -448,9 +448,11 @@ def menu(update, context):
         userbot = get_user(update)
         text = f"\U0001F4AC Escolha uma opção:"
         dict = {}  
-        if userbot:
+        if userbot.ver_logistica:
             dict['\U0001F4CB Logística']='frota'
+        if userbot.ver_relatorioveiculos:
             dict['\U0001F68C  Relatório Veículos']='veiculo'
+        if userbot:
             dict['\U0001F69A Solicitações Em Atendimento']='viagemsolicitacao'
 
         keyboard = []
