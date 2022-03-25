@@ -26,7 +26,7 @@ def enviar(sender, instance, created, **kwargs):
         token = bot.token 
         users = FrotaBot.objects.filter(ativo = True)
         for user in users:      
-            if user:  
+            if user.ver_logistica:  
                 chat_id = user.user_id
                 html_content = render_to_string('frota/telegram_message.html', {'nome': ItemViagem.objects.latest('id')})
                 bot = telegram.Bot(token=token)
@@ -45,7 +45,7 @@ def enviarabastecimento(sender, instance, created, **kwargs):
         except:
             pass
         for user in users:      
-            if user:  
+            if user.ver_logistica:  
                 chat_id = user.user_id
                 try:
                     html_content = render_to_string('frota/telegram_messageabast.html', {'nome': Abastecimento.objects.filter().latest('id'),'atual':atual.quantidade})
@@ -130,8 +130,7 @@ class AbastecimentoCreate(CreateView):
     model = Abastecimento
     form_class = AbastecimentoForm
 
-    def get_success_url(self):   
-        # from datetime import timedelta   
+    def get_success_url(self):    
         if self.object.interno:
             interno = EstoqueDiesel.objects.get(produto_id = 146)
             self.object.valor_unitario = float(interno.valor_unico) * self.object.quantidade
@@ -162,7 +161,9 @@ class AbastecimentoCreate(CreateView):
         initial = super(AbastecimentoCreate, self).get_initial(**kwargs)
         veiculo = Veiculo.objects.get(pk = self.kwargs['pk'])
         initial['veiculo'] = veiculo
-        if veiculo.caminhao:
+        if veiculo.trator or veiculo.gerador:
+            initial['interno'] = True 
+        if veiculo.caminhao or veiculo.trator or veiculo.gerador:
             initial['combustivel'] = 'Diesel'
         else:
             initial['combustivel'] = 'Álcool','Gasolina'
@@ -172,7 +173,8 @@ class AbastecimentoCreate(CreateView):
     def get_form_kwargs(self):        
         veiculo = Veiculo.objects.get(pk = self.kwargs['pk'])
         kwargs = super().get_form_kwargs()                
-        kwargs['inter'] = veiculo.caminhao
+        kwargs['inter'] = veiculo.caminhao or veiculo.trator or veiculo.gerador
+        kwargs['valor'] = veiculo.trator or veiculo.gerador
         return kwargs
 
 @method_decorator(login_required, name='dispatch')

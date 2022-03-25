@@ -30,7 +30,7 @@
                 <a href="javascript:void(0)" onClick="history.go(-1); return false;" type="button" class="close" aria-hidden="true">×</a>
                 <h5 class="modal-title titulo_filtrar" id="exampleModalLabel">Novo Abastecimento</h5>
                 {% if atual > 0 %}
-                    {%if nomeveiculo.caminhao%}<h5>Diesel Interno Disponível: <b>{{atual|floatformat:2}}</b> litros</h5>{%endif%}
+                    {%if nomeveiculo.caminhao or nomeveiculo.trator or nomeveiculo.gerador%}<h5>Diesel Interno Disponível: <b>{{atual|floatformat:2}}</b> litros</h5>{%endif%}
                 {% else %}
                     -
                 {% endif %}
@@ -103,6 +103,7 @@
     
     // Call hideShow when page is loaded
     $(document).ready(function(){
+        {% comment %} $("#id_valor_unitario").parents('p:first').hide(); {% endcomment %}
         $('#id_interno').on('change',function(){
             if($(this).is(':checked')){
                 $('#id_valor_unitario').parents('p:first').hide();

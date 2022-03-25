@@ -87,12 +87,15 @@ class AbastecimentoForm(forms.ModelForm):
         }
 
     def __init__(self, *args, **kwargs):
-        inter = kwargs.pop('inter', None)                
+        inter = kwargs.pop('inter', None)   
+        valor = kwargs.pop('valor', None)              
         super().__init__(*args, **kwargs)
         self.fields['valor_unitario'].label = "Valor Total"
         self.fields['interno'].label = "INTERNO"
         if not inter:
             self.fields['interno'].widget = forms.HiddenInput()
+        if valor:
+            self.fields['valor_unitario'].widget = forms.HiddenInput()
 
 
 class SolicitacaoForm(forms.ModelForm):
