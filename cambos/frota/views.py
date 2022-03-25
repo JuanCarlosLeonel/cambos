@@ -309,15 +309,12 @@ class SolicitacoesList(TemplateView):
                     peso += item.viagem_solicitacao.peso
 
         if edit == 'true':
-            # from datetime import timedelta 
             solicitacao = SolicitacaoViagem.objects.get(pk=value)
             solicitacao.situacao = '2'
             solicitacao.data_atendimento = datetime.datetime.now()
-            print(solicitacao.data_atendimento)
             solicitacao.save()
             model = ItemViagem(viagem = viag, viagem_solicitacao = solicitacao)
             model.save()
-            print(solicitacao.data_atendimento)
         elif edit == 'false':
             solicitacao = SolicitacaoViagem.objects.get(pk=value)
             solicitacao.situacao = '1'
@@ -596,7 +593,6 @@ class SolicitacaoCreate(CreateView):
     template_name = 'frota/solicitacaoviagem_form.html'
 
     def get_initial(self, *args, **kwargs):
-        # from datetime import timedelta 
         initial = super(SolicitacaoCreate, self).get_initial(**kwargs)
         initial['data_solicitacao'] = datetime.datetime.now()
         return initial
@@ -636,13 +632,18 @@ class SolicitacaoMotoristaUpdate(UpdateView):
         context = super().get_context_data(**kwargs)                
         context['veiculo'] = self.object.id
         return context
+
+    def get_initial(self, *args, **kwargs):
+        from datetime import timedelta 
+        initial = super(SolicitacaoMotoristaUpdate, self).get_initial(**kwargs)
+        initial['data_finalizacao'] = datetime.datetime.now()
+        return initial
     
     def get_success_url(self):
-        # from datetime import timedelta
         datafinalizado = self.object.data_finalizacao
         if datafinalizado:
             self.object.situacao = '3'
-            self.object.data_finalizacao = datetime.datetime.now() 
+            self.object.data_finalizacao = datetime.datetime.now()
             self.object.save()          
         else:
             pass   

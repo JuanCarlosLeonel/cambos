@@ -34,7 +34,7 @@ def solicitacao1719vermelho(update):
             text += f"<b>Bairro</b> {solicitacao.viagem_solicitacao.endereco.bairro}{os.linesep}"
             text += f"<b>Cidade</b> {solicitacao.viagem_solicitacao.endereco.cidade}{os.linesep}"
             text += f"<b>Cep</b> {solicitacao.viagem_solicitacao.endereco.cep}{os.linesep}"
-            text += f"<b>Para finalizar a solicitacao</b> : http://192.168.0.90:8000/frota/solicitacaomotorista_update/{solicitacao.viagem_solicitacao.pk}{os.linesep}"
+            text += f"<b>Para finalizar a solicitacao</b> : https://indicador.souzacambos.com.br/frota/solicitacaomotorista_update/{solicitacao.viagem_solicitacao.pk}{os.linesep}"
             text += f"============================{os.linesep}"
     update.edit_message_text(text, parse_mode=ParseMode.HTML)
     return return_menu(update, text)
@@ -61,7 +61,7 @@ def solicitacao1719azul(update):
             text += f"<b>Bairro</b> {solicitacao.viagem_solicitacao.endereco.bairro}{os.linesep}"
             text += f"<b>Cidade</b> {solicitacao.viagem_solicitacao.endereco.cidade}{os.linesep}"
             text += f"<b>Cep</b> {solicitacao.viagem_solicitacao.endereco.cep}{os.linesep}"
-            text += f"<b>Para finalizar a solicitacao</b> : http://192.168.0.90:8000/frota/solicitacaomotorista_update/{solicitacao.viagem_solicitacao.pk}{os.linesep}"
+            text += f"<b>Para finalizar a solicitacao</b> : https://indicador.souzacambos.com.br/frota/solicitacaomotorista_update/{solicitacao.viagem_solicitacao.pk}{os.linesep}"
             text += f"============================{os.linesep}"
     update.edit_message_text(text, parse_mode=ParseMode.HTML)
     return return_menu(update, text)
@@ -87,7 +87,7 @@ def solicitacao2426vermelho(update):
             text += f"<b>Bairro</b> {solicitacao.viagem_solicitacao.endereco.bairro}{os.linesep}"
             text += f"<b>Cidade</b> {solicitacao.viagem_solicitacao.endereco.cidade}{os.linesep}"
             text += f"<b>Cep</b> {solicitacao.viagem_solicitacao.endereco.cep}{os.linesep}"
-            text += f"<b>Para finalizar a solicitacao</b> : http://192.168.0.90:8000/frota/solicitacaomotorista_update/{solicitacao.viagem_solicitacao.pk}{os.linesep}"
+            text += f"<b>Para finalizar a solicitacao</b> : https://indicador.souzacambos.com.br/frota/solicitacaomotorista_update/{solicitacao.viagem_solicitacao.pk}{os.linesep}"
             text += f"============================{os.linesep}"
     update.edit_message_text(text, parse_mode=ParseMode.HTML)
     return return_menu(update, text)
@@ -113,7 +113,7 @@ def solicitacao24280cinza(update):
             text += f"<b>Bairro</b> {solicitacao.viagem_solicitacao.endereco.bairro}{os.linesep}"
             text += f"<b>Cidade</b> {solicitacao.viagem_solicitacao.endereco.cidade}{os.linesep}"
             text += f"<b>Cep</b> {solicitacao.viagem_solicitacao.endereco.cep}{os.linesep}"
-            text += f"<b>Para finalizar a solicitacao</b> : http://192.168.0.90:8000/frota/solicitacaomotorista_update/{solicitacao.viagem_solicitacao.pk}{os.linesep}"
+            text += f"<b>Para finalizar a solicitacao</b> : https://indicador.souzacambos.com.br/frota/solicitacaomotorista_update/{solicitacao.viagem_solicitacao.pk}{os.linesep}"
             text += f"============================{os.linesep}"
     update.edit_message_text(text, parse_mode=ParseMode.HTML)
     return return_menu(update, text)
