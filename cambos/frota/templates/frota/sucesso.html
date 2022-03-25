@@ -1,7 +1,9 @@
 <h1>Solicitação Finalizada com Sucesso!</h1>
-<input type="button" name="btn-sair" value="Sair" onclick="javascript:window.close()">
-
-{% block script %}
+{% comment %} <input type="button" name="btn-sair" value="Sair" onclick="javascript:window.close()"> {% endcomment %}
 
 
-{% endblock script %}
+<script>
+        setTimeout(() => {
+            window.close();
+        }, 2000);
+</script>
