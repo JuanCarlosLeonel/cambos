@@ -16,6 +16,8 @@ class Veiculo(models.Model):
     descricao   = models.ForeignKey(Ativo, null=True, on_delete=models.DO_NOTHING, db_constraint=False)
     placa       = models.CharField(max_length=20, null=True, blank=True)    
     caminhao    = models.BooleanField(default=False)
+    gerador     = models.BooleanField(default=False)
+    trator      = models.BooleanField(default=False)
 
     def __str__(self):
         return f'{self.descricao}'
@@ -265,6 +267,8 @@ class FrotaPermissao(models.Model):
     ver_abastecimento = models.BooleanField(default=True)
     ver_viagemlist = models.BooleanField(default=True) 
     ver_empilhadeira = models.BooleanField(default=False)    
+    ver_trator = models.BooleanField(default=False)  
+    ver_gerador = models.BooleanField(default=False)  
 
     def __str__(self):
         return f'{self.usuario}'

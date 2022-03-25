@@ -19,61 +19,143 @@
 
 {% block content %}
 {% if permissoes.ver_carro %}
-<h1 class="page-header"><span class="text-muted small">Carros </span></h1>
-<div class="panel panel-container">
-	<div class="row">		
-		
-		{%for item in object_list%}
-		{%if not item.caminhao%}
-		<a href="{% url 'veiculo_index' item.pk  %}">		
-			<div class="col-xs-6 no-padding">
-				<div class="panel panel-blue panel-widget border-right border-bottom">
-					<div class="row no-padding"><span class="color-teal"> <em class="fa fa-car fa-2x"></em></span>
-						<h2>{{item.descricao}}</h2>
-						{%for lista in lista_viagem%}
-							{%if lista.veiculo.id == item.id%}
-								{%if lista.data_final == none and lista.data_inicial == dataatual%}
-									<strong class="text-danger"><i class="fa fa-road"></i> O veículo está em uso</strong>
-								{%endif%}
-							{%endif%}
-						{%endfor%} 
-						
+<div class="panel panel-default">
+	<div class="panel-heading">
+		<strong class="">Carros<strong class="text-success"></strong></strong>
+		<span class="pull-right clickable panel-toggle panel-button-tab-left collapse in panel-collapsed"><em class="fa fa-toggle-down"></em></span>
+	</div>
+	<div class="panel-body" >
+		<div class="panel panel-container">
+			<div class="row">		
+				{%for item in object_list%}
+				{%if not item.caminhao and not item.trator and not item.gerador%}
+				<a href="{% url 'veiculo_index' item.pk  %}">		
+					<div class="col-xs-6 no-padding">
+						<div class="panel panel-blue panel-widget border-right border-bottom">
+							<div class="row no-padding"><span class="color-teal"> <em class="fa fa-car fa-2x"></em></span>
+								<h2>{{item.descricao}}</h2>
+								{%for lista in lista_viagem%}
+									{%if lista.veiculo.id == item.id%}
+										{%if lista.data_final == none and lista.data_inicial == dataatual%}
+											<strong class="text-danger"><i class="fa fa-road"></i> O veículo está em uso</strong>
+										{%endif%}
+									{%endif%}
+								{%endfor%} 
+								
+							</div>
+						</div>
 					</div>
-				</div>
-			</div>
-		</a>			
-		{%endif%}
-		{%endfor%}		
-	</div><!--/.row-->
+				</a>			
+				{%endif%}
+				{%endfor%}		
+			</div><!--/.row-->
+		</div>
+	</div>
 </div>
 {% endif %}
 {% if permissoes.ver_caminhao %}
-<h1 class="page-header"><span class="text-muted small">Caminhões </span></h1>
-<div class="panel panel-container">
-	<div class="row">		
-		
-			{%for item in object_list%}
-				{%if item.caminhao%}
-					<a href="{% url 'veiculo_index' item.pk  %}">		
-						<div class="col-xs-6 no-padding">
-							<div class="panel panel-blue panel-widget border-right border-bottom">
-								<div class="row no-padding"><span class="color-red"> <em class="fa fa-truck fa-2x"></em></span>
-									<h2>{{item.descricao}}</h2>
-									{%for lista in lista_viagem%}
-										{%if lista.veiculo.id == item.id%}
-											{%if lista.data_final == none%}
-												<strong class="text-danger"><i class="fa fa-road"></i> O veículo está em uso</strong>
+<div class="panel panel-default">
+	<div class="panel-heading">
+		<strong class="">Caminhões<strong class="text-success"></strong></strong>
+		<span class="pull-right clickable panel-toggle panel-button-tab-left collapse in panel-collapsed"><em class="fa fa-toggle-down"></em></span>
+	</div>
+	<div class="panel-body" >
+		<div class="panel panel-container">
+			<div class="row">		
+				{%for item in object_list%}
+					{%if item.caminhao%}
+						<a href="{% url 'veiculo_index' item.pk  %}">		
+							<div class="col-xs-6 no-padding">
+								<div class="panel panel-blue panel-widget border-right border-bottom">
+									<div class="row no-padding"><span class="color-red"> <em class="fa fa-truck fa-2x"></em></span>
+										<h2>{{item.descricao}}</h2>
+										{%for lista in lista_viagem%}
+											{%if lista.veiculo.id == item.id%}
+												{%if lista.data_final == none%}
+													<strong class="text-danger"><i class="fa fa-road"></i> O veículo está em uso</strong>
+												{%endif%}
 											{%endif%}
-										{%endif%}
-									{%endfor%}
-									
+										{%endfor%}
+										
+									</div>
 								</div>
 							</div>
-						</div>
-					</a>			
-				{%endif%}
-			{%endfor%}				
-	</div><!--/.row-->
+						</a>			
+					{%endif%}
+				{%endfor%}				
+			</div><!--/.row-->
+		</div>
+	</div>
+</div>
+{% endif %}
+{% if permissoes.ver_trator %}
+<div class="panel panel-default">
+	<div class="panel-heading">
+		<strong class="">Trator<strong class="text-success"></strong></strong>
+		<span class="pull-right clickable panel-toggle panel-button-tab-left collapse in panel-collapsed"><em class="fa fa-toggle-down"></em></span>
+	</div>
+	<div class="panel-body" >
+		<div class="panel panel-container">
+			<div class="row">		
+				{%for item in object_list%}
+					{%if item.trator%}
+						<a href="{% url 'veiculo_index' item.pk  %}">		
+							<div class="col-xs-6 no-padding">
+								<div class="panel panel-blue panel-widget border-right border-bottom">
+									<div class="row no-padding"><span class="color-red"> <em class="fa fa-truck fa-2x"></em></span>
+										<h2>{{item.descricao}}</h2>
+										{%for lista in lista_viagem%}
+											{%if lista.veiculo.id == item.id%}
+												{%if lista.data_final == none%}
+													<strong class="text-danger"><i class="fa fa-road"></i> O veículo está em uso</strong>
+												{%endif%}
+											{%endif%}
+										{%endfor%}
+										
+									</div>
+								</div>
+							</div>
+						</a>			
+					{%endif%}
+				{%endfor%}				
+			</div><!--/.row-->
+		</div>
+	</div>
+</div>
+{% endif %}
+{% if permissoes.ver_gerador %}
+<div class="panel panel-default">
+	<div class="panel-heading">
+		<strong class="">Gerador<strong class="text-success"></strong></strong>
+		<span class="pull-right clickable panel-toggle panel-button-tab-left collapse in panel-collapsed"><em class="fa fa-toggle-down"></em></span>
+	</div>
+	<div class="panel-body" >
+		<div class="panel panel-container">
+			<div class="row">		
+				{%for item in object_list%}
+					{%if item.gerador%}
+						<a href="{% url 'veiculo_index' item.pk  %}">		
+							<div class="col-xs-6 no-padding">
+								<div class="panel panel-blue panel-widget border-right border-bottom">
+									<div class="row no-padding"><span class="color-red"> <em class="fa fa-truck fa-2x"></em></span>
+										<h2>{{item.descricao}}</h2>
+										{%for lista in lista_viagem%}
+											{%if lista.veiculo.id == item.id%}
+												{%if lista.data_final == none%}
+													<strong class="text-danger"><i class="fa fa-road"></i> O veículo está em uso</strong>
+												{%endif%}
+											{%endif%}
+										{%endfor%}
+										
+									</div>
+								</div>
+							</div>
+						</a>			
+					{%endif%}
+				{%endfor%}				
+			</div><!--/.row-->
+		</div>
+	</div>
 </div>
 {% endif %}
 
