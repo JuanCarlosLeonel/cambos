@@ -450,8 +450,8 @@ def menu(update, context):
         dict = {}  
         if userbot:
             dict['\U0001F4CB Logística']='frota'
-            dict['\U0001F68C Veículos']='veiculo'
-            dict['\U0001F69A Viagens']='viagemsolicitacao'
+            dict['\U0001F68C  Relatório Veículos']='veiculo'
+            dict['\U0001F69A Solicitações Em Atendimento']='viagemsolicitacao'
 
         keyboard = []
         for key, value in dict.items():
