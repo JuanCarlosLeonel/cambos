@@ -81,7 +81,7 @@ class AbastecimentoForm(forms.ModelForm):
         widgets = {                                    
             'veiculo': forms.HiddenInput(),        
             'combustivel': forms.Select(attrs={'class':'form-control'}),
-            'data': forms.DateInput(attrs={'data-mask':'00/00/0000','class':'form-control datepicker'}),
+            'data': forms.HiddenInput(),
             'valor_unitario': forms.NumberInput(attrs={'class':'form-control'}),            
             'quantidade': forms.NumberInput(attrs={'class':'form-control'}),
         }
@@ -94,8 +94,11 @@ class AbastecimentoForm(forms.ModelForm):
         self.fields['interno'].label = "INTERNO"
         if not inter:
             self.fields['interno'].widget = forms.HiddenInput()
+        if inter:
+            self.fields['combustivel'].widget = forms.HiddenInput()
         if valor:
             self.fields['valor_unitario'].widget = forms.HiddenInput()
+            self.fields['combustivel'].widget = forms.HiddenInput()
             self.fields['interno'].widget = forms.HiddenInput()
 
 
