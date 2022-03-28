@@ -795,6 +795,42 @@ def relatorio_abastecimento_porcaminhao(request):
     
     return JsonResponse({'labels': x[0][:7], 'data': x[1][:7]})
 
+def relatorio_despesatrator(request):
+    from datetime import datetime
+    x = Abastecimento.objects.filter(veiculo__trator = True)
+    meses = ['jan', 'fev', 'mar', 'abr', 'mai', 'jun', 'jul', 'ago', 'set', 'out', 'nov', 'dez']
+    data = []
+    labels = []
+    mes = datetime.now().month + 1
+    ano = datetime.now().year
+    for i in range(12): 
+        mes -= 1
+        if mes == 0:
+            mes = 12
+            ano -= 1
+        y = sum([i.valor_unitario for i in x if i.data.month == mes and i.data.year == ano])
+        labels.append(meses[mes-1])
+        data.append(y)
+    data_json = {'data': data[::-1], 'labels': labels[::-1]}
+    return JsonResponse(data_json)
+
+def relatorio_abastecimento_portrator(request):
+    produtos = Veiculo.objects.filter(trator = True)
+    label = []
+    data = []
+    for produto in produtos:
+        vendas = Abastecimento.objects.filter(veiculo=produto).aggregate(Sum('valor_unitario'))
+        if not vendas['valor_unitario__sum']:
+            vendas['valor_unitario__sum'] = 0
+        label.append(produto.descricao.descricao)
+        data.append(vendas['valor_unitario__sum'])
+
+    x = list(zip(label, data))
+    x.sort(key=lambda x: x[1], reverse=True)
+    x = list(zip(*x))
+    
+    return JsonResponse({'labels': x[0][:7], 'data': x[1][:7]})
+
 def relatorio_abastecimento_porveiculo(request):
     produtos = Veiculo.objects.filter(caminhao = False)
     label = []
@@ -839,6 +875,7 @@ class IndexDespesas(TemplateView):
         context = super().get_context_data(**kwargs)   
         totabastecimentocarro = Abastecimento.objects.filter(veiculo__caminhao = False).aggregate(Sum('valor_unitario'))
         totabastecimentocaminhao = Abastecimento.objects.filter(veiculo__caminhao = True).aggregate(Sum('valor_unitario'))
+        totabastecimentotrator = Abastecimento.objects.filter(veiculo__trator = True).aggregate(Sum('valor_unitario'))
         totmanutencao = Manutencao.objects.aggregate(Sum('valor'))
         try:
             user_permission = FrotaPermissao.objects.get(usuario = self.request.user)
@@ -847,6 +884,7 @@ class IndexDespesas(TemplateView):
         context['permissoes'] = user_permission
         context['totabastecimentocarro']=totabastecimentocarro
         context['totabastecimentocaminhao']=totabastecimentocaminhao
+        context['totabastecimentotrator']=totabastecimentotrator
         context['totmanutencao']=totmanutencao       
         return context
 
