@@ -182,7 +182,7 @@ def palio(update):
     from datetime import date
     user = get_user(update)
     veiculo = Veiculo.objects.filter(id = 3)
-    viagem = Viagem.objects.filter(veiculo__in = veiculo)
+    viagem = Viagem.objects.filter(veiculo__in = veiculo).exclude(tipo='Manutençao')
     abastecimento = Abastecimento.objects.filter(veiculo__in = veiculo)
     text =""
     cont = 0
@@ -191,6 +191,8 @@ def palio(update):
     totalcool = 0
     totgastogasolina = 0
     totgastoalcool = 0
+    somahora = timedelta()
+    subdata = timedelta()
     if user.ativo:
         text = f"<b>Fiat Palio</b>:{os.linesep}"
         for item in viagem:
@@ -200,6 +202,21 @@ def palio(update):
                     pass
                 else:
                     cont += (item.km_final - item.km_inicial)
+                if item.hora_final:
+                    inicial = timedelta(hours=item.hora_inicial.hour, minutes=item.hora_inicial.minute, seconds=item.hora_inicial.second)
+                    final = timedelta(hours=item.hora_final.hour, minutes=item.hora_final.minute, seconds=item.hora_final.second)
+                    diferencahoras = final -inicial
+                    somahora += diferencahoras
+                    if item.data_final > item.data_inicial and item.hora_inicial < item.hora_final:
+                        subdata = item.data_final - item.data_inicial
+                    else:
+                        pass
+                else:
+                    pass
+        s = somahora + subdata
+        s = somahora + subdata
+        horas =  s.total_seconds() // 3600
+        minutos = s.total_seconds() % 3600/60
         for abas in abastecimento:
             if abas.data > date.today() - timedelta(days = 30):
                 if abas.combustivel == 'Gasolina':
@@ -208,7 +225,7 @@ def palio(update):
                 elif abas.combustivel == 'Álcool':
                     totalcool += abas.quantidade
                     totalcool += abas.valor_unitario
-        text += f"<b>Relatório dos últimos 30 dias:{os.linesep}{d} </b>viagens feitas.{os.linesep}Com <b>{cont}</b> km rodados{os.linesep}Consumo de <b>{str(totgasolina)[:5]}</b>l de gasolina{os.linesep}E <b>{str(totalcool)[:5]}</b>l de álcool.{os.linesep}Valor total gasolina <b>R${totgastogasolina}</b>{os.linesep}Valor total álcool <b>R${totgastoalcool}</b>{os.linesep}"
+        text += f"<b>Relatório dos últimos 30 dias:{os.linesep}{d} </b>viagens feitas.{os.linesep}Com <b>{cont}</b> km rodados{os.linesep}Tempo Total: <b>{str(horas)[:-2]}h</b>:<b>{str(minutos)[:-2]}m</b>{os.linesep}Consumo de <b>{str(totgasolina)[:5]}</b>l de gasolina{os.linesep}E <b>{str(totalcool)[:5]}</b>l de álcool.{os.linesep}Valor total gasolina <b>R${totgastogasolina}</b>{os.linesep}Valor total álcool <b>R${totgastoalcool}</b>{os.linesep}"
     update.edit_message_text(text, parse_mode=ParseMode.HTML)
     return return_menu(update, text)
 
@@ -217,7 +234,7 @@ def mobi(update):
     from datetime import date
     user = get_user(update)
     veiculo = Veiculo.objects.filter(id = 4)
-    viagem = Viagem.objects.filter(veiculo__in = veiculo)
+    viagem = Viagem.objects.filter(veiculo__in = veiculo).exclude(tipo='Manutençao')
     abastecimento = Abastecimento.objects.filter(veiculo__in = veiculo)
     text =""
     cont = 0
@@ -226,6 +243,8 @@ def mobi(update):
     totalcool = 0
     totgastogasolina = 0
     totgastoalcool = 0
+    somahora = timedelta()
+    subdata = timedelta()
     if user.ativo:
         text = f"<b>Fiat Mobi</b>:{os.linesep}"
         for item in viagem:
@@ -235,6 +254,21 @@ def mobi(update):
                     pass
                 else:
                     cont += (item.km_final - item.km_inicial)
+                if item.hora_final:
+                    inicial = timedelta(hours=item.hora_inicial.hour, minutes=item.hora_inicial.minute, seconds=item.hora_inicial.second)
+                    final = timedelta(hours=item.hora_final.hour, minutes=item.hora_final.minute, seconds=item.hora_final.second)
+                    diferencahoras = final -inicial
+                    somahora += diferencahoras
+                    if item.data_final > item.data_inicial and item.hora_inicial < item.hora_final:
+                        subdata = item.data_final - item.data_inicial
+                    else:
+                        pass
+                else:
+                    pass
+        s = somahora + subdata
+        s = somahora + subdata
+        horas =  s.total_seconds() // 3600
+        minutos = s.total_seconds() % 3600/60
         for abas in abastecimento:
             if abas.data > date.today() - timedelta(days = 30):
                 if abas.combustivel == 'Gasolina':
@@ -243,7 +277,7 @@ def mobi(update):
                 elif abas.combustivel == 'Álcool':
                     totalcool += abas.quantidade
                     totalcool += abas.valor_unitario
-        text += f"<b>Relatório dos últimos 30 dias:{os.linesep}{d} </b>viagens feitas.{os.linesep}Com <b>{cont}</b> km rodados{os.linesep}Consumo de <b>{str(totgasolina)[:5]}</b>l de gasolina{os.linesep}E <b>{str(totalcool)[:5]}</b>l de álcool.{os.linesep}Valor total gasolina <b>R${totgastogasolina}</b>{os.linesep}Valor total álcool <b>R${totgastoalcool}</b>{os.linesep}"
+        text += f"<b>Relatório dos últimos 30 dias:{os.linesep}{d} </b>viagens feitas.{os.linesep}Com <b>{cont}</b> km rodados{os.linesep}Tempo Total: <b>{str(horas)[:-2]}h</b>:<b>{str(minutos)[:-2]}m</b>{os.linesep}Consumo de <b>{str(totgasolina)[:5]}</b>l de gasolina{os.linesep}E <b>{str(totalcool)[:5]}</b>l de álcool.{os.linesep}Valor total gasolina <b>R${totgastogasolina}</b>{os.linesep}Valor total álcool <b>R${totgastoalcool}</b>{os.linesep}"
     update.edit_message_text(text, parse_mode=ParseMode.HTML)
     return return_menu(update, text)
 
@@ -252,7 +286,7 @@ def strada(update):
     from datetime import date
     user = get_user(update)
     veiculo = Veiculo.objects.filter(id = 5)
-    viagem = Viagem.objects.filter(veiculo__in = veiculo)
+    viagem = Viagem.objects.filter(veiculo__in = veiculo).exclude(tipo='Manutençao')
     abastecimento = Abastecimento.objects.filter(veiculo__in = veiculo)
     text =""
     cont = 0
@@ -261,6 +295,8 @@ def strada(update):
     totalcool = 0
     totgastogasolina = 0
     totgastoalcool = 0
+    somahora = timedelta()
+    subdata = timedelta()
     if user.ativo:
         text = f"<b>Fiat Strada</b>:{os.linesep}"
         for item in viagem:
@@ -270,6 +306,21 @@ def strada(update):
                     pass
                 else:
                     cont += (item.km_final - item.km_inicial)
+                if item.hora_final:
+                    inicial = timedelta(hours=item.hora_inicial.hour, minutes=item.hora_inicial.minute, seconds=item.hora_inicial.second)
+                    final = timedelta(hours=item.hora_final.hour, minutes=item.hora_final.minute, seconds=item.hora_final.second)
+                    diferencahoras = final -inicial
+                    somahora += diferencahoras
+                    if item.data_final > item.data_inicial and item.hora_inicial < item.hora_final:
+                        subdata = item.data_final - item.data_inicial
+                    else:
+                        pass
+                else:
+                    pass
+        s = somahora + subdata
+        s = somahora + subdata
+        horas =  s.total_seconds() // 3600
+        minutos = s.total_seconds() % 3600/60
         for abas in abastecimento:
             if abas.data > date.today() - timedelta(days = 30):
                 if abas.combustivel == 'Gasolina':
@@ -278,7 +329,7 @@ def strada(update):
                 elif abas.combustivel == 'Álcool':
                     totalcool += abas.quantidade
                     totalcool += abas.valor_unitario
-        text += f"<b>Relatório dos últimos 30 dias:{os.linesep}{d} </b>viagens feitas.{os.linesep}Com <b>{cont}</b> km rodados{os.linesep}Consumo de <b>{str(totgasolina)[:5]}</b>l de gasolina{os.linesep}E <b>{str(totalcool)[:5]}</b>l de álcool.{os.linesep}Valor total gasolina <b>R${totgastogasolina}</b>{os.linesep}Valor total álcool <b>R${totgastoalcool}</b>{os.linesep}"
+        text += f"<b>Relatório dos últimos 30 dias:{os.linesep}{d} </b>viagens feitas.{os.linesep}Com <b>{cont}</b> km rodados{os.linesep}Tempo Total: <b>{str(horas)[:-2]}h</b>:<b>{str(minutos)[:-2]}m</b>{os.linesep}Consumo de <b>{str(totgasolina)[:5]}</b>l de gasolina{os.linesep}E <b>{str(totalcool)[:5]}</b>l de álcool.{os.linesep}Valor total gasolina <b>R${totgastogasolina}</b>{os.linesep}Valor total álcool <b>R${totgastoalcool}</b>{os.linesep}"
     update.edit_message_text(text, parse_mode=ParseMode.HTML)
     return return_menu(update, text)
 
@@ -287,15 +338,17 @@ def MB1719Vermelho(update):
     from datetime import date
     user = get_user(update)
     veiculo = Veiculo.objects.filter(id = 7)
-    viagem = Viagem.objects.filter(veiculo__in = veiculo)
+    viagem = Viagem.objects.filter(veiculo__in = veiculo).exclude(tipo='Manutençao')
     abastecimento = Abastecimento.objects.filter(veiculo__in = veiculo)
     text =""
     cont = 0
     d = 0
-    totdieselinterno = 0
-    totdieselexterno = 0
-    totgastointerno = 0
-    totgastoexterno = 0
+    totgasolina = 0
+    totalcool = 0
+    totgastogasolina = 0
+    totgastoalcool = 0
+    somahora = timedelta()
+    subdata = timedelta()
     if user.ativo:
         text = f"<b>Caminhão MB 1719 Vermelho</b>:{os.linesep}"
         for item in viagem:
@@ -305,15 +358,30 @@ def MB1719Vermelho(update):
                     pass
                 else:
                     cont += (item.km_final - item.km_inicial)
+                if item.hora_final:
+                    inicial = timedelta(hours=item.hora_inicial.hour, minutes=item.hora_inicial.minute, seconds=item.hora_inicial.second)
+                    final = timedelta(hours=item.hora_final.hour, minutes=item.hora_final.minute, seconds=item.hora_final.second)
+                    diferencahoras = final -inicial
+                    somahora += diferencahoras
+                    if item.data_final > item.data_inicial and item.hora_inicial < item.hora_final:
+                        subdata = item.data_final - item.data_inicial
+                    else:
+                        pass
+                else:
+                    pass
+        s = somahora + subdata
+        s = somahora + subdata
+        horas =  s.total_seconds() // 3600
+        minutos = s.total_seconds() % 3600/60
         for abas in abastecimento:
             if abas.data > date.today() - timedelta(days = 30):
-                if abas.interno:
-                    totdieselinterno += abas.quantidade
-                    totgastointerno += abas.valor_unitario
-                elif not abas.interno:
-                    totdieselexterno += abas.quantidade
-                    totgastoexterno += abas.valor_unitario
-        text += f"<b>Relatório dos últimos 30 dias:{os.linesep}{d} </b>viagens feitas.{os.linesep}Com <b>{cont}</b> km rodados{os.linesep}Consumo: <b>{str(totdieselinterno)[:5]}</b>l de diesel INTERNO{os.linesep}E <b>{str(totdieselexterno)[:5]}</b>l de diesel EXTERNO{os.linesep}Valor total INTERNO <b>R${totgastointerno}</b>{os.linesep}Valor total EXTERNO <b>R${totgastoexterno}</b>{os.linesep}"
+                if abas.combustivel == 'Gasolina':
+                    totgasolina += abas.quantidade
+                    totgastogasolina += abas.valor_unitario
+                elif abas.combustivel == 'Álcool':
+                    totalcool += abas.quantidade
+                    totalcool += abas.valor_unitario
+        text += f"<b>Relatório dos últimos 30 dias:{os.linesep}{d} </b>viagens feitas.{os.linesep}Com <b>{cont}</b> km rodados{os.linesep}Tempo Total: <b>{str(horas)[:-2]}h</b>:<b>{str(minutos)[:-2]}m</b>{os.linesep}Consumo de <b>{str(totgasolina)[:5]}</b>l de gasolina{os.linesep}E <b>{str(totalcool)[:5]}</b>l de álcool.{os.linesep}Valor total gasolina <b>R${totgastogasolina}</b>{os.linesep}Valor total álcool <b>R${totgastoalcool}</b>{os.linesep}"
     update.edit_message_text(text, parse_mode=ParseMode.HTML)
     return return_menu(update, text)
 
@@ -322,15 +390,17 @@ def MB1719Azul(update):
     from datetime import date
     user = get_user(update)
     veiculo = Veiculo.objects.filter(id = 6)
-    viagem = Viagem.objects.filter(veiculo__in = veiculo)
+    viagem = Viagem.objects.filter(veiculo__in = veiculo).exclude(tipo='Manutençao')
     abastecimento = Abastecimento.objects.filter(veiculo__in = veiculo)
     text =""
     cont = 0
     d = 0
-    totdieselinterno = 0
-    totdieselexterno = 0
-    totgastointerno = 0
-    totgastoexterno = 0
+    totgasolina = 0
+    totalcool = 0
+    totgastogasolina = 0
+    totgastoalcool = 0
+    somahora = timedelta()
+    subdata = timedelta()
     if user.ativo:
         text = f"<b>Caminhão MB 1719 Azul</b>:{os.linesep}"
         for item in viagem:
@@ -340,15 +410,30 @@ def MB1719Azul(update):
                     pass
                 else:
                     cont += (item.km_final - item.km_inicial)
+                if item.hora_final:
+                    inicial = timedelta(hours=item.hora_inicial.hour, minutes=item.hora_inicial.minute, seconds=item.hora_inicial.second)
+                    final = timedelta(hours=item.hora_final.hour, minutes=item.hora_final.minute, seconds=item.hora_final.second)
+                    diferencahoras = final -inicial
+                    somahora += diferencahoras
+                    if item.data_final > item.data_inicial and item.hora_inicial < item.hora_final:
+                        subdata = item.data_final - item.data_inicial
+                    else:
+                        pass
+                else:
+                    pass
+        s = somahora + subdata
+        s = somahora + subdata
+        horas =  s.total_seconds() // 3600
+        minutos = s.total_seconds() % 3600/60
         for abas in abastecimento:
             if abas.data > date.today() - timedelta(days = 30):
-                if abas.interno:
-                    totdieselinterno += abas.quantidade
-                    totgastointerno += abas.valor_unitario
-                elif not abas.interno:
-                    totdieselexterno += abas.quantidade
-                    totgastoexterno += abas.valor_unitario
-        text += f"<b>Relatório dos últimos 30 dias:{os.linesep}{d} </b>viagens feitas.{os.linesep}Com <b>{cont}</b> km rodados{os.linesep}Consumo: <b>{str(totdieselinterno)[:5]}</b>l de diesel INTERNO{os.linesep}E <b>{str(totdieselexterno)[:5]}</b>l de diesel EXTERNO{os.linesep}Valor total INTERNO <b>R${totgastointerno}</b>{os.linesep}Valor total EXTERNO <b>R${totgastoexterno}</b>{os.linesep}"
+                if abas.combustivel == 'Gasolina':
+                    totgasolina += abas.quantidade
+                    totgastogasolina += abas.valor_unitario
+                elif abas.combustivel == 'Álcool':
+                    totalcool += abas.quantidade
+                    totalcool += abas.valor_unitario
+        text += f"<b>Relatório dos últimos 30 dias:{os.linesep}{d} </b>viagens feitas.{os.linesep}Com <b>{cont}</b> km rodados{os.linesep}Tempo Total: <b>{str(horas)[:-2]}h</b>:<b>{str(minutos)[:-2]}m</b>{os.linesep}Consumo de <b>{str(totgasolina)[:5]}</b>l de gasolina{os.linesep}E <b>{str(totalcool)[:5]}</b>l de álcool.{os.linesep}Valor total gasolina <b>R${totgastogasolina}</b>{os.linesep}Valor total álcool <b>R${totgastoalcool}</b>{os.linesep}"
     update.edit_message_text(text, parse_mode=ParseMode.HTML)
     return return_menu(update, text)
 
@@ -357,15 +442,17 @@ def MB2426Vermelho(update):
     from datetime import date
     user = get_user(update)
     veiculo = Veiculo.objects.filter(id = 2)
-    viagem = Viagem.objects.filter(veiculo__in = veiculo)
+    viagem = Viagem.objects.filter(veiculo__in = veiculo).exclude(tipo='Manutençao')
     abastecimento = Abastecimento.objects.filter(veiculo__in = veiculo)
     text =""
     cont = 0
     d = 0
-    totdieselinterno = 0
-    totdieselexterno = 0
-    totgastointerno = 0
-    totgastoexterno = 0
+    totgasolina = 0
+    totalcool = 0
+    totgastogasolina = 0
+    totgastoalcool = 0
+    somahora = timedelta()
+    subdata = timedelta()
     if user.ativo:
         text = f"<b>Caminhão MB 2426 Vermelho</b>:{os.linesep}"
         for item in viagem:
@@ -375,15 +462,30 @@ def MB2426Vermelho(update):
                     pass
                 else:
                     cont += (item.km_final - item.km_inicial)
+                if item.hora_final:
+                    inicial = timedelta(hours=item.hora_inicial.hour, minutes=item.hora_inicial.minute, seconds=item.hora_inicial.second)
+                    final = timedelta(hours=item.hora_final.hour, minutes=item.hora_final.minute, seconds=item.hora_final.second)
+                    diferencahoras = final -inicial
+                    somahora += diferencahoras
+                    if item.data_final > item.data_inicial and item.hora_inicial < item.hora_final:
+                        subdata = item.data_final - item.data_inicial
+                    else:
+                        pass
+                else:
+                    pass
+        s = somahora + subdata
+        s = somahora + subdata
+        horas =  s.total_seconds() // 3600
+        minutos = s.total_seconds() % 3600/60
         for abas in abastecimento:
             if abas.data > date.today() - timedelta(days = 30):
-                if abas.interno:
-                    totdieselinterno += abas.quantidade
-                    totgastointerno += abas.valor_unitario
-                elif not abas.interno:
-                    totdieselexterno += abas.quantidade
-                    totgastoexterno += abas.valor_unitario
-        text += f"<b>Relatório dos últimos 30 dias:{os.linesep}{d} </b>viagens feitas.{os.linesep}Com <b>{cont}</b> km rodados{os.linesep}Consumo: <b>{str(totdieselinterno)[:5]}</b>l de diesel INTERNO{os.linesep}E <b>{str(totdieselexterno)[:5]}</b>l de diesel EXTERNO{os.linesep}Valor total INTERNO <b>R${totgastointerno}</b>{os.linesep}Valor total EXTERNO <b>R${totgastoexterno}</b>{os.linesep}"
+                if abas.combustivel == 'Gasolina':
+                    totgasolina += abas.quantidade
+                    totgastogasolina += abas.valor_unitario
+                elif abas.combustivel == 'Álcool':
+                    totalcool += abas.quantidade
+                    totalcool += abas.valor_unitario
+        text += f"<b>Relatório dos últimos 30 dias:{os.linesep}{d} </b>viagens feitas.{os.linesep}Com <b>{cont}</b> km rodados{os.linesep}Tempo Total: <b>{str(horas)[:-2]}h</b>:<b>{str(minutos)[:-2]}m</b>{os.linesep}Consumo de <b>{str(totgasolina)[:5]}</b>l de gasolina{os.linesep}E <b>{str(totalcool)[:5]}</b>l de álcool.{os.linesep}Valor total gasolina <b>R${totgastogasolina}</b>{os.linesep}Valor total álcool <b>R${totgastoalcool}</b>{os.linesep}"
     update.edit_message_text(text, parse_mode=ParseMode.HTML)
     return return_menu(update, text)
 
@@ -392,15 +494,17 @@ def VW24280Cinza(update):
     from datetime import date
     user = get_user(update)
     veiculo = Veiculo.objects.filter(id = 1)
-    viagem = Viagem.objects.filter(veiculo__in = veiculo)
+    viagem = Viagem.objects.filter(veiculo__in = veiculo).exclude(tipo='Manutençao')
     abastecimento = Abastecimento.objects.filter(veiculo__in = veiculo)
     text =""
     cont = 0
     d = 0
-    totdieselinterno = 0
-    totdieselexterno = 0
-    totgastointerno = 0
-    totgastoexterno = 0
+    totgasolina = 0
+    totalcool = 0
+    totgastogasolina = 0
+    totgastoalcool = 0
+    somahora = timedelta()
+    subdata = timedelta()
     if user.ativo:
         text = f"<b>Caminhão VW 24280 Cinza</b>:{os.linesep}"
         for item in viagem:
@@ -410,15 +514,30 @@ def VW24280Cinza(update):
                     pass
                 else:
                     cont += (item.km_final - item.km_inicial)
+                if item.hora_final:
+                    inicial = timedelta(hours=item.hora_inicial.hour, minutes=item.hora_inicial.minute, seconds=item.hora_inicial.second)
+                    final = timedelta(hours=item.hora_final.hour, minutes=item.hora_final.minute, seconds=item.hora_final.second)
+                    diferencahoras = final -inicial
+                    somahora += diferencahoras
+                    if item.data_final > item.data_inicial and item.hora_inicial < item.hora_final:
+                        subdata = item.data_final - item.data_inicial
+                    else:
+                        pass
+                else:
+                    pass
+        s = somahora + subdata
+        s = somahora + subdata
+        horas =  s.total_seconds() // 3600
+        minutos = s.total_seconds() % 3600/60
         for abas in abastecimento:
             if abas.data > date.today() - timedelta(days = 30):
-                if abas.interno:
-                    totdieselinterno += abas.quantidade
-                    totgastointerno += abas.valor_unitario
-                elif not abas.interno:
-                    totdieselexterno += abas.quantidade
-                    totgastoexterno += abas.valor_unitario
-        text += f"<b>Relatório dos últimos 30 dias:{os.linesep}{d} </b>viagens feitas.{os.linesep}Com <b>{cont}</b> km rodados{os.linesep}Consumo: <b>{str(totdieselinterno)[:5]}</b>l de diesel INTERNO{os.linesep}E <b>{str(totdieselexterno)[:5]}</b>l de diesel EXTERNO{os.linesep}Valor total INTERNO <b>R${totgastointerno}</b>{os.linesep}Valor total EXTERNO <b>R${totgastoexterno}</b>{os.linesep}"
+                if abas.combustivel == 'Gasolina':
+                    totgasolina += abas.quantidade
+                    totgastogasolina += abas.valor_unitario
+                elif abas.combustivel == 'Álcool':
+                    totalcool += abas.quantidade
+                    totalcool += abas.valor_unitario
+        text += f"<b>Relatório dos últimos 30 dias:{os.linesep}{d} </b>viagens feitas.{os.linesep}Com <b>{cont}</b> km rodados{os.linesep}Tempo Total: <b>{str(horas)[:-2]}h</b>:<b>{str(minutos)[:-2]}m</b>{os.linesep}Consumo de <b>{str(totgasolina)[:5]}</b>l de gasolina{os.linesep}E <b>{str(totalcool)[:5]}</b>l de álcool.{os.linesep}Valor total gasolina <b>R${totgastogasolina}</b>{os.linesep}Valor total álcool <b>R${totgastoalcool}</b>{os.linesep}"
     update.edit_message_text(text, parse_mode=ParseMode.HTML)
     return return_menu(update, text)
 

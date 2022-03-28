@@ -36,6 +36,7 @@ class ViagemFilterCarro(django_filters.FilterSet):
     motorista = ModelChoiceFilter(queryset=Pessoa.objects.filter(status = 0),widget=forms.Select(attrs={'class':'form-control'}))
     inicio = DateFilter(lookup_expr='gte',widget=forms.DateInput(attrs={'id': 'datepicker','type':'date','class':'form-control'}),field_name="data_inicial",label='Início')
     fim = DateFilter(lookup_expr='lte',widget=forms.DateInput(attrs={'id': 'datepicker','type':'date','class':'form-control'}),field_name="data_inicial",label='Fim')
+    tipo = django_filters.ChoiceFilter(choices=Viagem.TIPOVIAGEM,label='Tipo',widget=forms.Select(attrs={'class':'form-control'}))
     destino = CharFilter(widget=forms.TextInput(attrs={'class':'form-control'}),field_name="destino",label='Destino',lookup_expr='icontains')
 
     class Meta:
