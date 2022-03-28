@@ -1,0 +1,124 @@
+{% extends "cambos/base_frota.html" %}
+{% load static %}
+{% block css %}
+
+{% endblock css %}
+
+{% block navigation %}
+    <div class="row">		
+        <ol class="breadcrumb ">
+            <li><a href="{% url 'frota_index' %}">
+                <em class="fa fa-home"></em>
+            </a></li>
+            <li class="active"><a href="{% url 'veiculo_list' %}">Veículos</a></li>
+        </ol>	
+    </div><!--/.row-->
+	
+	<div class="row">
+        <div class="col-lg-12">
+			<h4><b>Controle de Visitantes :</b></h4>
+        </div>
+    </div><!--/.row-->
+{% endblock navigation %}
+
+{% block content %}	
+<div class="col-12">
+	<div class="panel panel-default">
+		<div id="toolbar">		
+			<a href="{% url 'visitante_create' %}" class="btn_filtrar" data-toggle="modal">
+				<i class="fa fa-plus"></i>Novo(a) Visitante
+			</a>
+		</div>
+	</div>
+</div>	
+<div class="col-12">	
+	<div class="panel panel-default">
+		<div class="panel-body">
+			<table id="table"				
+				data-toolbar="#toolbar"
+				data-toggle="table"
+				data-show-refresh="false"
+				data-show-toggle="false"
+				data-show-columns="true"
+				data-search="true"
+				data-select-item-name="toolbar"
+				data-pagination="true"				 
+				data-sort-order="desc"
+			 >
+				<thead>
+					<tr>
+                        <th class="text-center">Data</th>
+                        <th class="text-center">Nome</th>
+						<th class="text-center">Documento</th>
+						<th class="text-center">Hora Ent.</th>
+						<th class="text-center">Hora Saída</th>
+						<th class="text-center">Responsável</th>
+					</tr>
+				</thead>
+				<tbody>
+					{% for data in object_list|dictsort:"data" %}
+                    <tr data-href="{% url 'visitante_update' data.pk %}"
+                        class="trLink" >
+                            <td class='text-center'>
+                                {{data.data|date:"d/m/y"}}
+                            </td>
+                            <td class='text-center'>
+                                {{data.nome}}
+                            </td>
+                            <td class='text-center'>
+                                {{data.documento}}
+                            </td>
+                            <td class='text-center' >																					
+                                {{data.hora_inicial}}																		
+                            </td>
+							<td class='text-center'>
+                                {%if data.hora_final%}
+                                    {{ data.hora_final }}
+                                {%else%}
+                                    -
+                                {%endif%}
+                            </td>
+                            <td class='text-center'>
+                                {{ data.responsavel }}
+                            </td>
+					{% endfor %}
+				</tbody>
+			</table>
+		</div>
+	</div>
+</div>
+{%endblock content%}
+
+
+{% block script %}
+
+<script>	
+	var tr = document.getElementsByClassName('tr-id');
+tr.onclick = function (e) {
+  location.href = 'http://www.google.com';
+};
+</script>
+<script src="https://momentjs.com/downloads/moment.min.js"></script>
+<script>
+	function dateFormat(value, row, index) {
+		return moment(value).format('DD/MM/YYYY');
+	}	
+</script>
+
+<script>
+	function dateSorter(a, b) {
+		var aa = a.replace('$', '')
+		var bb = b.replace('$', '')
+		return aa - bb
+		}
+  </script>
+  <script>
+	
+	$('#table').bootstrapTable({
+		onClickRow: function (item, $element) {return  window.location = $element.data('href');},
+	});
+
+</script>
+	
+{% endblock script %}
+

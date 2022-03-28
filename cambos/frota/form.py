@@ -2,7 +2,7 @@ from random import choices
 from django import forms
 
 from core.models import Enderecos
-from .models import Manutencao, Viagem, Abastecimento, SolicitacaoViagem
+from .models import ControleVisitantes, Manutencao, Viagem, Abastecimento, SolicitacaoViagem
 from django_select2.forms import Select2Widget
 
 from frota import models
@@ -148,6 +148,28 @@ class SolicitacaoMotoristaForm(forms.ModelForm):
          
         widgets = {             
             'data_finalizacao': forms.DateTimeInput(attrs={'data-mask':'00/00/0000','class':'form-control datepicker'}),    
+        }
+
+
+class VisitanteForm(forms.ModelForm):
+    class Meta:
+        model  = ControleVisitantes
+        fields = (
+            'data',
+            'nome',
+            'documento',
+            'hora_inicial',
+            'hora_final',
+            'responsavel',
+        )
+
+        widgets = {
+            'data': forms.HiddenInput(),
+            'nome': forms.TextInput(attrs={'class':'form-control'}),
+            'documento': forms.TextInput(attrs={'class':'form-control'}),
+            'hora_inicial': forms.TimeInput(attrs={'data-mask':'00:00','class':'form-control'}),            
+            'hora_final': forms.TimeInput(attrs={'data-mask':'00:00','class':'form-control'}),
+            'responsavel': forms.TextInput(attrs={'class':'form-control'}),
         }
 
 

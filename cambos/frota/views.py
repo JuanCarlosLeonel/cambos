@@ -7,8 +7,8 @@ from django.contrib.auth.decorators import login_required
 from django.views.generic.list import ListView
 
 from core.models import Enderecos, UserCompras
-from .models import Abastecimento, EstoqueDiesel, FrotaBot, ItemViagem, Manutencao, Motorista, Movimentacoes, Viagem, Veiculo, FrotaPermissao, SolicitacaoViagem
-from .form import ManutencaoForm, SolicitacaoForm, SolicitacaoMotoristaForm, ViagemForm, AbastecimentoForm, EnderecoForm
+from .models import Abastecimento, ControleVisitantes, EstoqueDiesel, FrotaBot, ItemViagem, Manutencao, Motorista, Movimentacoes, Viagem, Veiculo, FrotaPermissao, SolicitacaoViagem
+from .form import ManutencaoForm, SolicitacaoForm, SolicitacaoMotoristaForm, ViagemForm, AbastecimentoForm, EnderecoForm, VisitanteForm
 from django.http import HttpResponse, JsonResponse
 from django.db.models import Sum
 import datetime
@@ -143,7 +143,7 @@ class AbastecimentoCreate(CreateView):
             interno.quantidade = total
             interno.updated_at = datetime.datetime.now() 
             interno.save()
-            model = Movimentacoes(estoque_id = interno.id, user_id = 38, tipo = 'C', quantidade = self.object.quantidade, saldo_anterior = atual, saldo_atual = interno.quantidade, created_at = interno.updated_at)
+            model = Movimentacoes(estoque_id = interno.id, user_id = 38, tipo = 'C', quantidade = self.object.quantidade, valor_unico = interno.valor_unico, saldo_anterior = atual, saldo_atual = interno.quantidade, created_at = interno.updated_at)
             model.save()
         else:
             pass      
@@ -281,7 +281,7 @@ class AbastecimentoDelete(DeleteView):
             interno.quantidade = total
             interno.updated_at = datetime.datetime.now() 
             interno.save()
-            model = Movimentacoes(estoque_id = interno.id, user_id = 38, tipo = 'C', quantidade = self.object.quantidade, saldo_anterior = atual, saldo_atual = interno.quantidade, created_at = interno.updated_at)
+            model = Movimentacoes(estoque_id = interno.id, user_id = 38, tipo = 'C', quantidade = self.object.quantidade,valor_unico = interno.valor_unico, saldo_anterior = atual, saldo_atual = interno.quantidade, created_at = interno.updated_at)
             model.save()
         else:
             pass
@@ -377,6 +377,63 @@ class ViagemList(ListView):
         context['lista']=lista_viagem
         return context
 
+
+@method_decorator(login_required, name='dispatch')
+class ControleVisitaList(ListView):
+    model = ControleVisitantes
+    template_name = 'frota/visitantes_list.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)  
+        try:
+            user_permission = FrotaPermissao.objects.get(usuario = self.request.user)
+        except:
+            user_permission = {} 
+        context['permissoes'] = user_permission
+        context['dataatual'] = datetime.date.today()
+        context['horaatual'] = datetime.datetime.now().time().strftime('%H:%M')
+        return context
+
+
+@method_decorator(login_required, name='dispatch')
+class VisitanteCreate(CreateView):
+    model = ControleVisitantes
+    form_class = VisitanteForm
+    template_name = 'frota/controlevisitantes_form.html'
+
+    def get_initial(self, *args, **kwargs):
+        initial = super(VisitanteCreate, self).get_initial(**kwargs)
+        initial['data'] = datetime.date.today()
+        initial['hora_inicial'] = datetime.datetime.now()
+        return initial
+
+    def get_success_url(self):    
+        return '/frota/visitantes_list'
+
+
+@method_decorator(login_required, name='dispatch')
+class VisitanteUpdate(UpdateView):
+    model = ControleVisitantes
+    form_class = VisitanteForm
+    
+    def get_success_url(self):        
+        return '/frota/visitantes_list/'
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)                
+        return context
+
+
+@method_decorator(login_required, name='dispatch')
+class VisitanteDelete(DeleteView):
+    model = ControleVisitantes
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)        
+        return context   
+
+    def get_success_url(self):
+        return '/frota/visitantes_list/'
 
 @method_decorator(login_required, name='dispatch')
 class RelatorioList(ListView):

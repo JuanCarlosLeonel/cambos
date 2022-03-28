@@ -131,7 +131,10 @@
 					{% endif %}
 					{% if permissoes.ver_veiculo %}			
 						<li class=" enabled"><a id="" href="{% url 'veiculo_list' %}"><em class="fa fa-circle">&nbsp;</em> Veículos </a></li>
-					{% endif %}				
+					{% endif %}		
+					{% if permissoes.ver_controlevisitas %}			
+						<li class=" enabled"><a id="" href="{% url 'visitantes_list' %}"><em class="fa fa-circle">&nbsp;</em> Visitantes </a></li>
+					{% endif %}		
 					<li class="divider"></li>
 				</ul>
 				

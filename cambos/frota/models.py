@@ -150,6 +150,7 @@ class Movimentacoes(models.Model):
     tipo = models.CharField(db_column='tipo', max_length=1)
     descricao = models.CharField(db_column='descricao', max_length=191)
     quantidade = models.FloatField(db_column='quantidade')
+    valor_unico = models.FloatField(db_column='valor_unico')
     saldo_anterior = models.FloatField(db_column='saldo_anterior') 
     saldo_atual = models.FloatField(db_column='saldo_atual')
     created_at = models.DateTimeField(db_column='created_at')
@@ -269,6 +270,8 @@ class FrotaPermissao(models.Model):
     ver_empilhadeira = models.BooleanField(default=False)    
     ver_trator = models.BooleanField(default=False)  
     ver_gerador = models.BooleanField(default=False)  
+    ver_solicitacao = models.BooleanField(default=False)
+    ver_controlevisitas = models.BooleanField(default=False)
 
     def __str__(self):
         return f'{self.usuario}'
@@ -321,6 +324,23 @@ class FrotaBot(models.Model):
 
     def __str__(self):
         return f'{self.user_nome}'
+
+#para a portaria
+class ControleVisitantes(models.Model):
+    data = models.DateField()
+    nome = models.CharField(max_length=45)
+    documento = models.CharField(max_length=12)
+    hora_inicial = models.TimeField(blank=True, null=True)
+    hora_final   = models.TimeField(blank=True, null=True)
+    responsavel = models.CharField(max_length=25)
+
+    def __str__(self):
+        return f'{self.nome}'
+
+    class Meta:        
+        db_table = 'frota"."controle_visitante'
+
+
 
 
 

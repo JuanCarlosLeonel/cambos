@@ -41,6 +41,10 @@ from .views import(
     SolicitacaoDelete,
     EnderecoCreate,
     sucesso,
+    ControleVisitaList,
+    VisitanteCreate,
+    VisitanteUpdate,
+    VisitanteDelete
 )
 
 urlpatterns = [
@@ -54,6 +58,10 @@ urlpatterns = [
     path('relatorio_index',  RelatorioList.as_view(), name='relatorio_index'),
     path('viagem_list/<str:pk>/',  ViagemList.as_view(), name='viagem_list'),
     path('solicitacao_list/',  SolicitacaoList.as_view(), name='solicitacao_list'),
+    path('visitantes_list/',  ControleVisitaList.as_view(), name='visitantes_list'),
+    path('visitante_create/', VisitanteCreate.as_view(), name = 'visitante_create'),
+    path('visitante_update/<str:pk>/', VisitanteUpdate.as_view(), name='visitante_update'),
+    path('visitante_delete/<int:pk>/',VisitanteDelete.as_view(), name='visitante_delete_cbv'),
     path('solicitacao_create/', SolicitacaoCreate.as_view(), name = 'solicitacao_create'),
     path('endereco_create/', EnderecoCreate.as_view(), name = 'endereco_create'),
     path('solicitacaomotorista_update/<str:pk>/', SolicitacaoMotoristaUpdate.as_view(), name='solicitacaomotorista_update'), 

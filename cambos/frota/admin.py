@@ -14,6 +14,7 @@ from .models import (
     ItemViagem,
     FrotaBot,
     SolicitacaoViagem,
+    ControleVisitantes
 )
 
 admin.site.register(Veiculo)
@@ -29,3 +30,4 @@ admin.site.register(Motorista)
 admin.site.register(ItemViagem)
 admin.site.register(FrotaBot)
 admin.site.register(SolicitacaoViagem)
+admin.site.register(ControleVisitantes)
