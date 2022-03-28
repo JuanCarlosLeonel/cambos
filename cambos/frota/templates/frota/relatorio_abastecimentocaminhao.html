@@ -69,7 +69,7 @@
 				</thead>
 				<tbody>
 					{%for item in filter.qs|dictsortreversed:"data"%}
-						{%if item.veiculo.caminhao%}
+						{%if item.veiculo.caminhao or item.veiculo.trator or item.veiculo.gerador%}
 							<tr data-href="#"	
 							class="trLink" >
 							<td class='text-center' >									

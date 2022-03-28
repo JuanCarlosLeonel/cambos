@@ -563,7 +563,7 @@ class RelatorioAbastecimentoCaminhao(ListView):
         tot = 0
         valor = 0
         for item in abastecimento.qs:
-            if item.veiculo.caminhao:
+            if item.veiculo.caminhao or item.veiculo.trator or item.veiculo.gerador :
                 tot += item.quantidade
                 valor += item.valor_unitario
         try:

@@ -59,7 +59,7 @@ class AbastecimentoFilter(django_filters.FilterSet):
 
 
 class AbastecimentoFilterCaminhao(django_filters.FilterSet):
-    veiculo = ModelChoiceFilter(queryset=Veiculo.objects.filter(caminhao=True),label='Veículo',widget=forms.Select(attrs={'class':'form-control'}))
+    veiculo = ModelChoiceFilter(queryset=Veiculo.objects.all(),label='Veículo',widget=forms.Select(attrs={'class':'form-control'}))
     inicio = DateFilter(lookup_expr='gte',widget=forms.DateInput(attrs={'id': 'datepicker','type':'date','class':'form-control'}),field_name="data",label='Início')
     fim = DateFilter(lookup_expr='lte',widget=forms.DateInput(attrs={'id': 'datepicker','type':'date','class':'form-control'}),field_name="data",label='Fim')
 
