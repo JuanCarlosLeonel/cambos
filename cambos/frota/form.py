@@ -96,6 +96,7 @@ class AbastecimentoForm(forms.ModelForm):
             self.fields['interno'].widget = forms.HiddenInput()
         if valor:
             self.fields['valor_unitario'].widget = forms.HiddenInput()
+            self.fields['interno'].widget = forms.HiddenInput()
 
 
 class SolicitacaoForm(forms.ModelForm):
