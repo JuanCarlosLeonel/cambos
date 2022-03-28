@@ -40,15 +40,18 @@ def enviarabastecimento(sender, instance, created, **kwargs):
         bot = Bot.objects.get(nome = 'Frota')
         token = bot.token 
         users = FrotaBot.objects.filter(ativo = True)
+        valorpagodieselinterno = 0
         try:
-            atual = EstoqueDiesel.objects.get(produto_id = 146)
+            precodieselinterno = EstoqueDiesel.objects.get(produto_id = 146)
+            quantidadeabastecida = Abastecimento.objects.filter().latest('id')
+            valorpagodieselinterno = float(precodieselinterno.valor_unico) * quantidadeabastecida.quantidade
         except:
             pass
         for user in users:      
             if user.ver_logistica:  
                 chat_id = user.user_id
                 try:
-                    html_content = render_to_string('frota/telegram_messageabast.html', {'nome': Abastecimento.objects.filter().latest('id'),'atual':atual.quantidade})
+                    html_content = render_to_string('frota/telegram_messageabast.html', {'nome': Abastecimento.objects.filter().latest('id'),'valorpagodieselinterno':valorpagodieselinterno})
                 except:
                     html_content = render_to_string('frota/telegram_messageabast.html', {'nome': Abastecimento.objects.filter().latest('id')})
                 bot = telegram.Bot(token=token)
@@ -269,6 +272,19 @@ class AbastecimentoDelete(DeleteView):
         return context   
 
     def get_success_url(self):
+        if self.object.interno:
+            interno = EstoqueDiesel.objects.get(produto_id = 146)
+            self.object.valor_unitario = float(interno.valor_unico) * self.object.quantidade
+            self.object.save()
+            atual = interno.quantidade
+            total = interno.quantidade + self.object.quantidade
+            interno.quantidade = total
+            interno.updated_at = datetime.datetime.now() 
+            interno.save()
+            model = Movimentacoes(estoque_id = interno.id, user_id = 38, tipo = 'C', quantidade = self.object.quantidade, saldo_anterior = atual, saldo_atual = interno.quantidade, created_at = interno.updated_at)
+            model.save()
+        else:
+            pass
         return f'/frota/abastecimento_list/{self.object.veiculo.id}'
 
 

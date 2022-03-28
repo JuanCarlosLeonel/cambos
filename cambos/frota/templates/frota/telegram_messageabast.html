@@ -1,16 +1,10 @@
 Novo abastecimento <strong>{{nome.veiculo}}</strong>
 Combustível: <b>{{nome.combustivel}}</b>
-Valor Total: <b>{{nome.valor_unitario|floatformat:2}}.</b>
+{%if not nome.interno%} Valor Total: <b>{{nome.valor_unitario}}.</b>{%endif%}
 Qtd: <b>{{nome.quantidade|floatformat:2}} l.</b>
-{%if nome.veiculo.caminhao%}
-    {%if nome.interno%}
-        <b>Tipo de Abastecimento: INTERNO</b>
-    {%else%}
-        <b>Tipo de Abastecimento: EXTERNO</b>
-    {%endif%}
-{%if atual %}    
-Estoque Diesel Disponível:<b> {{atual}}</b>
+{%if nome.interno%}
+    <b>Tipo de Abastecimento: INTERNO</b>
+    <b>Valor Total: {{valorpagodieselinterno}}</b>
+{%else%}
+    <b>Tipo de Abastecimento: EXTERNO</b>
 {%endif%}
-{%endif%}
-
-
