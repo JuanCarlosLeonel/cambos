@@ -138,6 +138,56 @@ function renderiza_abastecimento_portrator(url){
     }) 
 }
 
+// grafico de despesa mensal GERADOR
+function renderiza_despesa_mensalgerador(url){
+    fetch(url, {
+        method: 'get',
+    }).then(function(result){
+        return result.json()
+    }).then(function(data){
+        const ctx = document.getElementById('despesa_mensalgerador').getContext('2d');
+        var cores_despesa_mensal = gera_cor(qtd=12)
+        const myChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: data.labels,
+                datasets: [{
+                    label: "Abastecimento Mensal",
+                    data: data.data,
+                    backgroundColor: cores_despesa_mensal[0],
+                    borderColor: cores_despesa_mensal[1],
+                    borderWidth: 1
+                }]
+            },  
+        });
+    })
+}
+
+// Despesa por veiculo(ABASTECIMENTO GERADOR)
+function renderiza_abastecimento_porgerador(url){
+    fetch(url, {
+        method: 'get',
+    }).then(function(result){
+        return result.json()
+    }).then(function(data){
+        const ctx = document.getElementById('despesa_abastecimento_porgerador').getContext('2d');
+        var cores_abastecimento = gera_cor(qtd=7)
+        const myChart = new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                labels: data.labels,
+                datasets: [{
+                    label: 'Despesas',
+                    data: data.data,
+                    backgroundColor: cores_abastecimento[0],
+                    borderColor: cores_abastecimento[1],
+                    borderWidth: 1
+                }]
+            }, 
+        });
+    }) 
+}
+
 // Despesa por veiculo(ABASTECIMENTO)
 function renderiza_abastecimento_porveiculo(url){
     fetch(url, {

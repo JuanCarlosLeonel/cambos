@@ -596,7 +596,7 @@ class RelatorioAbastecimento(ListView):
         tot = 0
         valor = 0
         for item in abastecimento.qs:
-            if not item.veiculo.caminhao:
+            if not item.veiculo.caminhao and not item.veiculo.trator and not item.veiculo.gerador:
                 tot += item.quantidade
                 valor += item.valor_unitario
         try:
@@ -742,7 +742,7 @@ class SolicitacaoDelete(DeleteView):
 
 def relatorio_despesa(request):
     from datetime import datetime
-    x = Abastecimento.objects.filter(veiculo__caminhao = False)
+    x = Abastecimento.objects.filter(veiculo__caminhao=False,veiculo__trator=False,veiculo__gerador=False)
     meses = ['jan', 'fev', 'mar', 'abr', 'mai', 'jun', 'jul', 'ago', 'set', 'out', 'nov', 'dez']
     data = []
     labels = []
@@ -831,8 +831,44 @@ def relatorio_abastecimento_portrator(request):
     
     return JsonResponse({'labels': x[0][:7], 'data': x[1][:7]})
 
+def relatorio_despesagerador(request):
+    from datetime import datetime
+    x = Abastecimento.objects.filter(veiculo__gerador = True)
+    meses = ['jan', 'fev', 'mar', 'abr', 'mai', 'jun', 'jul', 'ago', 'set', 'out', 'nov', 'dez']
+    data = []
+    labels = []
+    mes = datetime.now().month + 1
+    ano = datetime.now().year
+    for i in range(12): 
+        mes -= 1
+        if mes == 0:
+            mes = 12
+            ano -= 1
+        y = sum([i.valor_unitario for i in x if i.data.month == mes and i.data.year == ano])
+        labels.append(meses[mes-1])
+        data.append(y)
+    data_json = {'data': data[::-1], 'labels': labels[::-1]}
+    return JsonResponse(data_json)
+
+def relatorio_abastecimento_porgerador(request):
+    produtos = Veiculo.objects.filter(gerador = True)
+    label = []
+    data = []
+    for produto in produtos:
+        vendas = Abastecimento.objects.filter(veiculo=produto).aggregate(Sum('valor_unitario'))
+        if not vendas['valor_unitario__sum']:
+            vendas['valor_unitario__sum'] = 0
+        label.append(produto.descricao.descricao)
+        data.append(vendas['valor_unitario__sum'])
+
+    x = list(zip(label, data))
+    x.sort(key=lambda x: x[1], reverse=True)
+    x = list(zip(*x))
+    
+    return JsonResponse({'labels': x[0][:7], 'data': x[1][:7]})
+
 def relatorio_abastecimento_porveiculo(request):
-    produtos = Veiculo.objects.filter(caminhao = False)
+    produtos = Veiculo.objects.filter(caminhao=False,trator=False,gerador=False)
     label = []
     data = []
     for produto in produtos:
@@ -873,9 +909,10 @@ class IndexDespesas(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)   
-        totabastecimentocarro = Abastecimento.objects.filter(veiculo__caminhao = False).aggregate(Sum('valor_unitario'))
+        totabastecimentocarro = Abastecimento.objects.filter(veiculo__caminhao=False,veiculo__trator=False,veiculo__gerador=False).aggregate(Sum('valor_unitario'))
         totabastecimentocaminhao = Abastecimento.objects.filter(veiculo__caminhao = True).aggregate(Sum('valor_unitario'))
         totabastecimentotrator = Abastecimento.objects.filter(veiculo__trator = True).aggregate(Sum('valor_unitario'))
+        totabastecimentogerador = Abastecimento.objects.filter(veiculo__gerador = True).aggregate(Sum('valor_unitario'))
         totmanutencao = Manutencao.objects.aggregate(Sum('valor'))
         try:
             user_permission = FrotaPermissao.objects.get(usuario = self.request.user)
@@ -885,6 +922,7 @@ class IndexDespesas(TemplateView):
         context['totabastecimentocarro']=totabastecimentocarro
         context['totabastecimentocaminhao']=totabastecimentocaminhao
         context['totabastecimentotrator']=totabastecimentotrator
+        context['totabastecimentogerador']=totabastecimentogerador
         context['totmanutencao']=totmanutencao       
         return context
 

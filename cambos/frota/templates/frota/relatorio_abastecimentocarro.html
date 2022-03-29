@@ -61,7 +61,7 @@
 				</thead>
 				<tbody>
 					{%for item in filter.qs|dictsortreversed:"data"%}
-						{%if not item.veiculo.caminhao%}
+						{%if not item.veiculo.caminhao and not item.veiculo.trator and not item.veiculo.gerador%}
 							<tr data-href="#"	
 							class="trLink" >
 							<td class='text-center' >									

@@ -37,41 +37,41 @@
     <div class="row">
         <div class="col-md-6">
             <div class="panel panel-default">
-                <h4>Gasto mensal com Abastecimento dos Carros</h4>
-                <canvas class="chart" id="despesa_mensal" height="200" width="720"></canvas>
+                <h5><strong>Gasto mensal com Abastecimento dos Carros</strong></h5>
+                <canvas class="chart" id="despesa_mensal" height="150" width="620"></canvas>
             </div>
         </div>
         <div class="col-md-6">
             <div class="panel panel-default">
-                <h4>Abastecimento Total por Carro</h4>
+                <h5><strong>Abastecimento Total por Carro</strong></h5>
                 <div
                     style="width: 100%; height: 40px; position: absolute; top: 50%; left: 0; margin-top: 10px; line-height:19px; text-align: center; z-index: 999999999999999">
                     {{totabastecimentocarro.valor_unitario__sum}}<Br/>
                     Total
                 </div>
-                <canvas class="chart" id="despesa_abastecimento_porveiculo" height="195" width="700"></canvas>
+                <canvas class="chart" id="despesa_abastecimento_porveiculo" height="170" width="700"></canvas>
             </div>
         </div>
     </div>
 </div>
 <div class="container-fluid">
-    <h3><strong>Caminhões</strong> <em class="fa fa-truck"></em></h3>
+    <h5><strong>Caminhões</strong> <em class="fa fa-truck"></em></h5>
     <div class="row">
         <div class="col-md-6">
             <div class="panel panel-default">
-                <h4>Gasto mensal com Abastecimento dos Caminhões</h4>
-                <canvas class="chart" id="despesa_mensalcaminhao" height="200" width="720"></canvas>
+                <h5><strong>Gasto mensal com Abastecimento dos Caminhões</strong></h5>
+                <canvas class="chart" id="despesa_mensalcaminhao" height="150" width="620"></canvas>
             </div>
         </div>
         <div class="col-md-6">
             <div class="panel panel-default">
-                <h4>Abastecimento Total por Caminhão</h4>
+                <h5><strong>Abastecimento Total por Caminhão</strong></h5>
                 <div
                     style="width: 100%; height: 40px; position: absolute; top: 50%; left: 0; margin-top: 20px; line-height:19px; text-align: center; z-index: 999999999999999">
                     {{totabastecimentocaminhao.valor_unitario__sum}}<Br/>
                     Total
                 </div>
-                <canvas class="chart" id="despesa_abastecimento_porcaminhao" height="195" width="700"></canvas>
+                <canvas class="chart" id="despesa_abastecimento_porcaminhao" height="170" width="700"></canvas>
             </div>
         </div>
     </div>
@@ -81,19 +81,41 @@
     <div class="row">
         <div class="col-md-6">
             <div class="panel panel-default">
-                <h4>Gasto mensal com Abastecimento do Trator</h4>
-                <canvas class="chart" id="despesa_mensaltrator" height="200" width="720"></canvas>
+                <h5><strong>Gasto mensal com Abastecimento do Trator</strong></h5>
+                <canvas class="chart" id="despesa_mensaltrator" height="150" width="620"></canvas>
             </div>
         </div>
         <div class="col-md-6">
             <div class="panel panel-default">
-                <h4>Abastecimento Total do Trator</h4>
+                <h5><strong>Abastecimento Total do Trator</strong></h5>
                 <div
                     style="width: 100%; height: 40px; position: absolute; top: 45%; left: 0; margin-top: 20px; line-height:19px; text-align: center; z-index: 999999999999999">
                     {{totabastecimentotrator.valor_unitario__sum}}<Br/>
                     Total
                 </div>
-                <canvas class="chart" id="despesa_abastecimento_portrator" height="195" width="700"></canvas>
+                <canvas class="chart" id="despesa_abastecimento_portrator" height="170" width="700"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="container-fluid">
+    <h3><strong>Gerador</strong> <em class="fa fa-bolt"></em></h3>
+    <div class="row">
+        <div class="col-md-6">
+            <div class="panel panel-default">
+                <h5><strong>Gasto mensal com Abastecimento do Gerador</strong></h5>
+                <canvas class="chart" id="despesa_mensalgerador" height="150" width="620"></canvas>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="panel panel-default">
+                <h5><strong>Abastecimento Total do Gerador</strong></h5>
+                <div
+                    style="width: 100%; height: 40px; position: absolute; top: 45%; left: 0; margin-top: 20px; line-height:19px; text-align: center; z-index: 999999999999999">
+                    {{totabastecimentogerador.valor_unitario__sum}}<Br/>
+                    Total
+                </div>
+                <canvas class="chart" id="despesa_abastecimento_porgerador" height="170" width="700"></canvas>
             </div>
         </div>
     </div>
@@ -114,6 +136,8 @@
         renderiza_abastecimento_porcaminhao('{% url "retorna_abastecimento_porcaminhao" %}')
         renderiza_despesa_mensaltrator('{% url "retorna_despesastrator" %}')
         renderiza_abastecimento_portrator('{% url "retorna_abastecimento_portrator" %}')
+        renderiza_despesa_mensalgerador('{% url "retorna_despesasgerador" %}')
+        renderiza_abastecimento_porgerador('{% url "retorna_abastecimento_porgerador" %}')
         renderiza_abastecimento_porveiculo('{% url "retorna_abastecimento_porveiculo" %}')
         {% comment %} renderiza_manutencao_porveiculo('{% url "retorna_manutencao_porveiculo" %}') {% endcomment %}
     }
