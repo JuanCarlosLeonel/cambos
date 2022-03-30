@@ -1,6 +1,23 @@
 {% extends "cambos/base_frota.html" %}
 {% load static %}
-{% block css %}{% endblock css %}
+{% block css %}
+<style> @media print {
+	/* esconder tudo */
+	body * {
+	  visibility: hidden;
+	}
+	/* exibir somente o que tem na div para imprimir */
+	#imprimir, #imprimir * {
+	  visibility: visible;
+	}
+	#imprimir {
+	  position: fixed;
+	  left: 0;
+	  top: 0;
+	}
+  }
+</style>
+{% endblock css %}
 
 {% block navigation %}
     <div class="row">		
@@ -23,7 +40,7 @@
 <div class="panel panel-container">
 	<div class="col-12">
         <div id="identificado" class="col-xs-6 no-padding">
-            <div class="panel panel-orange panel-widget border-right border-bottom">
+            <div class="panel panel-orange panel-widget border-right border-bottom" id="imprimir">
 				<h3>Relatório de Abastecimento <i class="fas fa-gas-pump"></i></h3>  
             </div>
         </div>
@@ -38,11 +55,11 @@
 </div>
 <div class="col-12">
 	<div class="panel panel-default">
-		<div class="panel-body">
-			<button type="button" class="btn_filtrar" data-toggle="modal"
+		<button type="button" class="btn_filtrar" data-toggle="modal"
 			data-target="#exampleModal">
 			FILTRAR
-			</button>
+		</button> <button class="btn_filtrar"><i onclick=window.print() class="fas fa-print"></i></button>
+		<div class="panel-body" id="imprimir">
 			<table id="table"				
 			data-toolbar="#toolbar"
 			data-show-toggle="false"

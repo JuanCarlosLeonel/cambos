@@ -1,6 +1,23 @@
 {% extends "cambos/base_frota.html" %}
 {% load static %}
-{% block css %}{% endblock css %}
+{% block css %}
+<style> @media print {
+	/* esconder tudo */
+	body * {
+	  visibility: hidden;
+	}
+	/* exibir somente o que tem na div para imprimir */
+	#imprimir, #imprimir * {
+	  visibility: visible;
+	}
+	#imprimir {
+	  position: fixed;
+	  left: 0;
+	  top: 0;
+	}
+  }
+</style>
+{% endblock css %}
 
 {% block navigation %}
     <div class="row">		
@@ -23,7 +40,7 @@
 <div class="panel panel-container">
 	<div class="col-12">												
 			<div id="identificado" class="col-xs-4 no-padding">					
-				<div class="panel panel-teal panel-widget border-right border-bottom">
+				<div class="panel panel-teal panel-widget border-right border-bottom" id="imprimir">
 					<h3>Relatório de Viagens <em class="fa fa-truck"></em></h3>						
 				</div>
 			</div>						
@@ -45,14 +62,12 @@
 </div>
 <div class="col-12">
 	<div class="panel panel-default">
-		<div class="panel-body">
-			<button type="button" class="btn_filtrar" data-toggle="modal"
+		<button type="button" class="btn_filtrar" data-toggle="modal"
 			data-target="#exampleModal">
 			FILTRAR
-			</button>
-			<div id="toolbar">	
-				<strong class="text-danger"><i class="fa fa-road"></i> Em trânsito</strong>
-			</div>
+		</button> <button class="btn_filtrar"><i onclick=window.print() class="fas fa-print"></i></button><br>
+		<strong class="text-danger"><i class="fa fa-road"></i>Em trânsito</strong>
+		<div class="panel-body" id="imprimir">
 			<table id="table"				
 			data-toolbar="#toolbar"
 			data-show-toggle="false"
@@ -83,29 +98,47 @@
 								</td>
 								<td class='text-center'>
 									{%if item.data_final%}
-										{{item.veiculo}}
-									{% else %}
-										<lu class="trLink text-danger negrito">{{item.veiculo}}</lu>
+											{%if item.veiculo.id == 2 %}
+												MB2426 Verm.</td>	
+											{%elif item.veiculo.id == 1 %}
+												VW24280 Cin.
+											{%elif item.veiculo.id == 7 %}
+												MB1719 Verm.
+											{%elif item.veiculo.id == 6 %}
+												MB1719 Azul
+											{%endif%}
+										{% else %}
+										<lu class="trLink text-danger negrito">
+											{%if item.veiculo.id == 2 %}
+												MB2426 Verm.</td>	
+											{%elif item.veiculo.id == 1 %}
+												VW24280 Cin.
+											{%elif item.veiculo.id == 7 %}
+												MB1719 Verm.
+											{%elif item.veiculo.id == 6 %}
+												MB1719 Azul
+											{%endif%}
+										</lu>
 									{%endif%}	
 								</td>						
-								<td class='text-center'>{{item.destino}}</td>
+								<td class='text-center'>{{item.destino|slice:"0:20"}}</td>
 								<td class='text-center'>
 									{% if item.motorista %}
-										{{item.motorista.nome|slice:"0:25"}}
+										{{item.motorista.nome|slice:"0:12"}}.
 									{% else %}
 										-
 									{%endif%}
 								</td>
 								<td class='text-center'>
 									{% if item.motorista2 %}
-										{{item.motorista2.nome|slice:"0:25"}}
+										{{item.motorista2.nome|slice:"0:12"}}.
 									{% else %}
 										-
 									{%endif%}
 								</td>
 								<td class='text-center' >
 									{% if item.ajudante%}
-										{{item.ajudante}}
+										{{item.ajudante.nome|slice:"0:12"}}.
 									{%else%}
 										-
 									{%endif%}																		
