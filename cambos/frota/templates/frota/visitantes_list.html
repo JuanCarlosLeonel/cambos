@@ -41,12 +41,13 @@
 				data-show-columns="true"
 				data-search="true"
 				data-select-item-name="toolbar"
-				data-pagination="true"				 
+				data-pagination="true"
+				data-sort-name="Data"				 
 				data-sort-order="desc"
 			 >
 				<thead>
 					<tr>
-                        <th class="text-center">Data</th>
+                        <th data-field="Data" class="text-center">Data</th>
                         <th class="text-center">Nome</th>
 						<th class="text-center">Documento</th>
 						<th class="text-center">Hora Ent.</th>
@@ -55,7 +56,7 @@
 					</tr>
 				</thead>
 				<tbody>
-					{% for data in object_list|dictsort:"data" %}
+					{% for data in object_list|dictsortreversed:"hora_inicial" %}
                     <tr data-href="{% url 'visitante_update' data.pk %}"
                         class="trLink" >
                             <td class='text-center'>
