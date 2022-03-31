@@ -1,58 +1,75 @@
 {% extends "cambos/base_frota.html" %}
 {% load static %}
 {% block css %}
-
+<style> @media print {
+	/* esconder tudo */
+	body * {
+	  visibility: hidden;
+	}
+	/* exibir somente o que tem na div para imprimir */
+	#imprimir, #imprimir * {
+	  visibility: visible;
+	  padding-top: 5px;
+	  margin: 3mm 2mm 1.5mm -1.3mm;
+	}
+	#imprimir {
+	  position:fixed;
+	  left: 0;
+	  top: 0;
+	}
+  }
+</style>
 {% endblock css %}
 
 {% block navigation %}
-    <div class="row">		
-        <ol class="breadcrumb ">
-            <li><a href="{% url 'frota_index' %}">
-                <em class="fa fa-home"></em>
-            </a></li>
-            <li class="active"><a href="{% url 'veiculo_list' %}">Veículos</a></li>
-			<li class="active"><a href="{% url 'viagem_list' viag.veiculo.pk %}">Lista de Viagens</a></li>
-        </ol>	
-    </div><!--/.row-->
-	
-	<div class="row">
-        <div class="col-lg-12">
-			<h4><b>Viagem :</b></h4>
-			<p>
-				Veículo: 
-				<strong>{{viag.veiculo}}</strong>
-			</p>
-			<p>
-				Destino: 
-				<strong>{{viag.destino}}</strong>
-			</p>
-			<p>
-				Motorista: 
-				<strong>{{viag.motorista.nome}} / {{viag.motorista2.nome}}</strong>
-			</p>
-			<p>
-				Data Saída: 
-				<strong>{{viag.data_inicial|date:"d/m/Y"}} </strong>
-			</p>
-			{% if peso > 1 and peso <= 13500%}
-			<p>
-				Peso Total: 
-				<strong>{{peso}} </strong>
-			</p>
-			{% elif peso > 13500 %}
-			<p>
-				Peso Total: 
-				<strong class="text-danger"> {{peso}}! PESO EXCEDEU O LIMITE MÁXIMO PERMITIDO !</strong></strong>
-			</p>
-			{% endif %}
-        </div>
-    </div><!--/.row-->
+<div class="row">		
+	<ol class="breadcrumb ">
+		<li><a href="{% url 'frota_index' %}">
+			<em class="fa fa-home"></em>
+		</a></li>
+		<li class="active"><a href="{% url 'veiculo_list' %}">Veículos</a></li>
+		<li class="active"><a href="{% url 'viagem_list' viag.veiculo.pk %}">Lista de Viagens</a></li>
+	</ol>	
+</div><!--/.row-->
+
+<div class="row">
+	<button class="btn_filtrar"><i onclick=window.print() class="fas fa-print"></i></button>
+	<div class="col-lg-12" id="imprimir">
+		<p>
+			Veículo : 
+			<strong>{{viag.veiculo}}</strong>
+		</p>
+		<p>
+			Destino : 
+			<strong>{{viag.destino}}</strong>
+		</p>
+		<p>
+			Motorista : 
+			<strong>{{viag.motorista.nome}} / {{viag.motorista2.nome}}</strong>
+		</p>
+		<p>
+			Data Saída : 
+			<strong>{{viag.data_inicial|date:"d/m/Y"}} </strong>
+		</p>
+		{% if peso > 1 and peso <= 13500%}
+		<p>
+			Peso Total : 
+			<strong>{{peso}} </strong>
+		</p>
+		{% elif peso > 13500 %}
+		<p>
+			Peso Total : 
+			<strong class="text-danger"> {{peso}}! PESO EXCEDEU O LIMITE MÁXIMO PERMITIDO !</strong></strong>
+		</p>
+		{% endif %}
+	</div>
+</div><!--/.row-->
 {% endblock navigation %}
 
 {% block content %}		
 <div class="col-12">	
 	<div class="panel panel-default">
-		<div class="panel-body">
+		<div class="panel-body" id="imprimir">
 			<table id="table"				
 				data-toolbar="#toolbar"
 				data-toggle="table"
@@ -61,7 +78,7 @@
 				data-show-columns="true"
 				data-search="true"
 				data-select-item-name="toolbar"
-				data-pagination="true"				 
+				data-pagination="false"				 
 				data-sort-order="desc"
 			 >
 				<thead>
@@ -71,7 +88,7 @@
 						<th class="text-center">Prioridade</th>
 						<th class="text-center">Produto</th>
 						<th class="text-center">Peso</th>
-						<th class="text-center">Quantidade</th>
+						<th class="text-center">Quant.</th>
 						<th class="text-center">Rua</th>
 						<th class="text-center">Número</th>
 						<th class="text-center">Bairro</th>
@@ -84,14 +101,14 @@
 					</tr>
 				</thead>
 				<tbody>
-					{% for data in lista_solicitacoes|dictsort:"data_solicitacao" %}
+					{% for data in lista_solicitacoes|dictsort:"data_prevista" %}
 						{% if data.has_item == True %}
 						{% for item in itemviagem %}
 							{% if item.viagem_solicitacao == data and item.viagem == viag %}
 								<tr data-href="#"
 									class="trLink" >
 									<td class='text-center'>
-										{{data.user}}
+										{{data.user.name|slice:"0:12"}}
 									</td>
 									<td class='text-center'>
 										{% if data.tipo == '1' %}
@@ -132,7 +149,7 @@
 									<td class='text-center'>
 										{{data.endereco.cep}}
 									</td>
-									<td class='text-center'>{{ data.data_prevista|date:"d/m/y" }}</td>
+									<td class='text-center'><strong>{{ data.data_prevista|date:"d/m/y" }}</strong></td>
 									<td class='text-center'>{{ data.data_solicitacao|date:"d/m/y H:i" }}</td>
 									<td class='text-center'>
 										<form class="" id="" method="submit">
@@ -152,7 +169,7 @@
 							<tr data-href="#"
 									class="trLink" >
 									<td class='text-center'>
-										{{data.user}}
+										{{data.user.name|slice:"0:12"}}
 									</td>
 									<td class='text-center'>
 										{% if data.tipo == '1' %}
@@ -193,7 +210,7 @@
 									<td class='text-center'>
 										{{data.endereco.cep}}
 									</td>
-									<td class='text-center'>{{ data.data_prevista|date:"d/m/y" }}</td>
+									<td class='text-center'><strong>{{ data.data_prevista|date:"d/m/y" }}</strong></td>
 									<td class='text-center'>{{ data.data_solicitacao|date:"d/m/y H:i" }}</td>
 									<td class='text-center'>
 										<form class="" id="" method="submit">
