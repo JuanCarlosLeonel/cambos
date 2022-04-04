@@ -48,7 +48,8 @@ from .views import(
     ControleVisitaList,
     VisitanteCreate,
     VisitanteUpdate,
-    VisitanteDelete
+    VisitanteDelete,
+    RelatorioEmpilhadeira
 )
 
 urlpatterns = [
@@ -60,6 +61,7 @@ urlpatterns = [
     path('relatorio_abastecimentocarro',  RelatorioAbastecimento.as_view(), name='relatorio_abastecimentocarro'),
     path('relatorio_abastecimentocaminhao', RelatorioAbastecimentoCaminhao.as_view(), name='relatorio_abastecimentocaminhao'),
     path('relatorio_index',  RelatorioList.as_view(), name='relatorio_index'),
+    path('relatorio_empilhadeira',  RelatorioEmpilhadeira.as_view(), name='relatorio_empilhadeira'),
     path('viagem_list/<str:pk>/',  ViagemList.as_view(), name='viagem_list'),
     path('solicitacao_list/',  SolicitacaoList.as_view(), name='solicitacao_list'),
     path('visitantes_list/',  ControleVisitaList.as_view(), name='visitantes_list'),

@@ -1,11 +1,10 @@
-from multiprocessing import context
+from urllib import request
 from django.shortcuts import render, redirect
 from django.views.generic.base import TemplateView
 from django.views.generic.edit import UpdateView, CreateView, DeleteView
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
 from django.views.generic.list import ListView
-
 from core.models import Enderecos, UserCompras
 from .models import Abastecimento, ControleVisitantes, EstoqueDiesel, FrotaBot, ItemViagem, Manutencao, Motorista, Movimentacoes, Viagem, Veiculo, FrotaPermissao, SolicitacaoViagem
 from .form import ManutencaoForm, SolicitacaoForm, SolicitacaoMotoristaForm, ViagemForm, AbastecimentoForm, EnderecoForm, VisitanteForm
@@ -14,10 +13,9 @@ from django.db.models import Sum
 import datetime
 from .filters import SolicitacaoFilter, ViagemFilter, ViagemFilterCarro, AbastecimentoFilter, AbastecimentoFilterCaminhao
 from django.template.loader import render_to_string
-from django.utils.html import strip_tags
 import telegram
 from django.db.models.signals import post_save
-from django import template
+from decouple import config
 
 def enviar(sender, instance, created, **kwargs):
     if created:
@@ -995,3 +993,47 @@ class ManutencaoDelete(DeleteView):
 
     def get_success_url(self):
         return f'/frota/viagem_list/{self.object.veiculo.id}'
+
+@method_decorator(login_required, name='dispatch')
+class RelatorioEmpilhadeira(TemplateView):
+    template_name = 'frota/relatorio_empilhadeira.html'
+    def get_context_data(self, **kwargs):
+        get_empilhadeira()
+        context = super().get_context_data(**kwargs)     
+        try:
+            user_permission = FrotaPermissao.objects.get(usuario = self.request.user)
+        except:
+            user_permission = {} 
+        context['permissoes'] = user_permission
+        return context
+
+def get_empilhadeira():  
+    import requests
+    json = {
+        "client_id": config('client_id'),
+        "client_secret": config('client_secret'),
+        "grant_type": "password",
+        "scope": "*",
+        "username": "expedicaotecidos",
+        "password": "expedicao"
+    }
+
+    periodo = {
+	"periodo_inicial": "2022-01-01",
+	"periodo_final": "2022-04-04"
+    }
+
+    url = requests.post('http://192.168.0.16:8000/oauth/token', json)
+    dados = url.json()
+    token = dados['access_token']
+    head = {}
+    head['Authorization'] = 'Bearer ' + token
+    urlmotoristas = requests.get('http://192.168.0.16:8000/api/motoristas',headers= head)
+    urlservicos = requests.post('http://192.168.0.16:8000/api/relatorio-servicos',headers= head, json=periodo)
+    urlmanutencoes = requests.post('http://192.168.0.16:8000/api/relatorio-manutencoes',headers= head, json=periodo)
+    urlordem = requests.post('http://192.168.0.16:8000/api/relatorio-ordem',headers= head, json=periodo)
+    urlalmoxarifado = requests.post('http://192.168.0.16:8000/api/relatorio-almoxarifado',headers= head, json=periodo)
+    print(urlordem.json())
+
+
+

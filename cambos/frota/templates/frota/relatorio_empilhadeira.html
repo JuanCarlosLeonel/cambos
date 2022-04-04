@@ -1,0 +1,86 @@
+{% extends "cambos/base_frota.html" %}
+{% load static %}
+{% block css %}
+{% endblock css %}
+
+{% block navigation %}
+<div class="row">		
+    <ol class="breadcrumb ">
+        <li><a href="{% url 'frota_index' %}">
+            <em class="fa fa-home"></em>
+        </a></li>
+        <li class="active"><a href="{% url 'relatorio_index' %}">
+            Menu Anterior
+        </a></li>
+    </ol>	
+</div><!--/.row-->
+	
+{% endblock navigation %}
+
+{% block content %}
+<div class="row">
+	<div class="col-lg-12">
+		<p>
+			<h4><strong >Empilhadeiras</strong><span class="color-red"><i class="fa fa-dolly"></i></span> </h4> 
+		</p>
+	</div>
+</div><!--/.row-->
+<form class="has-warning">
+    <select class="btn_filtro" name="select-simples" class="ls-select" style="width:300px">
+        <option value="" disabled selected>Selecione o tipo de relatório</option>
+        <option value="0">Serviços</option>
+        <option value="1">Manutenções</option>
+        <option value="2">Ordem Serviço</option>
+        <option value="3">Almoxarifado</option>
+        <option value="4">Motoristas</option>
+    </select>
+    <div>
+        <input class="btn_filtro" type="date" id="festa" name="festa"  style="width:148px" required>
+        <input class="btn_filtro" type="date" id="festa" name="festa"  style="width:148px" required>
+        <span class="validity"></span>
+    </div>
+</form>
+
+{% endblock content%}
+
+
+{% block script %}
+<script>
+	const elements = document.querySelectorAll('.with-js')
+	for (let p of elements) {
+		p.innerText = p.innerText.substring(8, 20)
+	}
+</script>
+
+<script>	
+	var tr = document.getElementsByClassName('tr-id');
+tr.onclick = function (e) {
+  location.href = 'http://www.google.com';
+};
+</script>
+
+<script src="https://momentjs.com/downloads/moment.min.js"></script>
+
+<script>
+	function dateFormat(value, row, index) {
+		return moment(value).format('DD/MM/YYYY');
+	}	
+</script>
+
+<script>
+	function dateSorter(a, b) {
+		var aa = a.replace('$', '')
+		var bb = b.replace('$', '')
+		return aa - bb
+		}
+</script>
+
+<script>
+	
+	$('#table').bootstrapTable({
+		onClickRow: function (item, $element) {return  window.location = $element.data('href');},
+	});
+</script>
+  
+{% endblock script %}
+
