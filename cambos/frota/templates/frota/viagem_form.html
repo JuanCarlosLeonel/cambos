@@ -26,7 +26,7 @@
 
 <div class="modal-dialog modal-lg">
     <div class="modal-content">
-        <form method="post" autocomplete="off">
+        <form method="post" id="teste" autocomplete="off">
               <div class="modal-header">
                 <a href="javascript:void(0)" onClick="history.go(-1); return false;" type="button" class="close" aria-hidden="true">×</a>
                 <h2 class="modal-title titulo_filtrar" id="exampleModalLabel">Cadastro/Atualiz.</h2>
@@ -67,7 +67,7 @@
             </div> {% endcomment %}
               <div class="modal-footer">
                 <a href="javascript:void(0)" onClick="history.go(-1); return false;" type="button" class="btn btn-primary">Retornar</a>
-                <input type="submit" class="btn btn-success" value="Salvar"  />
+                <input type="submit" id="teste1" class="btn btn-success" value="Salvar"  />
                 {% if object  %}
                 <a href="{% url 'viagem_delete_cbv' object.pk %}" type="button" class="btn btn-danger">Deletar</a>                                
                 {% endif %}
@@ -79,35 +79,43 @@
 {% endblock content %}
 {% block script %}
  {{ form.media.js }}
-	<script>
-        let option = document.getElementById('setor{{setor.id}}');        
-        option.setAttribute('class', 'active');					           
-      </script>
-      <script>
-        $(document).ready(function(){            
-            $(".enabled").attr("class", "disabled");
-            $(".disabled a").removeAttr("href");    
-            $(".date").css('pointer-events', 'none');       
-        });
-      </script>
+<script>
+    $(document).ready(function(){
+        $('#teste').on('submit',function(){
+            $('#teste1').attr('disabled','disabled')
+        })
+        
+    })
+</script>
+<script>
+    let option = document.getElementById('setor{{setor.id}}');        
+    option.setAttribute('class', 'active');					           
+    </script>
+    <script>
+    $(document).ready(function(){            
+        $(".enabled").attr("class", "disabled");
+        $(".disabled a").removeAttr("href");    
+        $(".date").css('pointer-events', 'none');       
+    });
+</script>
      
-      <script>
-       $(document).ready(function(){
-            $('.datepicker').datepicker({
-                format: 'dd/mm/yyyy',
-                minViewMode: "days",
-                todayBtn: true,
-                todayHighlight: true,
-                
-            });            
-            $('.datepicker2').datepicker({
-                format: 'hh:mm',
-                minViewMode: "hours",
-                todayBtn: true,
-                todayHighlight: true,
-                
-            });            
-        });
+<script>
+    $(document).ready(function(){
+        $('.datepicker').datepicker({
+            format: 'dd/mm/yyyy',
+            minViewMode: "days",
+            todayBtn: true,
+            todayHighlight: true,
+            
+        });            
+        $('.datepicker2').datepicker({
+            format: 'hh:mm',
+            minViewMode: "hours",
+            todayBtn: true,
+            todayHighlight: true,
+            
+        });            
+    });
 </script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.10/jquery.mask.js"></script>
 {% endblock script %}

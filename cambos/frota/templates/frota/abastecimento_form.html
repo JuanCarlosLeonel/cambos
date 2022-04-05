@@ -22,10 +22,9 @@
 {% endblock navigation %}
 
 {% block content %}		
-
+<form method="post" id="teste" autocomplete="off">
 <div class="modal-dialog modal-lg">
     <div class="modal-content">
-        <form method="post" autocomplete="off">
               <div class="modal-header">
                 <a href="javascript:void(0)" onClick="history.go(-1); return false;" type="button" class="close" aria-hidden="true">×</a>
                 <h5 class="modal-title titulo_filtrar" id="exampleModalLabel">Novo Abastecimento</h5>
@@ -55,32 +54,34 @@
               </div>
               <div class="modal-footer">
                 <a href="javascript:void(0)" onClick="history.go(-1); return false;" type="button" class="btn btn-primary">Retornar</a>
-                <input type="submit" class="btn btn-success" value="Salvar"  />
+                <button type="submit" id="teste1" class="btn btn-success" >Salvar</button>
                 {% if object  %}
                 <a href="{% url 'abastecimento_delete_cbv' object.pk %}" type="button" class="btn btn-danger">Deletar</a>                                
                 {% endif %}
               </div>
-        </form>
+
        
     </div><!-- /.modal-content -->
 </div><!-- /.modal-dialog -->
+</form>
 {% endblock content %}
 {% block script %}
  {{ form.media.js }}
- <script>
+<script>
     let option = document.getElementById('setor{{setor.id}}');        
     option.setAttribute('class', 'active');					           
-  </script>
-  <script>
+</script>
+
+<script>
     $(document).ready(function(){            
         $(".enabled").attr("class", "disabled");
         $(".disabled a").removeAttr("href");    
         $(".date").css('pointer-events', 'none');       
     });
-  </script>
+</script>
  
-  <script>
-   $(document).ready(function(){
+<script>
+    $(document).ready(function(){
         $('.datepicker').datepicker({
             format: 'dd/mm/yyyy',
             minViewMode: "days",
@@ -97,11 +98,10 @@
         });            
     });
 </script>
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.10/jquery.mask.js"></script>
 
 <script>
-    
-    // Call hideShow when page is loaded
     $(document).ready(function(){
         {% comment %} $("#id_valor_unitario").parents('p:first').hide(); {% endcomment %}
         $('#id_interno').on('change',function(){
@@ -111,10 +111,11 @@
                 $('#id_valor_unitario').parents('p:first').show();
             }
         })
+        $('#teste').on('submit',function(){
+            $('#teste1').attr('disabled','disabled')
+        })
         
     })
-
 </script> 
-
 
 {% endblock script %}

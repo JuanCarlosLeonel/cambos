@@ -998,7 +998,7 @@ class ManutencaoDelete(DeleteView):
 class RelatorioEmpilhadeira(TemplateView):
     template_name = 'frota/relatorio_empilhadeira.html'
     def get_context_data(self, **kwargs):
-        # get_empilhadeira()
+        get_empilhadeira()
         context = super().get_context_data(**kwargs)     
         try:
             user_permission = FrotaPermissao.objects.get(usuario = self.request.user)
@@ -1007,33 +1007,33 @@ class RelatorioEmpilhadeira(TemplateView):
         context['permissoes'] = user_permission
         return context
 
-# def get_empilhadeira():  
-#     import requests
-#     json = {
-#         "client_id": config('client_id'),
-#         "client_secret": config('client_secret'),
-#         "grant_type": "password",
-#         "scope": "*",
-#         "username": "expedicaotecidos",
-#         "password": "expedicao"
-#     }
+def get_empilhadeira():  
+    import requests
+    json = {
+        "client_id": config('client_id'),
+        "client_secret": config('client_secret'),
+        "grant_type": "password",
+        "scope": "*",
+        "username": "expedicaotecidos",
+        "password": "expedicao"
+    }
 
-#     periodo = {
-# 	"periodo_inicial": "2022-01-01",
-# 	"periodo_final": "2022-04-04"
-#     }
+    periodo = {
+	"periodo_inicial": "2022-01-01",
+	"periodo_final": "2022-04-04"
+    }
 
-#     url = requests.post('http://192.168.0.16:8000/oauth/token', json)
-#     dados = url.json()
-#     token = dados['access_token']
-#     head = {}
-#     head['Authorization'] = 'Bearer ' + token
-#     urlmotoristas = requests.get('http://192.168.0.16:8000/api/motoristas',headers= head)
-#     urlservicos = requests.post('http://192.168.0.16:8000/api/relatorio-servicos',headers= head, json=periodo)
-#     urlmanutencoes = requests.post('http://192.168.0.16:8000/api/relatorio-manutencoes',headers= head, json=periodo)
-#     urlordem = requests.post('http://192.168.0.16:8000/api/relatorio-ordem',headers= head, json=periodo)
-#     urlalmoxarifado = requests.post('http://192.168.0.16:8000/api/relatorio-almoxarifado',headers= head, json=periodo)
-#     print(urlordem.json())
+    url = requests.post('http://192.168.0.16:8000/oauth/token', json)
+    dados = url.json()
+    token = dados['access_token']
+    head = {}
+    head['Authorization'] = 'Bearer ' + token
+    urlmotoristas = requests.get('http://192.168.0.16:8000/api/motoristas',headers= head)
+    urlservicos = requests.post('http://192.168.0.16:8000/api/relatorio-servicos',headers= head, json=periodo)
+    urlmanutencoes = requests.post('http://192.168.0.16:8000/api/relatorio-manutencoes',headers= head, json=periodo)
+    urlordem = requests.post('http://192.168.0.16:8000/api/relatorio-ordem',headers= head, json=periodo)
+    urlalmoxarifado = requests.post('http://192.168.0.16:8000/api/relatorio-almoxarifado',headers= head, json=periodo)
+    print(urlordem.json())
 
 
 
