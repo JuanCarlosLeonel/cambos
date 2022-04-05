@@ -114,12 +114,22 @@ class Abastecimento(models.Model):
             ('Gasolina', 'Gasolina'),             
             ('Álcool', 'Álcool'),                         
         )
+    RESPONSAVEL = (
+            ('JOAO LUIS SEMBOLONI', 'JOAO LUIS SEMBOLONI'),
+            ('ANTONIO PEDRO DE ARAUJO FILHO', 'ANTONIO PEDRO DE ARAUJO FILHO'),
+            ('ISAAC DA SILVA HERCULANO', 'ISAAC DA SILVA HERCULANO'),
+            ('PAULO VITOR TAVEIRA', 'PAULO VITOR TAVEIRA'),
+            ('JONATHAN CARVALHO XIMENES', 'JONATHAN CARVALHO XIMENES'),
+            ('VALDIR DONIZETTI FERREIRA', 'VALDIR DONIZETTI FERREIRA'),
+            ('LINDEMBERG RODRIGUES DA SILVA', 'LINDEMBERG RODRIGUES DA SILVA'),
+    )
     interno = models.BooleanField(default=False)
     veiculo        = models.ForeignKey(Veiculo, on_delete=models.DO_NOTHING, blank=True)
     combustivel = models.CharField(max_length=40, choices=COMBUSTIVEL)
     data           = models.DateField()        
     valor_unitario = models.FloatField(null=True,blank=True)
     quantidade     = models.FloatField()
+    responsavel    = models.CharField(max_length=40, null=True, choices=RESPONSAVEL)
 
     def __str__(self):
         return f'{self.veiculo}'

@@ -26,25 +26,137 @@
 	</div>
 </div><!--/.row-->
 <form class="has-warning">
-    <select class="btn_filtro" name="select-simples" class="ls-select" style="width:300px">
+    <select name="area" id="area" onchange="changeSelect();" class="btn_filtro" class="ls-select" style="width:300px">
         <option value="" disabled selected>Selecione o tipo de relatório</option>
-        <option value="0">Serviços</option>
-        <option value="1">Manutenções</option>
-        <option value="2">Ordem Serviço</option>
-        <option value="3">Almoxarifado</option>
-        <option value="4">Motoristas</option>
+        <option value="1">Serviços</option>
+        <option value="2">Manutenções</option>
+        <option value="3">Ordem Serviço</option>
+        <option value="4">Almoxarifado</option>
+        <option value="5">Motoristas</option>
     </select>
     <div>
-        <input class="btn_filtro" type="date" id="festa" name="festa"  style="width:148px" required>
-        <input class="btn_filtro" type="date" id="festa" name="festa"  style="width:148px" required>
+        <input class="btn_filtro" type="date" id="festa" style="width:148px" required>
+        <input class="btn_filtro" type="date" id="festa" style="width:148px" required>
         <span class="validity"></span>
     </div>
 </form>
 
+<table id="test_table" class="display table table-striped table-bordered" border="1" cellspacing="0" width="100%">
+    <thead>
+        <tr>
+            <th>MOTORISTA</th>
+            <th>SITUAÇÃO</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for m in resultadomotoristas %}
+            <tr>
+                <td>{{ m.nome }}</td>
+                <td>{{ m.situacao }}</td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table> 
+
+<table id="test_table" class="display table table-striped table-bordered" border="1" cellspacing="0" width="100%">
+    <thead>
+        <tr>
+            <th>SERVIÇO</th>
+            <th>QUANTIDADE</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for r in resultadoservicos %}
+            <tr>
+                <td>{{ r.servico }}</td>
+                <td>{{ r.quantidade }}</td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<table id="test_table" class="display table table-striped table-bordered" border="1" cellspacing="0" width="100%">
+    <thead>
+        <tr>
+            <th>RESPONSÁVEL</th>
+            <th>BOT. UTILIZADO</th>
+            <th>BOT. REPOSTO</th>
+            <th>EMPILHADERIA</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for r in resultadomanutencoes %}
+            <tr>
+                <td>{{ r.responsavel }}</td>
+                <td>{{ r.botijao_utilizado }}</td>
+                <td>{{ r.botijao_reposto }}</td>
+                <td>{{ r.empilhadeira_id }}</td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<table id="test_table" class="display table table-striped table-bordered" border="1" cellspacing="0" width="100%">
+    <thead>
+        <tr>
+            <th>SETOR</th>
+            <th>SERVIÇO</th>
+            <th>SITUAÇÃO</th>
+            <th>QUANTIDADE</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for r in resultadoordem %}
+            <tr>
+                <td>{{ r.setor }}</td>
+                <td>{{ r.servico }}</td>
+                <td>{{ r.situacao }}</td>
+                <td>{{ r.quantidade }}</td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<table id="test_table" class="display table table-striped table-bordered" border="1" cellspacing="0" width="100%">
+    <thead>
+        <tr>
+            <th>PRODUTO</th>
+            <th>QUANTIDADE</th>
+            <th>RESPONSÁVEL</th>
+            <th>DATA</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for r in resultadoalmoxarifado %}
+            <tr>
+                <td>{{ r.produto }}</td>
+                <td>{{ r.quantidade }}</td>
+                <td>{{ r.responsavel }}</td>
+                <td>{{ r.data }}</td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
 {% endblock content%}
 
 
 {% block script %}
+<script>
+    function changeSelect(){
+
+        var select = document.getElementById('area');
+        var selectSetor = document.getElementById('setor');
+
+        var value = select.options[select.selectedIndex].value;
+
+        //remove itens
+        var length = selectSetor.options.length;        
+        var i;
+        for(i = selectSetor.options.length-1 ; i>=0 ; i--)
+        {
+            selectSetor.remove(i);
+        }
+</script>
 <script>
 	const elements = document.querySelectorAll('.with-js')
 	for (let p of elements) {

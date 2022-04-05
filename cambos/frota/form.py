@@ -75,7 +75,8 @@ class AbastecimentoForm(forms.ModelForm):
             'combustivel',
             'data',
             'valor_unitario',            
-            'quantidade',            
+            'quantidade',   
+            'responsavel',         
         )
          
         widgets = {                                    
@@ -84,6 +85,7 @@ class AbastecimentoForm(forms.ModelForm):
             'data': forms.HiddenInput(),
             'valor_unitario': forms.NumberInput(attrs={'class':'form-control'}),            
             'quantidade': forms.NumberInput(attrs={'class':'form-control'}),
+            'responsavel': forms.Select(attrs={'class':'form-control'}),
         }
 
     def __init__(self, *args, **kwargs):
@@ -92,6 +94,7 @@ class AbastecimentoForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         self.fields['valor_unitario'].label = "Valor Total"
         self.fields['interno'].label = "INTERNO"
+        self.fields['responsavel'].label = "RESPONSÁVEL"
         if not inter:
             self.fields['interno'].widget = forms.HiddenInput()
         if inter:
