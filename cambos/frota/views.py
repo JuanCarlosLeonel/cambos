@@ -552,7 +552,7 @@ class RelatorioViagemCarro(ListView):
         somahora = datetime.timedelta()
         subdata = datetime.timedelta()
         for item in lista.qs:
-            if not item.veiculo.caminhao :
+            if not item.veiculo.caminhao and not item.veiculo.trator and not item.veiculo.gerador:
                 count += 1
                 if item.hora_final:
                     inicial = datetime.timedelta(hours=item.hora_inicial.hour, minutes=item.hora_inicial.minute, seconds=item.hora_inicial.second)

@@ -39,141 +39,158 @@
 {% endblock navigation %}
 
 {% block content %}
-<div class="panel panel-container">
-	<div class="col-12">												
-			<div id="identificado" class="col-xs-6 no-padding">					
-				<div class="panel panel-teal panel-widget border-right border-bottom" id="imprimir">
-					<h3>Relatório de Viagens <em class="fa fa-car"></em></h3>						
-				</div>
-			</div>						
-		<a href="{% url 'relatorio_abastecimentocarro' %}">				
-			<div id="identificado2" class="col-xs-6 no-padding">
-				<div class="panel panel-orange panel-widget border-right border-bottom">
-					<h3>Ir para Relatório de Abastecimento<i class="fas fa-gas-pump"></i></h3>
-				</div>
-			</div>
-		</a>
-	</div>
+<div id="loading" style="display: block">
+	<i class="fa fa-refresh fa-spin fa-10x fa-fw" style="top: 50%; left: 50%; margin: 300px 0 0 600px;" ></i>
 </div>
 
-<div class="col-12">
-	<div class="panel panel-default">
+<div id="conteudo" style="display: none">
+	<div class="panel panel-container">
+		<div class="col-12">												
+				<div id="identificado" class="col-xs-6 no-padding">					
+					<div class="panel panel-teal panel-widget border-right border-bottom" id="imprimir">
+						<h3>Relatório de Viagens <em class="fa fa-car"></em></h3>						
+					</div>
+				</div>						
+			<a href="{% url 'relatorio_abastecimentocarro' %}">				
+				<div id="identificado2" class="col-xs-6 no-padding">
+					<div class="panel panel-orange panel-widget border-right border-bottom">
+						<h3>Ir para Relatório de Abastecimento<i class="fas fa-gas-pump"></i></h3>
+					</div>
+				</div>
+			</a>
+		</div>
+	</div>
+
+	<div class="col-12">
 		<div class="panel panel-default">
-			<button type="button" class="btn_filtrar" data-toggle="modal"
-				data-target="#exampleModal">
-				FILTRAR
-			</button> <button class="btn_filtrar"><i onclick=window.print() class="fas fa-print"></i></button><br>
-			<strong class="text-danger"><i class="fa fa-road"></i>Em trânsito</strong>
-			<div class="panel-body" id="imprimir">
-				<table id="table"				
-				data-toolbar="#toolbar"
-				data-show-toggle="false"
-				data-show-columns="true"
-				data-select-item-name="toolbar"
-				data-pagination="true"				 
-				>
-					<thead>
-						<tr>						
-							<th data-field="Data Saída" data-formatter="dateFormat" data-sortable="true" class='text-center'>Data Saída</th>
-							<th data-field="Veiculo"  data-sortable="true" class='text-center'>Veiculo</th>																					
-							<th data-field="Destino"  data-sortable="true" class='text-center'>Destino</th>
-							<th data-field="Motorista" data-sortable="true" class='text-center'>Motorista</th>
-							<th data-field="Data Chegada"  data-formatter="dateFormat" data-sortable="true" class='text-center'>Data Chegada</th>
-							<th data-field="km" data-sortable="true" class='text-center'>Km Rodado</th>
-							<th data-field="tempo gasto" data-sortable="true" class='text-center'>Tempo gasto</th>
-						</tr>
-					</thead>
-					<tbody>
-						{%for item in filter.qs|dictsortreversed:"data_inicial"%}
-							{%if not item.veiculo.caminhao%}
-								<tr data-href="#"	
-								class="trLink" >
-									<td class='text-center' >									
-										{{item.data_inicial|safe}}									
-									</td>
-									<td class='text-center'>
-										{%if item.data_final%}
-											{%if item.veiculo.id == 3 %}
-												Fiat Palio</td>	
-											{%elif item.veiculo.id == 4 %}
-												Fiat Mobi
-											{%elif item.veiculo.id == 5 %}
-												Fiat Strada
+			<div class="panel panel-default">
+				<button type="button" class="btn_filtrar" data-toggle="modal"
+					data-target="#exampleModal">
+					FILTRAR
+				</button> <button class="btn_filtrar"><i onclick=window.print() class="fas fa-print"></i></button><br>
+				<strong class="text-danger"><i class="fa fa-road"></i>Em trânsito</strong>
+				<div class="panel-body" id="imprimir">
+					<table id="table"				
+					data-toolbar="#toolbar"
+					data-show-toggle="false"
+					data-show-columns="true"
+					data-select-item-name="toolbar"
+					data-pagination="true"				 
+					>
+						<thead>
+							<tr>						
+								<th data-field="Data Saída" data-formatter="dateFormat" data-sortable="true" class='text-center'>Data Saída</th>
+								<th data-field="Veiculo"  data-sortable="true" class='text-center'>Veiculo</th>																					
+								<th data-field="Destino"  data-sortable="true" class='text-center'>Destino</th>
+								<th data-field="Motorista" data-sortable="true" class='text-center'>Motorista</th>
+								<th data-field="Data Chegada"  data-formatter="dateFormat" data-sortable="true" class='text-center'>Data Chegada</th>
+								<th data-field="km" data-sortable="true" class='text-center'>Km Rodado</th>
+								<th data-field="tempo gasto" data-sortable="true" class='text-center'>Tempo gasto</th>
+							</tr>
+						</thead>
+						<tbody>
+							{%for item in filter.qs|dictsortreversed:"data_inicial"%}
+								{%if not item.veiculo.caminhao%}
+									<tr data-href="#"	
+									class="trLink" >
+										<td class='text-center' >									
+											{{item.data_inicial|safe}}									
+										</td>
+										<td class='text-center'>
+											{%if item.data_final%}
+												{%if item.veiculo.id == 3 %}
+													Fiat Palio</td>	
+												{%elif item.veiculo.id == 4 %}
+													Fiat Mobi
+												{%elif item.veiculo.id == 5 %}
+													Fiat Strada
+												{%endif%}
+											{% else %}
+												<lu class="trLink text-danger negrito">{{item.veiculo}}</lu>
+											{%endif%}							
+										<td class='text-center'>
+											{{item.destino|slice:"0:22"}}
+										</td>
+										<td class='text-center'>
+											{% if item.motorista %}
+												{{item.motorista.nome|slice:"0:12"}}.
+											{% else %}
+												-
 											{%endif%}
-										{% else %}
-											<lu class="trLink text-danger negrito">{{item.veiculo}}</lu>
-										{%endif%}							
-									<td class='text-center'>
-										{{item.destino|slice:"0:22"}}
-									</td>
-									<td class='text-center'>
-										{% if item.motorista %}
-											{{item.motorista.nome|slice:"0:12"}}.
-										{% else %}
-											-
-										{%endif%}
-									</td>
-									<td class='text-center' >	
-										{% if item.data_final%}																				
-											{{item.data_final|safe}}
-										{%else%}
-											-
-										{%endif%}																		
-									</td>
-									<td class='text-center' >
-										{%if item.kmfinalmenosinicial != none %}																					
-											{{item.kmfinalmenosinicial}} km
-										{%else%}
-											-
-										{%endif%}																		
-									</td>
-									<td class='text-center'>
-										{%if item.diagasto%}
-											{{ item.diagasto}} dias,
-										{%endif%}
-										<div class="with-js">
-										{%if item.hora_final > item.hora_inicial%}
+										</td>
+										<td class='text-center' >	
+											{% if item.data_final%}																				
+												{{item.data_final|safe}}
+											{%else%}
+												-
+											{%endif%}																		
+										</td>
+										<td class='text-center' >
+											{%if item.kmfinalmenosinicial != none %}																					
+												{{item.kmfinalmenosinicial}} km
+											{%else%}
+												-
+											{%endif%}																		
+										</td>
+										<td class='text-center'>
+											{%if item.diagasto%}
+												{{ item.diagasto}} dias,
+											{%endif%}
+											<div class="with-js">
+											{%if item.hora_final > item.hora_inicial%}
+												{%if item.horagasto != none%}																			
+													{{item.horagasto}}		
+												{%endif%}	
+											</div>		
+											{%endif%}	
 											{%if item.horagasto != none%}																			
 												{{item.horagasto}}		
-											{%endif%}	
-										</div>		
-										{%endif%}	
-										{%if item.horagasto != none%}																			
-											{{item.horagasto}}		
-										{%endif%}												
-									</td>
-							{%endif%}
-						{% endfor %}
-					</tbody>
-				</table>
-			<h4><i class="fa fa-car"></i> Total de Viagens Realizadas: <b>{{counter}}</b></h4>
-			<h4><i class="fa fa-tachometer"></i> Total de KM Rodados: <b>{{somakm}}</b></h4>
-			<h4><i class="fa fa-clock-o"></i> Total de Tempo Gasto: <b>{{horas|floatformat:0}}h : {{minutos|floatformat:0}}m</b></h4>			
+											{%endif%}												
+										</td>
+								{%endif%}
+							{% endfor %}
+						</tbody>
+					</table>
+				<h4><i class="fa fa-car"></i> Total de Viagens Realizadas: <b>{{counter}}</b></h4>
+				<h4><i class="fa fa-tachometer"></i> Total de KM Rodados: <b>{{somakm}}</b></h4>
+				<h4><i class="fa fa-clock-o"></i> Total de Tempo Gasto: <b>{{horas|floatformat:0}}h : {{minutos|floatformat:0}}m</b></h4>			
+			</div>
 		</div>
 	</div>
-</div>
 
-<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-	<div class="modal-dialog" role="document">
-		<div class="modal-content">
-		<div class="modal-header">
-			<h5 class="modal-title titulo_filtrar" id="exampleModalLabel">Selecione os Filtros</h5>
-		</div>
-		<div class="modal-body">
-			<form method="GET">
-				{{filter.form.as_p}}
-			<input class="btn_filtrar_modal" type="submit" value="FILTRAR">
-			</form>
-		</div>
-		
+	<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title titulo_filtrar" id="exampleModalLabel">Selecione os Filtros</h5>
+			</div>
+			<div class="modal-body">
+				<form method="GET">
+					{{filter.form.as_p}}
+				<input class="btn_filtrar_modal" type="submit" value="FILTRAR">
+				</form>
+			</div>
+			
+			</div>
 		</div>
 	</div>
-</div>
+{% comment %} </div> {% endcomment %}
 
 
 {% endblock content%}
 
 {% block script %}
+<script>
+var i = setInterval(function () {
+    
+    clearInterval(i);
+  
+    document.getElementById("loading").style.display = "none";
+    document.getElementById("conteudo").style.display = "inline";
+
+}, 2000);
+</script>
+
 <script>
 	const elements = document.querySelectorAll('.with-js')
 	for (let p of elements) {
