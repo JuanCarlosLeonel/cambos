@@ -67,7 +67,15 @@
 						<a href="{% url 'veiculo_index' item.pk  %}">		
 							<div class="col-xs-6 no-padding">
 								<div class="panel panel-blue panel-widget border-right border-bottom">
-									<div class="row no-padding"><span class="color-red"> <em class="fa fa-truck fa-2x"></em></span>
+									{% if item.id == 1 %}
+										<div class="row no-padding"><span class="color-gray"> <em class="fa fa-truck fa-2x"></em></span>
+									{% elif item.id == 2 %}
+										<div class="row no-padding"><span class="color-red"> <em class="fa fa-truck fa-2x"></em></span>
+									{% elif item.id == 7 %}
+										<div class="row no-padding"><span class="color-red"> <em class="fa fa-truck fa-2x"></em></span>
+									{% elif item.id == 6 %}
+										<div class="row no-padding"><span class="color-blue"> <em class="fa fa-truck fa-2x"></em></span>
+									{% endif %}
 										<h2>{{item.descricao}}</h2>
 										{%for lista in lista_viagem%}
 											{%if lista.veiculo.id == item.id%}

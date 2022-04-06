@@ -40,6 +40,7 @@
 							<th data-field="Combustivel" data-sortable="true" class='text-center'>Combustível</th>														
 							<th data-field="Valor"  data-sortable="true" class='text-center'>Valor Abas.</th>
 							<th data-field="Quantidade" data-sortable="true" class='text-center'>Quantidade(l)</th>
+							<th data-field="Responsavel" data-sortable="true" class='text-center'>Responsável</th>
 						</tr>
 					</thead>
 					<tbody>
@@ -53,6 +54,7 @@
 								<td class='text-center' >{{item.combustivel}}</td>
 								<td class='text-center'>{{item.valor_unitario|floatformat:2}}</td>
 								<td class='text-center'>{{item.quantidade}}</td>
+								<td class='text-center'>{{item.responsavel}}</td>
 						{% endfor %}
 					</tbody>
 				</table>			

@@ -132,7 +132,7 @@
         totalRows: 0, // server side need to set
         pageNumber: 1,
         pageSize: 25,
-        pageList: [5,10, 25, 50, 100],
+        pageList: [5,10, 25, 50, 100, 200, 300],
         search: false,
         selectItemName: 'btSelectItem',
         showHeader: true,

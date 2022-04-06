@@ -84,6 +84,7 @@
 						<th data-field="Tipoabastecimento" data-sortable="true" class='text-center'>Tipo</th>												
 						<th data-field="Valor"  data-sortable="true" class='text-center'>Valor Abas.</th>
 						<th data-field="Quantidade" data-sortable="true" class='text-center'>Quantidade(L)</th>
+						<th data-field="Responsavel" data-sortable="true" class='text-center'>Responsável</th>
 					</tr>
 				</thead>
 				<tbody>
@@ -107,6 +108,13 @@
 								R${{item.valor_unitario|floatformat:2}}												
 							</td>
 							<td class='text-center'>{{item.quantidade|floatformat:1}}</td>
+							<td class='text-center'>
+								{% if item.responsavel %}
+									{{item.responsavel}}
+								{% else %}
+									-
+								{% endif %}
+							</td>
 						{%endif%}
 					{% endfor %}
 				</tbody>
