@@ -6,7 +6,7 @@ from django import db
 from django.db import IntegrityError, models
 from django.db.models.constraints import CheckConstraint, UniqueConstraint
 from django.db.models import Q, F
-from core.models import Pessoa, Ativo, User , UserCompras, Enderecos
+from core.models import Pessoa, Ativo, User , UserCompras, Enderecos, SetoresPortal
 from django_currentuser.db.models import CurrentUserField
 import datetime
 from django.core.exceptions import ValidationError
@@ -18,6 +18,7 @@ class Veiculo(models.Model):
     caminhao    = models.BooleanField(default=False)
     gerador     = models.BooleanField(default=False)
     trator      = models.BooleanField(default=False)
+    empilhadeira= models.BooleanField(default=False)
 
     def __str__(self):
         return f'{self.descricao}'
@@ -28,6 +29,7 @@ class Veiculo(models.Model):
 class Motorista(models.Model):
     nome = models.ForeignKey(Pessoa, null=True, on_delete=models.DO_NOTHING, db_constraint=False)
     cnh = models.CharField(max_length=20)
+    empilhadeirista = models.BooleanField(default=False)
     
     def __str__(self):
         return f'{self.nome}'
@@ -200,6 +202,7 @@ class SolicitacaoViagem(models.Model):
     quantidade = models.IntegerField(db_column='quantidade',null=True,blank=True)
     peso = models.FloatField(db_column='peso')
     produtos = models.TextField()
+    horaentrega_coleta = models.TextField(db_column='horario',null=True)
     data_solicitacao = models.DateTimeField(db_column='data_solicitacao')
     data_atendimento = models.DateTimeField(db_column='data_atendimento',null=True)
     data_finalizacao = models.DateTimeField(db_column='data_finalizacao',null=True)
@@ -214,6 +217,17 @@ class SolicitacaoViagem(models.Model):
     class Meta:
         managed = False
         db_table = 'frota"."viagem_solicitacoes'
+
+class PedidoItem(models.Model):
+    compras_pedido_id = models.IntegerField(db_column='compras_pedido_id',null=True)
+    compras_produto_id = models.IntegerField(db_column='compras_produto_id', null=True)
+    
+    def __str__(self):
+        return str(self.compras_pedido_id)
+
+    class Meta:
+        managed = False
+        db_table = 'souzacambos"."compras_pedido_items' 
 
 
 class Infracao(models.Model):    
@@ -350,7 +364,65 @@ class ControleVisitantes(models.Model):
     class Meta:        
         db_table = 'frota"."controle_visitante'
 
+#EMPILHADEIRAS
+class Servicos(models.Model):
+    TIPOSERVICO= (
+            ('Ordem Serviço', 'Ordem Serviço'),
+            ('Manutençao', 'Manutenção'),            
+        )
+    TIPOMANUTENCAO= (
+            ('Preventiva', 'Preventiva'),
+            ('Corretiva', 'Corretiva'),       
+        )
+    descricao = models.CharField(max_length=80)
+    quantidade = models.IntegerField(blank=True, null=True)
+    motorista = models.ForeignKey(Motorista,on_delete=models.DO_NOTHING, db_constraint=False)
+    empilhadeira = models.ForeignKey(Veiculo, on_delete=models.DO_NOTHING, db_constraint=False)
+    data_inicial = models.DateField(blank=True, null=True)
+    data_final   = models.DateField(blank=True, null=True)
+    hora_inicial = models.TimeField(blank=True, null=True)
+    hora_final   = models.TimeField(blank=True, null=True)
+    tipo_servico = models.CharField(choices=TIPOSERVICO, max_length=20, null=True)
+    tipo_manutencao = models.CharField(choices=TIPOMANUTENCAO, max_length=20, null=True)
+
+    def __str__(self):
+        return f'{self.descricao}'
+
+    class Meta:        
+        db_table = 'frota"."empilhadeira_servico'
 
 
+class Ordem(models.Model):
+    SITUACAO= (
+            ('1', 'Aberto'),
+            ('2', 'Em atendimento'),    
+            ('3', 'Finalizado'),          
+        )
+    setor = models.ForeignKey(SetoresPortal,on_delete=models.SET_NULL, blank=True, null=True)
+    descricao = models.CharField(max_length=80)
+    quantidade = models.IntegerField(blank=True, null=True)
+    situacao = models.CharField(choices=SITUACAO, max_length=1)
+    servico = models.ForeignKey(Servicos,on_delete=models.DO_NOTHING, null=True)
+    observacao = models.CharField(max_length=80,null=True)
+    created_at = models.DateTimeField()
+
+    def __str__(self):
+        return f'{self.descricao}'
+
+    class Meta:        
+        db_table = 'frota"."empilhadeira_ordem'
+
+
+class ManutencaoEmpilhadeira(models.Model):
+    empilhadeira = models.ForeignKey(Veiculo, on_delete=models.SET_NULL, blank=True, null=True)
+    botijaoreposto = models.CharField(max_length=2)
+    botijaoutilizado = models.CharField(max_length=2)
+    responsavel = models.TextField(max_length=100)
+
+    def __str__(self):
+        return f'{self.empilhadeira}'
+
+    class Meta:        
+        db_table = 'frota"."empilhadeira_manutencao'
 
 

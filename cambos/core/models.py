@@ -65,6 +65,19 @@ class Pessoa(models.Model):
         managed = False
         db_table = 'souzacambos"."colaboradors' 
 
+class SetoresPortal(models.Model):
+    id = models.AutoField(db_column='id', primary_key = True)
+    nome = models.CharField(db_column='nome',max_length=80, blank=True)
+
+    def __str__(self):
+        return f'{self.nome}'
+
+    class Meta:
+        managed = False
+        db_table = 'souzacambos"."setores' 
+
+
+
 
 class Ativo(models.Model):    
     id = models.AutoField(db_column='id', primary_key=True)

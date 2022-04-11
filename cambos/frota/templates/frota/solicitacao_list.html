@@ -10,29 +10,13 @@
             <li><a href="{% url 'frota_index' %}">
                 <em class="fa fa-home"></em>
             </a></li>
-            <li class="active"><a href="{% url 'veiculo_list' %}">Veículos</a></li>
+			<li class="active">Solicitações</li>
         </ol>	
     </div><!--/.row-->
 	
 	<div class="row">
         <div class="col-lg-12">
 			<h4><b>Solicitações :</b></h4>
-			{% comment %} <p>
-				Veículo: 
-				<strong>{{viag.veiculo}}</strong>
-			</p>
-			<p>
-				Destino: 
-				<strong>{{viag.destino}}</strong>
-			</p>
-			<p>
-				Motorista: 
-				<strong>{{viag.motorista.nome}} / {{viag.motorista2.nome}}</strong>
-			</p>
-			<p>
-				Data Saída: 
-				<strong>{{viag.data_inicial|date:"d/m/Y"}} </strong>
-			</p> {% endcomment %}
         </div>
     </div><!--/.row-->
 {% endblock navigation %}
@@ -43,6 +27,7 @@
 		<div id="toolbar">		
 			<a href="{% url 'solicitacao_create' %}" class="btn_filtrar" data-toggle="modal">
 				<i class="fa fa-plus"></i>Nova Solicitação
+				{{itempedido}}
 			</a>
 		</div>
 	</div>
@@ -78,6 +63,7 @@
 						<th class="text-center">CEP</th>
 						<th data-field="Data Prevista" class='text-center'>Data Prevista</th>
 						<th data-field="Data Solicitação"class='text-center'>Data Solicitação</th>
+						<th data-field="Horário de Entrega/Coleta"class='text-center'>Hor. Entrega/Coleta</th>
 					</tr>
 				</thead>
 				<tbody>
@@ -114,7 +100,21 @@
                                     Normal
                                 {%endif%}																		
                             </td>
-							<td class='text-center'>{{ data.produtos }}</td>
+							<td class='text-center'>
+								{% if data.compras_pedido_id %}
+									{% for item in pedidoitem %}
+										{% if data.compras_pedido_id == item.compras_pedido_id %}
+											{% for atv in ativo %}
+												{% if item.compras_produto_id == atv.id %}
+													{{ atv.descricao }}
+												{% endif %}
+											{% endfor %}
+										{% endif %}
+									{% endfor %}
+								{% elif not data.compras_pedido_id %}
+									{{ data.produtos }}
+								{% endif %}
+							</td>
                             <td class='text-center'>{{ data.peso }}</td>
 							<td class='text-center'>{{ data.quantidade }}</td>
                             <td class='text-center'>
@@ -137,6 +137,12 @@
                             </td>
                             <td class='text-center'>{{ data.data_prevista|date:"d/m/y" }}</td>
                             <td class='text-center'>{{ data.data_solicitacao|date:"d/m/y H:i" }}</td>
+							<td class='text-center'>
+								{% if data.horaentrega_coleta %}
+									{{ data.horaentrega_coleta}}
+								{% else %}
+									-
+								{% endif %}
 					{% endfor %}
 				</tbody>
 			</table>

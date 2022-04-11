@@ -1,14 +1,13 @@
 import json
-from urllib import request
 from django.shortcuts import render, redirect
 from django.views.generic.base import TemplateView
 from django.views.generic.edit import UpdateView, CreateView, DeleteView
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
 from django.views.generic.list import ListView
-from core.models import Enderecos, UserCompras
-from .models import Abastecimento, ControleVisitantes, EstoqueDiesel, FrotaBot, ItemViagem, Manutencao, Motorista, Movimentacoes, Viagem, Veiculo, FrotaPermissao, SolicitacaoViagem
-from .form import ManutencaoForm, SolicitacaoForm, SolicitacaoMotoristaForm, ViagemForm, AbastecimentoForm, EnderecoForm, VisitanteForm
+from core.models import Enderecos, UserCompras, Ativo
+from .models import Abastecimento, ControleVisitantes, EstoqueDiesel, FrotaBot, ItemViagem, Manutencao, Motorista, Movimentacoes, Servicos, Viagem, Veiculo, FrotaPermissao, SolicitacaoViagem, PedidoItem
+from .form import ManutencaoForm, SolicitacaoForm, SolicitacaoMotoristaForm, ViagemForm, AbastecimentoForm, EnderecoForm, VisitanteForm, ServicoForm
 from django.http import HttpResponse, JsonResponse
 from django.db.models import Sum
 import datetime
@@ -17,6 +16,9 @@ from django.template.loader import render_to_string
 import telegram
 from django.db.models.signals import post_save
 from decouple import config
+from django.contrib import messages
+from django.contrib.messages import constants
+import requests
 
 def enviar(sender, instance, created, **kwargs):
     if created:
@@ -343,6 +345,10 @@ class SolicitacoesList(TemplateView):
             user_permission = FrotaPermissao.objects.get(usuario = self.request.user)
         except:
             user_permission = {} 
+        itempedido = PedidoItem.objects.all()
+        ativo = Ativo.objects.all()
+        context['pedidoitem'] = itempedido
+        context['ativo'] = ativo
         context['peso'] = peso
         context['permissoes'] = user_permission
         context['itemviagem'] = itemviagem
@@ -552,7 +558,7 @@ class RelatorioViagemCarro(ListView):
         somahora = datetime.timedelta()
         subdata = datetime.timedelta()
         for item in lista.qs:
-            if not item.veiculo.caminhao and not item.veiculo.trator and not item.veiculo.gerador:
+            if not item.veiculo.caminhao and not item.veiculo.trator and not item.veiculo.gerador and not item.veiculo.empilhadeira:
                 count += 1
                 if item.hora_final:
                     inicial = datetime.timedelta(hours=item.hora_inicial.hour, minutes=item.hora_inicial.minute, seconds=item.hora_inicial.second)
@@ -595,7 +601,7 @@ class RelatorioAbastecimento(ListView):
         tot = 0
         valor = 0
         for item in abastecimento.qs:
-            if not item.veiculo.caminhao and not item.veiculo.trator and not item.veiculo.gerador:
+            if not item.veiculo.caminhao and not item.veiculo.trator and not item.veiculo.gerador and not item.veiculo.gerador:
                 tot += item.quantidade
                 valor += item.valor_unitario
         try:
@@ -658,6 +664,10 @@ class SolicitacaoList(ListView):
         except:
             user_permission = {} 
         context['permissoes'] = user_permission
+        itempedido = PedidoItem.objects.all()
+        ativo = Ativo.objects.all()
+        context['pedidoitem'] = itempedido
+        context['ativo'] = ativo
         return context
 
 @method_decorator(login_required, name='dispatch')
@@ -995,57 +1005,107 @@ class ManutencaoDelete(DeleteView):
     def get_success_url(self):
         return f'/frota/viagem_list/{self.object.veiculo.id}'
 
-# @method_decorator(login_required, name='dispatch')
-# class RelatorioEmpilhadeira(TemplateView):
-#     template_name = 'frota/relatorio_empilhadeira.html'
-#     def get_context_data(self, **kwargs):
-#         import requests
-#         jso = {
-#             "client_id": config('client_id'),
-#             "client_secret": config('client_secret'),
-#             "grant_type": "password",
-#             "scope": "*",
-#             "username": "expedicaotecidos",
-#             "password": "expedicao"
-#         }
-#         periodo = {
-#             "periodo_inicial": "2022-01-01",
-#             "periodo_final": "2022-04-04"
-#         }
-#         url = requests.post('http://192.168.0.16:8000/oauth/token', jso)
-#         dados = url.json()
-#         token = dados['access_token']
-#         head = {}
-#         head['Authorization'] = 'Bearer ' + token
-#         urlmotoristas = requests.get('http://192.168.0.16:8000/api/motoristas',headers= head)
-#         responsemotoristas = json.loads(urlmotoristas.content)
-#         resultadomotoristas = responsemotoristas
-#         urlservicos = requests.post('http://192.168.0.16:8000/api/relatorio-servicos',headers= head, json=periodo)
-#         responseservicos = json.loads(urlservicos.content)
-#         resultadoservicos = responseservicos
-#         urlmanutencoes = requests.post('http://192.168.0.16:8000/api/relatorio-manutencoes',headers= head, json=periodo)
-#         responsemanutencoes = json.loads(urlmanutencoes.content)
-#         resultadomanutencoes = responsemanutencoes
-#         urlordem = requests.post('http://192.168.0.16:8000/api/relatorio-ordem',headers= head, json=periodo)
-#         responseordem = json.loads(urlordem.content)
-#         resultadoordem = responseordem
-#         urlalmoxarifado = requests.post('http://192.168.0.16:8000/api/relatorio-almoxarifado',headers= head, json=periodo)
-#         responsealmoxarifado = json.loads(urlalmoxarifado.content)
-#         resultadoalmoxarifado = responsealmoxarifado
-#         print(resultadoordem)
-#         context = super().get_context_data(**kwargs)     
+# @login_required
+# def RelatorioEmpilhadeira(request):
+#     if request.method == "GET":
 #         try:
-#             user_permission = FrotaPermissao.objects.get(usuario = self.request.user)
+#             user_permission = FrotaPermissao.objects.get(usuario = request.user)
 #         except:
-#             user_permission = {} 
-#         context['permissoes'] = user_permission
-#         context['resultadomotoristas'] = resultadomotoristas
-#         context['resultadoservicos'] = resultadoservicos['servicos']
-#         context['resultadomanutencoes'] = resultadomanutencoes['manutencoes']
-#         context['resultadoordem'] = resultadoordem['ordem']
-#         context['resultadoalmoxarifado'] = resultadoalmoxarifado['registros']
-#         return context
+#             user_permission = {}
+#         periodo_inicial = request.GET.get('periodo_inicial')
+#         periodo_final = request.GET.get('periodo_final')
+#         categoria = request.GET.get('categoria')
+
+#         if periodo_inicial or periodo_final or categoria:
+#             if not periodo_inicial:
+#                 messages.add_message(request, constants.ERROR, 'Período inicial é obrigatório para gerar o relatório.')
+#                 return render(request, 'frota/relatorio_empilhadeira.html', {'permissoes':user_permission})
+#             if not periodo_final:
+#                 messages.add_message(request, constants.ERROR, 'Período Final é Obrigatório para gerar o relatório.')
+#                 return render(request, 'frota/relatorio_empilhadeira.html', {'permissoes':user_permission})
+
+#             periodo = {
+#                 "periodo_inicial": str(periodo_inicial),
+#                 "periodo_final": str(periodo_final)
+#                 }
+
+#             categorias ={
+#                 'S': 'http://192.168.0.16:8000/api/relatorio-servicos',
+#                 'MA':'http://192.168.0.16:8000/api/relatorio-manutencoes',
+#                 'O': 'http://192.168.0.16:8000/api/relatorio-ordem',
+#                 'A': 'http://192.168.0.16:8000/api/relatorio-almoxarifado',
+#             }
+            
+#             urlc = categorias[categoria]
+
+#             jso = {
+#                 "client_id": config('client_id'),
+#                 "client_secret": config('client_secret'),
+#                 "grant_type": "password",
+#                 "scope": "*",
+#                 "username": "expedicaotecidos",
+#                 "password": "expedicao"
+#             }
+
+#             url = requests.post('http://192.168.0.16:8000/oauth/token', jso)
+#             dados = url.json()
+#             token = dados['access_token']
+#             head = {}
+#             head['Authorization'] = 'Bearer ' + token
+
+#             resultado = requests.post(urlc, headers=head, json=periodo)
+#             resultado = json.loads(resultado.content)
+#         else:
+#             return render(request, 'frota/relatorio_empilhadeira.html', {'permissoes':user_permission})
+#         return render(request, 'frota/relatorio_empilhadeira.html', {'categoria': categoria, 'resultado': resultado, 'periodo':periodo, 'permissoes':user_permission})
 
 
+# @method_decorator(login_required, name='dispatch')
+# class OrdemCreate(CreateView):
+#     model = Ordem
+#     form_class = OrdemForm
+
+#     def get_success_url(self):        
+#         return '/frota/empilhadeira_index'
+    
+#     def get_context_data(self, **kwargs):
+#         context = super().get_context_data(**kwargs)  
+#         return context        
+    
+#     def get_initial(self, *args, **kwargs):
+#         initial = super(OrdemCreate, self).get_initial(**kwargs)
+#         initial['data'] = datetime.date.today()
+#         return initial
 
 
+@method_decorator(login_required, name='dispatch')
+class EmpilhadeiraIndex(TemplateView):
+    template_name = 'frota/empilhadeira_index.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)                
+        try:
+            user_permission = FrotaPermissao.objects.get(usuario = self.request.user)
+        except:
+            user_permission = {}
+        context['permissoes'] = user_permission
+        return context
+
+
+@method_decorator(login_required, name='dispatch')
+class ServicoEmpilhadeiraCreate(CreateView):
+    model = Servicos
+    form_class = ServicoForm
+
+    def get_success_url(self):        
+        return '/frota/empilhadeira_index'
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)  
+        return context        
+    
+    def get_initial(self, *args, **kwargs):
+        initial = super(ServicoEmpilhadeiraCreate, self).get_initial(**kwargs)
+        initial['data_inicial'] = datetime.date.today()
+        initial['hora_inicial'] = datetime.datetime.now()
+        return initial

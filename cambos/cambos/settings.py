@@ -9,7 +9,7 @@ https://docs.djangoproject.com/en/3.0/ref/settings/
 
 import os
 from decouple import config
-
+from django.contrib.messages import constants
 from requests.api import options
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
@@ -186,3 +186,11 @@ LOGOUT_REDIRECT_URL = 'login'
 DECIMAL_SEPARATOR = ','
 USE_THOUSAND_SEPARATOR = True
 DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
+
+MESSAGE_TAGS = {
+    constants.DEBUG: 'alert-primary',
+    constants.ERROR: 'alert-danger',
+    constants.SUCCESS: 'alert-success',
+    constants.INFO: 'alert-info',
+    constants.WARNING: 'alert-warning',
+}

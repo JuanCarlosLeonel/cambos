@@ -28,7 +28,7 @@
 		<div class="panel panel-container">
 			<div class="row">		
 				{%for item in object_list%}
-				{%if not item.caminhao and not item.trator and not item.gerador%}
+				{%if not item.caminhao and not item.trator and not item.gerador and not item.empilhadeira%}
 				<a href="{% url 'veiculo_index' item.pk  %}">		
 					<div class="col-xs-6 no-padding">
 						<div class="panel panel-blue panel-widget border-right border-bottom">

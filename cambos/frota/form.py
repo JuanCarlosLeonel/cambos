@@ -2,7 +2,7 @@ from random import choices
 from django import forms
 
 from core.models import Enderecos
-from .models import ControleVisitantes, Manutencao, Viagem, Abastecimento, SolicitacaoViagem
+from .models import ControleVisitantes, Manutencao, Viagem, Abastecimento, SolicitacaoViagem, Servicos
 from django_select2.forms import Select2Widget
 
 from frota import models
@@ -117,6 +117,7 @@ class SolicitacaoForm(forms.ModelForm):
             'peso',
             'quantidade',
             'produtos',
+            'horaentrega_coleta',
             'data_solicitacao',     
         )
          
@@ -131,6 +132,7 @@ class SolicitacaoForm(forms.ModelForm):
             'prioridade': forms.Select(attrs={'class':'form-control'}),
             'peso': forms.NumberInput(attrs={'class':'form-control'}),
             'quantidade': forms.NumberInput(attrs={'class':'form-control'}),
+            'horaentrega_coleta': forms.TextInput(attrs={'class':'form-control'}),
             'produtos': forms.TextInput(attrs={'class':'form-control'}),
             'data_prevista': forms.DateInput(attrs={'data-mask':'00/00/0000','class':'form-control datepicker'}),
             'data_solicitacao': forms.HiddenInput(),  
@@ -140,6 +142,7 @@ class SolicitacaoForm(forms.ModelForm):
         super().__init__(*args, **kwargs)       
         self.fields['user'].label = "Solicitante"
         self.fields['produtos'].label = "Produto"
+        self.fields['horaentrega_coleta'].label = "Horário de Entrega/Coleta"
 
 
 class SolicitacaoMotoristaForm(forms.ModelForm):
@@ -224,3 +227,37 @@ class ManutencaoForm(forms.ModelForm):
             'descricao': forms.TextInput(attrs={'class':'form-control'}),
         }
 
+
+class ServicoForm(forms.ModelForm):
+    class Meta:
+        model = Servicos
+        fields = (            
+            'motorista',
+            'empilhadeira',            
+            'descricao', 
+            'data_inicial',
+            'hora_inicial', 
+            # 'data_final',            
+            # 'hora_final',    
+        )
+         
+        widgets = {     
+            'motorista': Select2Widget(                
+                attrs={'class':'form-control'},                
+            ),                                
+            'empilhadeira': Select2Widget(                
+                attrs={'class':'form-control', 'autofocus': 'autofocus'},                
+            ),  
+            'descricao': forms.TextInput(attrs={'class':'form-control'}),     
+            'data_inicial':forms.HiddenInput(attrs={'data-mask':'00/00/0000','class':'form-control datepicker'}), 
+            'hora_inicial': forms.HiddenInput(attrs={'data-mask':'00:00','class':'form-control'}),            
+            # 'data_final':forms.DateInput(attrs={'class':'form-control datepicker'}),                
+            # 'hora_final': forms.TimeInput(attrs={'data-mask':'00:00','class':'form-control'}),          
+        }
+        
+    def __init__(self, *args, **kwargs):  
+        super().__init__(*args, **kwargs)       
+        self.fields['motorista'].queryset = models.Motorista.objects.filter(empilhadeirista=True)
+        self.fields['empilhadeira'].queryset = models.Veiculo.objects.filter(empilhadeira=True)
+        self.fields['motorista'].label = "Colaborador"
+        self.fields['descricao'].label = "Serviço Prestado"

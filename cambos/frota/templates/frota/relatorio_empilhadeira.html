@@ -1,7 +1,6 @@
 {% extends "cambos/base_frota.html" %}
 {% load static %}
-{% block css %}
-{% endblock css %}
+{% block css %}{% endblock css %}
 
 {% block navigation %}
 <div class="row">		
@@ -10,10 +9,10 @@
             <em class="fa fa-home"></em>
         </a></li>
         <li class="active"><a href="{% url 'relatorio_index' %}">
-            Menu Anterior
+            Voltar para Relatórios
         </a></li>
     </ol>	
-</div><!--/.row-->
+</div>
 	
 {% endblock navigation %}
 
@@ -21,142 +20,184 @@
 <div class="row">
 	<div class="col-lg-12">
 		<p>
-			<h4><strong >Empilhadeiras</strong><span class="color-red"><i class="fa fa-dolly"></i></span> </h4> 
+		    <h4><strong>Relatório Empilhadeiras</strong><span class="color-red"><i class="fa fa-dolly fa-2x"></i></span> </h4> 
 		</p>
 	</div>
-</div><!--/.row-->
-<form class="has-warning">
-    <select name="area" id="area" onchange="changeSelect();" class="btn_filtro" class="ls-select" style="width:300px">
-        <option value="" disabled selected>Selecione o tipo de relatório</option>
-        <option value="1">Serviços</option>
-        <option value="2">Manutenções</option>
-        <option value="3">Ordem Serviço</option>
-        <option value="4">Almoxarifado</option>
-        <option value="5">Motoristas</option>
-    </select>
-    <div>
-        <input class="btn_filtro" type="date" id="festa" style="width:148px" required>
-        <input class="btn_filtro" type="date" id="festa" style="width:148px" required>
-        <span class="validity"></span>
+</div>
+
+{% if messages %}
+    {% for message in messages %}
+        <div class="alert {{message.tags}}">
+            {{message}}
+        </div>
+    {% endfor %}
+{% endif %}
+
+<div class="row">
+    <div class="col-lg-12">
+        <form action="{% url 'relatorio_empilhadeira' %}" method="GET"> {% csrf_token %}
+            <div class="col-sm">
+                <select class="btn_filtro" name="categoria">
+                    <option value="" disabled selected>Selecione o tipo de relatório</option>
+                    <option value="S">Serviços</option>
+                    <option value="MA">Manutenções</option>
+                    <option value="O">Ordem Serviço</option>
+                    <option value="A">Almoxarifado</option>
+                </select>
+                <br>
+            </div>
+            <div class="col-sm">
+                <input type="date" class="btn_filtro" name="periodo_inicial">
+                <br>
+                <input type="date" class="btn_filtro" name="periodo_final">
+            </div>
+            <input type="submit" class="btn" style="font-size: 15px; background-color: #92eed2" value="FILTRAR">
+        </form>
     </div>
-</form>
+</div>
 
+<br>
+{%if categoria == 'S'%}
 <table id="test_table" class="display table table-striped table-bordered" border="1" cellspacing="0" width="100%">
-    <thead>
+    <p>
+        <h4><strong>Período selecionado:</strong> {{periodo.periodo_inicial|slice:"8:"}}/{{periodo.periodo_inicial|slice:"5:7"}}/{{periodo.periodo_inicial|slice:"0:4"}} a {{periodo.periodo_final|slice:"8:"}}/{{periodo.periodo_final|slice:"5:7"}}/{{periodo.periodo_final|slice:"0:4"}}</h4>
+        <h4><strong>Tempo Total:</strong> {{resultado.horas}}Horas e {{resultado.minutos}}Minutos</h4>
+        <h3><strong >Relatório de Serviços</strong><span class="color-red"></span></h3> 
+    </p>
+    <thead style="color: #92eed2; font-size: 19px" >
         <tr>
-            <th>MOTORISTA</th>
-            <th>SITUAÇÃO</th>
+            <th class="text-center">Empilhadeira</th>
+            <th class="text-center">Serviço</th>
+            <th class="text-center">Quantidade</th>
+            <th class="text-center">Motorista</th>
+            <th class="text-center">Data/Hora Início</th>
+            <th class="text-center">Data/Hora Fim</th>
+            <th class="text-center">Horas de Uso</th>
         </tr>
     </thead>
     <tbody>
-        {% for m in resultadomotoristas %}
+        {% for r in resultado.servicos %}
             <tr>
-                <td>{{ m.nome }}</td>
-                <td>{{ m.situacao }}</td>
-            </tr>
-        {% endfor %}
-    </tbody>
-</table> 
-
-<table id="test_table" class="display table table-striped table-bordered" border="1" cellspacing="0" width="100%">
-    <thead>
-        <tr>
-            <th>SERVIÇO</th>
-            <th>QUANTIDADE</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for r in resultadoservicos %}
-            <tr>
-                <td>{{ r.servico }}</td>
-                <td>{{ r.quantidade }}</td>
-            </tr>
-        {% endfor %}
-    </tbody>
-</table>
-
-<table id="test_table" class="display table table-striped table-bordered" border="1" cellspacing="0" width="100%">
-    <thead>
-        <tr>
-            <th>RESPONSÁVEL</th>
-            <th>BOT. UTILIZADO</th>
-            <th>BOT. REPOSTO</th>
-            <th>EMPILHADERIA</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for r in resultadomanutencoes %}
-            <tr>
-                <td>{{ r.responsavel }}</td>
-                <td>{{ r.botijao_utilizado }}</td>
-                <td>{{ r.botijao_reposto }}</td>
-                <td>{{ r.empilhadeira_id }}</td>
+                <td class='text-center'>{{ r.empilhadeira_id }}</td>
+                <td class='text-center'>{{ r.servico }}</td>
+                <td class='text-center'>{{ r.quantidade }}</td>
+                <td class='text-center'>{{ r.nome }}</td>
+                <td class='text-center'>{{ r.data_inicial }} / {{ r.horario_inicial }}</td>
+                <td class='text-center'>{{ r.data_final }} / {{ r.horario_final }}</td>
+                <td class='text-center'>{{ r.horario_de_uso }}</td>
             </tr>
         {% endfor %}
     </tbody>
 </table>
+{%endif%}
 
+<br>
+{% if categoria == 'MA' %}
 <table id="test_table" class="display table table-striped table-bordered" border="1" cellspacing="0" width="100%">
-    <thead>
+    <p>
+        <h4><strong>Período selecionado:</strong> {{periodo.periodo_inicial|slice:"8:"}}/{{periodo.periodo_inicial|slice:"5:7"}}/{{periodo.periodo_inicial|slice:"0:4"}} a {{periodo.periodo_final|slice:"8:"}}/{{periodo.periodo_final|slice:"5:7"}}/{{periodo.periodo_final|slice:"0:4"}}</h4>
+        <h4><strong>Total Manutenções:</strong> {{resultado.total}}</h4>
+        <h4><strong>Empilhadeira 1:</strong> {{resultado.total_emp.1}}</h4>
+        <h4><strong>Empilhadeira 2:</strong> {{resultado.total_emp.2}}</h4>
+        <h4><strong>Empilhadeira 3:</strong> {{resultado.total_emp.3}}</h4>
+        <h3><strong >Relatório de Manutenções</strong><span class="color-red"></span> </h3> 
+    </p>
+    <thead style="color: #92eed2; font-size: 19px" >
         <tr>
-            <th>SETOR</th>
-            <th>SERVIÇO</th>
-            <th>SITUAÇÃO</th>
-            <th>QUANTIDADE</th>
+            <th class="text-center">Responsável</th>
+            <th class="text-center">Botijão Utilizado</th>
+            <th class="text-center">Botijão Reposto</th>
+            <th class="text-center">Empilhadeira</th>
+            <th class="text-center">Data</th>
+            <th class="text-center">Hora</th>
         </tr>
     </thead>
     <tbody>
-        {% for r in resultadoordem %}
+        {% for r in resultado.manutencoes %}
             <tr>
-                <td>{{ r.setor }}</td>
-                <td>{{ r.servico }}</td>
-                <td>{{ r.situacao }}</td>
-                <td>{{ r.quantidade }}</td>
+                <td class="text-center">{{ r.responsavel }}</td>
+                <td class="text-center">{{ r.botijao_utilizado }}</td>
+                <td class="text-center">{{ r.botijao_reposto }}</td>
+                <td class="text-center">{{ r.empilhadeira_id }}</td>
+                <td class="text-center">{{ r.data }}</td>
+                <td class="text-center">{{ r.horas }}</td>
             </tr>
         {% endfor %}
     </tbody>
 </table>
+{%endif%}
 
+<br>
+{%if categoria == 'O'%}
 <table id="test_table" class="display table table-striped table-bordered" border="1" cellspacing="0" width="100%">
-    <thead>
+    <p>
+        <h4><strong>Período selecionado:</strong> {{periodo.periodo_inicial|slice:"8:"}}/{{periodo.periodo_inicial|slice:"5:7"}}/{{periodo.periodo_inicial|slice:"0:4"}} a {{periodo.periodo_final|slice:"8:"}}/{{periodo.periodo_final|slice:"5:7"}}/{{periodo.periodo_final|slice:"0:4"}}</h4>
+        <h3><strong >Relatório Ordem de Serviço</strong><span class="color-red"></span> </h3> 
+    </p>
+    <thead style="color: #92eed2; font-size: 17px" >
         <tr>
-            <th>PRODUTO</th>
-            <th>QUANTIDADE</th>
-            <th>RESPONSÁVEL</th>
-            <th>DATA</th>
+            <th class="text-center">Setor</th>
+            <th class='text-center'>Serviço</th>
+            <th class="text-center">Situação</th>
+            <th class="text-center">Qtd</th>
+            <th class="text-center">Qtd Atendida</th>
+            <th class="text-center">Serviço N.</th>
+            <th class="text-center">Observação</th>
+            <th class="text-center">Data/Hora Ordem</th>
+            <th class="text-center">Data/Hora Atendimento</th>
+            <th class="text-center">Data/Hora Finalização</th>
         </tr>
     </thead>
     <tbody>
-        {% for r in resultadoalmoxarifado %}
+        {% for r in resultado.ordem %}
             <tr>
-                <td>{{ r.produto }}</td>
-                <td>{{ r.quantidade }}</td>
-                <td>{{ r.responsavel }}</td>
-                <td>{{ r.data }}</td>
+                <td class="text-center">{{ r.setor }}</td>
+                <td class="text-center">{{ r.servico }}</td>
+                <td class="text-center">{{ r.situacao }}</td>
+                <td class="text-center">{{ r.quantidade }}</td>
+                <td class="text-center">{{ r.quantidade_atendida }}</td>
+                <td class="text-center">{{ r.servico_id }}</td>
+                <td class="text-center">{{ r.observacao }}</td>
+                <td class="text-center">{{ r.data }} / {{ r.horas }}</td>
+                <td class="text-center">{{ r.data_atendimento }} / {{ r.hora_atendimento }}</td>
+                <td class="text-center">{{ r.data_finalizacao }} / {{ r.hora_finalizacao }}</td>
             </tr>
         {% endfor %}
     </tbody>
 </table>
+{%endif%}
+
+<br>
+{%if categoria == 'A'%}
+<table id="test_table" class="display table table-striped table-bordered" border="1" cellspacing="0" width="100%">
+    <p>
+        <h4><strong>Período selecionado:</strong> {{periodo.periodo_inicial|slice:"8:"}}/{{periodo.periodo_inicial|slice:"5:7"}}/{{periodo.periodo_inicial|slice:"0:4"}} a {{periodo.periodo_final|slice:"8:"}}/{{periodo.periodo_final|slice:"5:7"}}/{{periodo.periodo_final|slice:"0:4"}}</h4>
+        <h3><strong >Relatório Almoxarifado</strong><span class="color-red"></span> </h3> 
+    </p>
+    <thead style="color: #92eed2; font-size: 19px" >
+        <tr>
+            <th class="text-center">Produto</th>
+            <th class="text-center">Quantidade</th>
+            <th class="text-center">Responsável</th>
+            <th class="text-center">Data</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for r in resultado.registros %}
+            <tr>
+                <td class="text-center">{{ r.produto }}</td>
+                <td class="text-center">{{ r.quantidade }}</td>
+                <td class="text-center">{{ r.responsavel }}</td>
+                <td class="text-center">{{ r.data }}</td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{%endif%}
 {% endblock content%}
 
 
 {% block script %}
-<script>
-    function changeSelect(){
-
-        var select = document.getElementById('area');
-        var selectSetor = document.getElementById('setor');
-
-        var value = select.options[select.selectedIndex].value;
-
-        //remove itens
-        var length = selectSetor.options.length;        
-        var i;
-        for(i = selectSetor.options.length-1 ; i>=0 ; i--)
-        {
-            selectSetor.remove(i);
-        }
-</script>
 <script>
 	const elements = document.querySelectorAll('.with-js')
 	for (let p of elements) {

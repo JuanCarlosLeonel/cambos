@@ -49,7 +49,8 @@ from .views import(
     VisitanteCreate,
     VisitanteUpdate,
     VisitanteDelete,
-    # RelatorioEmpilhadeira
+    EmpilhadeiraIndex,
+    ServicoEmpilhadeiraCreate
 )
 
 urlpatterns = [
@@ -61,7 +62,7 @@ urlpatterns = [
     path('relatorio_abastecimentocarro',  RelatorioAbastecimento.as_view(), name='relatorio_abastecimentocarro'),
     path('relatorio_abastecimentocaminhao', RelatorioAbastecimentoCaminhao.as_view(), name='relatorio_abastecimentocaminhao'),
     path('relatorio_index',  RelatorioList.as_view(), name='relatorio_index'),
-    # path('relatorio_empilhadeira',  RelatorioEmpilhadeira.as_view(), name='relatorio_empilhadeira'),
+    path('empilhadeira_index',  EmpilhadeiraIndex.as_view(), name='empilhadeira_index'),
     path('viagem_list/<str:pk>/',  ViagemList.as_view(), name='viagem_list'),
     path('solicitacao_list/',  SolicitacaoList.as_view(), name='solicitacao_list'),
     path('visitantes_list/',  ControleVisitaList.as_view(), name='visitantes_list'),
@@ -101,5 +102,6 @@ urlpatterns = [
     path('manutencao_create/<str:pk>/', ManutencaoCreate.as_view(), name = 'manutencao_create'),
     path('manutencao_update/<str:pk>/', ManutencaoUpdate.as_view(), name='manutencao_update'),    
     path('manutencao_delete/<int:pk>/',ManutencaoDelete.as_view(), name='manutencao_delete_cbv'),
+    path('servico_create/', ServicoEmpilhadeiraCreate.as_view(), name = 'servico_create'),
 ]
     

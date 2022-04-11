@@ -110,6 +110,17 @@
 			</div>
 		</a>	
 		{%endif%}
+		{% if permissoes.ver_empilhadeira%}
+		<a href="{% url 'empilhadeira_index' %}">				
+			<div class="col-xs-6 no-padding">
+				<div class="panel panel-red panel-widget border-right border-bottom">
+					<div class="row no-padding"><span class="color-red"><i class="fa fa-dolly fa-2x"></i></span>  
+						<h2>Empilhadeiras</h2>
+					</div>
+				</div>
+			</div>
+		</a>
+		{%endif%}
 	</div><!--/.row-->
 </div>
 

@@ -10,7 +10,7 @@
 	#imprimir, #imprimir * {
 	  visibility: visible;
 	  padding-top: 5px;
-	  margin: 3mm 2mm 1.5mm -1.3mm;
+	  margin: 3mm 2mm 1.5mm -1.8mm;
 	}
 	#imprimir {
 	  position:absolute;
@@ -76,7 +76,6 @@
 				data-show-refresh="false"
 				data-show-toggle="false"
 				data-show-columns="true"
-				data-search="true"
 				data-select-item-name="toolbar"
 				data-pagination="false"				 
 				data-sort-order="desc"
@@ -89,14 +88,11 @@
 						<th class="text-center">Produto</th>
 						<th class="text-center">Peso</th>
 						<th class="text-center">Quant.</th>
-						<th class="text-center">Rua</th>
-						<th class="text-center">Número</th>
-						<th class="text-center">Bairro</th>
-						<th class="text-center">Cidade</th>
-						<th class="text-center">UF</th>
+						<th class="text-center">Endereco</th>
 						<th class="text-center">CEP</th>
 						<th data-field="Data Prevista" class='text-center'>Data Prevista</th>
 						<th data-field="Data Solicitação"class='text-center'>Data Solicitação</th>
+						<th data-field="Horário de Entrega/Coleta"class='text-center'>Hor. Entrega/Coleta</th>
 						<th class='text-center'>-</th>
 					</tr>
 				</thead>
@@ -132,25 +128,20 @@
 									<td class='text-center'>{{ data.peso }}</td>
 									<td class='text-center'>{{ data.quantidade }}</td>
 									<td class='text-center'>
-										{{data.endereco.endereco}}
-									</td>
-									<td class='text-center'>
-										{{data.endereco.numero}}
-									</td>
-									<td class='text-center'>
-										{{data.endereco.bairro}}
-									</td>
-									<td class='text-center'>
-										{{data.endereco.cidade}}
-									</td>
-									<td class='text-center'>
-										{{data.endereco.uf}}
+										<strong>{{data.endereco}}</strong>
 									</td>
 									<td class='text-center'>
 										{{data.endereco.cep}}
 									</td>
 									<td class='text-center'><strong>{{ data.data_prevista|date:"d/m/y" }}</strong></td>
 									<td class='text-center'>{{ data.data_solicitacao|date:"d/m/y H:i" }}</td>
+									<td class='text-center'>
+										{% if data.horaentrega_coleta %}
+											{{ data.horaentrega_coleta}}
+										{% else %}
+											-
+										{% endif %}
+									</td>
 									<td class='text-center'>
 										<form class="" id="" method="submit">
 											<button class="fas fa-dolly-flatbed btn btn-danger" type="submit" role="button" value="null">
@@ -189,29 +180,38 @@
 											Normal
 										{%endif%}																																			
 									</td>
-									<td class='text-center'>{{ data.produtos }}</td>
+									<td class='text-center'>
+										{% if data.compras_pedido_id %}
+											{% for item in pedidoitem %}
+												{% if data.compras_pedido_id == item.compras_pedido_id %}
+													{% for atv in ativo %}
+														{% if item.compras_produto_id == atv.id %}
+															{{ atv.descricao }}
+														{% endif %}
+													{% endfor %}
+												{% endif %}
+											{% endfor %}
+										{% elif not data.compras_pedido_id %}
+											{{ data.produtos }}
+										{% endif %}
+									</td>
 									<td class='text-center'>{{ data.peso }}</td>
 									<td class='text-center'>{{ data.quantidade }}</td>
 									<td class='text-center'>
-										{{data.endereco.endereco}}
-									</td>
-									<td class='text-center'>
-										{{data.endereco.numero}}
-									</td>
-									<td class='text-center'>
-										{{data.endereco.bairro}}
-									</td>
-									<td class='text-center'>
-										{{data.endereco.cidade}}
-									</td>
-									<td class='text-center'>
-										{{data.endereco.uf}}
+										<strong>{{data.endereco}}<strong>
 									</td>
 									<td class='text-center'>
 										{{data.endereco.cep}}
 									</td>
 									<td class='text-center'><strong>{{ data.data_prevista|date:"d/m/y" }}</strong></td>
 									<td class='text-center'>{{ data.data_solicitacao|date:"d/m/y H:i" }}</td>
+									<td class='text-center'>
+										{% if data.horaentrega_coleta %}
+											{{ data.horaentrega_coleta}}
+										{% else %}
+											-
+										{% endif %}
+									</td>
 									<td class='text-center'>
 										<form class="" id="" method="submit">
 											<button class="fas fa-dolly-flatbed btn btn-primary" type="submit" role="button" value="null">
