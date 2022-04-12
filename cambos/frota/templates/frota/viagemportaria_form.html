@@ -1,35 +1,30 @@
-{% extends "cambos/base_frota.html" %}
-
-{% block css %}
+{% load static %}
 {{ form.media.css }}
-{% endblock css %}
-
-{% block navigation %}
-    <div class="row">
-        <ol class="breadcrumb">
-            <li><a href="{% url 'frota_index' %}">
-                <em class="fa fa-home"></em>
-            </a></li>
-            <li class=""><a href="{% url 'viagem_list' veiculo%}">Viagem</a></li>
-            <li class="active">Cadastro-Atualização de Viagem</li>
-        </ol>
-    </div><!--/.row-->
-    <div class="row">
-        <div class="col-lg-12">
-            <h1 class="page-header">{{nomeveiculo}}</h1></h1>
-            <h1 class="page-header">{{viagem.veiculo}}</h1></h1>
-        </div>
-    </div><!--/.row-->
-{% endblock navigation %}
-
-{% block content %}		
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Cambos - Frota</title>
+	{% block css %}{% endblock css %}
+	<link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet">
+	<link href="{% static 'css/font-awesome.min.css' %}" rel="stylesheet">	
+	<link href="{% static 'css/datepicker.css' %}" rel="stylesheet">
+	<script src="https://kit.fontawesome.com/dfb3144c94.js" crossorigin="anonymous"></script>
+	<link href="{% static 'css/bootstrap-table.css' %}" rel="stylesheet">
+	<link href="{% static 'css/styles.css' %}" rel="stylesheet">
+	<link href="{% static 'fullcalendar5/main.min.css' %}" rel="stylesheet">
+	<!--Custom Font-->
+	<link href="https://fonts.googleapis.com/css?family=Montserrat:300,300i,400,400i,500,500i,600,600i,700,700i" rel="stylesheet">
+	
+</head>
 
 <div class="modal-dialog modal-lg">
     <div class="modal-content">
-        <form method="post" id="teste" autocomplete="off">
+        <form method="post" autocomplete="off">
               <div class="modal-header">
-                <a href="javascript:void(0)" onClick="history.go(-1); return false;" type="button" class="close" aria-hidden="true">×</a>
-                <h2 class="modal-title titulo_filtrar" id="exampleModalLabel">Cadastro/Atualiz.</h2>
+                <a href="javascript:void(0)" onClick="history.go(-1); return false;" type="button" class="close" aria-hidden="true">X</a>
+                <h4 class="modal-title titulo_filtrar" id="exampleModalLabel">CONFIRA OS DADOS ANTES DE INICIAR/FINALIZAR A VIAGEM </h4>
               </div>
               <div class="modal-body">                
                     {% csrf_token %}
@@ -47,44 +42,30 @@
                             {% if field.help_text %}<div class="form-helptext">{{ field.help_text }}</div>{% endif %}                    
                         </div>
                     {% endfor %}
-                    {{form}}
+                    {{form.as_p}}
               </div>
               <div class="modal-footer">
-                <a href="javascript:void(0)" onClick="history.go(-1); return false;" type="button" class="btn btn-primary">Retornar</a>
-                <input type="submit" id="teste1" class="btn btn-success" value="Salvar"  />
-                {% if object  %}
-                <a href="{% url 'viagem_delete_cbv' object.pk %}" type="button" class="btn btn-danger">Deletar</a>                                
-                {% endif %}
+                <input type="submit" class="btn btn-success" value="Salvar"  />
               </div>
-        </form>
-       
+        </form>   
     </div><!-- /.modal-content -->
 </div><!-- /.modal-dialog -->
-{% endblock content %}
 {% block script %}
  {{ form.media.js }}
-<script>
-    $(document).ready(function(){
-        $('#teste').on('submit',function(){
-            $('#teste1').attr('disabled','disabled')
-        })
-        
-    })
-</script>
-<script>
+ <script>
     let option = document.getElementById('setor{{setor.id}}');        
     option.setAttribute('class', 'active');					           
-    </script>
-    <script>
+  </script>
+  <script>
     $(document).ready(function(){            
         $(".enabled").attr("class", "disabled");
         $(".disabled a").removeAttr("href");    
         $(".date").css('pointer-events', 'none');       
     });
-</script>
-     
-<script>
-    $(document).ready(function(){
+  </script>
+ 
+  <script>
+   $(document).ready(function(){
         $('.datepicker').datepicker({
             format: 'dd/mm/yyyy',
             minViewMode: "days",
@@ -102,4 +83,28 @@
     });
 </script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.10/jquery.mask.js"></script>
+
+{% comment %} <script>
+function mostrarPosicao(posicao) {
+    console.log("Latitude: " + posicao.coords.latitude + 
+    "; Longitude: " + posicao.coords.longitude + "");
+
+    const geoApiUrl = 'https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${posicao.coords.latitude}&longitude=${posicao.coords.longitude}&localityLanguage=en'
+
+    fetch(geoApiUrl)
+    .then(res => res.json())
+    .then(data => {
+        console.log(data)
+    })
+}
+if(window.navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(mostrarPosicao);
+}
+else{
+    document.writeln("A API Geolocation foi encontrada.");  
+}
+</script>  {% endcomment %}
+
+
+
 {% endblock script %}

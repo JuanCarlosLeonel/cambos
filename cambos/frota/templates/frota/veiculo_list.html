@@ -85,7 +85,7 @@
 										<h2>{{item.descricao}}</h2>
 										{%for lista in lista_viagem%}
 											{%if lista.veiculo.id == item.id%}
-												{%if lista.data_final == none%}
+												{%if lista.hora_inicial and not lista.hora_final%}
 													<strong class="text-danger"><i class="fa fa-road"></i> O veículo está em uso</strong>
 												{%endif%}
 											{%endif%}

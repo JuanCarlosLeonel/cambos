@@ -7,7 +7,7 @@ from django.contrib.auth.decorators import login_required
 from django.views.generic.list import ListView
 from core.models import Enderecos, UserCompras, Ativo
 from .models import Abastecimento, ControleVisitantes, EstoqueDiesel, FrotaBot, ItemViagem, Manutencao, Motorista, Movimentacoes, Servicos, Viagem, Veiculo, FrotaPermissao, SolicitacaoViagem, PedidoItem
-from .form import ManutencaoForm, SolicitacaoForm, SolicitacaoMotoristaForm, ViagemForm, AbastecimentoForm, EnderecoForm, VisitanteForm, ServicoForm
+from .form import ManutencaoForm, SolicitacaoForm, SolicitacaoMotoristaForm, ViagemForm, AbastecimentoForm, EnderecoForm, VisitanteForm, ServicoForm, ViagemPortariaForm
 from django.http import HttpResponse, JsonResponse
 from django.db.models import Sum
 import datetime
@@ -19,10 +19,10 @@ from decouple import config
 from django.contrib import messages
 from django.contrib.messages import constants
 import requests
+from core.models import Bot
 
 def enviar(sender, instance, created, **kwargs):
     if created:
-        from core.models import Bot
         bot = Bot.objects.get(nome = 'Frota')
         token = bot.token 
         users = FrotaBot.objects.filter(ativo = True)
@@ -37,7 +37,6 @@ post_save.connect(enviar, sender=ItemViagem)
 
 def enviarabastecimento(sender, instance, created, **kwargs):
     if created:
-        from core.models import Bot
         bot = Bot.objects.get(nome = 'Frota')
         token = bot.token 
         users = FrotaBot.objects.filter(ativo = True)
@@ -114,7 +113,8 @@ class ViagemCreate(CreateView):
             km = None
         initial['veiculo'] = veiculo
         initial['data_inicial'] = datetime.date.today()
-        initial['hora_inicial'] = datetime.datetime.now()
+        if not veiculo.caminhao:
+            initial['hora_inicial'] = datetime.datetime.now()
         initial['km_inicial'] = km
         return initial
 
@@ -206,6 +206,47 @@ class ViagemUpdate(UpdateView):
         viagem_object = self.get_object()
         if viagem_object.km_inicial == None or viagem_object.data_final == None or viagem_object.km_final == None:
             initial['km_inicial'] = km 
+        return initial
+
+    def get_form_kwargs(self):
+        veiculo = self.object.veiculo
+        if veiculo.caminhao:
+            motoristas = Motorista.objects.filter().values('nome__id')
+        else:
+            motoristas = False
+        kwargs = super().get_form_kwargs()
+        kwargs['list_motorista'] = motoristas
+        return kwargs
+
+
+@method_decorator(login_required, name='dispatch')
+class ViagemPortariaUpdate(UpdateView):
+    model = Viagem
+    form_class = ViagemPortariaForm
+    template_name = 'frota/viagemportaria_form.html'
+    
+    def get_success_url(self):   
+        return f'/frota/viagem_list/{self.object.veiculo.id}'
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)  
+        try:
+            user_permission = FrotaPermissao.objects.get(usuario = self.request.user)
+        except:
+            user_permission = {} 
+        context['permissoes'] = user_permission
+        context['veiculo'] = self.object.veiculo.id
+        return context
+
+    def get_initial(self):
+        initial = super(ViagemPortariaUpdate, self).get_initial()
+        veiculo = self.object.veiculo.id
+        km= Viagem.objects.filter(veiculo = veiculo).exclude(km_final = None).latest("km_final").km_final
+        viagem_object = self.get_object()
+        if viagem_object.km_inicial == None or viagem_object.data_final == None or viagem_object.km_final == None:
+            initial['km_inicial'] = km 
+        if viagem_object.hora_inicial == None:
+            initial['hora_inicial'] = datetime.datetime.now()
         return initial
 
     def get_form_kwargs(self):
@@ -714,11 +755,10 @@ class SolicitacaoMotoristaUpdate(UpdateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)                
-        context['veiculo'] = self.object.id
+        context['veiculo'] = self.object.endereco
         return context
 
     def get_initial(self, *args, **kwargs):
-        from datetime import timedelta 
         initial = super(SolicitacaoMotoristaUpdate, self).get_initial(**kwargs)
         initial['data_finalizacao'] = datetime.datetime.now()
         return initial
@@ -728,7 +768,17 @@ class SolicitacaoMotoristaUpdate(UpdateView):
         if datafinalizado:
             self.object.situacao = '3'
             self.object.data_finalizacao = datetime.datetime.now()
-            self.object.save()          
+            self.object.save()   
+
+            bot = Bot.objects.get(nome = 'Frota')
+            token = bot.token 
+            users = FrotaBot.objects.filter(ativo = True)
+            for user in users:      
+                if user.ver_logistica:  
+                    chat_id = user.user_id 
+                    html_content = render_to_string('frota/telegram_messagesolicitacao.html', {'nome': self.object})
+                    bot = telegram.Bot(token=token)
+                    bot.send_message(chat_id=chat_id,text=html_content, parse_mode=telegram.ParseMode.HTML)    
         else:
             pass   
         return '/frota/sucesso/'
