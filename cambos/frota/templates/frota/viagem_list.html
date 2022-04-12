@@ -127,45 +127,82 @@
 				<th data-field="Destino" class='text-center'>Destino</th>																					
 				<th data-field="Motorista" data-sortable="true" class='text-center'>Motorista</th>														
 				<th data-field="Data Chegada"  data-formatter="dateFormat" data-sortable="true" class='text-center'>Data Chegada</th>
-				<th class="text-center">Solicitações</th>														
+				{% if permissoes.ver_solicitacao%}
+					<th class="text-center">Solicitações</th>		
+				{% endif %}												
 			</tr>
 		</thead>
 		<tbody>
 			{% for data in lista %}
-				<tr data-href="{% url 'viagem_update' data.pk %}"
-					class="trLink" >							
-					<td class='text-center' >									
-						{%if data.data_final%}
-							Concluído
-						{% else %}
-							<lu class="text-danger">Em Trânsito</lu>
-						{%endif%}
-					</td>
-					<td class='text-center' >	
-						{% if data.data_inicial %}								
-							{{data.data_inicial|safe}}								
-						{% endif %}	
-					</td>								
-					<td class='text-center' >									
-						{{data.destino}}									
-					</td>								
-					<td class='text-center'>
-						{% if data.motorista2 != none %}
-							{{data.motorista}} | {{data.motorista2}}
-						{% elif data.motorista2 == none %}
-							{{data.motorista}}
-						{%endif%}
-					</td>				
-					<td class='text-center' >																					
-						{{data.data_final|safe}}																		
-					</td>
-					<td class="text-center">
-						{% if data.data_final == none %}
-							<a href="{% url 'viagem_solicitacao_list' data.pk %}" class="btn btn-primary">
-								<i class="fa fa-plus"></i>Atribuir
-							</a>
-						{% endif %}
-					</td>																																				
+				{% if permissoes.ver_solicitacao%}
+					<tr data-href="{% url 'viagem_update' data.pk %}"
+						class="trLink" >							
+						<td class='text-center' >									
+							{%if data.data_final%}
+								Concluído
+							{%elif not data.hora_inicial%}
+								<lu class="text-primary">Reservado</lu>
+							{% else %}
+								<lu class="text-danger">Em Trânsito</lu>
+							{%endif%}
+						</td>
+						<td class='text-center' >	
+							{% if data.data_inicial %}								
+								{{data.data_inicial|safe}}								
+							{% endif %}	
+						</td>								
+						<td class='text-center' >									
+							{{data.destino}}									
+						</td>								
+						<td class='text-center'>
+							{% if data.motorista2 != none %}
+								{{data.motorista}} | {{data.motorista2}}
+							{% elif data.motorista2 == none %}
+								{{data.motorista}}
+							{%endif%}
+						</td>				
+						<td class='text-center' >																					
+							{{data.data_final|safe}}																		
+						</td>
+						<td class="text-center">
+							{% if data.data_final == none %}
+								<a href="{% url 'viagem_solicitacao_list' data.pk %}" class="btn btn-primary">
+									<i class="fa fa-plus"></i>Atribuir
+								</a>
+							{% endif %}
+						</td>	
+						
+				{% else %}
+					<tr data-href="{% url 'viagemportaria_update' data.pk %}"
+						class="trLink" >							
+						<td class='text-center' >									
+							{%if data.data_final%}
+								Concluído
+							{%elif not data.hora_inicial%}
+								<lu class="text-primary">Reservado</lu>
+							{% else %}
+								<lu class="text-danger">Em Trânsito</lu>
+							{%endif%}
+						</td>
+						<td class='text-center' >	
+							{% if data.data_inicial %}								
+								{{data.data_inicial|safe}}								
+							{% endif %}	
+						</td>								
+						<td class='text-center' >									
+							{{data.destino}}									
+						</td>								
+						<td class='text-center'>
+							{% if data.motorista2 != none %}
+								{{data.motorista}} | {{data.motorista2}}
+							{% elif data.motorista2 == none %}
+								{{data.motorista}}
+							{%endif%}
+						</td>				
+						<td class='text-center' >																					
+							{{data.data_final|safe}}																		
+						</td>
+				{% endif %}
 			{%endfor%}
 		</tbody>					
 	</table>

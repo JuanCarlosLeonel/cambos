@@ -181,6 +181,19 @@ tr.onclick = function (e) {
 	});
 
 </script>
+
+<script>
+    $(document).ready(function(){
+        $("#id_tipo_servico").on('change',function(){
+			console.log('qualqer')
+			if ($(this).val() === 'Ordem Serviço'){
+				$('#id_tipo_manutencao').hide()
+			}else {
+				$('#id_tipo_manutencao').show()
+			}
+		})
+    })
+</script> 
 	
 {% endblock script %}
 

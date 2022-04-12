@@ -58,6 +58,7 @@ class ViagemForm(forms.ModelForm):
         self.fields['data_final'].label = "Data Retorno"
         self.fields['hora_final'].label = "Hora Retorno"
         if list_motorista:
+            self.fields['hora_inicial'].widget = forms.HiddenInput()
             self.fields['motorista'].queryset = models.Pessoa.objects.filter(id__in = list_motorista)
             self.fields['motorista2'].queryset = models.Pessoa.objects.filter(id__in = list_motorista)
             self.fields['ajudante'].queryset = models.Pessoa.objects.filter(status = 0) #PEGAR APENAS COLABORADORES ATIVOS DA TABELA SOUZACAMBOS.COLABORADORS
@@ -65,6 +66,50 @@ class ViagemForm(forms.ModelForm):
             self.fields['motorista'].queryset = models.Pessoa.objects.filter(status = 0) #PEGAR APENAS COLABORADORES ATIVOS DA TABELA SOUZACAMBOS.COLABORADORS
             self.fields['motorista2'].widget = forms.HiddenInput()
             self.fields['ajudante'].widget = forms.HiddenInput()
+
+
+class ViagemPortariaForm(forms.ModelForm):
+    class Meta:
+        model = Viagem
+        fields = (
+            'motorista',
+            'motorista2',
+            'data_inicial',
+            'km_inicial',
+            'hora_inicial',
+            'data_final',
+            'hora_final',
+            'km_final'
+        )
+
+        widgets = {
+            'motorista': Select2Widget(                
+                attrs={'class':'form-control'},                
+            ),
+            'motorista2': Select2Widget(                
+                attrs={'class':'form-control'},                
+            ),
+            'data_inicial':forms.DateInput(attrs={'data-mask':'00/00/0000','class':'form-control datepicker'}),            
+            'data_final':forms.DateInput(attrs={'class':'form-control datepicker'}),     
+            'hora_inicial': forms.TimeInput(attrs={'data-mask':'00:00','class':'form-control'}),            
+            'hora_final': forms.TimeInput(attrs={'data-mask':'00:00','class':'form-control'}),
+            'km_inicial': forms.NumberInput(attrs={'class':'form-control'}),
+            'km_final': forms.NumberInput(attrs={'class':'form-control'}),
+        }
+    
+    def __init__(self, *args, **kwargs):
+        list_motorista = kwargs.pop('list_motorista', None)
+        super(ViagemPortariaForm, self).__init__(*args, **kwargs)
+        self.fields['data_inicial'].label = "Data Saída"
+        self.fields['hora_inicial'].label = "Hora Saída"
+        self.fields['data_final'].label = "Data Retorno"
+        self.fields['hora_final'].label = "Hora Retorno"
+        if list_motorista:
+            self.fields['motorista'].queryset = models.Pessoa.objects.filter(id__in = list_motorista)
+            self.fields['motorista2'].queryset = models.Pessoa.objects.filter(id__in = list_motorista)
+        else:
+            self.fields['motorista'].queryset = models.Pessoa.objects.filter(status = 0) #PEGAR APENAS COLABORADORES ATIVOS DA TABELA SOUZACAMBOS.COLABORADORS
+            self.fields['motorista2'].widget = forms.HiddenInput()
 
 class AbastecimentoForm(forms.ModelForm):
     class Meta:
@@ -234,9 +279,11 @@ class ServicoForm(forms.ModelForm):
         fields = (            
             'motorista',
             'empilhadeira',            
-            'descricao', 
             'data_inicial',
             'hora_inicial', 
+            'tipo_servico',
+            'descricao', 
+            'tipo_manutencao',
             # 'data_final',            
             # 'hora_final',    
         )
@@ -250,7 +297,9 @@ class ServicoForm(forms.ModelForm):
             ),  
             'descricao': forms.TextInput(attrs={'class':'form-control'}),     
             'data_inicial':forms.HiddenInput(attrs={'data-mask':'00/00/0000','class':'form-control datepicker'}), 
-            'hora_inicial': forms.HiddenInput(attrs={'data-mask':'00:00','class':'form-control'}),            
+            'hora_inicial': forms.HiddenInput(attrs={'data-mask':'00:00','class':'form-control'}),   
+            'tipo_servico': forms.Select(attrs={'class':'form-control'}),
+            'tipo_manutencao': forms.Select(attrs={'class':'form-control'}),
             # 'data_final':forms.DateInput(attrs={'class':'form-control datepicker'}),                
             # 'hora_final': forms.TimeInput(attrs={'data-mask':'00:00','class':'form-control'}),          
         }
